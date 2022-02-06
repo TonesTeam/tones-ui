@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>A Basic HTML5 Template</title>
+    <link rel="stylesheet" href="navbar.css">
+    <script src="https://kit.fontawesome.com/e0841da107.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --list-header-height: clamp(50px, 8vh, 80px);
+            --search-bar-height: calc(var(--list-header-height)*0.8);
+        }
+
+        .page-header {
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+            height: var(--list-header-height);
+            padding: 10px;
+            --bar-border-radius: 5px;
+            --bar-border: 2px solid #D8D8DA;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar-container {
+            display: flex;
+            height: var(--search-bar-height);
+            width: 100%;
+        }
+
+        .search-bar-container button {
+            width: calc(var(--search-bar-height)*1.5);
+            height: var(--search-bar-height);
+            font-size: calc(var(--search-bar-height)*0.4);
+            background-color: #4242FF;
+            color: white;
+            border-radius: 0px;
+            border-left: 1px solid #D8D8DA;
+            border-top-right-radius: var(--bar-border-radius);
+            border-bottom-right-radius: var(--bar-border-radius);
+            border-top: var(--bar-border);
+            border-bottom: var(--bar-border);
+            border-right: var(--bar-border);
+        }
+
+        .search-bar {
+            font-weight: 300;
+            width: 100%;
+            border-radius: 0px;
+            padding: 4px 20px;
+            font-size: calc(var(--list-header-height)*0.35);
+            color: #484848;
+            caret-color: #68686A;
+            border-top-left-radius: var(--bar-border-radius);
+            border-bottom-left-radius: var(--bar-border-radius);
+            border-right: none;
+            border-top: var(--bar-border);
+            border-bottom: var(--bar-border);
+            border-left: var(--bar-border);
+        }
+
+        .search-bar:focus {
+            outline: 0;
+        }
+        .launch-container button {
+            height: calc(var(--search-bar-height)*0.95);
+            width: var(--search-bar-height);
+            margin-left: 2vw;
+            font-size: calc(var(--search-bar-height)*0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar">
+        <div class="user-prof">
+            <span class="fas fa-user"></span>
+            <div>Test Username</div>
+        </div>
+        <div id="navbar-menu">
+            <div class="selected-navbar-item">
+                <span class="fas fa-list"></span>
+                <div>Protocol List</div>
+            </div>
+            <div>
+                <span class="fas fa-edit"></span>
+                <div>Create Protocol</div>
+            </div>
+            <div>
+                <span class="fas fa-history"></span>
+                <div>History</div>
+            </div>
+            <div>
+                <span class="fas fa-user-cog"></span>
+                <div>Profile Settings</div>
+            </div>
+            <div>
+                <span class="fas fa-cogs"></span>
+                <div>System settings</div>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <div class="search-bar-container">
+                <input type="text" class="search-bar" placeholder="Search for protocols...">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="launch-container">
+                <button type="submit" disabled="true"><i class="fa fa-play-circle"></i></button>
+            </div>
+        </div>
+        <div>
+            <!-- list with protocols -->
+        </div>
+    </div>
+</body>
+
+</html>

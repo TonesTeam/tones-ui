@@ -1,0 +1,26 @@
+
+
+
+digraph {
+    splines = ortho
+    node [shape=rectangle,fixedsize=false]
+	"Login Page" -> "Protocol List"
+	"Protocol List" [width=3]
+	{rank = same; "Navigation Bar";"Login Page";}
+
+	"Navigation Bar" -> "Protocol List" [dir=both]
+	"Navigation Bar" -> "Protocol History" [dir=both]
+	"Navigation Bar" -> "Profile Settings" [dir=both]
+	"Navigation Bar" -> "System Settings" [dir=both]
+
+	"Protocol List" -> "Protocol Creation/View Page" [taillabel="ro\n (view)"]
+	"Protocol List" -> "Protocol Creation/View Page" [taillabel="rw\n (edit)"]
+	"Protocol List" -> "Protocol Creation/View Page" [taillabel="rw\n (copy)"]
+	"Protocol List" -> "Protocol Start Page"
+
+	"Protocol Creation/View Page" -> "Navigation Bar" 
+	"Protocol Creation/View Page" -> "Protocol Start Page"
+	"Protocol Start Page" -> "Protocol Requirements Page"
+	"Protocol Requirements Page" -> "Protocol Status Page"
+	
+}

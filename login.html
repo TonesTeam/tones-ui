@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>A Basic HTML5 Template</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --main-width: 25vw;
+    }
+    form {
+      margin-bottom: 15vh;
+    }
+
+    form input {
+      display: block;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      padding: 12px 20px;
+      width: var(--main-width);
+    }
+
+    form button {
+      padding: 8px 20px;
+      width: 100%;
+    }
+
+    .login-form {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-form">
+    <form>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+
+</html>
