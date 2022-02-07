@@ -5,14 +5,24 @@ from pathlib import Path
 import base64
 import sys
 import validators
+import re
 
 original_html_text = Path(sys.argv[1]).read_text(encoding="utf-8")
-soup = BeautifulSoup(original_html_text)
+soup = BeautifulSoup(original_html_text, features="lxml")
+
+def read_css_file(filepath):
+    file_text = Path(filepath).read_text(encoding="utf-8")
+    for imp in re.findall('@import ?[\'"].*[\'"];', file_text):
+        imp_path = re.search('@import ?[\'"](.*)[\'"];', imp).group(1)
+        imp_res = read_css_file(imp_path)
+        file_text = file_text.replace(imp, imp_res)
+    return file_text
+
 
 # Find link tags. example: <link rel="stylesheet" href="css/somestyle.css">
 for tag in soup.find_all('link', href=True):
     if tag.has_attr('href'):
-        file_text = Path(tag['href']).read_text(encoding="utf-8")
+        file_text = read_css_file(tag['href'])
 
         # remove the tag from soup
         tag.extract()
