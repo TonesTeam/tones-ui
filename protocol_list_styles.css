@@ -26,28 +26,36 @@
 
 .protocol-container{
     width: 100%;
-    text-align:center;
+
 }
 
 .protocol-container .info-cell{
     float: left;
     display: flex;
-    text-align: center;
+    align-items: center;
+    height: auto;
     width: 20%;
     padding-right: clamp(15px, 5%, 50px);
+    margin-right: auto;
 }
 
-.protocol-container .info-cell p{
+/* .protocol-container .info-cell p{
     white-space: pre-wrap;
+} */
+
+.protocol-container .info-cell .label{
+ margin-right: clamp(5px, 20px, 20px);
 }
 
 .check{
-    width: 5%;  
+    width: 50px; 
+    padding: 10px;
+    margin: auto; 
 }
 
 .check input.check-to-run{
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
 }
 
 .protocol-container span{
