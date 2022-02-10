@@ -1,5 +1,8 @@
 :root {
-    --root-font-size: 20px
+    --root-font-size: 20px;
+    --color-1: #bacddb;
+    --color-2: #123d5f;
+    --color-3: #4242FF;
 }
 html {
     font-size: var(--root-font-size);
