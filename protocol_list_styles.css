@@ -1,0 +1,115 @@
+.protocol-list{
+    margin: 20px;
+}
+
+.accordion {
+    background-color: #bacddb;
+    color: #444;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    border: none;
+    border-bottom: 2px dashed #bebebe;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+.active, .accordion:hover {
+    background-color: #fff;
+}
+
+.accordion:hover{
+    border: 2px solid #120d63;
+}
+
+.protocol-container{
+    width: 100%;
+    text-align:center;
+}
+
+.protocol-container .info-cell{
+    float: left;
+    display: flex;
+    text-align: center;
+    width: 20%;
+    padding-right: clamp(15px, 5%, 50px);
+}
+
+.protocol-container .info-cell p{
+    white-space: pre-wrap;
+}
+
+.check{
+    width: 5%;  
+}
+
+.check input.check-to-run{
+    width: 20px;
+    height: 20px;
+}
+
+.protocol-container span{
+    float: right;
+}
+
+.label{
+    color: #8a8a8a;
+}
+  
+.panel {
+    height: auto;
+    max-height: 0;
+    padding: 0 18px;
+    background-color: rgb(252, 252, 252);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.panel table.dropdown-table{
+    width: 100%;
+    align-content: center;
+}
+
+.panel table.dropdown-table tr{
+    height: 42px;
+    align-content: center;
+}
+
+.panel table.dropdown-table td{
+    width: 33%;
+}
+
+.panel .protocol-options{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-auto-rows: 75px;
+    gap: 10px;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.panel .protocol-options button{
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 3px;
+    color:#8a8a8a;
+    background-color: #bacddb;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: 0.2s;
+}
+
+.panel .protocol-options button:active,
+.panel .protocol-options button:hover
+{
+    border: 1px solid #120d63;
+    color: #000;
+    background-color: #fff;
+}
+

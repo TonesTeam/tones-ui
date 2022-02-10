@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>A Basic HTML5 Template</title>
     <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="protocol_list_styles.css">
     <script src="https://kit.fontawesome.com/e0841da107.js" crossorigin="anonymous"></script>
     <style>
         :root {
@@ -45,7 +46,7 @@
 
         .search-bar {
             font-weight: 300;
-            width: 100%;
+            width: 70%;
             border-radius: 0px;
             padding: 4px 20px;
             font-size: calc(var(--list-header-height)*0.35);
@@ -62,6 +63,12 @@
         .search-bar:focus {
             outline: 0;
         }
+
+        .launch-container{
+            display: flex;
+            font-size: 12px;
+        }
+
         .launch-container button {
             height: calc(var(--search-bar-height)*0.95);
             width: var(--search-bar-height);
@@ -72,48 +79,251 @@
 </head>
 
 <body>
-    <div id="navbar">
+    <div id="navbar" class="sidenav">
+        <div id="upper-nav">
+            <div class="side">
+                <button id="log-out-btn">Log out</button>
+            </div>
+            <div class="side">
+                <button class="closebtn" onclick="closeNav()">&times;</button>
+            </div>
+        </div>
+        
         <div class="user-prof">
             <span class="fas fa-user"></span>
             <div>Test Username</div>
         </div>
+        
         <div id="navbar-menu">
-            <div class="selected-navbar-item">
+
+            <a href="#">
+            <div id="nav-item" class="selected-navbar-item">
                 <span class="fas fa-list"></span>
                 <div>Protocol List</div>
             </div>
-            <div>
+            </a>
+
+            <a href="#">
+            <div id="nav-item">
                 <span class="fas fa-edit"></span>
                 <div>Create Protocol</div>
             </div>
-            <div>
+            </a>
+
+            <a href="#">
+            <div id="nav-item">
                 <span class="fas fa-history"></span>
                 <div>History</div>
             </div>
-            <div>
+            </a>
+
+            <a href="#">
+            <div id="nav-item">
                 <span class="fas fa-user-cog"></span>
                 <div>Profile Settings</div>
             </div>
-            <div>
+            </a>
+
+            <a href="#">
+            <div id="nav-item">
                 <span class="fas fa-cogs"></span>
-                <div>System settings</div>
+                <div>System Settings</div>
             </div>
+            </a>
+
+            <a href="#">
+                <div id="nav-item">
+                    <span class="fas fa-file"></span>
+                    <div>Reports</div>
+                </div>
+            </a>
+
+            <!-- <a href="#">
+                <div id="nav-item" class="btn">
+                    <button>Log out</button>
+                </div>
+            </a> -->
+
+            <!-- <a href="#">
+                <div id="nav-item" class="btn">
+                    <button>Leave System</button>
+                </div>
+            </a> -->
+
         </div>
     </div>
-    <div class="main">
+
+    <div id="main">
+        
         <div class="page-header">
+            <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
             <div class="search-bar-container">
                 <input type="text" class="search-bar" placeholder="Search for protocols...">
                 <button type="submit"><i class="fa fa-search"></i></button>
             </div>
             <div class="launch-container">
+                <p>Launch 1/2 protocols</p>
                 <button type="submit" disabled="true"><i class="fa fa-play-circle"></i></button>
             </div>
         </div>
-        <div>
-            <!-- list with protocols -->
+
+        
+        <div class="protocol-list"> 
+            <!-- List of protocols -->
+
+            <button class="accordion">
+            <div class="check"><input type="checkbox" class="check-to-run" name="protocol"></div>
+            <div class="protocol-container">
+                <div class="info-cell"><p class="label">ID:   </p><p>PA-001</p></div>
+                <div class="info-cell"><p class="label">Name:   </p><p>Protocol Alpha</p></div>
+                <div class="info-cell"><p class="label">Author:   </p><p>James Doe</p></div>
+                <div class="info-cell"><p class="label">Date of creation:   </p><p>21.12.2021</p></div>
+                <span class="fa fa-caret-down"></span>
+                
+            </div>
+            </button>
+            <div class="panel">
+                <table class="dropdown-table">
+                    <tr>
+                        <td>Temperature: 36F</td>
+                        <td>Duration: 24h</td>
+                        <td>Containers used: 5</td>
+                    </tr>
+                    <tr>
+                        <td>Status: Approved</td>
+                        <td>Stages: 6</td>
+                        <td>Blockly Scheme: Avaliable</td>
+                    </tr>
+                </table>
+                <p>Description:<br/>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue convallis tincidunt at eget lacus. 
+                Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum. 
+                Proin aliquam ipsum ac neque gravida, vel porta elit consectetur. 
+                Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+                
+                <div class="protocol-options">
+                    <button class="proto-btn">Blockly Scheme</button>
+                    <button class="proto-btn">Use as template</button>
+                    <button class="proto-btn">View history</button>
+                    <button class="proto-btn">Delete</button>
+                </div>
+            </div>
+
+            <button class="accordion">
+                <div class="check"><input type="checkbox" class="check-to-run" name="protocol"></div>
+                <div class="protocol-container">
+                    <div class="info-cell"><p class="label">ID:   </p><p>PB-002</p></div>
+                    <div class="info-cell"><p class="label">Name:   </p><p>Protocol Beta</p></div>
+                    <div class="info-cell"><p class="label">Author:   </p><p>Janette Smith</p></div>
+                    <div class="info-cell"><p class="label">Date of creation:   </p><p>11.07.2026</p></div>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+            </button>
+            <div class="panel">
+                <table class="dropdown-table">
+                    <tr>
+                        <td>Temperature: 36F</td>
+                        <td>Duration: 24h</td>
+                        <td>Containers used: 5</td>
+                    </tr>
+                    <tr>
+                        <td>Status: Approved</td>
+                        <td>Stages: 6</td>
+                        <td>Blockly Scheme: Avaliable</td>
+                    </tr>
+                </table>
+                <p>Description:<br/>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue convallis tincidunt at eget lacus. 
+                Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum. 
+                Proin aliquam ipsum ac neque gravida, vel porta elit consectetur. 
+                Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+                
+                <div class="protocol-options">
+                    <button class="proto-btn">Blockly Scheme</button>
+                    <button class="proto-btn">Use as template</button>
+                    <button class="proto-btn">View history</button>
+                    <button class="proto-btn">Delete</button>
+                </div>
+            </div>
+
+                <button class="accordion">
+                    <div class="check"><input type="checkbox" class="check-to-run" name="protocol"></div>
+                    <div class="protocol-container">
+                        <div class="info-cell"><p class="label">ID:   </p><p>PY-003</p></div>
+                        <div class="info-cell"><p class="label">Name:   </p><p>Protocol Gamma</p></div>
+                        <div class="info-cell"><p class="label">Author:   </p><p>Helena Lee</p></div>
+                        <div class="info-cell"><p class="label">Date of creation:   </p><p>02.02.2222</p></div>
+                        <span class="fa fa-caret-down"></span>
+                    </div>
+                    </button>
+                    <div class="panel">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br/>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue convallis tincidunt at eget lacus. 
+                        Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum. 
+                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur. 
+                        Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+                        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+
         </div>
     </div>
+
+<script>
+    //w3
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+        } else {
+        panel.style.maxHeight = panel.scrollHeight + "px";
+        } 
+    });
+    }
+</script>
+
+<script>
+    //https://stackoverflow.com/questions/19001844/how-to-limit-the-number-of-selected-checkboxes
+    var limit = 2;
+    $('input.check-to-run').on('change', function(evt) {
+    if($("input[name='protocol']:checked").length > limit) {
+        this.checked = false;
+    }
+    });
+</script>
+
+<script>
+    //Navigation bar opening-closing
+    function openNav() {
+      document.getElementById("navbar").style.width = "350px";
+      document.getElementById("main").style.marginLeft = "350px";
+    }
+    
+    function closeNav() {
+      document.getElementById("navbar").style.width = "0";
+      document.getElementById("main").style.marginLeft= "0";
+    }
+    </script>
+
 </body>
 
 </html>
