@@ -18,7 +18,7 @@
     align-items: center;
     position: relative;
     cursor: pointer;
-    transition: box-shadow .2s, background-color .5s;
+    transition: all .4s ease-in-out;
 }
 
 .info-cell-container{
@@ -51,28 +51,31 @@
     content: "\2212"; /*minus icon*/
 }
 
-.protocol-general:hover {
-    -webkit-box-shadow:inset 0px 0px 0px 1px #123d5f;
-    -moz-box-shadow:inset 0px 0px 0px 1px #123d5f;
-    box-shadow:inset 0px 0px 0px 1px #123d5f;
-    background-color: #b8d7ff;
+.protocol-general.active{
+    border-top: 3px solid #123d5f;
+    border-right: 3px solid #123d5f;
+    border-left: 3px solid #123d5f;
+    background-color: #dee4fd;
 }
 
-.protocol-general.active:hover{
-    box-shadow: none;
-    background-color: #bacddb;
+.protocol-general.active + .protocol-body{
+    border-right: 3px solid #123d5f;
+    border-bottom: 3px solid #123d5f;
+    border-left: 3px solid #123d5f;
+    background-color: #dee4fd
 }
+
 
 .protocol-body{
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.2s ease-out;
+    transition: all .4s ease-out;
 }
 
 .protocol-body-content{
     padding: 1rem;
     line-height: 1.5rem;
-    border-top: 2px dashed #120d63;
+    border-top: 2px dashed #110d634d;
 }
 
 #check input.check-to-run{
@@ -108,11 +111,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #120d63;
+    border: 1px solid #123d5f;
     border-radius: 3px;
-    color:#8a8a8a;
-    background-color: #bacddb;
+    color:#123d5f;
+    background-color: #fff;
     font-size: 14px;
+    font-weight:bold;
     text-transform: uppercase;
     transition: 0.2s;
 }
