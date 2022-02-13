@@ -1,12 +1,13 @@
 @import 'style.css';
 
 :root {
-    --navbar-width: clamp(150px, 250px, 30vw);
+    --navbar-width: clamp(250px, 350px, 30vw);
     --navbar-lr-padding: 20px;
+    --navbar-font-size: calc(var(--navbar-width)/13);
 }
 
 #navbar {
-    font-size: calc(var(--navbar-width)/13);
+    font-size: var(--navbar-font-size);
     /* padding: 30px var(--navbar-lr-padding); */
     position: fixed;
     top: 0;
@@ -15,6 +16,7 @@
     background-color: #123d5f;
     color: white;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 #navbar-menu {
@@ -23,11 +25,11 @@
     /* align-items: center; */
 }
 
-#navbar-menu>div {
+#navbar-menu>a {
     --item-border: 1px solid #A1A1A1;
     width: 100%;
     display: flex;
-    height: 3em;
+    height: 2em;
     flex-direction: row;
     border-bottom: var(--item-border);
     align-items: center;
@@ -41,12 +43,12 @@
     border-bottom: none;
 }
 
-#navbar-menu #nav-item{
+#navbar-menu .nav-item {
     display: flex;
     flex-direction: row;
 }
 
-#nav-item span{
+.nav-item span {
     height: 30px;
     width: 30px;
 }
@@ -63,48 +65,55 @@
     transition: 0.5s;
     padding-top: 60px;
 }
-  
 
-.sidenav .closebtn{
-    color:#bababa;
+
+.sidenav .closebtn {
+    color: #bababa;
     background: local;
     border: none;
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
 }
 
-.sidenav .closebtn:hover{
+.sidenav .closebtn:hover {
+    color: #fff;
+}
+
+.sidenav .openbtn {
+    color: #bababa;
+    background: local;
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    font-size: 36px;
+    /* margin-left: 50px; */
+}
+
+.sidenav .openbtn:hover {
     color: #fff;
 }
 
 .sidenav a {
-padding: 10px 10px 10px 36px;
-text-decoration: none;
-font-size: 25px;
-color: #818181;
-display: block;
-/* transition: 0.2s; */
-}
-  
-.sidenav a:hover {
-color: #f1f1f1;
-}
-  
-.sidenav .closebtn {
-position: absolute;
-top: 0;
-right: 25px;
-font-size: 36px;
-margin-left: 50px;
+    padding: 10px 10px 10px 36px;
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
 }
 
-#main {
-transition: margin-left .5s;
-padding: 16px;
+.sidenav a:hover {
+    color: #A1A1A1;
 }
-/*
-@media screen and (max-height: 450px) {
-.sidenav {padding-top: 15px;}
-.sidenav a {font-size: 18px;}
-} */
+
+
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
 .main {
     margin-left: var(--navbar-width);
 }
@@ -114,17 +123,18 @@ padding: 16px;
     flex-direction: column;
     align-items: center;
 }
-.user-prof > [class~="fas"] {
+
+.user-prof>[class~="fas"] {
     margin-bottom: 1rem;
     font-size: 5em;
 }
 
-.user-prof > div {
+.user-prof>div {
     margin-bottom: 1rem;
     border-bottom: 1px solid #A1A1A1;
 }
 
-#upper-nav{
+#upper-nav {
     display: table;
     width: 100%;
     height: 42px;
@@ -132,16 +142,16 @@ padding: 16px;
     z-index: 100;
 }
 
-#upper-nav div{
+#upper-nav div {
     display: table-cell;
     text-align: center;
 }
 
-#upper-nav #log-out-btn{
+#upper-nav #log-out-btn {
     height: 32px;
     border: none;
     border-radius: 3px;
-    color:#8a8a8a;
+    color: #8a8a8a;
     background-color: #123d5f;
     font-size: 14px;
     text-transform: uppercase;
@@ -149,20 +159,17 @@ padding: 16px;
 }
 
 #upper-nav #log-out-btn:hover,
-#upper-nav #log-out-btn:active{
+#upper-nav #log-out-btn:active {
     color: #fff;
     text-decoration: underline 4px;
 }
 
-.selected-navbar-item {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border: solid 2px #fff;
-    border-radius: 5px;
-    color: #ffffff;
-    width: var(--navbar-width) !important; 
+#selected-navbar-item {
+    background-color: white;
+    color: black;
+    width: var(--navbar-width);
 }
 
 .selected-navbar-item :first-child {
-    margin-left: var(--navbar-lr-padding);
+    /* margin-left: var(--navbar-lr-padding); */
 }
