@@ -1,96 +1,95 @@
 .protocol-list{
-    margin: 20px;
+    width: 90%;
+    /* max-width: 1000px; */
+    margin: 2rem auto;
 }
 
-.accordion {
-    background-color: #bacddb;
-    color: #444;
-    cursor: pointer;
-    display: flex;
-    width: 100%;
-    border: none;
-    border-bottom: 2px dashed #bebebe;
-    text-align: left;
-    outline: none;
-    font-size: 18px;
-    transition: 0.2s;
-}
-
-.active, .accordion:hover {
-    background-color: #fff;
-}
-
-.accordion:hover{
-    border: 2px solid #120d63;
-}
-
-.protocol-container{
-    width: 100%;
-
-}
-
-.protocol-container .info-cell{
-    float: left;
-    display: flex;
-    align-items: center;
-    height: auto;
-    width: 20%;
-    padding-right: clamp(15px, 5%, 50px);
-    margin-right: auto;
-}
-
-/* .protocol-container .info-cell p{
-    white-space: pre-wrap;
+/* .protocol-list-item{
+    display: grid;
+    grid-template-columns: 1fr 12fr;
 } */
 
-.protocol-container .info-cell .label{
- margin-right: clamp(5px, 20px, 20px);
+.protocol{
+    background-color: #bacddb;
+    color: #444;
+    margin: 1rem 0;
 }
 
-.check{
-    width: 50px; 
-    padding: 10px;
-    margin: auto; 
+.protocol-general{
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    column-gap: 1rem;
+    padding: 0.5rem 3rem 0.5rem 1rem;
+    min-height: 3.5rem;
+    line-height: 1.25rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
 }
 
-.check input.check-to-run{
-    width: 32px;
-    height: 32px;
+.protocol-general .info-cell{
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    align-items: center;
+    justify-content: center;
 }
 
-.protocol-container span{
-    float: right;
+
+/* .protocol-general .info-cell#check{
+} */
+
+.protocol-general .info-cell .label{
+    margin: 0;
+    color: #444;
 }
 
-.label{
-    color: #8a8a8a;
+.protocol-general::after{
+    content: "\002B";
+    font-size: 2rem;
+    position: absolute;
+    right: 1rem;
+    transition: 0.2s ease-in-out;
 }
-  
-.panel {
-    height: auto;
+
+.protocol-general.active::after{
+    content: "\2212";
+}
+
+.protocol-body{
     max-height: 0;
-    padding: 0 18px;
-    background-color: rgb(252, 252, 252);
-    margin-bottom: 10px;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
 
-.panel table.dropdown-table{
+.protocol-body-content{
+    padding: 1rem;
+    line-height: 1.5rem;
+    border-top: 2px dashed #120d63;
+}
+
+#check input.check-to-run{
+    width: 32px;
+    height: 32px;
+}
+
+.protocol-body-content table.dropdown-table{
     width: 100%;
     align-content: center;
 }
 
-.panel table.dropdown-table tr{
+.protocol-body-content table.dropdown-table tr{
     height: 42px;
     align-content: center;
 }
 
-.panel table.dropdown-table td{
+.protocol-body-content table.dropdown-table td{
     width: 33%;
 }
 
-.panel .protocol-options{
+.protocol-body-content .protocol-options{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-auto-rows: 75px;
@@ -99,7 +98,7 @@
     padding-bottom: 20px;
 }
 
-.panel .protocol-options button{
+.protocol-body-content .protocol-options button{
     height: 42px;
     display: flex;
     justify-content: center;
@@ -113,11 +112,54 @@
     transition: 0.2s;
 }
 
-.panel .protocol-options button:active,
-.panel .protocol-options button:hover
+.protocol-body-content .protocol-options button:active,
+.protocol-body-content .protocol-options button:hover
 {
     border: 1px solid #120d63;
     color: #000;
     background-color: #fff;
 }
+
+
+
+
+/*Obsolete down*/
+
+/* .accordion {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.active, .accordion:hover {
+    background-color: #fff;
+} */
+
+/* .accordion:hover{
+    border: 2px solid #120d63;
+}
+
+.protocol-container{
+    background-color: #bacddb;
+    color: #444;
+    cursor: pointer;
+    display: flex;
+    border: none;
+    border-bottom: 2px dashed #bebebe;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+.protocol-container .info-cell{
+    float: left;
+    display: flex;
+    align-items: center;
+    height: auto;
+    width: 20%;
+    padding-right: clamp(15px, 5%, 50px);
+    margin-right: auto;
+} */    
+
+
 
