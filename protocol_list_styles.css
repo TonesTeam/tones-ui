@@ -4,14 +4,8 @@
     margin: 2rem auto;
 }
 
-/* .protocol-list-item{
-    display: grid;
-    grid-template-columns: 1fr 12fr;
-} */
-
 .protocol{
     background-color: #bacddb;
-    color: #444;
     margin: 1rem 0;
 }
 
@@ -21,10 +15,10 @@
     padding: 0.5rem 4rem 0.5rem 1rem;
     min-height: 3.5rem;
     line-height: 1.25rem;
-    /* display: flex; */
     align-items: center;
     position: relative;
     cursor: pointer;
+    transition: box-shadow .2s, background-color .5s;
 }
 
 .info-cell-container{
@@ -33,11 +27,7 @@
     column-gap: 7%;
 }
 
-/* .info-cell-subcontainer{
-
-} */
-
-.protocol-general .info-cell{
+.info-cell{
     display: grid;
     grid-template-columns: auto auto;
     column-gap: 10px;
@@ -45,13 +35,9 @@
     justify-content: center;
 }
 
-
-/* .protocol-general .info-cell#check{
-} */
-
 .protocol-general .info-cell .label{
     margin: 0;
-    color: #444;
+    color: #757575;
 }
 
 .protocol-general::after{
@@ -59,11 +45,22 @@
     font-size: 2rem;
     position: absolute;
     right: 1rem;
-    transition: 0.2s ease-in-out;
 }
 
 .protocol-general.active::after{
     content: "\2212"; /*minus icon*/
+}
+
+.protocol-general:hover {
+    -webkit-box-shadow:inset 0px 0px 0px 1px #123d5f;
+    -moz-box-shadow:inset 0px 0px 0px 1px #123d5f;
+    box-shadow:inset 0px 0px 0px 1px #123d5f;
+    background-color: #b8d7ff;
+}
+
+.protocol-general.active:hover{
+    box-shadow: none;
+    background-color: #bacddb;
 }
 
 .protocol-body{
@@ -111,7 +108,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: none;
+    border: 1px solid #120d63;
     border-radius: 3px;
     color:#8a8a8a;
     background-color: #bacddb;
@@ -126,48 +123,7 @@
     border: 1px solid #120d63;
     color: #000;
     background-color: #fff;
-}
-
-
-
-
-/*Obsolete down*/
-
-/* .accordion {
-    display: grid;
-    grid-template-columns: auto auto;
-}
-
-.active, .accordion:hover {
-    background-color: #fff;
-} */
-
-/* .accordion:hover{
-    border: 2px solid #120d63;
-}
-
-.protocol-container{
-    background-color: #bacddb;
-    color: #444;
-    cursor: pointer;
-    display: flex;
-    border: none;
-    border-bottom: 2px dashed #bebebe;
-    text-align: left;
-    outline: none;
-    font-size: 18px;
-    transition: 0.2s;
-}
-
-.protocol-container .info-cell{
-    float: left;
-    display: flex;
-    align-items: center;
-    height: auto;
-    width: 20%;
-    padding-right: clamp(15px, 5%, 50px);
-    margin-right: auto;
-} */    
+}  
 
 
 

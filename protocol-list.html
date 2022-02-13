@@ -162,7 +162,8 @@
                 <button type="submit"><i class="fa fa-search"></i></button>
             </div>
             <div class="launch-container">
-                <p>Launch 1/2 protocols</p>
+                <div>Launch <span id="protocolCount">?</span> protocols</div>
+                
                 <button type="submit" disabled="true"><i class="fa fa-play-circle"></i></button>
             </div>
         </div>
@@ -547,14 +548,20 @@
     </script>
 
     <script>
-        //https://stackoverflow.com/questions/19001844/how-to-limit-the-number-of-selected-checkboxes
-        var limit = 2;
-        $('input.check-to-run').on('change', function (evt) {
-            if ($("input[name='protocol']:checked").length > limit) {
-                this.checked = false;
-            }
-        });
+        //checkbox limit
+        //+ checkbox counter
+        var checks = document.querySelectorAll(".check-to-run");
+        var max = 2;
+        for (var i = 0; i < checks.length; i++)
+            checks[i].onclick = selectiveCheck;
+        function selectiveCheck (event) {
+            var checkedChecks = document.querySelectorAll(".check-to-run:checked");
+            if (checkedChecks.length >= max + 1)
+                return false;
+            document.getElementById("protocolCount").textContent = checkedChecks.length;
+        }
     </script>
+
 
     <script>
         //Navigation bar opening-closing
