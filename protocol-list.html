@@ -177,22 +177,31 @@
                     <div class="info-cell" id="check">
                         <input type="checkbox" class="check-to-run" name="protocol">
                     </div>
-                    <div class="info-cell">
-                        <p class="label">ID: </p>
-                        <p>PA-001</p>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PA-001</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Alpha</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>James Doe</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>21.12.2021</p>
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="info-cell">
-                        <p class="label">Name: </p>
-                        <p>Protocol Alpha</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Author: </p>
-                        <p>James Doe</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Date of creation: </p>
-                        <p>21.12.2021</p>
-                    </div>
+                    
                 </div>
 
                 <div class="protocol-body">
@@ -230,22 +239,31 @@
                     <div class="info-cell" id="check">
                         <input type="checkbox" class="check-to-run" name="protocol">
                     </div>
-                    <div class="info-cell">
-                        <p class="label">ID: </p>
-                        <p>PB-002</p>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PB-002</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Beta</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Janette Smith</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>11.07.2026</p>
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="info-cell">
-                        <p class="label">Name: </p>
-                        <p>Protocol Beta</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Author: </p>
-                        <p>Janette Smith</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Date of creation: </p>
-                        <p>11.07.2026</p>
-                    </div>
+                   
                 </div>
 
                 <div class="protocol-body">
@@ -283,22 +301,31 @@
                     <div class="info-cell" id="check">
                         <input type="checkbox" class="check-to-run" name="protocol">
                     </div>
-                    <div class="info-cell">
-                        <p class="label">ID: </p>
-                        <p>PY-003</p>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PY-003</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Gamma</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Helena Lee</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>02.02.2222</p>
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="info-cell">
-                        <p class="label">Name: </p>
-                        <p>Protocol Gamma</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Author: </p>
-                        <p>Helena Lee</p>
-                    </div>
-                    <div class="info-cell">
-                        <p class="label">Date of creation: </p>
-                        <p>02.02.2222</p>
-                    </div>
+                    
                 </div>
 
                 <div class="protocol-body">
@@ -517,25 +544,6 @@
             })
         })
 
-    </script>
-
-    <script>
-        //w3 accordion. 
-        //Change accordion to "protocol-list" and you get a new bug, but the checkboxes wouldnt trigger accordion event
-        var acc = document.getElementsByClassName("protocol-container");
-        var i;
-
-        for (i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function () {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-            });
-        }
     </script>
 
     <script>
