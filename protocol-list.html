@@ -12,69 +12,6 @@
             --list-header-height: clamp(50px, 8vh, 80px);
             --search-bar-height: calc(var(--list-header-height)*0.8);
         }
-
-        .page-header {
-            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-            height: var(--list-header-height);
-            padding: 10px;
-            --bar-border-radius: 5px;
-            --bar-border: 2px solid #D8D8DA;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-bar-container {
-            display: flex;
-            height: var(--search-bar-height);
-            width: 100%;
-        }
-
-        .search-bar-container button {
-            width: calc(var(--search-bar-height)*1.5);
-            height: var(--search-bar-height);
-            font-size: calc(var(--search-bar-height)*0.4);
-            background-color: #4242FF;
-            color: white;
-            border-radius: 0px;
-            border-left: 1px solid #D8D8DA;
-            border-top-right-radius: var(--bar-border-radius);
-            border-bottom-right-radius: var(--bar-border-radius);
-            border-top: var(--bar-border);
-            border-bottom: var(--bar-border);
-            border-right: var(--bar-border);
-        }
-
-        .search-bar {
-            font-weight: 300;
-            width: 70%;
-            border-radius: 0px;
-            padding: 4px 20px;
-            font-size: calc(var(--list-header-height)*0.35);
-            color: #484848;
-            caret-color: #68686A;
-            border-top-left-radius: var(--bar-border-radius);
-            border-bottom-left-radius: var(--bar-border-radius);
-            border-right: none;
-            border-top: var(--bar-border);
-            border-bottom: var(--bar-border);
-            border-left: var(--bar-border);
-        }
-
-        .search-bar:focus {
-            outline: 0;
-        }
-
-        .launch-container {
-            display: flex;
-            font-size: 12px;
-        }
-
-        .launch-container button {
-            height: calc(var(--search-bar-height)*0.95);
-            width: var(--search-bar-height);
-            margin-left: 2vw;
-            font-size: calc(var(--search-bar-height)*0.5);
-        }
     </style>
 </head>
 
@@ -155,16 +92,21 @@
 
     <div id="main">
 
-        <div class="page-header">
-            <span style="font-size:30px;cursor:pointer;margin-right: 20px;" onclick="openNav()">&#9776;</span>
+        <div class="page-header" id="sticker">
+            <div class="open-menu-btn">
+                <span style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776;</span>
+            </div>
             <div class="search-bar-container">
                 <input type="text" class="search-bar" placeholder="Search for protocols...">
                 <button type="submit"><i class="fa fa-search"></i></button>
             </div>
             <div class="launch-container">
-                <div>Launch <span id="protocolCount">?</span> protocols</div>
-                
-                <button type="submit" disabled="true"><i class="fa fa-play-circle"></i></button>
+                <div class="protocol-counter">
+                    <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
+                </div>
+                <div class="protocol-submit-btn">
+                    <button type="submit"><i class="fa fa-play-circle"></i></button>
+                </div>
             </div>
         </div>
 
@@ -359,6 +301,383 @@
                 </div>
             </div>
 
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PD-004</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Delta</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Josh Stampton</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>11.06.2025</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PE-005</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Epsilon</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>James Arthur Marks</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>05.02.2023</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PZ-006</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Zeta</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Megan Elizabeth Ramirez</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>15.09.2034</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PZ-006</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Zeta</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Megan Elizabeth Ramirez</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>15.09.2034</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PZ-006</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Zeta</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Megan Elizabeth Ramirez</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>15.09.2034</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="protocol">
+
+                <div class="protocol-general">
+                    <div class="info-cell" id="check">
+                        <input type="checkbox" class="check-to-run" name="protocol">
+                    </div>
+                    <div class="info-cell-container">
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">ID: </p>
+                                <p>PZ-006</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Name: </p>
+                                <p>Protocol Zeta</p>
+                            </div>
+                        </div>
+
+                        <div class="info-cell-container">
+                            <div class="info-cell">
+                                <p class="label">Author: </p>
+                                <p>Megan Elizabeth Ramirez</p>
+                            </div>
+                            <div class="info-cell">
+                                <p class="label">Date of creation: </p>
+                                <p>15.09.2034</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="protocol-body">
+                    <div class="protocol-body-content">
+                        <table class="dropdown-table">
+                            <tr>
+                                <td>Temperature: 36F</td>
+                                <td>Duration: 24h</td>
+                                <td>Containers used: 5</td>
+                            </tr>
+                            <tr>
+                                <td>Status: Approved</td>
+                                <td>Stages: 6</td>
+                                <td>Blockly Scheme: Avaliable</td>
+                            </tr>
+                        </table>
+                        <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed augue
+                            convallis tincidunt at eget lacus.
+                            Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                            Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                            Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+        
+                        <div class="protocol-options">
+                            <button class="proto-btn">Blockly Scheme</button>
+                            <button class="proto-btn">Use as template</button>
+                            <button class="proto-btn">View history</button>
+                            <button class="proto-btn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
