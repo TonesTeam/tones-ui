@@ -83,7 +83,7 @@
 
         </div>
     </div>
-    <div id="main">
+    <div id="nav-btn">
         <a href="protocol-list.html" onclick="window.open('protocol-list.html', 'myWin', 'toolbar=no, directories=no, location=no, status=yes, menubar=no, resizable=no, scrollbars=yes, width=1024, height=768'); return false">
             Open Protocol List</a>
     </div>
@@ -106,7 +106,7 @@
             $(".nav-item>div").show();
 
             document.getElementById("navbar").style.width = width;
-            document.getElementById("main").style.marginLeft = width;
+            document.getElementById("nav-btn").style.marginLeft = width;
         }
 
         function closeNav() {
@@ -118,7 +118,7 @@
             $("#navbar-menu a").width(75).css("padding", "0").css("justify-content", "center");
             $("#navbar-menu a .nav-item").width($("#navbar-menu a .nav-item span").width() + 10)
             document.getElementById("navbar").style.width = "75px";
-            document.getElementById("main").style.marginLeft = "75px";
+            document.getElementById("nav-btn").style.marginLeft = "75px";
         }
         openNav()
     </script>

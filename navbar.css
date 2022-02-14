@@ -17,6 +17,7 @@
     color: white;
     box-sizing: border-box;
     overflow: hidden;
+    z-index: 11;
 }
 
 #navbar-menu {
@@ -170,6 +171,6 @@
     width: var(--navbar-width);
 }
 
-.selected-navbar-item :first-child {
-    /* margin-left: var(--navbar-lr-padding); */
-}
+/* .selected-navbar-item :first-child {
+    /margin-left: var(--navbar-lr-padding);
+} */
