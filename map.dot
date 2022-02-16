@@ -10,8 +10,13 @@ digraph {
 
 	"Navigation Bar" -> "Protocol List" [dir=both]
 	"Navigation Bar" -> "Protocol History" [dir=both]
-	"Navigation Bar" -> "Profile Settings" [dir=both]
-	"Navigation Bar" -> "System Settings" [dir=both]
+	"Navigation Bar" -> "Settings"
+	"Settings" -> "Library Component Settings" [dir=both]
+	"Settings" -> "Profile Settings" [dir=both]
+	"Settings" -> "System Settings" [dir=both]
+
+	"Navigation Bar" -> "Cleanup Page" [dir=both]
+	"Navigation Bar" -> "Running Protocols Page" [dir=both]
 
 	"Protocol List" -> "Protocol Creation/View Page" [taillabel="ro\n (view)"]
 	"Protocol List" -> "Protocol Creation/View Page" [taillabel="rw\n (edit)"]

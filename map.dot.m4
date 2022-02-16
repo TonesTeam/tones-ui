@@ -9,6 +9,11 @@ define(`prtstart',`"Protocol Start Page"')
 define(`prtreq',`"Protocol Requirements Page"')
 define(`prtstatus',`"Protocol Status Page"')
 define(`navbar',`"Navigation Bar"')
+define(`reports',`"Reports Page"')
+define(`clean',`"Cleanup Page"')
+define(`startedprt',`"Running Protocols Page"')
+define(`libcomp',`"Library Component Settings"')
+define(`settings',`"Settings"')
 divert(0)
 
 
@@ -21,8 +26,13 @@ digraph {
 
 	navbar -> prtlist [dir=both]
 	navbar -> prthist [dir=both]
-	navbar -> prfsettings [dir=both]
-	navbar -> syssettings [dir=both]
+	navbar -> settings
+	settings -> libcomp [dir=both]
+	settings -> prfsettings [dir=both]
+	settings -> syssettings [dir=both]
+
+	navbar -> clean [dir=both]
+	navbar -> startedprt [dir=both]
 
 	prtlist -> prtpage [taillabel="ro\n (view)"]
 	prtlist -> prtpage [taillabel="rw\n (edit)"]
