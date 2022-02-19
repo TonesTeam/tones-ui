@@ -38,8 +38,11 @@
 }
 
 #navbar-menu [class~="fas"] {
-    margin-right: 1em;
     font-size: calc(var(--navbar-width)/13);
+}
+
+.nav-item-txt-box {
+    margin-left: 1em;
 }
 
 #navbar-menu>div:last-of-type {
@@ -89,11 +92,9 @@
     color: #bababa;
     background: local;
     border: none;
-    position: absolute;
     top: 0;
-    right: 20px;
     font-size: 36px;
-    /* margin-left: 50px; */
+    height: 60px;
 }
 
 .sidenav .openbtn:hover {
