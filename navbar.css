@@ -116,10 +116,12 @@
 #main {
     transition: margin-left .5s;
     padding: 16px;
+    margin-left: var(--navbar-width);
+    font-size: var(--navbar-font-size);
 }
 
-.main {
-    margin-left: var(--navbar-width);
+#main>* {
+    font-size: var(--root-font-size);
 }
 
 .user-prof {
