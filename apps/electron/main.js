@@ -1,18 +1,15 @@
-const { app, BrowserWindow } = require('electron')
-//const waitPort = require('wait-port');
+const {
+    app,
+    BrowserWindow
+} = require('electron')
 
 const createWindow = () => {
-	const win = new BrowserWindow({
-		width: 800,
-		height: 600
-	})
-	win.loadURL('http://127.0.0.1:3000')
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600
+    })
+    win.loadURL('http://127.0.0.1:' + process.env.ROUTER_PORT)
 }
-
-frontend = {host:'127.0.0.1',port:3000}
-backend = {host:'127.0.0.1',port:3001}
-
 app.whenReady().then(() => {
-	createWindow();
+    createWindow();
 })
-

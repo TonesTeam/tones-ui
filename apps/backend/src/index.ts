@@ -1,11 +1,15 @@
 import express from 'express'
+import httpProxy from 'http-proxy'
 const app = express()
-const port = 3001
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+const port = process.env.BE_PORT
+const apiRouter = express.Router()
+const FEProxy = httpProxy.createProxyServer();
+apiRouter.get('/test', (req, res) => {
+	res.send('Hello World!')
 })
 
+app.use('/api', apiRouter)
+
 app.listen(port, () => {
-  console.log(`API listening on port ${port}`)
+	console.log(`API listening on port ${port}`)
 })
