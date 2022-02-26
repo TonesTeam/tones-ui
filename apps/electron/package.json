@@ -1,0 +1,17 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "description": "tones electron shell",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-now": "electron .",
+    "start": "wait-port 3000 && wait-port 3001 && electron ."
+  },
+  "author": "drewman",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^17.1.0",
+    "wait-port": "^0.2.9"
+  }
+}

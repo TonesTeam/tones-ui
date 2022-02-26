@@ -1,0 +1,28 @@
+{
+  "name": "tones",
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend",
+    "apps/electron"
+  ],
+  "version": "1.0.0",
+  "description": "tones ui",
+  "main": "index.js",
+  "scripts": {
+	"start-dev" : "npm run start -w apps/backend & npm run dev -w apps/frontend & npm run start -w apps/electron",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drewzxcvbnm/tones-ui.git"
+  },
+  "author": "drewman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drewzxcvbnm/tones-ui/issues"
+  },
+  "homepage": "https://github.com/drewzxcvbnm/tones-ui#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
