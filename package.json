@@ -1,20 +1,20 @@
 {
     "name": "tones",
     "workspaces": [
-        "apps/router",
-        "apps/backend",
-        "apps/frontend",
-        "apps/electron"
+        "modules/router",
+        "modules/backend",
+        "modules/frontend",
+        "modules/electron"
     ],
     "version": "1.0.0",
     "description": "tones ui",
     "main": "index.js",
     "scripts": {
         "set-env": "",
-        "start-dev:fe": "npm run start-frontend -w apps/frontend",
-        "start-dev:be": "npm run start -w apps/backend",
-        "start-dev:router": "npm run start -w apps/router",
-        "start-dev:electron": "npm run start -w apps/electron",
+        "start-dev:fe": "npm run start-frontend -w modules/frontend",
+        "start-dev:be": "npm run start -w modules/backend",
+        "start-dev:router": "npm run start -w modules/router",
+        "start-dev:electron": "npm run start -w modules/electron",
         "start-dev": "cross-env-shell ROUTER_PORT=8080 FE_PORT=8081 BE_PORT=8082 npm run _start-dev",
         "_start-dev": "npm-run-all -p -r start-dev:router start-dev:fe start-dev:be start-dev:electron",
         "test": "echo \"Error: no test specified\" && exit 1"
