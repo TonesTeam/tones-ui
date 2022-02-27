@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
     "start": "ts-node src/index.ts"
   },
   "keywords": [],
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.8",
-    "http-proxy": "^1.18.1"
+    "http-proxy": "^1.18.1",
+    "nodemon": "^2.0.15"
   }
 }

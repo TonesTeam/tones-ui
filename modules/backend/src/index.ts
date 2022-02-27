@@ -5,7 +5,7 @@ const port = process.env.BE_PORT
 const apiRouter = express.Router()
 
 apiRouter.get('/test', (req, res) => {
-	res.send('Hello World!')
+	res.send('{"test":"Hello Worlds 23"}')
 })
 
 app.use('/api', apiRouter)
