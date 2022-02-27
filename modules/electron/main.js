@@ -5,10 +5,10 @@ const {
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 800,
-        height: 600
+        width: 1366,
+        height: 768
     })
-    win.loadURL('http://127.0.0.1:' + process.env.ROUTER_PORT)
+    win.loadURL('http://localhost:' + process.env.ROUTER_PORT)
 }
 app.whenReady().then(() => {
     createWindow();
