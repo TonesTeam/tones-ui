@@ -2,12 +2,14 @@ import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtocolList from './ProtocolList/ProtocolList'
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<TestComp />} />
+        <Route path="/list" element={<ProtocolList />} />
         <Route path="/test" element={<h1>TEST</h1>} />
       </Routes>
     </Router>
