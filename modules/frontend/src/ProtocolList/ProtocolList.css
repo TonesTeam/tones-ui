@@ -7,7 +7,7 @@
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     padding: 10px;
     --bar-border-radius: 5px;
-    --bar-border: 2px solid #D8D8DA;
+    --bar-border: 2px solid #d8d8da;
     display: grid;
     grid-template-columns: 1fr 10fr 5fr;
     gap: 2vw;
@@ -27,13 +27,13 @@
 }
 
 .search-bar-container button {
-    width: calc(var(--search-bar-height)*1.5);
+    width: calc(var(--search-bar-height) * 1.5);
     height: var(--search-bar-height);
-    font-size: calc(var(--search-bar-height)*0.4);
-    background-color: #4242FF;
+    font-size: calc(var(--search-bar-height) * 0.4);
+    background-color: #4242ff;
     color: white;
     border-radius: 0px;
-    border-left: 1px solid #D8D8DA;
+    border-left: 1px solid #d8d8da;
     border-top-right-radius: var(--bar-border-radius);
     border-bottom-right-radius: var(--bar-border-radius);
     border-top: var(--bar-border);
@@ -46,9 +46,9 @@
     width: 100%;
     border-radius: 0px;
     padding: 4px 20px;
-    font-size: calc(var(--list-header-height)*0.35);
+    font-size: calc(var(--list-header-height) * 0.35);
     color: #484848;
-    caret-color: #68686A;
+    caret-color: #68686a;
     border-top-left-radius: var(--bar-border-radius);
     border-bottom-left-radius: var(--bar-border-radius);
     border-right: none;
@@ -72,7 +72,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    font-size: calc(var(--search-bar-height)*0.4);
+    font-size: calc(var(--search-bar-height) * 0.4);
 }
 
 .launch-container .protocol-submit-btn {
@@ -82,25 +82,22 @@
 }
 
 .protocol-submit-btn button {
-    height: calc(var(--search-bar-height)*1);
+    height: calc(var(--search-bar-height) * 1);
     /* width: var(--search-bar-height); */
     margin-left: 2vw;
-    font-size: calc(var(--search-bar-height)*0.5);
+    font-size: calc(var(--search-bar-height) * 0.5);
     background-color: #fff;
-    color: #4242FF;
+    color: #4242ff;
     border-radius: 5px;
-    border: 2px solid #D8D8DA;
+    border: 2px solid #d8d8da;
 }
 
 .protocol-submit-btn button i {
     font-size: 30px;
 }
 
-
-
 /*-------------------------*/
 /* PROTOCOL LIST*/
-
 
 .protocol-list {
     width: 90%;
@@ -122,7 +119,7 @@
     align-items: center;
     position: relative;
     cursor: pointer;
-    transition: all .4s ease-in-out;
+    transition: all 0.4s ease-in-out;
 }
 
 .info-cell-container {
@@ -164,18 +161,17 @@
     background-color: #dee4fd;
 }
 
-.protocol-general.active+.protocol-body {
+.protocol-general.active + .protocol-body {
     border-right: 3px solid #123d5f;
     border-bottom: 3px solid #123d5f;
     border-left: 3px solid #123d5f;
-    background-color: #dee4fd
+    background-color: #dee4fd;
 }
-
 
 .protocol-body {
     max-height: 0;
     overflow: hidden;
-    transition: all .4s ease-out;
+    transition: all 0.4s ease-out;
 }
 
 .protocol-body-content {

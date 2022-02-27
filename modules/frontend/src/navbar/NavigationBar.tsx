@@ -1,22 +1,13 @@
 import './NavigationBar.css'
-import $ from 'jquery'
 import { useEffect, useState } from 'react';
-import e from 'express';
+import { CenteringFlexBox } from 'common/components'
 
-function CenteringFlexBox(props: any) {
-    const { className, ...other } = props;
-    return (
-        <div className={`centering-flex-box ${className}`} {...other} >
-            {props.children}
-        </div>
-    );
-}
-
-function NavBarItem(props: any) {
+function NavBarItem(props: any | { route: String }) {
     let id = props.isSelected ? "selected-navbar-item" : undefined;
     const isOpen = props.isOpen
+    let route = { href: props.route }
     return (
-        <a id={id} href="#" className={`nav-item-link ${isOpen ? 'nav-item-link-open' : 'nav-item-link-closed'}`}>
+        <a id={id} {...route} className={`nav-item-link ${isOpen ? 'nav-item-link-open' : 'nav-item-link-closed'}`}>
             <div className="nav-item">
                 <div><span className={`fas fa-${props.icon}`}></span></div>
                 {isOpen &&
@@ -69,7 +60,7 @@ export default function NavigationBar() {
                 <NavBarItem isOpen={isOpen} icon="user-cog" text="Profile Settings" />
                 <NavBarItem isOpen={isOpen} icon="cogs" text="System Settings" />
                 <NavBarItem isOpen={isOpen} icon="file" text="Reports" />
-                <NavBarItem isOpen={isOpen} icon="sign-out-alt" text="Log out" />
+                <NavBarItem isOpen={isOpen} icon="sign-out-alt" text="Log out" route="/" />
                 <div style={{ flexGrow: 2 }}></div>
             </div>
         </div>

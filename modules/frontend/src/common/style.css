@@ -2,7 +2,7 @@
     --root-font-size: 20px;
     --color-1: #bacddb;
     --color-2: #123d5f;
-    --color-3: #4242FF;
+    --color-3: #4242ff;
 }
 
 html {
@@ -11,7 +11,7 @@ html {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #F1F1F1;
+    background-color: #f1f1f1;
     margin: 0;
     padding: 0;
 }
