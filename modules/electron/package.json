@@ -1,0 +1,21 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "description": "tones electron shell",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-now": "electron .",
+	"wait-be": "cross-env-shell wait-port $BE_PORT",
+	"wait-fe": "cross-env-shell wait-port $FE_PORT",
+	"wait-router": "cross-env-shell wait-port $ROUTER_PORT",
+    "start": "npm-run-all wait-be wait-fe wait-router start-now"
+  },
+  "author": "drewman",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^17.1.0",
+    "npm-run-all": "^4.1.5",
+    "wait-port": "^0.2.9"
+  }
+}
