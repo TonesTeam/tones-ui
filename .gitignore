@@ -4,6 +4,8 @@ logs
 
 # Vite production files
 **/dist/**
+**/build/**
+
 
 # Runtime data
 pids
