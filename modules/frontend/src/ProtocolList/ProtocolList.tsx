@@ -103,10 +103,16 @@ function Protocol(props: any){
                         Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
 
                     <div className="protocol-options">
-                        <button className="proto-btn">Blockly Scheme</button>
-                        <button className="proto-btn">Use as template</button>
-                        <button className="proto-btn">View history</button>
-                        <button className="proto-btn">Delete</button>
+                        <div className="protocol-options">
+                            <button className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
+                            <button className="proto-btn"><i className="fas fa-code-branch"></i>Use as template</button>
+                        </div>
+
+                        <div className="protocol-options">
+                            <button className="proto-btn"><i className="fas fa-history"></i>View history</button>
+                            <button className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

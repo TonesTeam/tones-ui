@@ -101,13 +101,14 @@
 
 .protocol-list {
     width: 90%;
-    /* max-width: 1000px; */
     margin: 2rem auto;
 }
 
 .protocol {
+    /* max-height: fit-content; */
     background-color: #bacddb;
     margin: 1rem 0;
+
 }
 
 .protocol-general {
@@ -158,6 +159,7 @@
     border-top: 3px solid #123d5f;
     border-right: 3px solid #123d5f;
     border-left: 3px solid #123d5f;
+    border-bottom: 2px dashed #110d634d;
     background-color: #dee4fd;
 }
 
@@ -170,14 +172,14 @@
 
 .protocol-body {
     max-height: 0;
-    overflow: hidden;
+    overflow-y: scroll;
     transition: all 0.4s ease-out;
 }
 
 .protocol-body-content {
     padding: 1rem;
     line-height: 1.5rem;
-    border-top: 2px dashed #110d634d;
+    /* border-top: 2px dashed #110d634d; */
 }
 
 #check input.check-to-run {
@@ -201,8 +203,8 @@
 
 .protocol-body-content .protocol-options {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-auto-rows: 75px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* grid-auto-rows: 75px; */
     gap: 10px;
     align-items: center;
     padding-bottom: 20px;
@@ -228,4 +230,9 @@
     border: 1px solid #120d63;
     color: #000;
     background-color: #fff;
+}
+
+.proto-btn i{
+    font-size: large;
+    margin-right: 10px;
 }
