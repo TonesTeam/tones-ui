@@ -115,7 +115,6 @@
 
 #main {
     transition: margin-left .5s;
-    padding: 16px;
     margin-left: var(--navbar-width);
     font-size: var(--navbar-font-size);
 }

@@ -44,6 +44,75 @@ function setEventListeners() {
         checks[i].onclick = selectiveCheck;
 }
 
+function Protocol(props: any){
+    return(
+        <div className="protocol">
+
+            <div className="protocol-general">
+                <div className="info-cell" id="check">
+                    <input type="checkbox" className="check-to-run" name="protocol"></input>
+                </div>
+                <div className="info-cell-container">
+                    <div className="info-cell-container">
+                        <div className="info-cell">
+                            <p className="label">ID: </p>
+                            <p>{props.id}</p>
+                        </div>
+                        <div className="info-cell">
+                            <p className="label">Name: </p>
+                            <p>{props.name}</p>
+                        </div>
+                    </div>
+
+                    <div className="info-cell-container">
+                        <div className="info-cell">
+                            <p className="label">Author: </p>
+                            <p>{props.author}</p>
+                        </div>
+                        <div className="info-cell">
+                            <p className="label">Date of creation: </p>
+                            <p>{props.date}</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="protocol-body">
+                <div className="protocol-body-content">
+                    <table className="dropdown-table">
+                        <tbody>
+                            <tr>
+                                <td>Temperature: {props.infoTemperature}</td>
+                                <td>Duration: {props.infoDuration}</td>
+                                <td>Containers used: {props.infoContainers}</td>
+                            </tr>
+                            <tr>
+                                <td>Status: {props.infoStatus}</td>
+                                <td>Stages: {props.infoStages}</td>
+                                <td>Blockly Scheme: {props.infoBlockly}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
+                        augue
+                        convallis tincidunt at eget lacus.
+                        Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
+                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
+                        Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+
+                    <div className="protocol-options">
+                        <button className="proto-btn">Blockly Scheme</button>
+                        <button className="proto-btn">Use as template</button>
+                        <button className="proto-btn">View history</button>
+                        <button className="proto-btn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function ProtocolList() {
     useEffect(setEventListeners)
@@ -71,598 +140,59 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-                    <div className="protocol">
+                    <Protocol id="PA-001" name="Protocol Alpha" 
+                    author="James Doe" date="10.01.2021"
+                    infoTemperature="36F" infoDuration="24h"
+                    infoContainers="1" infoStatus="Approved"
+                    infoStages="4" infoBlockly="Avaliable"/>
 
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PA-001</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Alpha</p>
-                                    </div>
-                                </div>
+                    <Protocol id="PB-002" name="Protocol Beta" 
+                    author="Janette Smith" date="11.07.2026"
+                    infoTemperature="11F" infoDuration="11h"
+                    infoContainers="1" infoStatus="Approved"
+                    infoStages="12" infoBlockly="Avaliable"/>
 
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>James Doe</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>21.12.2021</p>
-                                    </div>
-                                </div>
+                    <Protocol id="PY-003" name="Protocol Gamma" 
+                    author="Bellatrix Lestrange " date="22.12.2020"
+                    infoTemperature="50F" infoDuration="5h"
+                    infoContainers="3" infoStatus="Approved"
+                    infoStages="4" infoBlockly="Avaliable"/>
 
-                            </div>
+                    <Protocol id="PD-004" name="Protocol Delta" 
+                    author="Godric Gryffindor" date="02.03.1126"
+                    infoTemperature="33F" infoDuration="13h"
+                    infoContainers="12" infoStatus="Obsolete"
+                    infoStages="4" infoBlockly="Avaliable"/>
 
-                        </div>
+                    <Protocol id="PE-005" name="Protocol Epsilon" 
+                    author="Rubeus Hagrid" date="11.07.2026"
+                    infoTemperature="11F" infoDuration="24h"
+                    infoContainers="1" infoStatus="Draft"
+                    infoStages="40" infoBlockly="Avaliable"/>
 
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+                    <Protocol id="PD-006" name="Protocol Zeta" 
+                    author="Helga Hufflepuff" date="11.07.1111"
+                    infoTemperature="36F" infoDuration="3h"
+                    infoContainers="5" infoStatus="Approved"
+                    infoStages="13" infoBlockly="Avaliable"/>
 
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Protocol id="PD-007" name="Protocol Eta" 
+                    author="Viktor Krum" date="10.07.2323"
+                    infoTemperature="36F" infoDuration="24h"
+                    infoContainers="7" infoStatus="Draft"
+                    infoStages="43" infoBlockly="Avaliable"/>
 
-                    <div className="protocol">
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PB-002</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Beta</p>
-                                    </div>
-                                </div>
+                    <Protocol id="PO-008" name="Protocol Theta" 
+                    author="Luna Lovegood" date="12.09.2052"
+                    infoTemperature="55F" infoDuration="6h"
+                    infoContainers="2" infoStatus="Approved"
+                    infoStages="4" infoBlockly="Avaliable"/>
 
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Janette Smith</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>11.07.2026</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PY-003</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Gamma</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Helena Lee</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>02.02.2222</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PD-004</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Delta</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Josh Stampton</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>11.06.2025</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PE-005</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Epsilon</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>James Arthur Marks</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>05.02.2023</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PZ-006</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Zeta</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Megan Elizabeth Ramirez</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>15.09.2034</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PZ-006</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Zeta</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Megan Elizabeth Ramirez</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>15.09.2034</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PZ-006</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Zeta</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Megan Elizabeth Ramirez</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>15.09.2034</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="protocol">
-
-                        <div className="protocol-general">
-                            <div className="info-cell" id="check">
-                                <input type="checkbox" className="check-to-run" name="protocol"></input>
-                            </div>
-                            <div className="info-cell-container">
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">ID: </p>
-                                        <p>PZ-006</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Name: </p>
-                                        <p>Protocol Zeta</p>
-                                    </div>
-                                </div>
-
-                                <div className="info-cell-container">
-                                    <div className="info-cell">
-                                        <p className="label">Author: </p>
-                                        <p>Megan Elizabeth Ramirez</p>
-                                    </div>
-                                    <div className="info-cell">
-                                        <p className="label">Date of creation: </p>
-                                        <p>15.09.2034</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="protocol-body">
-                            <div className="protocol-body-content">
-                                <table className="dropdown-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Temperature: 36F</td>
-                                            <td>Duration: 24h</td>
-                                            <td>Containers used: 5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: Approved</td>
-                                            <td>Stages: 6</td>
-                                            <td>Blockly Scheme: Avaliable</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                                    augue
-                                    convallis tincidunt at eget lacus.
-                                    Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                                    Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                                    Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
-
-                                <div className="protocol-options">
-                                    <button className="proto-btn">Blockly Scheme</button>
-                                    <button className="proto-btn">Use as template</button>
-                                    <button className="proto-btn">View history</button>
-                                    <button className="proto-btn">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <Protocol id="PK-009" name="Protocol Kappa" 
+                    author="Minerva McGonagall" date="11.07.2022"
+                    infoTemperature="36F" infoDuration="3h"
+                    infoContainers="6" infoStatus="Obslete"
+                    infoStages="12" infoBlockly="Avaliable"/>
                 </div>
             </div></>
     )
