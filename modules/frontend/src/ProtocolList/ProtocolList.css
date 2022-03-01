@@ -81,11 +81,13 @@
     align-items: center;
 }
 
-.protocol-submit-btn button {
-    height: calc(var(--search-bar-height) * 1);
-    /* width: var(--search-bar-height); */
+.protocol-submit-btn a {
+    height: 30px;
+    width: 30px;
+    /* height: calc(var(--search-bar-height) * 12);
+    width: var(--search-bar-height); */
     margin-left: 2vw;
-    font-size: calc(var(--search-bar-height) * 0.5);
+    /* font-size: calc(var(--search-bar-height) * 0.5); */
     background-color: #fff;
     color: #4242ff;
     border-radius: 5px;
@@ -108,6 +110,7 @@
     /* max-height: fit-content; */
     background-color: #bacddb;
     margin: 1rem 0;
+    overflow: hidden;
 
 }
 
@@ -172,7 +175,7 @@
 
 .protocol-body {
     max-height: 0;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     transition: all 0.4s ease-out;
 }
 

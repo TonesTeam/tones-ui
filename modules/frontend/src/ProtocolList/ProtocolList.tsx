@@ -2,7 +2,9 @@ import NavigationBar from 'navbar/NavigationBar'
 import 'navbar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
-import { useEffect } from 'react';
+import ModalWrapper from './ModalWrapper'
+import { useEffect } from 'react'
+import { useState } from 'react';
 
 const max = 2;
 
@@ -122,6 +124,11 @@ function Protocol(props: any){
 
 export default function ProtocolList() {
     useEffect(setEventListeners)
+    const [isVisible, setToVisible] = useState(false)
+
+    const tooglePopup = () => {
+        setToVisible(wasVisible => !wasVisible)
+    }
     return (
         <><NavigationBar />
             <div id="main">
@@ -138,11 +145,14 @@ export default function ProtocolList() {
                             <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
                         </div>
                         <div className="protocol-submit-btn">
-                            <button type="submit"><i className="fa fa-play-circle"></i></button>
+                            <button onClick={tooglePopup}>Open Run PP</button>
+                            <ModalWrapper isVisible={isVisible} onBackdropClick={tooglePopup} />
+                            {/* <i className="fa fa-play-circle"></i> */} 
                         </div>
                     </div>
                 </div>
 
+                <div id="modal-root"></div>
 
                 <div className="protocol-list">
 
