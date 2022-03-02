@@ -5,6 +5,7 @@ import 'common/style.css'
 import ModalWrapper from './ModalWrapper'
 import { useEffect } from 'react'
 import { useState } from 'react';
+import ProtocolSetup, {SetupFunction} from './ProtocolSetup'
 
 const max = 2;
 
@@ -122,6 +123,10 @@ function Protocol(props: any){
     );
 }
 
+const onSetupRequest: SetupFunction = async ({slots, time, name}) =>{
+    console.log(slots, time, name)
+}
+
 export default function ProtocolList() {
     useEffect(setEventListeners)
     const [isVisible, setToVisible] = useState(false)
@@ -129,6 +134,11 @@ export default function ProtocolList() {
     const tooglePopup = () => {
         setToVisible(wasVisible => !wasVisible)
     }
+
+    const onBackdropClick = () => {
+        setToVisible(false)
+    }
+    
     return (
         <><NavigationBar />
             <div id="main">
@@ -146,8 +156,9 @@ export default function ProtocolList() {
                         </div>
                         <div className="protocol-submit-btn">
                             <button onClick={tooglePopup}>Open Run PP</button>
-                            <ModalWrapper isVisible={isVisible} onBackdropClick={tooglePopup} />
-                            {/* <i className="fa fa-play-circle"></i> */} 
+                            <ProtocolSetup onBackdropClick={onBackdropClick}
+                            onSetupRequest={onSetupRequest}
+                            isVisible={isVisible} />
                         </div>
                     </div>
                 </div>
