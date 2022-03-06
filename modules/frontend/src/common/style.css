@@ -1,8 +1,17 @@
+
 :root {
     --root-font-size: 20px;
+    /* --color-1: #bacddb; */
+    /* --color-2: #123d5f; */
+    /* --color-3: #4242ff; */
+}
+
+:root {
     --color-1: #bacddb;
     --color-2: #123d5f;
     --color-3: #4242ff;
+    --color-4: #465499;
+    --color-5: #151738;
 }
 
 html {

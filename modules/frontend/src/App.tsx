@@ -3,6 +3,8 @@ import logo from 'static/logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtocolList from './ProtocolList/ProtocolList'
+import History from 'History/History'
+
 // import {NavBarItem} from 'navbar/NavigationBar'
 
 import Login from 'Login/Login';
@@ -13,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/list" element={<ProtocolList />} />
+        <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
       </Routes>
     </Router>

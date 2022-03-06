@@ -1,0 +1,14 @@
+{
+  "name": "sharedlib",
+  "version": "1.0.0",
+  "description": "Common libs and interfaces for FE and BE",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "drewman",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}

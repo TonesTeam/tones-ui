@@ -13,7 +13,7 @@
     float: left;
     top: 0;
     height: 100%;
-    background-color: #123d5f;
+    background-color: var(--color-2);
     color: white;
     box-sizing: border-box;
     overflow: hidden;

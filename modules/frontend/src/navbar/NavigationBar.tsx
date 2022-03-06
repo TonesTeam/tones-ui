@@ -54,9 +54,9 @@ export default function NavigationBar() {
             </>}
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
                 <div style={{ flexGrow: 1 }}></div>
-                <NavBarItem isOpen={isOpen} isSelected icon="list" text="Protocol List" />
+                <NavBarItem isOpen={isOpen} isSelected icon="list" text="Protocol List" route="/list" />
                 <NavBarItem isOpen={isOpen} icon="edit" text="Create Protocol" />
-                <NavBarItem isOpen={isOpen} icon="history" text="History" />
+                <NavBarItem isOpen={isOpen} icon="history" text="History" route="/history" />
                 <NavBarItem isOpen={isOpen} icon="user-cog" text="Profile Settings" />
                 <NavBarItem isOpen={isOpen} icon="cogs" text="System Settings" />
                 <NavBarItem isOpen={isOpen} icon="file" text="Reports" />
