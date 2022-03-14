@@ -1,6 +1,13 @@
 import NavigationBar from "navbar/NavigationBar";
 import './History.css'
-import { Liquid } from 'sharedlib'
+import { LiquidUseInstance } from 'sharedlib'
+import { getComparator } from 'common/util'
+
+const testData: LiquidUseInstance[] = [
+    { name: "Triclosan", amount: "50ml", slotNum: 3 },
+    { name: "Phthalates", amount: "10ml", slotNum: 1 },
+    { name: "Hydrogen peroxide", amount: "50ml", slotNum: 2 },
+]
 
 export default function History() {
     return (
@@ -18,9 +25,11 @@ export default function History() {
                 <div className="history-list">
                     <HistoryItem>
                         <ProtocolStart protocolName="Alpha" username="EdgeLord6969xxx" datetime="10 Jan, 08:00" />
-                        <ProtocolExecution slots={[1, 2, 3, 4]}>
-                            <ProtocolExecutionDetails></ProtocolExecutionDetails>
-                            <ProtocolSteps></ProtocolSteps>
+                        <ProtocolExecution>
+                            <ProtocolExecutionDetails slots={[1, 2, 3, 4]} liquids={testData} />
+                            <ProtocolSteps>
+                                <ProtocolStep />
+                            </ProtocolSteps>
                         </ProtocolExecution>
                         <ProtocolEnd />
                     </HistoryItem>
@@ -47,23 +56,42 @@ function ProtocolStart(props: any) {
 function ProtocolEnd() {
     return (<div></div>)
 }
+
 function ProtocolExecution(props: any) {
-    const slots: number[] = props.slots
-    const liquids: Liquid[] = props.liquids
-    const slotRange: string = `${Math.min(...slots)} - ${Math.max(...slots)}`
     return (
         <div>
-            <div>Used sample slots: <b>{slotRange}</b></div>
-            <div>Used Liquid slots:</div>
-            <ul>
-                { }
-            </ul>
+            {props.children}
         </div>
     )
 }
-function ProtocolExecutionDetails() {
-    return (<div></div>)
+
+function PrototypeStep(props: any) {
+    const step = props.step
+    return (
+        <div>
+            - 
+        </div>
+    )
 }
-function ProtocolSteps() {
-    return (<div></div>)
+
+function ProtocolExecutionDetails(props: any) {
+    const slots: number[] = props.slots
+    const liquids: LiquidUseInstance[] = props.liquids
+    const slotRange: string = `${Math.min(...slots)} - ${Math.max(...slots)}`
+    return (
+        <>
+            <div>Used sample slots: <b>{slotRange}</b></div>
+            <div>Used Liquid slots:</div>
+            <div>
+                {liquids.sort(getComparator(o => o.slotNum)).map(protocolLiquidConfigEntry)}
+            </div>
+        </>
+    )
+}
+function ProtocolSteps(props: any) {
+    return (<div>{props.children}</div>)
+}
+
+function protocolLiquidConfigEntry(l: LiquidUseInstance) {
+    return <div>{l.slotNum} - {l.name} - {l.amount}</div>
 }
