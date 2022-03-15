@@ -29,7 +29,11 @@
   "dependencies": {
     "@types/http-proxy": "^1.17.8",
     "http-proxy": "^1.18.1",
+    "nodemon": "^2.0.15",
+    "reflect-metadata": "^0.1.13",
     "sharedlib": "file:../sharedlib",
-    "nodemon": "^2.0.15"
+    "sqlite3": "^5.0.2",
+    "typeorm": "^0.2.45",
+    "typeorm-naming-strategies": "^4.0.0"
   }
 }
