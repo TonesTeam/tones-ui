@@ -1,3 +1,9 @@
+
+CREATE TABLE IF NOT EXISTS protocol_type (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  type_name varchar(255) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS protocol (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   protocol_name varchar(255) not NULL UNIQUE,
@@ -5,7 +11,10 @@ CREATE TABLE IF NOT EXISTS protocol (
   protocol_string TEXT,
   comment TEXT,
   creator_id int NOT NULL,
-  FOREIGN KEY (creator_id) REFERENCES user (id)
+  standard_temp int NOT NULL,
+  protocol_type_id int NOT NULL,
+  FOREIGN KEY (creator_id) REFERENCES user (id),
+  FOREIGN KEY (protocol_type_id) REFERENCES protocol_type (id)
 );
 
 CREATE TABLE IF NOT EXISTS step (
@@ -113,4 +122,6 @@ CREATE TABLE IF NOT EXISTS deployment_liquid_configuration (
 
 ------ TEST DATA ------
 
-INSERT INTO user (name, surname, role) VALUES ('John', 'Smith', 'Administrator')
+INSERT INTO user (name, surname, role) VALUES ('John', 'Smith', 'Administrator');
+INSERT INTO protocol_type (type_name) VALUES ("protocol type 1");
+INSERT INTO protocol (protocol_name, creation_date, creator_id, standard_temp, protocol_type_id) VALUES ("alpha", date(), 1, 22, 1);
