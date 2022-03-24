@@ -4,6 +4,7 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtocolList from './ProtocolList/ProtocolList'
 import History from 'History/History'
+import BlocklyPage from 'Blockly/Blockly';
 
 // import {NavBarItem} from 'navbar/NavigationBar'
 
@@ -13,10 +14,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* <Route path="/" element={<Login />} /> */}
         <Route path="/list" element={<ProtocolList />} />
         <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
+        <Route path="/" element={<BlocklyPage />} />
       </Routes>
     </Router>
   )
