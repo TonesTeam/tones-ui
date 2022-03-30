@@ -95,7 +95,8 @@ Blockly.Blocks['set_normal_temp'] = {
 Blockly.Blocks['apply_liquid'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField(createLabel("Reagent: ", "boldit"))
+            .appendField(createLabel("Reagent:", "boldit"))
+            .appendField("Apply")
             .appendField(new Blockly.FieldNumber(0), "volume")
             .appendField("units of ")
             .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
@@ -155,7 +156,8 @@ Blockly.Blocks['apply_washing_liquid'] = {
 Blockly.Blocks['apply_antigen_liquid'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField(createLabel("Antigen retrieval:   ", "boldit"))
+            .appendField(createLabel("Antigen retrieval: ", "boldit"))
+            .appendField("Apply")
             .appendField(new Blockly.FieldNumber(0), "volume")
             .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
@@ -174,7 +176,8 @@ Blockly.Blocks['apply_antigen_liquid'] = {
 Blockly.Blocks['apply_blocking_liquid'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField(createLabel("Blocking: ", "boldit"))
+            .appendField(createLabel("Blocking:", "boldit"))
+            .appendField("Apply")
             .appendField(new Blockly.FieldNumber(0), "volume")
             .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
