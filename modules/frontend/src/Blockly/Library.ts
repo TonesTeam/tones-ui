@@ -1,9 +1,79 @@
-import Blockly, { Block } from 'blockly';
+import Blockly, { Block, Input } from 'blockly';
 import 'blockly/python';
 
 function createLabel(text: string, clazz: string) {
     return new Blockly.FieldLabel(text, clazz, undefined);
 }
+
+Blockly.Blocks['reagent_type'] = {
+    init: function (this: Block) {
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
+        this.setOutput(true, null);
+        this.setColour(230);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+}
+
+Blockly.Blocks['apply_reagent_2'] = {
+    init: function (this: Block) {
+        const newBlock = this.workspace.newBlock('math_number')
+        // this.getInput("volume")?.connection.connect(newBlock.nextConnection)
+        this.setInputsInline(true);
+        this.appendValueInput("volume")
+            .setCheck("Number")
+            .appendField("Reagent:")
+        // ?.connection.connect(newBlock.outputConnection);
+        this.appendValueInput("reagent")
+            .setCheck("reagent_type")
+            .appendField("units of");
+        this.appendValueInput("time")
+            .setCheck("Number")
+            .appendField("for");
+        this.appendDummyInput()
+            .appendField("minutes at");
+        this.appendValueInput("degree")
+            .setCheck("Number");
+        this.appendDummyInput()
+            .appendField("°C");
+        this.setColour(90);
+        this.setTooltip("");
+        this.setHelpUrl("");
+        this.setNextStatement(true, null);
+        this.setPreviousStatement(true, null);
+        // Blockly.Extensions.apply('my_fill_default_fields', this, false)
+    }
+};
+
+Blockly.Blocks['apply_reagent_3'] = {
+    init: function (this: Block) {
+        // this.setMutator(new Blockly.Mutator(['math_number']));
+        const newBlock = this.workspace.newBlock('math_number')
+        // this.getInput("volume")?.connection.connect(newBlock.nextConnection)
+        this.setInputsInline(false);
+        this.appendValueInput("reagent")
+            .setCheck("reagent_type")
+            .appendField("Reagent:")
+        // ?.connection.connect(newBlock.outputConnection);
+        this.appendValueInput("volume")
+            .setCheck("Number")
+            .appendField("Volume:");
+        this.appendValueInput("time")
+            .setCheck("Number")
+            .appendField("Time:");
+        this.appendValueInput("degree")
+            .setCheck("Number")
+            .appendField("Degrees °C:");
+        this.setColour(90);
+        this.setTooltip("");
+        this.setHelpUrl("");
+        this.setNextStatement(true, null);
+        this.setPreviousStatement(true, null);
+        // Blockly.Extensions.apply('my_fill_default_fields', this, false)
+    }
+
+};
 
 Blockly.Blocks['set_normal_temp'] = {
     init: function () {
@@ -27,14 +97,14 @@ Blockly.Blocks['apply_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Reagent: ", "boldit"))
             .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("ml of ")
+            .appendField("units of ")
             .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
-            .appendField("minutes at ")
-            .appendField(new Blockly.FieldNumber(0), "degrees")
-            .appendField("°C");
+            .appendField("minutes.")
+        // .appendField(new Blockly.FieldNumber(0), "degrees")
+        // .appendField("°C");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(90);
@@ -49,7 +119,7 @@ Blockly.Blocks['apply_parafinization_liquid'] = {
             .appendField(createLabel("Deparafinization: ", "boldit"))
             .appendField("Apply")
             .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("ml of")
+            .appendField("units of")
         this.appendDummyInput()
             .appendField("dewax solution for")
             .appendField(new Blockly.FieldNumber(0), "time")
@@ -67,7 +137,7 @@ Blockly.Blocks['apply_washing_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Washing: ", "boldit"))
             .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("ml of")
+            .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
         this.appendDummyInput()
             .appendField("for")
@@ -77,6 +147,44 @@ Blockly.Blocks['apply_washing_liquid'] = {
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(180);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['apply_antigen_liquid'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField(createLabel("Antigen retrieval:   ", "boldit"))
+            .appendField(new Blockly.FieldNumber(0), "volume")
+            .appendField("units of")
+            .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
+        this.appendDummyInput()
+            .appendField("for")
+            .appendField(new Blockly.FieldNumber(0), "time")
+            .appendField("minutes.")
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(130);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['apply_blocking_liquid'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField(createLabel("Blocking: ", "boldit"))
+            .appendField(new Blockly.FieldNumber(0), "volume")
+            .appendField("units of")
+            .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
+        this.appendDummyInput()
+            .appendField("for")
+            .appendField(new Blockly.FieldNumber(0), "time")
+            .appendField("minutes.")
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(110);
         this.setTooltip("");
         this.setHelpUrl("");
     }
@@ -171,7 +279,7 @@ Blockly.Blocks['wait'] = {
 };
 
 interface CodeGenerator {
-    [index: string]: (b: Block) => string;
+    [index: string]: (b: Block) => string | [string, any];
 }
 
 interface PythonContainer {
@@ -252,3 +360,26 @@ PyGen['set_normal_temp'] = function (block: Block) {
     var code = '...\n';
     return code;
 };
+
+PyGen['apply_reagent_2'] = function (block) {
+    var value_volume = (Blockly as any).Python.valueToCode(block, 'volume', (Blockly as any).Python.ORDER_ATOMIC);
+    var value_reagent = (Blockly as any).Python.valueToCode(block, 'reagent', (Blockly as any).Python.ORDER_ATOMIC);
+    var value_time = (Blockly as any).Python.valueToCode(block, 'time', (Blockly as any).Python.ORDER_ATOMIC);
+    var value_degree = (Blockly as any).Python.valueToCode(block, 'degree', (Blockly as any).Python.ORDER_ATOMIC);
+    // TODO: Assemble Python into code variable.
+    var code = '...\n';
+    return code;
+};
+
+PyGen['reagent_type'] = function (block) {
+    var dropdown_reagent = block.getFieldValue('reagent');
+    // TODO: Assemble Python into code variable.
+    var code = '...';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, (Blockly as any).Python.ORDER_NONE];
+};
+
+for (const [key, val] of Object.entries(Blockly.Blocks)) {
+    if (PyGen[key] === undefined)
+        PyGen[key] = (b: Block) => ""
+}
