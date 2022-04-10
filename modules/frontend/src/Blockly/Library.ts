@@ -1,5 +1,6 @@
-import Blockly, { Block, Input } from 'blockly';
+import Blockly, { Block } from 'blockly';
 import 'blockly/python';
+import './BlocklyFunction'
 
 function createLabel(text: string, clazz: string) {
     return new Blockly.FieldLabel(text, clazz, undefined);
@@ -7,6 +8,8 @@ function createLabel(text: string, clazz: string) {
 
 Blockly.Blocks['reagent_type'] = {
     init: function (this: Block) {
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldDropdown([["reagent_type_1", "reagent_type_1"], ["reagent_type_2", "reagent_type_2"], ["reagent_type_3", "reagent_type_3"]]), "reagent");
         this.appendDummyInput()
             .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
         this.setOutput(true, null);
@@ -56,15 +59,12 @@ Blockly.Blocks['apply_reagent_3'] = {
             .setCheck("reagent_type")
             .appendField("Reagent:")
         // ?.connection.connect(newBlock.outputConnection);
-        this.appendValueInput("volume")
+        this.appendValueInput("times")
             .setCheck("Number")
-            .appendField("Volume:");
-        this.appendValueInput("time")
-            .setCheck("Number")
-            .appendField("Time:");
+            .appendField("Times:");
         this.appendValueInput("degree")
             .setCheck("Number")
-            .appendField("Degrees °C:");
+            .appendField("At Degrees °C:");
         this.setColour(90);
         this.setTooltip("");
         this.setHelpUrl("");
@@ -96,16 +96,21 @@ Blockly.Blocks['apply_liquid'] = {
     init: function () {
         this.appendDummyInput()
             .appendField(createLabel("Reagent:", "boldit"))
-            .appendField("Apply")
-            .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("units of ")
-            .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
+            .appendField("From")
+            .appendField(new Blockly.FieldDropdown([["reagent_type_1", "reagent_type_1"], ["reagent_type_2", "reagent_type_2"], ["reagent_type_3", "reagent_type_3"]]), "reagent");
         this.appendDummyInput()
+            .appendField("apply")
+            .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent")
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
             .appendField("minutes.")
-        // .appendField(new Blockly.FieldNumber(0), "degrees")
-        // .appendField("°C");
+        this.appendDummyInput()
+            .appendField("Times - ")
+            .appendField(new Blockly.FieldNumber(1), "times")
+            .appendField(".")
+            .appendField("At")
+            .appendField(new Blockly.FieldNumber(0), "degrees")
+            .appendField("°C")
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(90);
@@ -119,8 +124,6 @@ Blockly.Blocks['apply_parafinization_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Deparafinization: ", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("units of")
         this.appendDummyInput()
             .appendField("dewax solution for")
             .appendField(new Blockly.FieldNumber(0), "time")
@@ -158,8 +161,6 @@ Blockly.Blocks['apply_antigen_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Antigen retrieval: ", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
         this.appendDummyInput()
             .appendField("for")
@@ -178,8 +179,6 @@ Blockly.Blocks['apply_blocking_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Blocking:", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
         this.appendDummyInput()
             .appendField("for")
@@ -213,6 +212,9 @@ Blockly.Blocks['set_temperature'] = {
             .appendField("Change temperature to")
             .appendField(new Blockly.FieldNumber(0), "NAME")
             .appendField("°C");
+        this.appendDummyInput()
+            .appendField("Wait:")
+            .appendField(new Blockly.FieldCheckbox("TRUE", undefined, undefined), "NAME");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(0);
@@ -248,7 +250,8 @@ Blockly.Blocks['begin_protocol'] = {
             .appendField("Standard temp: ")
             .appendField(new Blockly.FieldNumber(12), "temp")
             .appendField("°C");
-        this.setNextStatement(true, null);
+        this.appendStatementInput("protocol_content");
+        // this.setNextStatement(true, null);
         this.setColour(270);
         this.setTooltip("");
         this.setHelpUrl("");
@@ -280,109 +283,3 @@ Blockly.Blocks['wait'] = {
         this.setHelpUrl("");
     }
 };
-
-interface CodeGenerator {
-    [index: string]: (b: Block) => string | [string, any];
-}
-
-interface PythonContainer {
-    Python: CodeGenerator;
-}
-
-const PyGen = (Blockly as unknown as PythonContainer).Python
-
-PyGen['apply_liquid'] = function (block: Block) {
-    var number_volume = block.getFieldValue('volume');
-    var dropdown_liquid = block.getFieldValue('liquid');
-    var number_time = block.getFieldValue('time');
-    var number_degrees = block.getFieldValue('degrees');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['apply_parafinization_liquid'] = function (block: Block) {
-    var number_volume = block.getFieldValue('volume');
-    var dropdown_liquid = block.getFieldValue('liquid');
-    var number_time = block.getFieldValue('time');
-    var number_degrees = block.getFieldValue('degrees');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['apply_washing_liquid'] = function (block: Block) {
-    var number_volume = block.getFieldValue('volume');
-    var dropdown_liquid = block.getFieldValue('liquid');
-    var number_time = block.getFieldValue('time');
-    var number_degrees = block.getFieldValue('degrees');
-    var number_times = block.getFieldValue('times');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['wait'] = function (block: Block) {
-    var number_time = block.getFieldValue('time');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['set_temperature'] = function (block: Block) {
-    var number_name = block.getFieldValue('NAME');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['repeat'] = function (block: Block) {
-    var number_times = block.getFieldValue('times');
-    var statements_name = (Blockly as any).Python.statementToCode(block, 'NAME');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['begin_protocol'] = function (block: Block) {
-    var text_protocol_name = block.getFieldValue('protocol_name');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['normalize_temperature'] = function (block: Block) {
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['set_normal_temp'] = function (block: Block) {
-    var number_name = block.getFieldValue('NAME');
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['apply_reagent_2'] = function (block) {
-    var value_volume = (Blockly as any).Python.valueToCode(block, 'volume', (Blockly as any).Python.ORDER_ATOMIC);
-    var value_reagent = (Blockly as any).Python.valueToCode(block, 'reagent', (Blockly as any).Python.ORDER_ATOMIC);
-    var value_time = (Blockly as any).Python.valueToCode(block, 'time', (Blockly as any).Python.ORDER_ATOMIC);
-    var value_degree = (Blockly as any).Python.valueToCode(block, 'degree', (Blockly as any).Python.ORDER_ATOMIC);
-    // TODO: Assemble Python into code variable.
-    var code = '...\n';
-    return code;
-};
-
-PyGen['reagent_type'] = function (block) {
-    var dropdown_reagent = block.getFieldValue('reagent');
-    // TODO: Assemble Python into code variable.
-    var code = '...';
-    // TODO: Change ORDER_NONE to the correct strength.
-    return [code, (Blockly as any).Python.ORDER_NONE];
-};
-
-for (const [key, val] of Object.entries(Blockly.Blocks)) {
-    if (PyGen[key] === undefined)
-        PyGen[key] = (b: Block) => ""
-}

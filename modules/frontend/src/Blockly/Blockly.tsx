@@ -1,9 +1,13 @@
 // import "./App.css";
 import "./Library"
 import React, { useState } from "react";
-import { BlocklyWorkspace, ToolboxDefinition } from "react-blockly";
-import Blockly from "blockly";
+import { BlocklyWorkspace, ToolboxDefinition, WorkspaceSvg } from "react-blockly";
+import Blockly, { bindEvent_ } from "blockly";
 import "./Blockly.css"
+import { GenerateAll } from "./LibraryCodeGen";
+import format from "xml-formatter"
+
+GenerateAll();
 
 export default function BlocklyPage() {
     const [xml, setXml] = useState("");
@@ -17,6 +21,44 @@ export default function BlocklyPage() {
     {
         contents:
             [
+                {
+                    kind: "category",
+                    name: "Functions",
+                    contents: [
+                        { kind: "block", type: "function_block" },
+                        { kind: "block", type: "function_call" },
+                        { kind: "block", type: "reagent_type" },
+                        { kind: "block", type: "math_number" },
+                    ]
+                },
+                {
+                    kind: "category",
+                    name: "Liquid Application",
+                    contents: [
+                        { kind: "block", type: "apply_liquid" },
+                        { kind: "block", type: "apply_antigen_liquid" },
+                        { kind: "block", type: "apply_blocking_liquid" },
+                        { kind: "block", type: "apply_parafinization_liquid" },
+                        { kind: "block", type: "apply_washing_liquid" },
+                        {
+                            kind: "block", type: "apply_reagent_3", inputs: {
+                                times: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
+                                degree: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
+                                reagent: { kind: "block", block: { "type": "reagent_type", fields: { reagent: "reagent_1" } } },
+                            }
+                        },
+                    ]
+                },
+                {
+                    kind: "category",
+                    name: "Other",
+                    contents: [
+                        { kind: "block", type: "wait" },
+                        { kind: "block", type: "repeat" },
+                        { kind: "block", type: "set_temperature" },
+                    ]
+                },
+
                 // { kind: "block", type: "math_number" },
                 // { kind: "block", type: "reagent_type" },
                 // {
@@ -27,24 +69,6 @@ export default function BlocklyPage() {
                 //         reagent: { kind: "block", block: { "type": "reagent_type", fields: { reagent: "reagent_1" } } },
                 //     }
                 // },
-                // {
-                //     kind: "block", type: "apply_reagent_3", inputs: {
-                //         volume: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         time: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         degree: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         reagent: { kind: "block", block: { "type": "reagent_type", fields: { reagent: "reagent_1" } } },
-                //     }
-                // },
-                { kind: "block", type: "apply_liquid" },
-                { kind: "block", type: "apply_antigen_liquid" },
-                { kind: "block", type: "apply_blocking_liquid" },
-                { kind: "block", type: "apply_parafinization_liquid" },
-                { kind: "block", type: "apply_washing_liquid" },
-                // {kind: "block", type: "set_normal_temp"},
-                { kind: "block", type: "wait" },
-                { kind: "block", type: "repeat" },
-                { kind: "block", type: "set_temperature" },
-                { kind: "block", type: "normalize_temperature" },
             ]
     };
 
@@ -71,7 +95,7 @@ export default function BlocklyPage() {
                 onWorkspaceChange={workspaceDidChange}
                 onXmlChange={setXml}
             />
-            <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{xml}</pre>
+            <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre>
             <textarea
                 id="code"
                 style={{ height: "100px", width: "200px" }}
