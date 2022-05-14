@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS liquid_application (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   step_id int NOT NULL,
   liquid_id int NOT NULL,
-  amount int NOT NULL,
   FOREIGN KEY (liquid_id) REFERENCES liquid (id),
   FOREIGN KEY (step_id) REFERENCES step (id)
 );
@@ -45,6 +44,7 @@ CREATE TABLE IF NOT EXISTS temperature_change (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   step_id int NOT NULL,
   target_temperature int NOT NULL,
+  blocking BOOLEAN NOT NULL CHECK (blocking IN (0, 1)),
   FOREIGN KEY (step_id) REFERENCES step (id)
 );
 
@@ -87,11 +87,18 @@ CREATE TABLE IF NOT EXISTS liquid_type (
   type_name varchar(255) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS liquid_sub_type (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  sub_type_name varchar(255) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS liquid (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   liquid_name VARCHAR(255) NOT NULL UNIQUE,
   liquid_type_id int NOT NULL,
-  FOREIGN KEY (liquid_type_id) REFERENCES liquid_type (id)
+  liquid_sub_type_id int NULL,
+  FOREIGN KEY (liquid_type_id) REFERENCES liquid_type (id),
+  FOREIGN KEY (liquid_sub_type_id) REFERENCES liquid_sub_type (id)
 );
 
 CREATE TABLE IF NOT EXISTS deployment_error (

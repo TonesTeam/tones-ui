@@ -140,8 +140,6 @@ Blockly.Blocks['apply_washing_liquid'] = {
     init: function () {
         this.appendDummyInput()
             .appendField(createLabel("Washing: ", "boldit"))
-            .appendField(new Blockly.FieldNumber(0), "volume")
-            .appendField("units of")
             .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
         this.appendDummyInput()
             .appendField("for")
