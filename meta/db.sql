@@ -132,3 +132,16 @@ CREATE TABLE IF NOT EXISTS deployment_liquid_configuration (
 INSERT INTO user (name, surname, role) VALUES ('John', 'Smith', 'Administrator');
 INSERT INTO protocol_type (type_name) VALUES ("protocol type 1");
 INSERT INTO protocol (protocol_name, creation_date, creator_id, standard_temp, protocol_type_id) VALUES ("alpha", date(), 1, 22, 1);
+INSERT INTO liquid_type (type_name) VALUES ("Washing"), ("Deparafinization"), ("Reagent"), ("Blocking"), ("Antigen retrieval");
+INSERT INTO liquid_sub_type (sub_type_name) VALUES ("reagent_type_1"), ("reagent_type_2");
+INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES 
+  ("Schwartz reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="reagent_type_1")),
+  ("Stryker's reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="reagent_type_2")),
+  ("Fairy", (select id from liquid_type where type_name="Washing"), NULL),
+  ("Persil", (select id from liquid_type where type_name="Washing"), NULL),
+  ("Formalin", (select id from liquid_type where type_name="Deparafinization"), NULL),
+  ("Xylene", (select id from liquid_type where type_name="Deparafinization"), NULL),
+  ("Bovine serum albumin", (select id from liquid_type where type_name="Blocking"), NULL),
+  ("Fish Gelatin", (select id from liquid_type where type_name="Blocking"), NULL),
+  ("HistoReveal", (select id from liquid_type where type_name="Antigen retrieval"), NULL),
+  ("Trypsin", (select id from liquid_type where type_name="Antigen retrieval"), NULL);

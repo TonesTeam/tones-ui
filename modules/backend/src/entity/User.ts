@@ -7,13 +7,13 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable: false})
     name: string;
 
-    @Column()
+    @Column({nullable: false})
     surname: string;
 
-    @Column()
+    @Column({nullable: false})
     role: String;
 
     @OneToMany(() => Protocol, protocol => protocol.creator)

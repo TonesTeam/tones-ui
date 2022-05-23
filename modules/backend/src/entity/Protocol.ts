@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Step } from "./Step";
 import { User } from "./User";
 
 @Entity()
@@ -7,7 +8,7 @@ export class ProtocolType {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ nullable: false })
     typeName: string;
 
     @OneToMany(() => Protocol, protocol => protocol.protocolType)
@@ -21,13 +22,13 @@ export class Protocol {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ nullable: false })
     protocolName: string;
 
     @CreateDateColumn()
     creationDate: Date;
 
-    @Column()
+    @Column({ nullable: false })
     protocolString: string;
 
     @Column()
@@ -36,10 +37,13 @@ export class Protocol {
     @ManyToOne(() => User, user => user.protocols)
     creator: User;
 
-    @Column()
+    @Column({ nullable: false })
     standardTemp: number;
 
     @ManyToOne(() => ProtocolType, protocolType => protocolType.protocols)
     protocolType: ProtocolType;
+
+    @OneToMany(() => Step, step => step.protocol)
+    steps: Step[];
 
 }
