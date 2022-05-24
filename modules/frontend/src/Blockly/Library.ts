@@ -1,6 +1,14 @@
 import Blockly, { Block } from 'blockly';
 import 'blockly/python';
+import { getRequest, groupBy } from 'common/util';
 import './BlocklyFunction'
+import { LiquidDto } from "sharedlib/dto/liquid.dto"
+
+const liquids = (await getRequest<LiquidDto[]>("/liquids")).data;
+const typesMap = groupBy(liquids, l => l.type, l => l.name);
+console.log(typesMap);
+const reagents = typesMap.get("Reagent")?.map(r => [r, r])
+const antigens = typesMap.get("Antigen retrieval")?.map(r => [r, r])!
 
 function createLabel(text: string, clazz: string) {
     return new Blockly.FieldLabel(text, clazz, undefined);
@@ -159,7 +167,7 @@ Blockly.Blocks['apply_antigen_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Antigen retrieval: ", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
+            .appendField(new Blockly.FieldDropdown(antigens), "liquid");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
