@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, ManyToOne, EntityRepository, Repository } from "typeorm";
 import { LiquidApplication } from "./LiquidApplication";
 
 @Entity()
@@ -45,3 +45,6 @@ export class Liquid {
     liquidApplications: LiquidApplication[];
 
 }
+
+// @EntityRepository(Liquid)
+// export class LiquidRepository extends Repository<Liquid> {}
