@@ -5,9 +5,10 @@ import './BlocklyFunction'
 import { LiquidDto } from "sharedlib/dto/liquid.dto"
 
 const liquids = (await getRequest<LiquidDto[]>("/liquids")).data;
+console.log(liquids)
 const typesMap = groupBy(liquids, l => l.type, l => l.name);
-console.log(typesMap);
-const reagents = typesMap.get("Reagent")?.map(r => [r, r])
+const reagentSubTypeMap = groupBy(liquids.filter(l => l.type === "Reagent"), r => r.subType, l => l.name)
+console.log(reagentSubTypeMap);
 const antigens = typesMap.get("Antigen retrieval")?.map(r => [r, r])!
 
 function createLabel(text: string, clazz: string) {
@@ -16,10 +17,11 @@ function createLabel(text: string, clazz: string) {
 
 Blockly.Blocks['reagent_type'] = {
     init: function (this: Block) {
+        const rtype = new Blockly.FieldDropdown(Array.from(reagentSubTypeMap.keys()).map(i => [i, i]))
         this.appendDummyInput()
-            .appendField(new Blockly.FieldDropdown([["reagent_type_1", "reagent_type_1"], ["reagent_type_2", "reagent_type_2"], ["reagent_type_3", "reagent_type_3"]]), "reagent");
+            .appendField(rtype, "reagent");
         this.appendDummyInput()
-            .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent");
+            .appendField(new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i])), "reagent");
         this.setOutput(true, null);
         this.setColour(230);
         this.setTooltip("");
@@ -102,13 +104,14 @@ Blockly.Blocks['set_normal_temp'] = {
 
 Blockly.Blocks['apply_liquid'] = {
     init: function () {
+        const rtype = new Blockly.FieldDropdown(Array.from(reagentSubTypeMap.keys()).map(i => [i, i]))
         this.appendDummyInput()
             .appendField(createLabel("Reagent:", "boldit"))
             .appendField("From")
-            .appendField(new Blockly.FieldDropdown([["reagent_type_1", "reagent_type_1"], ["reagent_type_2", "reagent_type_2"], ["reagent_type_3", "reagent_type_3"]]), "reagent");
+            .appendField(rtype, "reagent");
         this.appendDummyInput()
             .appendField("apply")
-            .appendField(new Blockly.FieldDropdown([["reagent_1", "reagent_1"], ["reagent_2", "reagent_2"], ["reagent_3", "reagent_3"]]), "reagent")
+            .appendField(new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i])), "reagent")
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
             .appendField("minutes.")
@@ -148,7 +151,7 @@ Blockly.Blocks['apply_washing_liquid'] = {
     init: function () {
         this.appendDummyInput()
             .appendField(createLabel("Washing: ", "boldit"))
-            .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
+            .appendField(new Blockly.FieldDropdown(typesMap.get("Washing")?.map(i => [i, i])!), "liquid");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
@@ -185,7 +188,7 @@ Blockly.Blocks['apply_blocking_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Blocking:", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldDropdown([["liquid_1", "liquid_1"], ["liquid_2", "liquid_2"], ["liquid_3", "liquid_3"]]), "liquid");
+            .appendField(new Blockly.FieldDropdown(typesMap.get("Blocking")?.map(i => [i, i])!), "liquid");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")

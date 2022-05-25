@@ -6,6 +6,7 @@ import Blockly, { bindEvent_ } from "blockly";
 import "./Blockly.css"
 import { GenerateAll } from "./LibraryCodeGen";
 import format from "xml-formatter"
+import NavigationBar from "navbar/NavigationBar";
 
 GenerateAll();
 
@@ -58,17 +59,6 @@ export default function BlocklyPage() {
                         { kind: "block", type: "set_temperature" },
                     ]
                 },
-
-                // { kind: "block", type: "math_number" },
-                // { kind: "block", type: "reagent_type" },
-                // {
-                //     kind: "block", type: "apply_reagent_2", inputs: {
-                //         volume: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         time: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         degree: { kind: "block", block: { "type": "math_number", fields: { NUM: 10 } } },
-                //         reagent: { kind: "block", block: { "type": "reagent_type", fields: { reagent: "reagent_1" } } },
-                //     }
-                // },
             ]
     };
 
@@ -79,30 +69,33 @@ export default function BlocklyPage() {
 
     return (
         <>
-            <BlocklyWorkspace
-                toolboxConfiguration={toolboxCategories}
-                initialXml={initialXml}
-                className="fill-height"
-                workspaceConfiguration={{
-                    trashcan: true,
-                    grid: {
-                        spacing: 20,
-                        length: 3,
-                        colour: "#ccc",
-                        snap: true,
-                    },
-                }}
-                onWorkspaceChange={workspaceDidChange}
-                onXmlChange={setXml}
-            />
-            <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre>
-            <textarea
-                id="code"
-                style={{ height: "100px", width: "200px" }}
-                value={javascriptCode}
-                readOnly
-            >
-            </textarea>
+            <NavigationBar />
+            <div id="main">
+                <BlocklyWorkspace
+                    toolboxConfiguration={toolboxCategories}
+                    initialXml={initialXml}
+                    className="fill-height"
+                    workspaceConfiguration={{
+                        trashcan: true,
+                        grid: {
+                            spacing: 20,
+                            length: 3,
+                            colour: "#ccc",
+                            snap: true,
+                        },
+                    }}
+                    onWorkspaceChange={workspaceDidChange}
+                    onXmlChange={setXml}
+                />
+                <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre>
+                <textarea
+                    id="code"
+                    style={{ height: "100px", width: "200px" }}
+                    value={javascriptCode}
+                    readOnly
+                >
+                </textarea>
+            </div>
         </>
     );
 }

@@ -25,7 +25,7 @@ const setMainMargin = (mgl: String) => {
 }
 
 export default function NavigationBar() {
-    const [isOpen, setOpen] = useState(true)
+    const [isOpen, setOpen] = useState(false)
     useEffect(() => {
         const w = getComputedStyle(document.documentElement).getPropertyValue("--navbar-width")
         if (!isOpen) setMainMargin("75px")
