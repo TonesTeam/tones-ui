@@ -7,6 +7,9 @@ import "./Blockly.css"
 import { GenerateAll } from "./LibraryCodeGen";
 import format from "xml-formatter"
 import NavigationBar from "navbar/NavigationBar";
+import { Button, Fab } from "@mui/material";
+import SaveIcon from '@mui/icons-material/Save';
+
 
 GenerateAll();
 
@@ -71,6 +74,12 @@ export default function BlocklyPage() {
         <>
             <NavigationBar />
             <div id="main">
+                <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended" onClick={() => console.log("test")} >
+                    <SaveIcon />
+                    Save
+                </Fab>
+
+
                 <BlocklyWorkspace
                     toolboxConfiguration={toolboxCategories}
                     initialXml={initialXml}
