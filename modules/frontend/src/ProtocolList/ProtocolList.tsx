@@ -149,7 +149,6 @@ export default function ProtocolList() {
     return (
         <><NavigationBar />
             <div id="main">
-
                 <div className="page-header" id="sticker">
                     <div className="open-menu-btn">
                     </div>

@@ -6,6 +6,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import "@controller/main.controller"
 import { buildProviderModule } from "inversify-binding-decorators";
 import { Logger } from "tslog";
+import config from "sharedlib/tones-config.json"
 
 //apiRouter.get('/test', async (req, res) => {
 //	const connection = await connectionPromise
@@ -17,6 +18,7 @@ import { Logger } from "tslog";
 //	res.send(JSON.stringify(allUsers[0]))
 //})
 
+
 let container = new Container();
 container.load(buildProviderModule());
 const logger = new Logger()
@@ -26,6 +28,7 @@ let server = new InversifyExpressServer(container, null, { rootPath: "/api" });
 let app = server.build();
 const port = process.env.BE_PORT ?? 8080
 app.listen(port, () => {
+	console.log("Magic word is", config["magic-word"])
 	logger.info(`API listening on port ${port}`)
 });
 
