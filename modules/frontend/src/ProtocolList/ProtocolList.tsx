@@ -8,12 +8,12 @@ import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
 
 const p1: ProtocolDto = {
     id: 1,
-    name: 'Test1',
+    name: 'TestName',
     authorName: 'Test Author',
-    creationDate: new Date(2020, 2, 2),
+    creationDate: new Date(),
     usedLiquids: [{
-        liquidName: 'TestLiq1',
-        liquidType: 'TestLiqType1',
+        liquidName: 'TestLiqName',
+        liquidType: 'TestLiqType',
         amount: 40,
     }]
 }
@@ -60,8 +60,9 @@ function setEventListeners() {
 
 function Protocol(props: any){
     return(
+        
         <div className="protocol">
-
+{/*             <h2>{p1.id}, {p1.name}, {p1.authorName}, {p1.creationDate.toDateString()}, {p1.id}</h2> */}
             <div className="protocol-general">
                 <div className="info-cell" id="check">
                     <input type="checkbox" className="check-to-run" name="protocol"></input>
@@ -98,13 +99,11 @@ function Protocol(props: any){
                     <table className="dropdown-table">
                         <tbody>
                             <tr>
-                                <td>Temperature: {props.infoTemperature}</td>
                                 <td>Duration: {props.infoDuration}</td>
-                                <td>Containers used: {props.infoContainers}</td>
+                                <td>Slots used: {props.infoSlots}</td>
                             </tr>
                             <tr>
                                 <td>Status: {props.infoStatus}</td>
-                                <td>Stages: {props.infoStages}</td>
                                 <td>Blockly Scheme: {props.infoBlockly}</td>
                             </tr>
                         </tbody>
@@ -123,7 +122,7 @@ function Protocol(props: any){
                         </div>
 
                         <div className="protocol-options">
-                            <button className="proto-btn"><i className="fas fa-history"></i>View history</button>
+                            <button className="proto-btn"><a href="/launch/"><i className="fas fa-play"></i>Launch</a></button>
                             <button className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
                         
@@ -138,17 +137,16 @@ function Protocol(props: any){
 
 export default function ProtocolList() {
     useEffect(setEventListeners)
-    const [isVisible, setToVisible] = useState(false)
+    const [isVisible, setToVisible] = useState(false) 
 
-
-
-/*     const onBackdropClick = () => {
+    const onBackdropClick = () => {
         setToVisible(false)
-    } */
+    }
     
     return (
         <><NavigationBar />
             <div id="main">
+
                 <div className="page-header" id="sticker">
                     <div className="open-menu-btn">
                     </div>
@@ -158,68 +156,73 @@ export default function ProtocolList() {
                     </div>
                     <div className="launch-container">
                         <div className="protocol-counter">
-                            <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
+                            {/* <a href={`/launch/${p1.id}`}> */}
+                                <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
+                            {/* </a> */}
                         </div>
                     </div>
                 </div>
 
-                <div id="modal-root"></div>
-
                 <div className="protocol-list">
+
+                    <Protocol id={p1.id} name={p1.name}
+                    author={p1.authorName} date={p1.creationDate.toDateString()}
+                    infoDuration="24h" infoSlots="1" 
+                    infoStatus="Approved" infoBlockly="Avaliable"/> 
 
                     <Protocol id="PA-001" name="Protocol Alpha" 
                     author="James Doe" date="10.01.2021"
-                    infoTemperature="36F" infoDuration="24h"
-                    infoContainers="1" infoStatus="Approved"
-                    infoStages="4" infoBlockly="Avaliable"/>
+                    infoDuration="24h"
+                    infoSlots="1" infoStatus="Approved"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PB-002" name="Protocol Beta" 
                     author="Janette Smith" date="11.07.2026"
-                    infoTemperature="11F" infoDuration="11h"
-                    infoContainers="1" infoStatus="Approved"
-                    infoStages="12" infoBlockly="Avaliable"/>
+                    infoDuration="11h"
+                    infoSlots="1" infoStatus="Approved"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PY-003" name="Protocol Gamma" 
                     author="Bellatrix Lestrange " date="22.12.2020"
-                    infoTemperature="50F" infoDuration="5h"
-                    infoContainers="3" infoStatus="Approved"
-                    infoStages="4" infoBlockly="Avaliable"/>
+                    infoDuration="5h"
+                    infoSlots="3" infoStatus="Approved"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PD-004" name="Protocol Delta" 
                     author="Godric Gryffindor" date="02.03.1126"
-                    infoTemperature="33F" infoDuration="13h"
-                    infoContainers="12" infoStatus="Obsolete"
-                    infoStages="4" infoBlockly="Avaliable"/>
+                    infoDuration="13h"
+                    infoSlots="12" infoStatus="Obsolete"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PE-005" name="Protocol Epsilon" 
                     author="Rubeus Hagrid" date="11.07.2026"
-                    infoTemperature="11F" infoDuration="24h"
-                    infoContainers="1" infoStatus="Draft"
-                    infoStages="40" infoBlockly="Avaliable"/>
+                    infoDuration="24h"
+                    infoSlots="1" infoStatus="Draft"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PD-006" name="Protocol Zeta" 
                     author="Helga Hufflepuff" date="11.07.1111"
-                    infoTemperature="36F" infoDuration="3h"
-                    infoContainers="5" infoStatus="Approved"
+                    infoDuration="3h"
+                    infoSlots="5" infoStatus="Approved"
                     infoStages="13" infoBlockly="Avaliable"/>
 
                     <Protocol id="PD-007" name="Protocol Eta" 
                     author="Viktor Krum" date="10.07.2323"
                     infoTemperature="36F" infoDuration="24h"
-                    infoContainers="7" infoStatus="Draft"
-                    infoStages="43" infoBlockly="Avaliable"/>
+                    infoSlots="7" infoStatus="Draft"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PO-008" name="Protocol Theta" 
                     author="Luna Lovegood" date="12.09.2052"
-                    infoTemperature="55F" infoDuration="6h"
-                    infoContainers="2" infoStatus="Approved"
-                    infoStages="4" infoBlockly="Avaliable"/>
+                    infoDuration="6h"
+                    infoSlots="2" infoStatus="Approved"
+                    infoBlockly="Avaliable"/>
 
                     <Protocol id="PK-009" name="Protocol Kappa" 
                     author="Minerva McGonagall" date="11.07.2022"
-                    infoTemperature="36F" infoDuration="3h"
-                    infoContainers="6" infoStatus="Obslete"
-                    infoStages="12" infoBlockly="Avaliable"/>
+                    infoDuration="3h"
+                    infoSlots="6" infoStatus="Obslete"
+                    infoBlockly="Avaliable"/>
                 </div>
             </div></>
     )
