@@ -6,6 +6,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import "@controller/main.controller"
 import { buildProviderModule } from "inversify-binding-decorators";
 import { Logger } from "tslog";
+import "ormconfig"
 
 //apiRouter.get('/test', async (req, res) => {
 //	const connection = await connectionPromise

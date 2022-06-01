@@ -2,10 +2,21 @@ import NavigationBar from 'navbar/NavigationBar'
 import 'navbar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
-import ModalWrapper from './ModalWrapper'
 import { useEffect } from 'react'
 import { useState } from 'react';
-import ProtocolSetup, {SetupFunction} from './ProtocolSetup'
+import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
+
+const p1: ProtocolDto = {
+    id: 1,
+    name: 'Test1',
+    authorName: 'Test Author',
+    creationDate: new Date(2020, 2, 2),
+    usedLiquids: [{
+        liquidName: 'TestLiq1',
+        liquidType: 'TestLiqType1',
+        amount: 40,
+    }]
+}
 
 const max = 2;
 
@@ -123,21 +134,17 @@ function Protocol(props: any){
     );
 }
 
-const onSetupRequest: SetupFunction = async ({slots, time, name}) =>{
-    console.log(slots, time, name)
-}
+
 
 export default function ProtocolList() {
     useEffect(setEventListeners)
     const [isVisible, setToVisible] = useState(false)
 
-    const tooglePopup = () => {
-        setToVisible(wasVisible => !wasVisible)
-    }
 
-    const onBackdropClick = () => {
+
+/*     const onBackdropClick = () => {
         setToVisible(false)
-    }
+    } */
     
     return (
         <><NavigationBar />
@@ -153,12 +160,6 @@ export default function ProtocolList() {
                     <div className="launch-container">
                         <div className="protocol-counter">
                             <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
-                        </div>
-                        <div className="protocol-submit-btn">
-                            <button onClick={tooglePopup}>Open Run PP</button>
-                            <ProtocolSetup onBackdropClick={onBackdropClick}
-                            onSetupRequest={onSetupRequest}
-                            isVisible={isVisible} />
                         </div>
                     </div>
                 </div>

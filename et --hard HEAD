@@ -1,0 +1,231 @@
+[33mcommit 8e8f7bbc38a7201b26720169221e72271914d630[m[33m ([m[1;36mHEAD -> [m[1;32mfrontendLab[m[33m, [m[1;31morigin/frontendLab[m[33m)[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Wed Mar 2 18:52:46 2022 +0200
+
+    Popup base
+
+[33mcommit 1317c9f8c979d2f366a9470034244f714fe00145[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Tue Mar 1 16:30:41 2022 +0200
+
+    Created a base for popup
+
+[33mcommit 7a38f5ba964de5a6eb4f06a55ebf7d4f4bfab726[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Mon Feb 28 16:34:10 2022 +0200
+
+    Icons for protocol options and crutches for protocol content overflow situation
+
+[33mcommit 5165e60b03348e9d18a49450de210f30a996d03f[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Mon Feb 28 15:33:37 2022 +0200
+
+    Rewrote protocol as component
+
+[33mcommit 446b6ea26376758ce4c59d97e19dbe19f0bab9e8[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 23:04:02 2022 +0200
+
+    move graph info
+
+[33mcommit a58f80a934179ea34d89a591895008f8bf971669[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 19:03:28 2022 +0200
+
+    axios backend request
+
+[33mcommit d77986ad274884d2a3a02c05cc356ef3ffe63020[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 18:26:58 2022 +0200
+
+    ignore build files
+
+[33mcommit 457c575f20e4ee1d3c2d38085b5d7ac76d64a89d[m
+Author: Drewman <drewzxcvbnm0@gmail.com>
+Date:   Sun Feb 27 18:24:09 2022 +0200
+
+    Create README.md
+
+[33mcommit 2f028b872488f06ea125d206d4b0ab070903c8aa[m
+Merge: d87edc3 ce01555
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 18:16:35 2022 +0200
+
+    Merge branch 'node-migration'
+
+[33mcommit ce01555466f5185b1fa08af4cf465357c6cdbb64[m[33m ([m[1;31morigin/node-migration[m[33m)[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 18:14:02 2022 +0200
+
+    minor refactoring
+
+[33mcommit 0b66646561cc237191174941eedd283647e5dfee[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 16:50:17 2022 +0200
+
+    router fix
+
+[33mcommit 5a2043e990be63db7510c7668e712d158dd2f053[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 15:32:42 2022 +0200
+
+    refactor
+
+[33mcommit 966e98a5b5271e37300c8ca49e0700a6c2e59f18[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 27 12:18:19 2022 +0200
+
+    migrated (hacky migration) protocol list page
+
+[33mcommit 52ef611df7e8fca4cfbc903161c07f97c0421b66[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sat Feb 26 19:56:22 2022 +0200
+
+    primitive routing
+
+[33mcommit e5962813286f77e5891490983322e491412564a2[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sat Feb 26 18:19:54 2022 +0200
+
+    primitive node intergration
+
+[33mcommit d87edc3b326c0ba996decb1b73c8223db89d126b[m
+Merge: 7954cfe 6ca8ccf
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sat Feb 26 11:42:36 2022 +0200
+
+    Merge branch 'drewman/workshop'
+    Updated navbar and started history page
+
+[33mcommit 7954cfef75f2fdbde8cc44a0238bba4e7dadcacc[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Wed Feb 23 17:26:57 2022 +0200
+
+    graph changes
+
+[33mcommit 6ca8ccf140c3414fff01441db247b9a85b2514f3[m[33m ([m[1;31morigin/drewman/workshop[m[33m)[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 20 19:10:47 2022 +0200
+
+    WIP: started logs page
+
+[33mcommit f9b27be04ae14017c9b13f2d8468076354ab240d[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sat Feb 19 19:13:27 2022 +0200
+
+    navbar menu changes. centered icons
+
+[33mcommit 7120e72178bd57f433e51bc7e5386f525a70dd77[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Thu Feb 17 18:46:17 2022 +0200
+
+    adding client side react
+
+[33mcommit d66ea1798dcedaf613c8c08f17337bf12ba9fcbf[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Wed Feb 16 19:49:36 2022 +0200
+
+    ui graph changes
+
+[33mcommit cd7eaed77c96d6d5ffb81ba8b26063f1d38bc414[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Wed Feb 16 12:29:49 2022 +0200
+
+    Last changes in side nav
+
+[33mcommit 2f769cfd9e4b1860b889fbbc25bb5b74cdb96a93[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Mon Feb 14 17:57:08 2022 +0200
+
+    Inegrated nav bar into protocol list page
+
+[33mcommit 6523bd824b5a56b8f9ff3604a2f604f14611465f[m[33m ([m[1;31morigin/taisiaBranch[m[33m, [m[1;32mtaisiaBranch[m[33m)[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Mon Feb 14 12:38:16 2022 +0200
+
+    Fixed layout in header and made header stick to top
+
+[33mcommit 4755407113068a32cacbc0ed869c5ac48be03078[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Sun Feb 13 22:03:53 2022 +0200
+
+    Fixed colors in protocol boxes
+
+[33mcommit 780551747827c284ca2e94932f018cfdd53424ee[m
+Merge: da791bb 4b49f48
+Author: drewzxcvbnm <drewzxcvbnm0@gmail.com>
+Date:   Sun Feb 13 21:04:37 2022 +0200
+
+    Merge remote-tracking branch 'origin/drewman/workshop'
+
+[33mcommit da791bbf1830914150f6863a2d89559c97cdf215[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Sun Feb 13 21:00:03 2022 +0200
+
+    C
+
+[33mcommit 60fa149b2712adcfd5c2798819f990d8a39ab5a3[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Sun Feb 13 19:41:50 2022 +0200
+
+    Added checkbox counter and limit for 2 checks
+
+[33mcommit 4b49f48ec3ebdab10a5b43ab71864849e0324b1e[m[33m ([m[1;32mdrewman/workshop[m[33m)[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 13 19:27:18 2022 +0200
+
+    sidebar remake
+
+[33mcommit 989e1f5bdf7dd36898cbf0a992c2feede49dcf67[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Sun Feb 13 16:56:14 2022 +0200
+
+    Fixed responsiveness of protocol headers
+
+[33mcommit 1cc1c3a8e39ba973e137e16530cc3117bbd4cce9[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Sun Feb 13 15:08:07 2022 +0200
+
+    Restructured protocol list, fixed checkboxes
+
+[33mcommit b1af44c124c7e36897da574b7cf8bd195553860e[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Fri Feb 11 00:23:43 2022 +0200
+
+    Fixed checkbutton size and centering of labels
+
+[33mcommit a651e8ccf171e464006452ba414fe7be82393abc[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Thu Feb 10 19:09:00 2022 +0200
+
+    colors
+
+[33mcommit 1515b9e07b6a1ca38c894f50002fd3c189d38fcc[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Thu Feb 10 18:26:27 2022 +0200
+
+    formatting
+
+[33mcommit b9705fa7fc3383da71730b9d58b67f7d82d32637[m
+Author: TaisiaKozharina <kozharina1306@gmail.com>
+Date:   Thu Feb 10 18:10:06 2022 +0200
+
+    1st commit
+
+[33mcommit cdfeed1eff42575eb489abfc545df1e5ecf0f7c5[m
+Author: Drewman <drewzxcvbnm0@gmail.com>
+Date:   Mon Feb 7 14:53:06 2022 +0200
+
+    Create README.md
+
+[33mcommit 8f490756a24fadc8320574fcff4d81cbab21ec39[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Mon Feb 7 09:42:02 2022 +0200
+
+    css file import support for dist
+
+[33mcommit 5313c57bdf981c4fccaf4b99e418e1edd0d574d1[m
+Author: andris.zacs <andris.zacs@accenture.com>
+Date:   Sun Feb 6 19:17:12 2022 +0200
+
+    initial

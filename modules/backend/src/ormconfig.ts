@@ -1,6 +1,6 @@
 import { SnakeNamingStrategy } from "typeorm-naming-strategies"
 
-export default {
+export = {
    "type": "sqlite",
    //    "host": "localhost",
    //    "port": 3306,
