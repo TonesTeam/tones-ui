@@ -2,7 +2,8 @@ import { inject, injectable } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Logger } from "tslog";
 import { Connection, createConnection, EntityTarget, ObjectType, Repository } from "typeorm";
-
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { connectionOptions  } from "./ormconfig";
 @provide(DatabaseService)
 export class DatabaseService {
     private static connection: Connection;
@@ -17,7 +18,7 @@ export class DatabaseService {
         }
 
         try {
-            DatabaseService.connection = await createConnection();
+            DatabaseService.connection = await createConnection(connectionOptions);
             this.logger.info(`Connection established`);
             return DatabaseService.connection;
         } catch (e) {

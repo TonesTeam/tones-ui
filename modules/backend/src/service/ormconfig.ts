@@ -1,6 +1,7 @@
+import { ConnectionOptions } from "typeorm"
 import { SnakeNamingStrategy } from "typeorm-naming-strategies"
 
-export = {
+export const connectionOptions: ConnectionOptions = {
    "type": "sqlite",
    //    "host": "localhost",
    //    "port": 3306,
