@@ -39,7 +39,7 @@ export default function BlocklyPage() {
                     kind: "category",
                     name: "Liquid Application",
                     contents: [
-                        { kind: "block", type: "apply_liquid" },
+                        { kind: "block", type: "apply_reagent" },
                         { kind: "block", type: "apply_antigen_liquid" },
                         { kind: "block", type: "apply_blocking_liquid" },
                         { kind: "block", type: "apply_parafinization_liquid" },

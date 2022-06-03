@@ -102,13 +102,13 @@ Blockly.Blocks['set_normal_temp'] = {
     }
 };
 
-Blockly.Blocks['apply_liquid'] = {
+Blockly.Blocks['apply_reagent'] = {
     init: function () {
         const rtype = new Blockly.FieldDropdown(Array.from(reagentSubTypeMap.keys()).map(i => [i, i]))
         this.appendDummyInput()
             .appendField(createLabel("Reagent:", "boldit"))
             .appendField("From")
-            .appendField(rtype, "reagent");
+            .appendField(rtype, "reagent_type");
         this.appendDummyInput()
             .appendField("apply")
             .appendField(new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i])), "reagent")
