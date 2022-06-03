@@ -1,12 +1,11 @@
 import { Liquid } from "@entity/Liquid";
-import { LiquidMapper } from "@mapper/liquid.mapper";
-import { DatabaseService } from "@service/database.service";
+import { LiquidMapper } from "@mapper/LiquidMapper";
+import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
 import { BaseHttpController, Controller, controller, httpGet, httpPost, request, response } from "inversify-express-utils";
 import * as express from "express";
 import {JSDOM} from "jsdom";
-import { ProtocolXmlParsingService } from "@service/protocolxmlparsing.service";
-import { Protocol } from "@entity/Protocol";
+import { ProtocolXmlParsingService } from "@service/ProtocolXmlParsingService";
 
 
 @controller("")

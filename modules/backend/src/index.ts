@@ -3,7 +3,7 @@ import "reflect-metadata"
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import "@controller/blockly.controller"
+import "@controller/BlocklyController"
 import * as bodyParser from 'body-parser';
 import { buildProviderModule } from "inversify-binding-decorators";
 import { Logger } from "tslog";
