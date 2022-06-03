@@ -3,7 +3,8 @@ import "reflect-metadata"
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import "@controller/main.controller"
+import "@controller/blockly.controller"
+import * as bodyParser from 'body-parser';
 import { buildProviderModule } from "inversify-binding-decorators";
 import { Logger } from "tslog";
 import config from "sharedlib/tones-config.json"
@@ -25,6 +26,9 @@ const logger = new Logger()
 container.bind<Logger>(Logger).toConstantValue(logger);
 
 let server = new InversifyExpressServer(container, null, { rootPath: "/api" });
+server.setConfig(app => {
+	app.use(bodyParser.text({type: '*/*'}));
+})
 let app = server.build();
 const port = process.env.BE_PORT ?? 8080
 app.listen(port, () => {

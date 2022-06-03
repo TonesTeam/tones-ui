@@ -43,7 +43,7 @@ export class Protocol {
     @ManyToOne(() => ProtocolType, protocolType => protocolType.protocols)
     protocolType: ProtocolType;
 
-    @OneToMany(() => Step, step => step.protocol)
+    @OneToMany(() => Step, step => step.protocol, {cascade: true})
     steps: Step[];
 
 }

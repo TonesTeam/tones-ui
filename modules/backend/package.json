@@ -29,10 +29,12 @@
   },
   "dependencies": {
     "@types/http-proxy": "^1.17.8",
+    "@types/jsdom": "^16.2.14",
     "http-proxy": "^1.18.1",
     "inversify": "^6.0.1",
     "inversify-binding-decorators": "^4.0.0",
     "inversify-express-utils": "^6.4.3",
+    "jsdom": "^19.0.0",
     "nodemon": "^2.0.15",
     "reflect-metadata": "^0.1.13",
     "sharedlib": "file:../sharedlib",

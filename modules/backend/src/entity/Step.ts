@@ -26,13 +26,13 @@ export class Step {
     @Column({ nullable: false})
     stepType: StepType;
 
-    @OneToOne(() => LiquidApplication)
+    @OneToOne(() => LiquidApplication, {cascade: true})
     liquidApplication?: LiquidApplication;
 
-    @OneToOne(() => Waiting)
+    @OneToOne(() => Waiting, {cascade: true})
     waiting?: Waiting;
 
-    @OneToOne(() => TemperatureChange)
+    @OneToOne(() => TemperatureChange, {cascade: true})
     temperatureChange?: TemperatureChange;
 
 }
