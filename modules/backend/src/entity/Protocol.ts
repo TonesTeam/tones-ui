@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Step } from "./Step";
 import { User } from "./User";
 
@@ -43,7 +43,15 @@ export class Protocol {
     @ManyToOne(() => ProtocolType, protocolType => protocolType.protocols)
     protocolType: ProtocolType;
 
-    @OneToMany(() => Step, step => step.protocol, {cascade: true})
+    @OneToMany(() => Step, step => step.protocol, { cascade: true })
     steps: Step[];
+
+    @AfterLoad()
+    async nullChecks() {
+        if (!this.steps) {
+            this.steps = []
+        }
+    }
+
 
 }
