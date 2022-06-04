@@ -6,9 +6,9 @@ import { Waiting } from "./Waiting";
 
 
 export enum StepType {
-    TEMPERATURE_CHANGE = "TEMPERATURE_CHANGE",
-    WAITING = "WAITING",
-    LIQUID_APPLICATION = "LIQUID_APPLICATION"
+    TEMPERATURE_CHANGE = "temperature_change",
+    WAITING = "waiting",
+    LIQUID_APPLICATION = "liquid_application"
 }
 
 @Entity()

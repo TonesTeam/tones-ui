@@ -6,13 +6,13 @@ import { Waiting } from "@entity/Waiting";
 import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindCondition, FindConditions, FindOneOptions } from "typeorm";
+import { FindCondition, FindConditions, FindOneOptions, ObjectLiteral } from "typeorm";
 
 @provide(BlockParserHelper)
 export class BlockParserHelper {
 
     @inject(DatabaseService)
-    databseService: DatabaseService;
+    private databseService: DatabaseService;
 
     public getLastStepIndex(protocol: Protocol): number {
         const indices = protocol.steps.map(s => s.sequenceOrder)
@@ -22,9 +22,9 @@ export class BlockParserHelper {
         return Math.max(...indices)
     }
 
-    public async findLiquid<T>(op: T) {
+    public async findLiquid(op: FindConditions<Liquid>[] | FindConditions<Liquid> | ObjectLiteral | string) {
         const repo = await this.databseService.getRepository(Liquid)
-        return await repo.findOneOrFail({ where: op })
+        return await repo.findOneOrFail({ relations: ["liquidType", "liquidSubType"], where: op })
     }
 
     public appendWaitStep(protocol: Protocol, time: number) {

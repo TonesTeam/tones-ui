@@ -8,6 +8,8 @@ import * as bodyParser from 'body-parser';
 import { buildProviderModule } from "inversify-binding-decorators";
 import { Logger } from "tslog";
 import config from "sharedlib/tones-config.json"
+import getDecorators from "inversify-inject-decorators";
+
 
 //apiRouter.get('/test', async (req, res) => {
 //	const connection = await connectionPromise
@@ -21,13 +23,15 @@ import config from "sharedlib/tones-config.json"
 
 
 let container = new Container();
+container.bind(Container).toConstantValue(container);
+
 container.load(buildProviderModule());
 const logger = new Logger()
 container.bind<Logger>(Logger).toConstantValue(logger);
 
 let server = new InversifyExpressServer(container, null, { rootPath: "/api" });
 server.setConfig(app => {
-	app.use(bodyParser.text({type: '*/*'}));
+	app.use(bodyParser.text({ type: '*/*' }));
 })
 let app = server.build();
 const port = process.env.BE_PORT ?? 8080

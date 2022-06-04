@@ -1,4 +1,8 @@
+import { inject } from "inversify";
+import { provide } from "inversify-binding-decorators";
 import { BlockParser } from "./AbstractBlockParser";
+import { ApplyAntigenParser } from "./ApplyAntigenParser";
+import { ApplyReagentParser } from "./ApplyReagentParser";
 
 // "apply_reagent" 
 // "apply_antigen_liquid" 
@@ -10,7 +14,23 @@ import { BlockParser } from "./AbstractBlockParser";
 // "set_temperature" 
 
 
+@provide(ParserMap)
+export class ParserMap {
 
-export const ParserMap = new Map<string, BlockParser>([
-    // ["a"]
-])
+    private parserMap: Map<string, BlockParser>;
+
+    public constructor(
+        @inject(ApplyReagentParser) applyReagentParser: ApplyReagentParser,
+        @inject(ApplyAntigenParser) applyAntigenParser: ApplyAntigenParser,
+    ) {
+        this.parserMap = new Map<string, BlockParser>([
+            ["apply_reagent", applyReagentParser],
+            ["apply_antigen_liquid", applyAntigenParser],
+        ]);
+    }
+
+
+    public get(blockType: string): BlockParser | undefined {
+        return this.parserMap.get(blockType);
+    }
+}

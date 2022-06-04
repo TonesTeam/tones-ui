@@ -2,8 +2,11 @@ import { Liquid } from "@entity/Liquid";
 import { LiquidApplication } from "@entity/LiquidApplication";
 import { Protocol } from "@entity/Protocol";
 import { Step, StepType } from "@entity/Step";
+import { provide } from "inversify-binding-decorators";
+import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import { BlockParser } from "./AbstractBlockParser";
 
+@provide(ApplyReagentParser)
 export class ApplyReagentParser extends BlockParser {
 
     async parse(applyReagent: Element, protocol: Protocol): Promise<Protocol> {
@@ -12,7 +15,7 @@ export class ApplyReagentParser extends BlockParser {
         for (var i = 0; i < times; i++) {
             protocol.steps.push(await this.createLiquidApplicationStep(protocol, applyReagent));
         }
-        this.helper.appendWaitStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=reagent]")!.innerHTML))
+        this.helper.appendWaitStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=time]")!.innerHTML))
         return protocol;
     }
 
@@ -25,9 +28,13 @@ export class ApplyReagentParser extends BlockParser {
         s.liquidApplication = new LiquidApplication();
         s.liquidApplication.step = s;
         s.liquidApplication.liquid = await this.helper.findLiquid({
-            type: "Reagent",
-            liquidSubType: applyReagent.querySelector(":scope> field[name=reagent_type]")!.innerHTML,
-            liquidName: applyReagent.querySelector(":scope> field[name=reagent]")!.innerHTML
+            liquidType: {
+                typeName: LiquidTypeName.REAGENT,
+            },
+            liquidSubType: {
+                subTypeName: applyReagent.querySelector(":scope> field[name=reagent_type]")!.innerHTML,
+            },
+            liquidName: applyReagent.querySelector(":scope> field[name=reagent]")!.innerHTML,
         });
         return s;
     }

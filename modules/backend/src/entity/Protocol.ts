@@ -1,4 +1,5 @@
-import { AfterLoad, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProtocolXml } from "./ProtocolXml";
 import { Step } from "./Step";
 import { User } from "./User";
 
@@ -28,8 +29,9 @@ export class Protocol {
     @CreateDateColumn()
     creationDate: Date;
 
-    @Column({ nullable: false })
-    protocolString: string;
+    @JoinColumn()
+    @OneToOne(() => ProtocolXml, { cascade: true })
+    protocolXml: ProtocolXml;
 
     @Column()
     comment: string;
@@ -45,13 +47,5 @@ export class Protocol {
 
     @OneToMany(() => Step, step => step.protocol, { cascade: true })
     steps: Step[];
-
-    @AfterLoad()
-    async nullChecks() {
-        if (!this.steps) {
-            this.steps = []
-        }
-    }
-
 
 }

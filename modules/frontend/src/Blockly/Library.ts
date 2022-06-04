@@ -3,13 +3,14 @@ import 'blockly/python';
 import { getRequest, groupBy } from 'common/util';
 import './BlocklyFunction'
 import { LiquidDto } from "sharedlib/dto/liquid.dto"
+import { LiquidTypeName } from "sharedlib/enum/LiquidTypes"
 
 const liquids = (await getRequest<LiquidDto[]>("/liquids")).data;
 console.log(liquids)
 const typesMap = groupBy(liquids, l => l.type, l => l.name);
-const reagentSubTypeMap = groupBy(liquids.filter(l => l.type === "Reagent"), r => r.subType, l => l.name)
+const reagentSubTypeMap = groupBy(liquids.filter(l => l.type === LiquidTypeName.REAGENT), r => r.subType, l => l.name)
 console.log(reagentSubTypeMap);
-const antigens = typesMap.get("Antigen retrieval")?.map(r => [r, r])!
+const antigens = typesMap.get(LiquidTypeName.ANTIGEN)?.map(r => [r, r])!
 
 function createLabel(text: string, clazz: string) {
     return new Blockly.FieldLabel(text, clazz, undefined);
@@ -151,7 +152,7 @@ Blockly.Blocks['apply_washing_liquid'] = {
     init: function () {
         this.appendDummyInput()
             .appendField(createLabel("Washing: ", "boldit"))
-            .appendField(new Blockly.FieldDropdown(typesMap.get("Washing")?.map(i => [i, i])!), "liquid");
+            .appendField(new Blockly.FieldDropdown(typesMap.get(LiquidTypeName.WASHING)?.map(i => [i, i])!), "liquid");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
@@ -188,7 +189,7 @@ Blockly.Blocks['apply_blocking_liquid'] = {
         this.appendDummyInput()
             .appendField(createLabel("Blocking:", "boldit"))
             .appendField("Apply")
-            .appendField(new Blockly.FieldDropdown(typesMap.get("Blocking")?.map(i => [i, i])!), "liquid");
+            .appendField(new Blockly.FieldDropdown(typesMap.get(LiquidTypeName.BLOCKING)?.map(i => [i, i])!), "liquid");
         this.appendDummyInput()
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")

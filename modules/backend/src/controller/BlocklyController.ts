@@ -4,19 +4,24 @@ import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
 import { BaseHttpController, Controller, controller, httpGet, httpPost, request, response } from "inversify-express-utils";
 import * as express from "express";
-import {JSDOM} from "jsdom";
+import { JSDOM } from "jsdom";
 import { ProtocolXmlParsingService } from "@service/ProtocolXmlParsingService";
+import { Protocol } from "@entity/Protocol";
+import { safeJSONSerialize } from "@util/JSONSerializer";
+import { Logger } from "tslog";
 
 
 @controller("")
 export class BlocklyController extends BaseHttpController implements Controller {
 
+    @inject(Logger)
+    private logger: Logger;
     @inject(DatabaseService)
-    dbservice: DatabaseService;
+    private dbservice: DatabaseService;
     @inject(LiquidMapper)
-    liquidMapper: LiquidMapper;
+    private liquidMapper: LiquidMapper;
     @inject(ProtocolXmlParsingService)
-    protocolParsingService: ProtocolXmlParsingService;
+    private protocolParsingService: ProtocolXmlParsingService;
 
     @httpGet("/liquids")
     public async liquids() {
@@ -28,10 +33,16 @@ export class BlocklyController extends BaseHttpController implements Controller 
     @httpPost("/protocol")
     public async saveProtocol(@request() req: express.Request, @response() res: express.Response) {
         const DOMParser = new JSDOM("").window.DOMParser;
-        const doc = new DOMParser().parseFromString(req.body,"text/xml");
+        const doc = new DOMParser().parseFromString(req.body, "text/xml");
         const protocolXml = doc.querySelector('[type=begin_protocol]')!;
-        console.log(protocolXml?.outerHTML);
-        // const protocol = this.protocolParsingService.parseProtocolXml(protocolXml);
-        // (await this.dbservice.getRepository(Protocol)).save(protocol)
+        const pr = await this.protocolParsingService.parseProtocolXml(protocolXml);
+        try {
+            await (await this.dbservice.getRepository(Protocol)).save(pr);
+        } catch (error) {
+            this.logger.error("Failed to save:", error);
+            res.status(500).send(error);
+            return;
+        }
+        res.status(200).send(safeJSONSerialize(pr));
     }
 }

@@ -1,16 +1,19 @@
 import { Protocol } from "@entity/Protocol";
 import { DatabaseService } from "@service/DatabaseService";
+import { lazyInject } from "@util/LazyInject";
 import { Maybe } from "@util/Maybe";
-import { inject } from "inversify";
+import { inject, injectable, LazyServiceIdentifer } from "inversify";
 import { BlockParserHelper } from "./BlockParserHelper";
 import { ParserMap } from "./ParserMap";
 
+
+@injectable()
 export abstract class BlockParser {
 
     @inject(BlockParserHelper)
-    helper: BlockParserHelper;
-    @inject(DatabaseService)
-    databaseService: DatabaseService;
+    protected helper: BlockParserHelper;
+    @lazyInject(() => ParserMap)
+    private parserMap: ParserMap;
 
     public async parseProtocol(block: Element, protocol: Protocol): Promise<Protocol> {
         let modifiedProtocol = this.parse(block, protocol);
@@ -23,15 +26,16 @@ export abstract class BlockParser {
         return modifiedProtocol;
     }
 
+    protected abstract parse(block: Element, protocol: Protocol): Promise<Protocol>;
+
     private async parseContinue(blockContainer: Element, protocol: Protocol): Promise<Protocol> {
         const blockToParse = blockContainer.querySelector(":scope > block")!
-        const parser = ParserMap.get(blockToParse.getAttribute("type")!)
+        const parser = this.parserMap.get(blockToParse.getAttribute("type")!)
         if (parser === undefined) {
             throw new Error(`Unable to parse ${blockToParse.getAttribute("type")}, ${blockToParse.outerHTML}`)
         }
-        return await ParserMap.get(blockToParse.getAttribute("type")!)!.parseProtocol(blockToParse, await protocol)
+        return await this.parserMap.get(blockToParse.getAttribute("type")!)!.parseProtocol(blockToParse, await protocol)
     }
 
-    abstract parse(block: Element, protocol: Protocol): Promise<Protocol>;
 
 }

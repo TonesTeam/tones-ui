@@ -3,13 +3,13 @@ import { provide } from "inversify-binding-decorators";
 import { Logger } from "tslog";
 import { Connection, createConnection, EntityTarget, ObjectType, Repository } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { connectionOptions  } from "./ormconfig";
+import { connectionOptions } from "./ormconfig";
 @provide(DatabaseService)
 export class DatabaseService {
     private static connection: Connection;
 
     @inject(Logger)
-    logger: Logger;
+    private logger: Logger;
 
 
     public async getConnection(): Promise<Connection> {

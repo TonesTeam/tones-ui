@@ -1,3 +1,4 @@
+import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, ManyToOne, EntityRepository, Repository } from "typeorm";
 import { LiquidApplication } from "./LiquidApplication";
 
@@ -7,7 +8,7 @@ export class LiquidType {
     id: number;
 
     @Column({ nullable: false })
-    typeName: string;
+    typeName: LiquidTypeName;
 
     @OneToMany(() => Liquid, liquid => liquid.liquidType)
     liquids: Liquid[];

@@ -4,16 +4,22 @@ CREATE TABLE IF NOT EXISTS protocol_type (
   type_name varchar(255) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS protocol_xml (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  xml BLOB NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS protocol (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   protocol_name varchar(255) not NULL UNIQUE,
   creation_date DATETIME NOT NULL,
-  protocol_string TEXT,
+  protocol_xml_id int,
   comment TEXT,
   creator_id int NOT NULL,
   standard_temp int NOT NULL,
   protocol_type_id int NOT NULL,
   FOREIGN KEY (creator_id) REFERENCES user (id),
+  FOREIGN KEY (protocol_xml_id) REFERENCES protocol_xml (id)
   FOREIGN KEY (protocol_type_id) REFERENCES protocol_type (id)
 );
 
