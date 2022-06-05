@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS protocol_xml (
 
 CREATE TABLE IF NOT EXISTS protocol (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  protocol_name varchar(255) not NULL UNIQUE,
+  protocol_name varchar(255) not NULL,
   creation_date DATETIME NOT NULL,
   protocol_xml_id int,
   comment TEXT,
@@ -148,7 +148,6 @@ INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES
   ("Distilled Water", (select id from liquid_type where type_name="Washing"), NULL),
   ("Alcohol", (select id from liquid_type where type_name="Washing"), NULL),
   ("Formalin", (select id from liquid_type where type_name="Deparafinization"), NULL),
-  ("Xylene", (select id from liquid_type where type_name="Deparafinization"), NULL),
   ("Bovine serum albumin", (select id from liquid_type where type_name="Blocking"), NULL),
   ("Fish Gelatin", (select id from liquid_type where type_name="Blocking"), NULL),
   ("HistoReveal", (select id from liquid_type where type_name="Antigen retrieval"), NULL),

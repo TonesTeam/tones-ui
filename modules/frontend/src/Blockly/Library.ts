@@ -220,11 +220,11 @@ Blockly.Blocks['set_temperature'] = {
     init: function () {
         this.appendDummyInput()
             .appendField("Change temperature to")
-            .appendField(new Blockly.FieldNumber(0), "NAME")
+            .appendField(new Blockly.FieldNumber(0), "degrees")
             .appendField("°C");
         this.appendDummyInput()
             .appendField("Wait:")
-            .appendField(new Blockly.FieldCheckbox("TRUE", undefined, undefined), "NAME");
+            .appendField(new Blockly.FieldCheckbox("TRUE", undefined, undefined), "blocking");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(0);

@@ -12,6 +12,12 @@ export async function getRequest<T>(path: string): Promise<AxiosResponse<T, any>
     return await axios.get(fullpath)
 }
 
+export async function postRequest<T>(path: string, payload: string): Promise<AxiosResponse<T, any>> {
+    const fullpath = domain + prefix + path
+    console.log("POST: " + fullpath)
+    return await axios.post(fullpath, payload, { validateStatus: null })
+}
+
 export function ident(o: any): any { return o };
 
 export function groupBy<T, K, V>(list: T[], keyGetter: (o: T) => K, mapper: (o: T) => V = ident): Map<K, V[]> {

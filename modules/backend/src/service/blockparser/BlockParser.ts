@@ -10,13 +10,14 @@ export class BlockSequenceParser {
     @inject(ProcessorMap)
     private processorMap: ProcessorMap;
 
-    public parse(block: Element, protocol: Protocol): Promise<Protocol> {
-        const processedProtocol = Maybe.fromValue(block.getAttribute("type"))
-            .flatMap(t => this.processorMap.get(t))
-            .map(pr => pr.process(block, protocol))
-            .getOrThrow(() => new Error(`Cannot deduce processor for block type ${block.getAttribute("type")}`));
-        Maybe.fromValue(block.querySelector(":scope > next > block"))
-            .map(async bl => this.parse(bl, await processedProtocol));
-        return processedProtocol;
+    public async parse(block: Element, protocol: Protocol): Promise<Protocol> {
+        const processedProtocol = this.processorMap.get(block.getAttribute("type")!)
+            .getOrThrow(() => new Error(`Cannot deduce processor for block type ${block.getAttribute("type")}`))
+            .process(block, protocol);
+        const blockToProcess = block.querySelector(":scope > next > block");
+        if (!blockToProcess) {
+            return processedProtocol;
+        }
+        return await this.parse(blockToProcess, await processedProtocol)
     }
 }

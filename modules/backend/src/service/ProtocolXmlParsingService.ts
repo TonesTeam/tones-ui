@@ -30,7 +30,7 @@ export class ProtocolXmlParsingService {
         protocol.protocolXml.xml = protocolXml.outerHTML
         protocol.standardTemp = parseInt(cleanProtocolXml.querySelector(":scope>field[name=temp]")!.innerHTML)
         const blockToParse = cleanProtocolXml.querySelector(":scope>statement>block")!;
-        return await this.blockParser.parse(blockToParse, protocol);
+        return this.blockParser.parse(blockToParse, protocol);
     }
 
     private scrubIdsFromDocument(doc: Element): Element {

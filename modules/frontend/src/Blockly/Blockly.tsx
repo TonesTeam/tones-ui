@@ -1,17 +1,29 @@
 // import "./App.css";
-import "./Library"
-import React, { useState } from "react";
-import { BlocklyWorkspace, ToolboxDefinition, WorkspaceSvg } from "react-blockly";
-import Blockly, { bindEvent_ } from "blockly";
-import "./Blockly.css"
-import { GenerateAll } from "./LibraryCodeGen";
-import format from "xml-formatter"
-import NavigationBar from "navbar/NavigationBar";
-import { Button, Fab } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
+import { Fab } from "@mui/material";
+import Blockly from "blockly";
+import { postRequest } from 'common/util';
+import NavigationBar from "navbar/NavigationBar";
+import React, { useState } from "react";
+import { BlocklyWorkspace } from "react-blockly";
+import format from "xml-formatter";
+import "./Blockly.css";
+import "./Library";
+import { GenerateAll } from "./LibraryCodeGen";
 
 
 GenerateAll();
+
+function saveProtocol(xml: string) {
+    postRequest("/protocol", xml)
+        .then(resp => {
+            if (resp.status === 200) {
+                alert("Success")
+            } else {
+                alert(`Error:${resp.data}`);
+            }
+        })
+}
 
 export default function BlocklyPage() {
     const [xml, setXml] = useState("");
@@ -74,7 +86,8 @@ export default function BlocklyPage() {
         <>
             <NavigationBar />
             <div id="main">
-                <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended" onClick={() => console.log("test")} >
+                <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended"
+                    onClick={() => saveProtocol(xml)} >
                     <SaveIcon />
                     Save
                 </Fab>

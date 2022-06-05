@@ -1,4 +1,5 @@
 import { Liquid } from "@entity/Liquid";
+import { LiquidApplication } from "@entity/LiquidApplication";
 import { Protocol } from "@entity/Protocol";
 import { Step, StepType } from "@entity/Step";
 import { TemperatureChange } from "@entity/TemperatureChange";
@@ -6,10 +7,10 @@ import { Waiting } from "@entity/Waiting";
 import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindCondition, FindConditions, FindOneOptions, ObjectLiteral } from "typeorm";
+import { FindConditions, ObjectLiteral } from "typeorm";
 
 @provide(BlockProcessingHelper)
-export class BlockProcessingHelper {
+export default class BlockProcessingHelper {
 
     @inject(DatabaseService)
     private databseService: DatabaseService;
@@ -47,6 +48,17 @@ export class BlockProcessingHelper {
         s.temperatureChange.blocking = blocking;
         s.temperatureChange.targetTemperature = targetTemp;
         s.temperatureChange.step = s;
+        protocol.steps.push(s);
+    }
+
+    public appendLiquidApplicationStep(protocol: Protocol, liquid: Liquid) {
+        const s = new Step();
+        s.protocol = protocol;
+        s.sequenceOrder = this.getLastStepIndex(protocol) + 1;
+        s.stepType = StepType.LIQUID_APPLICATION;
+        s.liquidApplication = new LiquidApplication();
+        s.liquidApplication.step = s;
+        s.liquidApplication.liquid = liquid;
         protocol.steps.push(s);
     }
 }

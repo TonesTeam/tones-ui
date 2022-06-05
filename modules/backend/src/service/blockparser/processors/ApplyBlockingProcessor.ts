@@ -6,21 +6,20 @@ import { provide } from "inversify-binding-decorators";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import BlockProcessor from "./BlockProcessor";
 
-@provide(ApplyAntigenProcessor)
-export default class ApplyAntigenProcessor extends BlockProcessor {
+@provide(ApplyBlockingProcessor)
+export default class ApplyBlockingProcessor extends BlockProcessor {
 
     async process(applyAntigenBlock: Element, protocol: Protocol): Promise<Protocol> {
-        this.helper.appendLiquidApplicationStep(protocol, await this.getAntigenLiquid(applyAntigenBlock));
+        this.helper.appendLiquidApplicationStep(protocol, await this.getBlockingLiquid(applyAntigenBlock));
         this.helper.appendWaitStep(protocol, parseInt(applyAntigenBlock.querySelector(":scope>field[name=time]")!.innerHTML));
         return protocol;
     }
 
-
-    private getAntigenLiquid(applyAntigenBlock: Element): Promise<Liquid> {
+    private getBlockingLiquid(applyAntigenBlock: Element): Promise<Liquid> {
         return this.helper.findLiquid({
             liquidName: applyAntigenBlock.querySelector(":scope>field[name=liquid]")!.innerHTML,
             liquidType: {
-                typeName: LiquidTypeName.ANTIGEN
+                typeName: LiquidTypeName.BLOCKING
             },
         });
     }

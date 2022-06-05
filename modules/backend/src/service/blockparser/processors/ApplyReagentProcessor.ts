@@ -3,10 +3,10 @@ import { Protocol } from "@entity/Protocol";
 import { Step, StepType } from "@entity/Step";
 import { provide } from "inversify-binding-decorators";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
-import { BlockProcessor } from "./BlockProcessor";
+import BlockProcessor from "./BlockProcessor";
 
 @provide(ApplyReagentProcessor)
-export class ApplyReagentProcessor extends BlockProcessor {
+export default class ApplyReagentProcessor extends BlockProcessor {
 
     async process(applyReagent: Element, protocol: Protocol): Promise<Protocol> {
         this.helper.appendTempStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=degrees]")!.innerHTML), true);
