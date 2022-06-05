@@ -8,8 +8,8 @@ import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { FindCondition, FindConditions, FindOneOptions, ObjectLiteral } from "typeorm";
 
-@provide(BlockParserHelper)
-export class BlockParserHelper {
+@provide(BlockProcessingHelper)
+export class BlockProcessingHelper {
 
     @inject(DatabaseService)
     private databseService: DatabaseService;

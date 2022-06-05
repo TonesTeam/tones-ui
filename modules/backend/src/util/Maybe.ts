@@ -13,12 +13,22 @@ export class Maybe<T> {
         return new Maybe<T>(null);
     }
 
-    static fromValue<T>(value: T | null): Maybe<T> {
-        return value ? Maybe.some(value!) : Maybe.none<T>();
+    static fromValue<T>(value: T | null | undefined): Maybe<T> {
+        if (value === null || value === undefined) {
+            return Maybe.none<T>();
+        }
+        return Maybe.some(value!)
     }
 
     getOrElse(defaultValue: T) {
         return this.value === null ? defaultValue : this.value;
+    }
+
+    getOrThrow(errorSupplier: () => Error) {
+        if (this.value === null) {
+            throw errorSupplier();
+        }
+        return this.value;
     }
 
     map<R>(f: (wrapped: T) => R): Maybe<R> {

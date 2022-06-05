@@ -1,12 +1,10 @@
-import { LiquidType } from "@entity/Liquid";
 import { Protocol, ProtocolType } from "@entity/Protocol";
 import { ProtocolXml } from "@entity/ProtocolXml";
 import { User } from "@entity/User";
-import { timeStamp } from "console";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { JSDOM } from "jsdom";
-import { ParserMap } from "./blockparser/ParserMap";
+import { BlockSequenceParser } from "./blockparser/BlockParser";
 import { DatabaseService } from "./DatabaseService";
 import { DateService } from "./DateService";
 
@@ -15,10 +13,10 @@ export class ProtocolXmlParsingService {
 
     @inject(DateService)
     private dateService: DateService;
-    @inject(ParserMap)
-    private parserMap: ParserMap;
     @inject(DatabaseService)
     private dbservice: DatabaseService;
+    @inject(BlockSequenceParser)
+    blockParser: BlockSequenceParser;
 
     public async parseProtocolXml(protocolXml: Element): Promise<Protocol> {
         const protocol = new Protocol();
@@ -32,7 +30,7 @@ export class ProtocolXmlParsingService {
         protocol.protocolXml.xml = protocolXml.outerHTML
         protocol.standardTemp = parseInt(cleanProtocolXml.querySelector(":scope>field[name=temp]")!.innerHTML)
         const blockToParse = cleanProtocolXml.querySelector(":scope>statement>block")!;
-        return await this.parserMap.get(blockToParse?.getAttribute("type")!)!.parseProtocol(blockToParse, protocol);
+        return await this.blockParser.parse(blockToParse, protocol);
     }
 
     private scrubIdsFromDocument(doc: Element): Element {

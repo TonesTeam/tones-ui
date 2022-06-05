@@ -1,15 +1,14 @@
-import { Liquid } from "@entity/Liquid";
 import { LiquidApplication } from "@entity/LiquidApplication";
 import { Protocol } from "@entity/Protocol";
 import { Step, StepType } from "@entity/Step";
 import { provide } from "inversify-binding-decorators";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
-import { BlockParser } from "./AbstractBlockParser";
+import { BlockProcessor } from "./BlockProcessor";
 
-@provide(ApplyReagentParser)
-export class ApplyReagentParser extends BlockParser {
+@provide(ApplyReagentProcessor)
+export class ApplyReagentProcessor extends BlockProcessor {
 
-    async parse(applyReagent: Element, protocol: Protocol): Promise<Protocol> {
+    async process(applyReagent: Element, protocol: Protocol): Promise<Protocol> {
         this.helper.appendTempStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=degrees]")!.innerHTML), true);
         const times = parseInt(applyReagent.querySelector(":scope> field[name=times]")!.innerHTML)
         for (var i = 0; i < times; i++) {

@@ -1,14 +1,14 @@
 import { LiquidApplication } from "@entity/LiquidApplication";
 import { Protocol } from "@entity/Protocol";
 import { Step, StepType } from "@entity/Step";
-import { BlockParser } from "./AbstractBlockParser";
+import { BlockProcessor } from "./BlockProcessor";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import { provide } from "inversify-binding-decorators";
 
-@provide(ApplyAntigenParser)
-export class ApplyAntigenParser extends BlockParser {
+@provide(ApplyAntigenProcessor)
+export class ApplyAntigenProcessor extends BlockProcessor {
 
-    async parse(applyAntigenBlock: Element, protocol: Protocol): Promise<Protocol> {
+    async process(applyAntigenBlock: Element, protocol: Protocol): Promise<Protocol> {
         await this.addAntigenApplicationStep(protocol, applyAntigenBlock);
         this.helper.appendWaitStep(protocol, parseInt(applyAntigenBlock.querySelector(":scope>field[name=time]")!.innerHTML));
         return protocol;
