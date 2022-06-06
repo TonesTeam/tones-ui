@@ -9,10 +9,10 @@ import BlockProcessor from "./BlockProcessor";
 export default class ApplyReagentProcessor extends BlockProcessor {
 
     async process(applyReagent: Element, protocol: Protocol): Promise<Protocol> {
-        this.helper.appendTempStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=degrees]")!.innerHTML), true);
         const times = parseInt(applyReagent.querySelector(":scope> field[name=times]")!.innerHTML)
         for (var i = 0; i < times; i++) {
             protocol.steps.push(await this.createLiquidApplicationStep(protocol, applyReagent));
+            this.helper.appendTempStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=degrees]")!.innerHTML), true);
         }
         this.helper.appendWaitStep(protocol, parseInt(applyReagent.querySelector(":scope> field[name=time]")!.innerHTML))
         return protocol;
