@@ -11,6 +11,6 @@ export class Waiting {
     waitingTime: number;
 
     @JoinColumn()
-    @OneToOne(() => Step, { nullable: false })
+    @OneToOne(() => Step, step => step.waiting, { nullable: false })
     step: Step;
 }

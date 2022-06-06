@@ -1,14 +1,15 @@
 import Blockly, { Block } from 'blockly';
 import 'blockly/python';
-import { getRequest, groupBy } from 'common/util';
-import './BlocklyFunction'
-import { LiquidDto } from "sharedlib/dto/liquid.dto"
-import { LiquidTypeName } from "sharedlib/enum/LiquidTypes"
+import { getRequest } from 'common/util';
+import { groupByMapped } from "sharedlib/collection.util";
+import { LiquidDto } from "sharedlib/dto/liquid.dto";
+import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
+import './BlocklyFunction';
 
 const liquids = (await getRequest<LiquidDto[]>("/liquids")).data;
 console.log(liquids)
-const typesMap = groupBy(liquids, l => l.type, l => l.name);
-const reagentSubTypeMap = groupBy(liquids.filter(l => l.type === LiquidTypeName.REAGENT), r => r.subType, l => l.name)
+const typesMap = groupByMapped(liquids, l => l.type, l => l.name);
+const reagentSubTypeMap = groupByMapped(liquids.filter(l => l.type === LiquidTypeName.REAGENT), r => r.subType, l => l.name)
 console.log(reagentSubTypeMap);
 const antigens = typesMap.get(LiquidTypeName.ANTIGEN)?.map(r => [r, r])!
 

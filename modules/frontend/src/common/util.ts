@@ -18,21 +18,6 @@ export async function postRequest<T>(path: string, payload: string): Promise<Axi
     return await axios.post(fullpath, payload, { validateStatus: null })
 }
 
-export function ident(o: any): any { return o };
-
-export function groupBy<T, K, V>(list: T[], keyGetter: (o: T) => K, mapper: (o: T) => V = ident): Map<K, V[]> {
-    const map = new Map();
-    list.forEach((item) => {
-        const key = keyGetter(item);
-        const collection = map.get(key);
-        if (!collection) {
-            map.set(key, [mapper(item)]);
-        } else {
-            collection.push(mapper(item));
-        }
-    });
-    return map;
-}
 
 export function getComparator<T>(fieldExtractor: ToNumberFunction<T>): ObjectComparator<T> {
     return (o1: any, o2: any) => {

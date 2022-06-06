@@ -15,6 +15,6 @@ export class TemperatureChange {
     blocking: boolean;
 
     @JoinColumn()
-    @OneToOne(() => Step, { nullable: false })
+    @OneToOne(() => Step, step => step.temperatureChange, { nullable: false })
     step: Step;
 }

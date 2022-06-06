@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, ManyToOne, Column, OneToOne, Entity } from "typeorm";
+import { PrimaryGeneratedColumn, ManyToOne, Column, OneToOne, Entity, JoinColumn } from "typeorm";
 import { LiquidApplication } from "./LiquidApplication";
 import { Protocol } from "./Protocol";
 import { TemperatureChange } from "./TemperatureChange";
@@ -17,22 +17,23 @@ export class Step {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @JoinColumn()
     @ManyToOne(() => Protocol, protocol => protocol.steps, { nullable: false })
     protocol: Protocol;
 
     @Column({ nullable: false })
     sequenceOrder: number;
 
-    @Column({ nullable: false})
+    @Column({ nullable: false })
     stepType: StepType;
 
-    @OneToOne(() => LiquidApplication, {cascade: true})
+    @OneToOne(() => LiquidApplication, lq => lq.step, { cascade: true })
     liquidApplication?: LiquidApplication;
 
-    @OneToOne(() => Waiting, {cascade: true})
+    @OneToOne(() => Waiting, w => w.step, { cascade: true })
     waiting?: Waiting;
 
-    @OneToOne(() => TemperatureChange, {cascade: true})
+    @OneToOne(() => TemperatureChange, tc => tc.step, { cascade: true })
     temperatureChange?: TemperatureChange;
 
 }

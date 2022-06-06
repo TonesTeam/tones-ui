@@ -9,10 +9,12 @@ export class LiquidApplication {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @JoinColumn()
     @ManyToOne(() => Liquid, liquid => liquid.liquidApplications, { nullable: false })
     liquid: Liquid;
 
     @JoinColumn()
-    @OneToOne(() => Step, { nullable: false })
+    @OneToOne(() => Step, step => step.liquidApplication, { nullable: false })
     step: Step;
+
 }

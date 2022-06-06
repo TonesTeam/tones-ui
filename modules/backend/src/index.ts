@@ -1,25 +1,12 @@
-import "reflect-metadata"
-
-import { Container } from 'inversify';
-import { InversifyExpressServer } from 'inversify-express-utils';
-
-import "@controller/BlocklyController"
+import "@controller/BlocklyController";
+import "@controller/ProtocolController";
 import * as bodyParser from 'body-parser';
+import { Container } from 'inversify';
 import { buildProviderModule } from "inversify-binding-decorators";
+import { InversifyExpressServer } from 'inversify-express-utils';
+import "reflect-metadata";
+import config from "sharedlib/tones-config.json";
 import { Logger } from "tslog";
-import config from "sharedlib/tones-config.json"
-import getDecorators from "inversify-inject-decorators";
-
-
-//apiRouter.get('/test', async (req, res) => {
-//	const connection = await connectionPromise
-//	const userRepo = connection.getRepository(User);
-//	const protocolRepo = connection.getRepository(Protocol);
-//	const allUsers = await userRepo.find({ relations: ["protocols", "protocols.protocolType"] });
-//	console.log(allUsers[0])
-//	console.log(allUsers[0].protocols[0].creator)
-//	res.send(JSON.stringify(allUsers[0]))
-//})
 
 
 let container = new Container();

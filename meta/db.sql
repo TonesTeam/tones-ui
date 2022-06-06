@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS deployment_liquid_configuration (
 
 INSERT INTO user (name, surname, role) VALUES ('John', 'Smith', 'Administrator');
 INSERT INTO protocol_type (type_name) VALUES ("protocol type 1");
-INSERT INTO protocol (protocol_name, creation_date, creator_id, standard_temp, protocol_type_id) VALUES ("alpha", date(), 1, 22, 1);
+-- INSERT INTO protocol (protocol_name, creation_date, creator_id, standard_temp, protocol_type_id) VALUES ("alpha", date(), 1, 22, 1);
 INSERT INTO liquid_type (type_name) VALUES ("Washing"), ("Deparafinization"), ("Reagent"), ("Blocking"), ("Antigen retrieval");
 INSERT INTO liquid_sub_type (sub_type_name) VALUES ("black subtype"), ("red subtype");
 INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES 
@@ -152,3 +152,20 @@ INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES
   ("Fish Gelatin", (select id from liquid_type where type_name="Blocking"), NULL),
   ("HistoReveal", (select id from liquid_type where type_name="Antigen retrieval"), NULL),
   ("Trypsin", (select id from liquid_type where type_name="Antigen retrieval"), NULL);
+
+--- Temporary Data (sorta) ---
+INSERT INTO protocol VALUES(2,'test_protocol','2022-06-06 10:17:17.387',1,NULL,1,12,1);
+INSERT INTO step VALUES(1,2,1,'temperature_change');
+INSERT INTO step VALUES(2,2,2,'liquid_application');
+INSERT INTO step VALUES(3,2,3,'waiting');
+INSERT INTO step VALUES(4,2,4,'liquid_application');
+INSERT INTO step VALUES(5,2,5,'waiting');
+INSERT INTO step VALUES(6,2,6,'liquid_application');
+INSERT INTO step VALUES(7,2,7,'waiting');
+INSERT INTO liquid_application VALUES(1,2,3);
+INSERT INTO liquid_application VALUES(2,4,10);
+INSERT INTO liquid_application VALUES(3,6,6);
+INSERT INTO waiting VALUES(1,0,3);
+INSERT INTO waiting VALUES(2,0,5);
+INSERT INTO waiting VALUES(3,0,7);
+INSERT INTO temperature_change VALUES(1,1,0,1);
