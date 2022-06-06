@@ -1,3 +1,26 @@
 {
-    "magic-word": "zhizha"
+    "magic-word": "zhizha",
+    "liquid-application-volume": 0.1,
+    "liquids-tube-holders": [
+        {
+            "size": 5,
+            "count": 24,
+            "for-washing": false
+        },
+        {
+            "size": 15,
+            "count": 6,
+            "for-washing": false
+        },
+        {
+            "size": 50,
+            "count": 4,
+            "for-washing": false
+        },
+        {
+            "size": 500,
+            "count": 1,
+            "for-washing": true
+        }
+    ]
 }
