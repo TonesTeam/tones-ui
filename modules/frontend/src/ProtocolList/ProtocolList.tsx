@@ -5,17 +5,30 @@ import 'common/style.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
 import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
+import { getRequest } from 'common/util'
 
-const p1: ProtocolDto = {
+const protocol = (await getRequest<ProtocolDto[]>("/protocol/all")).data[0]
+export const p1: ProtocolDto = {
     id: 1,
     name: 'TestName',
     authorName: 'Test Author',
     creationDate: new Date(),
-    usedLiquids: [{
-        liquidName: 'TestLiqName',
-        liquidType: 'TestLiqType',
+    usedLiquids: [
+        {
+        liquidName: 'APR-220',
+        liquidType: 'Zhizha 1',
         amount: 40,
-    }]
+        },
+        {liquidName: 'Some very long name of a liquid',
+        liquidType: 'Zhizha 2',
+        amount: 100,
+        },
+        {liquidName: 'Xelenium',
+        liquidType: 'Zhizha 3',
+        amount: 20,
+        }
+
+    ]
 }
 
 const max = 2;
