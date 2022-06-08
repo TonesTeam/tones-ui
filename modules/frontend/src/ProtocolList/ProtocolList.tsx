@@ -7,7 +7,7 @@ import { useState } from 'react';
 import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
 import { getRequest } from 'common/util'
 
-const protocol = (await getRequest<ProtocolDto[]>("/protocol/all")).data[0]
+/* const protocol = (await getRequest<ProtocolDto[]>("/protocol/all")).data[0] */
 export const p1: ProtocolDto = {
     id: 1,
     name: 'TestName',
@@ -26,8 +26,35 @@ export const p1: ProtocolDto = {
         {liquidName: 'Xelenium',
         liquidType: 'Zhizha 3',
         amount: 20,
+        },
+        {liquidName: 'Liquid gold',
+        liquidType: 'Zhizha 2',
+        amount: 100,
+        },
+        {liquidName: 'Another very long name',
+        liquidType: 'Zhizha 2',
+        amount: 30,
+        },
+        {liquidName: 'ABC-123',
+        liquidType: 'Zhizha 2',
+        amount: 11,
+        },
+        {liquidName: 'Alcohol',
+        liquidType: 'Zhizha 21',
+        amount: 400,
+        },
+        {liquidName: 'Lorem ipsum',
+        liquidType: 'Zhizha 2',
+        amount: 50,
+        },
+        {liquidName: 'One more liquid with very long name',
+        liquidType: 'Zhizha 2',
+        amount: 23,
+        },
+        {liquidName: 'Holy water',
+        liquidType: 'Zhizha 2',
+        amount: 10,
         }
-
     ]
 }
 
@@ -95,11 +122,11 @@ function Protocol(props: any){
                     <div className="info-cell-container">
                         <div className="info-cell">
                             <p className="label">Author: </p>
-                            <p>{props.author}</p>
+                            <p>{props.authorName}</p>
                         </div>
                         <div className="info-cell">
                             <p className="label">Date of creation: </p>
-                            <p>{props.date}</p>
+                            <p>{props.creationDate}</p>
                         </div>
                     </div>
 
@@ -112,12 +139,12 @@ function Protocol(props: any){
                     <table className="dropdown-table">
                         <tbody>
                             <tr>
-                                <td>Duration: {props.infoDuration}</td>
-                                <td>Slots used: {props.infoSlots}</td>
+                                <td>Duration: IN DEVELOPEMNT{/* {props.infoDuration} */}</td>
+                                <td>Slots used: IN DEVELOPMENT{/* {props.infoSlots} */}</td>
                             </tr>
                             <tr>
-                                <td>Status: {props.infoStatus}</td>
-                                <td>Blockly Scheme: {props.infoBlockly}</td>
+                                <td>Status: IN DEVELOPEMNT {/* {props.infoStatus} */}</td>
+                                <td>Blockly Scheme: IN DEVELOPEMNT {/* {props.infoBlockly} */}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -145,6 +172,26 @@ function Protocol(props: any){
         </div>
     );
 }
+const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all"));
+
+function fillProtocolList(){
+
+    let container = document.querySelector('.protocol-list')
+    let i:number = 0;
+    while(protocolList.data[i]){
+        let protocol = protocolList.data[i];
+        let card = document.createElement('Protocol');
+        card.setAttribute("id", protocol.id.toString());
+        card.setAttribute("name", protocol.name);
+        card.setAttribute("authorName", protocol.authorName);
+        card.setAttribute("creationDate", "11.11.2012");
+
+        container!.append(card);
+
+        i++;
+    }        
+}  
+    
 
 
 
@@ -152,9 +199,14 @@ export default function ProtocolList() {
     useEffect(setEventListeners)
     const [isVisible, setToVisible] = useState(false) 
 
+    useEffect(() => {
+        fillProtocolList();
+    }, []);
+
     const onBackdropClick = () => {
         setToVisible(false)
     }
+
     
     return (
         <><NavigationBar />
@@ -178,64 +230,64 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-                    <Protocol id={p1.id} name={p1.name}
+{/*                     <Protocol id={p1.id} name={p1.name}
                     author={p1.authorName} date={p1.creationDate.toDateString()}
                     infoDuration="24h" infoSlots="1" 
-                    infoStatus="Approved" infoBlockly="Avaliable"/> 
+                    infoStatus="Approved" infoBlockly="Avaliable"/>  */}
 
                     <Protocol id="PA-001" name="Protocol Alpha" 
-                    author="James Doe" date="10.01.2021"
-                    infoDuration="24h"
+                    authorName="James Doe" creationDate="10.01.2021"
+/*                     infoDuration="24h"
                     infoSlots="1" infoStatus="Approved"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PB-002" name="Protocol Beta" 
-                    author="Janette Smith" date="11.07.2026"
-                    infoDuration="11h"
+                    authorName="Janette Smith" creationDate="11.07.2026"
+/*                     infoDuration="11h"
                     infoSlots="1" infoStatus="Approved"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PY-003" name="Protocol Gamma" 
-                    author="Bellatrix Lestrange " date="22.12.2020"
-                    infoDuration="5h"
+                    authorName="Bellatrix Lestrange " creationDate="22.12.2020"
+/*                     infoDuration="5h"
                     infoSlots="3" infoStatus="Approved"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PD-004" name="Protocol Delta" 
-                    author="Godric Gryffindor" date="02.03.1126"
-                    infoDuration="13h"
+                    authorName="Godric Gryffindor" creationDate="02.03.1126"
+/*                     infoDuration="13h"
                     infoSlots="12" infoStatus="Obsolete"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PE-005" name="Protocol Epsilon" 
-                    author="Rubeus Hagrid" date="11.07.2026"
-                    infoDuration="24h"
+                    authorName="Rubeus Hagrid" creationDate="11.07.2026"
+/*                     infoDuration="24h"
                     infoSlots="1" infoStatus="Draft"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PD-006" name="Protocol Zeta" 
-                    author="Helga Hufflepuff" date="11.07.1111"
-                    infoDuration="3h"
+                    authorName="Helga Hufflepuff" creationDate="11.07.1111"
+/*                     infoDuration="3h"
                     infoSlots="5" infoStatus="Approved"
-                    infoStages="13" infoBlockly="Avaliable"/>
+                    infoStages="13" infoBlockly="Avaliable" *//>
 
                     <Protocol id="PD-007" name="Protocol Eta" 
-                    author="Viktor Krum" date="10.07.2323"
-                    infoTemperature="36F" infoDuration="24h"
+                    authorName="Viktor Krum" creationDate="10.07.2323"
+/*                     infoTemperature="36F" infoDuration="24h"
                     infoSlots="7" infoStatus="Draft"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PO-008" name="Protocol Theta" 
-                    author="Luna Lovegood" date="12.09.2052"
-                    infoDuration="6h"
+                    authorName="Luna Lovegood" creationDate="12.09.2052"
+/*                     infoDuration="6h"
                     infoSlots="2" infoStatus="Approved"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
 
                     <Protocol id="PK-009" name="Protocol Kappa" 
-                    author="Minerva McGonagall" date="11.07.2022"
-                    infoDuration="3h"
+                    authorName="Minerva McGonagall" creationDate="11.07.2022"
+/*                     infoDuration="3h"
                     infoSlots="6" infoStatus="Obslete"
-                    infoBlockly="Avaliable"/>
+                    infoBlockly="Avaliable" *//>
                 </div>
             </div></>
     )
