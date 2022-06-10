@@ -1,13 +1,13 @@
 .tableContainer{
     text-align: center;
-    padding: 50px;
+    padding: 30px;
 }
 
-#recom-table{
+/* ------------------UNCOMMENT TO RETURN TO UNGROUPED TABLE COLOURS------------------ */
+/* #recom-table{
     margin: auto;
-    /* display: flex; */
     justify-content: center; 
-    width: 80%;
+    width: 90%;
     border-collapse: collapse;
     background: rgb(18,61,95);
     background: linear-gradient(160deg, rgba(18,61,95,1) 0%, rgb(0, 139, 185) 100%);
@@ -16,15 +16,50 @@
     -webkit-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
     -moz-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
     box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
+} */
+/* ---------------------------------------------------------------------------------------- */
+
+/* ------------------COMMENT TO RETURN TO UNGROUPED TABLE COLOURS------------------ */
+#recom-table{
+    margin: auto;
+    justify-content: center; 
+    width: 95%;
+    border-collapse: collapse;
+    color: #fff;
+    font-weight: 600;
+    table-layout: fixed;
+    -webkit-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
+    -moz-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
+    box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
 }
+
+col.small{
+    background: #8c976b;
+/*     background: rgb(60,100,161);
+    background: radial-gradient(circle, rgba(60,100,161,1) 0%, rgba(31,59,103,1) 100%); */
+}
+col.medium{
+    background: #6f8b6c;
+/*     background: rgb(60,86,161);
+    background: radial-gradient(circle, rgba(60,86,161,1) 0%, rgba(31,39,103,1) 100%); */
+}
+col.large{
+    background: #7090a3;
+/*     background: rgb(26,75,179);
+    background: linear-gradient(45deg, rgba(26,75,179,1) 0%, rgba(77,82,176,1) 100%); */
+}
+
+.washing{
+    background: #6b738a;
+}
+
+/* ---------------------------------------------------------------------------------------- */
 
 #recom-table td{
-    padding: 30px 0;
+    padding: 40px 0;
     border: 1px solid #f1f1f14b;
-    width: 100px;
     height: auto;
 }
-
 
 #recom-table thead{
     background-color: #123d5f;
@@ -32,10 +67,15 @@
     pointer-events: none;
 }
 
+#recom-table thead td{
+    padding: 0;
+    height: 65px;
+}
+
 #recom-table #horizontal-thead{
     background-color: #123d5f;
     border-right: 3px solid #f1f1f1;
-    width: 50px;
+    width: 65px;
     pointer-events: none;
 }
 
@@ -44,6 +84,7 @@
     color: #d3d3d3;
     font-weight: 100;
     font-size: smaller;
+    letter-spacing: 2px;
 }
 
 /*------Hover animations---------*/
@@ -54,23 +95,31 @@
 
 @keyframes emptyAnim
 {
-from {background:rgb(0, 139, 185);}
+from {background:#123d5f;}
 to {background: initial;}
 }
 
-@-webkit-keyframes myfirst /* Safari and Chrome */
+@-webkit-keyframes emptyAnim /* Safari and Chrome */
 {
-from {background:rgb(0, 139, 185);}
+from {background:#123d5f;}
 to {background:initial;}
 }
 
 #recom-table .liquidCell:hover{
-    background-color: rgb(0, 139, 185);
+    background-color: #123d5f;
 }
 /*------------------------------*/
 
+
+/*----------CONFIRMATION-------------*/
+.launchContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 .confirm{
-    margin: auto;
+    /* margin: auto; */
     display: flex;
     flex-direction: row;
     justify-content: center; 
@@ -109,5 +158,21 @@ to {background:initial;}
 
 .confirm p::before{
     content: 'Have you completed liquid recommendations?';
-    font-size: large;
+    font-size: 30px;
+}
+
+#launchBtn{
+    display: flex;
+    align-items: center;
+}
+
+#launchBtn a{
+    border: 2px solid #0f9500;
+    border-radius: 10px;
+    padding: 20px;
+    text-decoration: none;
+    color: #000;
+    font-weight: 600;
+    font-size: 30px;
+    background-color: #bee1ba;
 }
