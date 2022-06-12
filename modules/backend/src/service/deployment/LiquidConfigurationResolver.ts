@@ -45,47 +45,10 @@ export class LiquidConfigurationResolver {
     private getLiquidsConfiguration(commands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration[] {
         return Array.from(groupBy(commands, c => c.liquidInfo.id).values())
             .sort(getComparator(cms => lodash.sum(cms.map(c => c.volume))))
-            .flatMap(cms => this.getLiquidConfiguration_2(cms, state))
+            .flatMap(cms => this.getLiquidConfiguration(cms, state))
     }
 
     private getLiquidConfiguration(commands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration[] {
-        const liquidConfig: DeploymentLiquidConfiguration[] = [];
-        let availableSizes = state.getAvailableSizes()
-        let hydratedCommands: LiquidApplicationCommand[] = [];
-        for (let i = 0; i < commands.length; i++) {
-            if (availableSizes.length === 0) {
-                throw new Error("Impossible to configure liquids for protocol deployment");
-            }
-            const command = commands[i];
-            availableSizes = availableSizes.map(i => i - command.volume);
-            hydratedCommands.push(command);
-            if (availableSizes.every(s => s < 0)) {
-                const dlc = new DeploymentLiquidConfiguration();
-                dlc.liquidAmount = Math.max(...state.getAvailableSizes());
-                dlc.liquidId = commands[0].liquidInfo.id!;
-                dlc.liquidSlotNumber = state.allocateLiquidSlotOfSize(dlc.liquidAmount);
-                liquidConfig.push(dlc);
-                availableSizes = state.getAvailableSizes();
-                hydratedCommands.forEach(c => c.from = dlc.liquidSlotNumber);
-                hydratedCommands = [];
-                i--;
-                continue;
-            }
-        }
-        if (availableSizes.length === 0) {
-            throw new Error("Impossible to configure liquids for protocol deployment");
-        }
-        const sizeIndex = availableSizes.findIndex(i => i >= 0)
-        const dlc = new DeploymentLiquidConfiguration();
-        dlc.liquidAmount = state.getAvailableSizes()[sizeIndex];
-        dlc.liquidId = commands[0].liquidInfo.id!;
-        dlc.liquidSlotNumber = state.allocateLiquidSlotOfSize(dlc.liquidAmount);
-        hydratedCommands.forEach(c => c.from = dlc.liquidSlotNumber);
-        liquidConfig.push(dlc);
-        return liquidConfig;
-    }
-
-    private getLiquidConfiguration_2(commands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration[] {
         let acc = 0;
         let hydratedCommands: LiquidApplicationCommand[] = [];
         const liquidConfig: DeploymentLiquidConfiguration[] = []
