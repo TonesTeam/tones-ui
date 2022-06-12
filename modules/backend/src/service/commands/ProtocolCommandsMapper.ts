@@ -1,4 +1,3 @@
-import { LiquidType } from "@entity/Liquid";
 import { Step, StepType } from "@entity/Step";
 import { provide } from "inversify-binding-decorators";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
