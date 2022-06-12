@@ -28,13 +28,13 @@ export default class BlockProcessingHelper {
         return await repo.findOneOrFail({ relations: ["liquidType", "liquidSubType"], where: op })
     }
 
-    public appendWaitStep(protocol: Protocol, time: number) {
+    public appendWaitStep(protocol: Protocol, waitMinutes: number) {
         const s = new Step()
         s.sequenceOrder = this.getLastStepIndex(protocol) + 1;
         s.protocol = protocol;
         s.stepType = StepType.WAITING;
         s.waiting = new Waiting();
-        s.waiting.waitingTime = time;
+        s.waiting.waitingTime = waitMinutes * 60; // minutes to seconds converion
         s.waiting.step = s;
         protocol.steps.push(s);
     }

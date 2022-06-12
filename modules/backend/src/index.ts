@@ -1,5 +1,8 @@
 import "@controller/BlocklyController";
 import "@controller/ProtocolController";
+import { LiquidApplicationCommand } from "@service/commands/Commands";
+import { LiquidConfigurationResolver } from "@service/deployment/LiquidConfigurationResolver";
+import assert from "assert";
 import * as bodyParser from 'body-parser';
 import { Container } from 'inversify';
 import { buildProviderModule } from "inversify-binding-decorators";
@@ -22,6 +25,16 @@ server.setConfig(app => {
 })
 let app = server.build();
 const port = process.env.BE_PORT ?? 8080
+
+const l = new LiquidConfigurationResolver();
+console.log("TEST:")
+const commands = [
+	new LiquidApplicationCommand(undefined, -1, 49, {id:1, isWashing: false}),
+	new LiquidApplicationCommand(undefined, -1, 6, {id:2, isWashing: false}),
+]
+console.log(l.getDeploymentConfiguration(commands))
+console.log(commands)
+
 app.listen(port, () => {
 	console.log("Magic word is", config["magic-word"])
 	logger.info(`API listening on port ${port}`)
