@@ -111,7 +111,7 @@
     background-color: #bacddb;
     margin: 1rem 0;
     overflow: hidden;
-
+    font-size: 1.2em;
 }
 
 .protocol-general {
@@ -163,14 +163,14 @@
     border-right: 3px solid #123d5f;
     border-left: 3px solid #123d5f;
     border-bottom: 2px dashed #110d634d;
-    background-color: #dee4fd;
+    background-color: #d0e5f5;
 }
 
 .protocol-general.active + .protocol-body {
     border-right: 3px solid #123d5f;
     border-bottom: 3px solid #123d5f;
     border-left: 3px solid #123d5f;
-    background-color: #dee4fd;
+    background-color: #d0e5f5;
 }
 
 .protocol-body {
@@ -214,7 +214,7 @@
 }
 
 .protocol-body-content .protocol-options button {
-    height: 42px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -222,20 +222,26 @@
     border-radius: 3px;
     color: #123d5f;
     background-color: #fff;
-    font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
     transition: 0.2s;
+    font-size: large;
+}
+
+.protocol-options button a{
+    display: flex;
+    text-decoration: none;
+    color: #123d5f;
+    align-items: center;
 }
 
 .protocol-body-content .protocol-options button:active,
 .protocol-body-content .protocol-options button:hover {
-    border: 1px solid #120d63;
+    border: 2px solid #123d5f;
     color: #000;
-    background-color: #fff;
 }
 
 .proto-btn i{
-    font-size: large;
+    font-size: 1.5em;
     margin-right: 10px;
 }

@@ -20,7 +20,7 @@ function App() {
         <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
         <Route path="/" element={<BlocklyPage />} />
-        <Route path="/launch" element={<Recommendations />} />
+        <Route path="/launch/*" element={<Recommendations />} />
       </Routes>
     </Router>
   )

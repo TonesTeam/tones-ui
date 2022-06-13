@@ -7,7 +7,6 @@ import { useState } from 'react';
 import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
 import { getRequest } from 'common/util'
 
-/* const protocol = (await getRequest<ProtocolDto[]>("/protocol/all")).data[0] */
 export const p1: ProtocolDto = {
     id: 1,
     name: 'TestName',
@@ -59,7 +58,6 @@ export const p1: ProtocolDto = {
 }
 
 const max = 2;
-
 function selectiveCheck(_event: any) {
     var checkedChecks = document.querySelectorAll(".check-to-run:checked");
     if (checkedChecks.length >= max + 1)
@@ -102,7 +100,6 @@ function Protocol(props: any){
     return(
         
         <div className="protocol">
-{/*             <h2>{p1.id}, {p1.name}, {p1.authorName}, {p1.creationDate.toDateString()}, {p1.id}</h2> */}
             <div className="protocol-general">
                 <div className="info-cell" id="check">
                     <input type="checkbox" className="check-to-run" name="protocol"></input>
@@ -152,8 +149,7 @@ function Protocol(props: any){
                         augue
                         convallis tincidunt at eget lacus.
                         Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.
-                        Pellentesque enim lectus, mattis sit amet neque in, efficitur euismod arcu.</p>
+                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p>
 
                     <div className="protocol-options">
                         <div className="protocol-options">
@@ -162,7 +158,7 @@ function Protocol(props: any){
                         </div>
 
                         <div className="protocol-options">
-                            <button className="proto-btn"><a href="/launch/"><i className="fas fa-play"></i>Launch</a></button>
+                            <button className="proto-btn"><a href={`/launch/${props.id}`}><i className="fas fa-play"></i>Launch</a></button>
                             <button className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
                         
@@ -172,41 +168,20 @@ function Protocol(props: any){
         </div>
     );
 }
-const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all"));
 
-function fillProtocolList(){
+const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all")).data;
+const protocol = protocolList[0];
 
-    let container = document.querySelector('.protocol-list')
-    let i:number = 0;
-    while(protocolList.data[i]){
-        let protocol = protocolList.data[i];
-        let card = document.createElement('Protocol');
-        card.setAttribute("id", protocol.id.toString());
-        card.setAttribute("name", protocol.name);
-        card.setAttribute("authorName", protocol.authorName);
-        card.setAttribute("creationDate", "11.11.2012");
+// console.log(protocolList.data.length);
 
-        container!.append(card);
-
-        i++;
-    }        
-}  
-    
-
-
-
+console.log(protocol)
 export default function ProtocolList() {
     useEffect(setEventListeners)
     const [isVisible, setToVisible] = useState(false) 
 
-    useEffect(() => {
-        fillProtocolList();
-    }, []);
-
     const onBackdropClick = () => {
         setToVisible(false)
     }
-
     
     return (
         <><NavigationBar />
@@ -221,8 +196,8 @@ export default function ProtocolList() {
                     </div>
                     <div className="launch-container">
                         <div className="protocol-counter">
+                            {/* <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development*/} 
                             {/* <a href={`/launch/${p1.id}`}> */}
-                                <p>Launch <span id="protocolCount">0</span>/2 protocols</p>
                             {/* </a> */}
                         </div>
                     </div>
@@ -230,64 +205,38 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-{/*                     <Protocol id={p1.id} name={p1.name}
-                    author={p1.authorName} date={p1.creationDate.toDateString()}
-                    infoDuration="24h" infoSlots="1" 
-                    infoStatus="Approved" infoBlockly="Avaliable"/>  */}
+                {protocolList.map(function(protocol){
+                    return <Protocol id={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()}/>
+                })}
+
+                
 
                     <Protocol id="PA-001" name="Protocol Alpha" 
-                    authorName="James Doe" creationDate="10.01.2021"
-/*                     infoDuration="24h"
-                    infoSlots="1" infoStatus="Approved"
-                    infoBlockly="Avaliable" *//>
+                    authorName="James Doe" creationDate="10.01.2021"/>
 
                     <Protocol id="PB-002" name="Protocol Beta" 
-                    authorName="Janette Smith" creationDate="11.07.2026"
-/*                     infoDuration="11h"
-                    infoSlots="1" infoStatus="Approved"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Janette Smith" creationDate="11.07.2026"/>
 
                     <Protocol id="PY-003" name="Protocol Gamma" 
-                    authorName="Bellatrix Lestrange " creationDate="22.12.2020"
-/*                     infoDuration="5h"
-                    infoSlots="3" infoStatus="Approved"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Bellatrix Lestrange " creationDate="22.12.2020"/>
 
                     <Protocol id="PD-004" name="Protocol Delta" 
-                    authorName="Godric Gryffindor" creationDate="02.03.1126"
-/*                     infoDuration="13h"
-                    infoSlots="12" infoStatus="Obsolete"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Godric Gryffindor" creationDate="02.03.1126"/>
 
                     <Protocol id="PE-005" name="Protocol Epsilon" 
-                    authorName="Rubeus Hagrid" creationDate="11.07.2026"
-/*                     infoDuration="24h"
-                    infoSlots="1" infoStatus="Draft"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Rubeus Hagrid" creationDate="11.07.2026"/>
 
                     <Protocol id="PD-006" name="Protocol Zeta" 
-                    authorName="Helga Hufflepuff" creationDate="11.07.1111"
-/*                     infoDuration="3h"
-                    infoSlots="5" infoStatus="Approved"
-                    infoStages="13" infoBlockly="Avaliable" *//>
+                    authorName="Helga Hufflepuff" creationDate="11.07.1111"/>
 
                     <Protocol id="PD-007" name="Protocol Eta" 
-                    authorName="Viktor Krum" creationDate="10.07.2323"
-/*                     infoTemperature="36F" infoDuration="24h"
-                    infoSlots="7" infoStatus="Draft"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Viktor Krum" creationDate="10.07.2323"/>
 
                     <Protocol id="PO-008" name="Protocol Theta" 
-                    authorName="Luna Lovegood" creationDate="12.09.2052"
-/*                     infoDuration="6h"
-                    infoSlots="2" infoStatus="Approved"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Luna Lovegood" creationDate="12.09.2052"/>
 
                     <Protocol id="PK-009" name="Protocol Kappa" 
-                    authorName="Minerva McGonagall" creationDate="11.07.2022"
-/*                     infoDuration="3h"
-                    infoSlots="6" infoStatus="Obslete"
-                    infoBlockly="Avaliable" *//>
+                    authorName="Minerva McGonagall" creationDate="11.07.2022"/>
                 </div>
             </div></>
     )
