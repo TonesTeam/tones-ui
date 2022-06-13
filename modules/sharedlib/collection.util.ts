@@ -31,6 +31,18 @@ export function groupBy<T, K>(list: T[], keyGetter: (o: T) => K): Map<K, T[]> {
     return map;
 }
 
+export function toMap<T, K>(list: T[], keyGetter: (o: T) => K): Map<K, T> {
+    const map = new Map();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const existingItem = map.get(key);
+        if (!existingItem) {
+            map.set(key, item);
+        }
+    });
+    return map;
+}
+
 export function getComparator<T>(fieldExtractor: ToNumberFunction<T>): ObjectComparator<T> {
     return (o1: any, o2: any) => {
         if (fieldExtractor(o1).valueOf() === fieldExtractor(o2)) {
