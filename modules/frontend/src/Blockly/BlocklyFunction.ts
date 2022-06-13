@@ -4,7 +4,7 @@ import { List, Set } from 'immutable';
 import { WorkspaceSvg } from 'react-blockly';
 import 'blockly/python';
 import { Input } from 'blockly';
-import { getComparator } from 'common/util';
+import { getComparator } from 'sharedlib/collection.util'
 
 
 class FunctionBlock extends Block {
