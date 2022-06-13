@@ -1,7 +1,7 @@
 import NavigationBar from "navbar/NavigationBar";
 import './History.css'
 import { LiquidUseInstance } from 'sharedlib'
-import { getComparator } from 'common/util'
+import { getComparator } from 'sharedlib/collection.util'
 
 const testData: LiquidUseInstance[] = [
     { name: "Triclosan", amount: "50ml", slotNum: 3 },
