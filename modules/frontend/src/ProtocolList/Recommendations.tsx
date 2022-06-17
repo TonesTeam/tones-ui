@@ -79,18 +79,18 @@ function createTable(liquidConfig: DeploymentLiquidConfiguration[]) {
 
         for (let j = 0; j < 6; j++) { /* each column */
             let cell = document.createElement('td');
-            let cellConfigID = (i+1)+(6*j);
+            let cellConfigID = (i + 1) + (6 * j);
             /* cell.setAttribute("cellConfig", cellConfigID.toString()); */
-            
-             /* adding text to cell */
+
+            /* adding text to cell */
             let cellContent = document.createElement('div');
             let empty = true;
 
-            for(let i=0; i<liquidConfig.length; i++){
+            for (let i = 0; i < liquidConfig.length; i++) {
                 console.log('Config ID ' + liquidConfig[i].liquidId);
-                console.log('Calculated ID '+ cellConfigID);
+                console.log('Calculated ID ' + cellConfigID);
 
-                if(liquidConfig[i].liquidSlotNumber === cellConfigID){
+                if (liquidConfig[i].liquidSlotNumber === cellConfigID) {
 
                     let nameDiv = document.createElement('div');
                     nameDiv.setAttribute("class", "liqName");
@@ -108,43 +108,43 @@ function createTable(liquidConfig: DeploymentLiquidConfiguration[]) {
 
                     cell.setAttribute("class", "liquidCell");
 
-                    empty=false;
+                    empty = false;
                 }
             }
 
-            if(empty){
+            if (empty) {
                 let text = document.createTextNode('Empty ');
                 cellContent.appendChild(text);
                 cell.setAttribute("class", "emptyCell");
             }
 
 
-/*             if (tableLiquids[iter]) {
-                let nameDiv = document.createElement('div');
-                nameDiv.setAttribute("class", "liqName");
-                let textName = document.createTextNode(Object(tableLiquids[iter].liquidName));
-                nameDiv.appendChild(textName);
-
-                let amountDiv = document.createElement('div');
-                amountDiv.setAttribute("class", "liqAmount");
-                let textAmount = document.createTextNode(Object(tableLiquids[iter].amount) + ' ml');
-                amountDiv.appendChild(textAmount);
-
-                cellContent.appendChild(nameDiv);
-                cellContent.appendChild(amountDiv);
-
-                cell.setAttribute("class", "liquidCell");
-            }
-            else {
-                let text = document.createTextNode('Empty ');
-                cellContent.appendChild(text);
-                cell.setAttribute("class", "emptyCell");
-            } */
+            /*             if (tableLiquids[iter]) {
+                            let nameDiv = document.createElement('div');
+                            nameDiv.setAttribute("class", "liqName");
+                            let textName = document.createTextNode(Object(tableLiquids[iter].liquidName));
+                            nameDiv.appendChild(textName);
+            
+                            let amountDiv = document.createElement('div');
+                            amountDiv.setAttribute("class", "liqAmount");
+                            let textAmount = document.createTextNode(Object(tableLiquids[iter].amount) + ' ml');
+                            amountDiv.appendChild(textAmount);
+            
+                            cellContent.appendChild(nameDiv);
+                            cellContent.appendChild(amountDiv);
+            
+                            cell.setAttribute("class", "liquidCell");
+                        }
+                        else {
+                            let text = document.createTextNode('Empty ');
+                            cellContent.appendChild(text);
+                            cell.setAttribute("class", "emptyCell");
+                        } */
 
             if (j == 5 && i > 3) {
                 cell.setAttribute('class', cell.getAttribute('class') + ' washing');
             }
-            
+
 
             cell.appendChild(cellContent);
             row.appendChild(cell);
@@ -169,21 +169,16 @@ function showBtn() {
 
 
 export default function Recommendations() {
-    const [liquidConfig, setLiquidConfig] : [DeploymentLiquidConfiguration[], any] = useState([])
     useEffect(() => {
         let id = window.location.href.split('/').slice(-1);
         console.log(id);
         async function test() {
             const liquidConfig = await (await getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)).data;
-            setLiquidConfig(liquidConfig)
+            createTable(liquidConfig);
         };
         test();
-        
     }, [])
-    
-    useEffect(() => {
-        createTable(liquidConfig);
-    }, []);
+
 
     return (
         <>
