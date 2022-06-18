@@ -72,7 +72,7 @@ col.large{
     height: 65px;
 }
 
-#recom-table #horizontal-thead{
+#recom-table .horizontal-thead {
     background-color: #123d5f;
     border-right: 3px solid #f1f1f1;
     width: 65px;

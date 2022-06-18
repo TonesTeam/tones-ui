@@ -1,162 +1,13 @@
-import { useEffect, useState } from "react";
+import classNames from "classnames";
 import "common/style.css";
+import { getRequest } from 'common/util';
 import NavigationBar from "navbar/NavigationBar";
 import "navbar/NavigationBar.css";
-import "./Recommendations.css";
-import { ProtocolDto, UsedProtocolLiquid } from 'sharedlib/dto/protocol.dto';
-import { getRequest } from 'common/util';
-import { p1 } from "ProtocolList/ProtocolList";
-import { Checkbox, CheckboxProps } from "@mui/material";
+import { useEffect, useState } from "react";
+import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
+import "./Recommendations.css";
 
-/* const liquids = p1.usedLiquids;  <- TEST DTO*/
-const protocol = (await getRequest<ProtocolDto[]>("/protocol/all")).data[0]
-const liquids = protocol.usedLiquids;
-
-
-function createTable(liquidConfig: DeploymentLiquidConfiguration[]) {
-
-    console.log(liquidConfig.entries);
-
-    let headers = ['A', 'B', 'C', 'D', 'E', 'F'];
-    let tableLiquids = liquids;
-    let finalTable = document.querySelector('.tableContainer');
-    let recomTable = document.createElement('table');
-    recomTable.setAttribute("id", "recom-table");
-
-
-    /*   adding test colgroup  */
-    /* -------------COMMENT TO RETURN TO UNGROUPED TABLE COLOURS ---------- */
-    let colgroup = document.createElement('colgroup');
-
-    let colSm = document.createElement('col');
-    colSm.setAttribute('class', 'small');
-    colSm.setAttribute('span', '5');
-    colgroup.appendChild(colSm);
-
-    let colMd = document.createElement('col');
-    colMd.setAttribute('class', 'medium');
-    colgroup.appendChild(colMd);
-
-    let colLg = document.createElement('col');
-    colLg.setAttribute('class', 'large');
-    colgroup.appendChild(colLg);
-
-    recomTable.appendChild(colgroup);
-    /*-------------------------------------------------------------------*/
-
-    /* adding header row */
-    let thead = document.createElement('thead');
-    let headerRow = document.createElement('tr');
-    let tempCell = document.createElement('td');
-    tempCell.setAttribute("id", "horizontal-thead");
-    headerRow.appendChild(tempCell);
-
-    headers.forEach(headerText => {
-        let headerCell = document.createElement('td');
-        let textNode = document.createTextNode(headerText);
-        headerCell.appendChild(textNode);
-        headerRow.appendChild(headerCell);
-    });
-
-    thead.appendChild(headerRow);
-    recomTable.appendChild(thead);
-
-
-
-    /* adding body */
-    let body = document.createElement('tbody');
-    /* let iter = 0; /* iterator for liquid array */
-
-    for (let i = 0; i < 6; i++) { /* each row */
-        let row = document.createElement('tr');
-
-        /* Horizontal thead:  row numbers */
-        let horizThead = document.createElement('td');
-        horizThead.setAttribute("id", "horizontal-thead");
-        horizThead.appendChild(document.createTextNode((i + 1).toString()));
-        row.appendChild(horizThead);
-
-        for (let j = 0; j < 6; j++) { /* each column */
-            let cell = document.createElement('td');
-            let cellConfigID = (i + 1) + (6 * j);
-            /* cell.setAttribute("cellConfig", cellConfigID.toString()); */
-
-            /* adding text to cell */
-            let cellContent = document.createElement('div');
-            let empty = true;
-
-            for (let i = 0; i < liquidConfig.length; i++) {
-                console.log('Config ID ' + liquidConfig[i].liquidId);
-                console.log('Calculated ID ' + cellConfigID);
-
-                if (liquidConfig[i].liquidSlotNumber === cellConfigID) {
-
-                    let nameDiv = document.createElement('div');
-                    nameDiv.setAttribute("class", "liqName");
-                    /* let textName = document.createTextNode(Object(tableLiquids[iter].liquidName)); */
-                    let textName = document.createTextNode(liquidConfig[i].liquid!.name);
-                    nameDiv.appendChild(textName);
-
-                    let amountDiv = document.createElement('div');
-                    amountDiv.setAttribute("class", "liqAmount");
-                    let textAmount = document.createTextNode(liquidConfig[i].liquidAmount + ' ml');
-                    amountDiv.appendChild(textAmount);
-
-                    cellContent.appendChild(nameDiv);
-                    cellContent.appendChild(amountDiv);
-
-                    cell.setAttribute("class", "liquidCell");
-
-                    empty = false;
-                }
-            }
-
-            if (empty) {
-                let text = document.createTextNode('Empty ');
-                cellContent.appendChild(text);
-                cell.setAttribute("class", "emptyCell");
-            }
-
-
-            /*             if (tableLiquids[iter]) {
-                            let nameDiv = document.createElement('div');
-                            nameDiv.setAttribute("class", "liqName");
-                            let textName = document.createTextNode(Object(tableLiquids[iter].liquidName));
-                            nameDiv.appendChild(textName);
-            
-                            let amountDiv = document.createElement('div');
-                            amountDiv.setAttribute("class", "liqAmount");
-                            let textAmount = document.createTextNode(Object(tableLiquids[iter].amount) + ' ml');
-                            amountDiv.appendChild(textAmount);
-            
-                            cellContent.appendChild(nameDiv);
-                            cellContent.appendChild(amountDiv);
-            
-                            cell.setAttribute("class", "liquidCell");
-                        }
-                        else {
-                            let text = document.createTextNode('Empty ');
-                            cellContent.appendChild(text);
-                            cell.setAttribute("class", "emptyCell");
-                        } */
-
-            if (j == 5 && i > 3) {
-                cell.setAttribute('class', cell.getAttribute('class') + ' washing');
-            }
-
-
-            cell.appendChild(cellContent);
-            row.appendChild(cell);
-            /* iter++; */
-        }
-        body.appendChild(row);
-    }
-
-    recomTable.appendChild(body);
-
-    finalTable!.appendChild(recomTable);
-}
 
 function showBtn() {
     const checkbox = document.getElementById('confirmCheck') as HTMLInputElement | null;
@@ -167,16 +18,39 @@ function showBtn() {
     }
 }
 
+function resolveCell(cid: number, rid: number, configMap: Map<number, DeploymentLiquidConfiguration>) {
+    const id = cid * 6 + rid + 1
+    const liq = configMap.get(id)
+    const washing = cid == 5 && rid > 3;
+    if (liq !== undefined) {
+        return (
+            <td key={cid} className={classNames('liquidCell', { washing })}>
+                <div className="liqName">
+                    {liq.liquid?.name}
+                </div>
+                <div className="liqAmount">
+                    {liq.liquidAmount} ml
+                </div>
+            </td>
+        )
+    }
+    return <td key={cid} className={classNames('emptyCell', { washing })}><span className="emptyCell">Empty </span></td>
+}
+
 
 export default function Recommendations() {
+    const headers = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const rows = 6;
+    const columns = 6;
+    const [liquidConfig, setLiquidConfig] = useState<DeploymentLiquidConfiguration[]>([])
+    const configMap = toMap(liquidConfig, i => i.liquidSlotNumber);
+
     useEffect(() => {
         let id = window.location.href.split('/').slice(-1);
         console.log(id);
-        async function test() {
-            const liquidConfig = await (await getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)).data;
-            createTable(liquidConfig);
-        };
-        test();
+        getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
+            // .then(resp => createTable(resp.data))
+            .then(resp => setLiquidConfig(resp.data))
     }, [])
 
 
@@ -190,12 +64,37 @@ export default function Recommendations() {
                 </div>
                 <div className="tableContainer">
                     <h4><i>Fill in tubes and place them according to the configuration table:</i></h4>
+                    <table id="recom-table">
+                        <colgroup>
+                            <col className="small" span={5} />
+                            <col className="medium" />
+                            <col className="large" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <td className="horizontal-thead"></td>
+                                {headers.map(h =>
+                                    <td key={h}>{h}</td>
+                                )}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[...Array(rows).keys()].map((rid) =>
+                                <tr key={rid}>
+                                    <td className="horizontal-thead">{rid + 1}</td>
+                                    {[...Array(columns).keys()].map(cid =>
+                                        resolveCell(cid, rid, configMap)
+                                    )}
+                                </tr>
+                            )}
+                        </tbody>
 
+                    </table>
                 </div>
                 <div className="launchContainer">
                     <div className="confirm">
                         <input type="checkbox" name="confirm" id="confirmCheck"
-                            onClick={event => showBtn()}></input>
+                            onClick={() => showBtn()}></input>
                         <p></p>
                     </div>
                     <div id="launchBtn" style={{ visibility: "hidden" }}>
