@@ -1,7 +1,10 @@
-import { AfterLoad, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Repository } from "typeorm";
 import { ProtocolXml } from "./ProtocolXml";
 import { Step } from "./Step";
 import { User } from "./User";
+
+export const PROTOCOL_STEP_RELATIONS = ["steps", "steps.liquidApplication", "steps.waiting", "steps.temperatureChange",
+    "steps.liquidApplication.liquid", "steps.liquidApplication.liquid.liquidType"];
 
 @Entity()
 export class ProtocolType {
@@ -29,8 +32,7 @@ export class Protocol {
     @CreateDateColumn()
     creationDate: Date;
 
-    @JoinColumn()
-    @OneToOne(() => ProtocolXml, { cascade: true })
+    @OneToOne(() => ProtocolXml, protocolXml => protocolXml.protocol, { cascade: true })
     protocolXml: ProtocolXml;
 
     @Column()

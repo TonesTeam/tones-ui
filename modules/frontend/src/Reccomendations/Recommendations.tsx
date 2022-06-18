@@ -4,6 +4,7 @@ import { getRequest } from 'common/util';
 import NavigationBar from "navbar/NavigationBar";
 import "navbar/NavigationBar.css";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
 import "./Recommendations.css";
@@ -44,9 +45,10 @@ export default function Recommendations() {
     const columns = 6;
     const [liquidConfig, setLiquidConfig] = useState<DeploymentLiquidConfiguration[]>([])
     const configMap = toMap(liquidConfig, i => i.liquidSlotNumber);
+    const params = useParams()
 
     useEffect(() => {
-        let id = window.location.href.split('/').slice(-1);
+        let id = params.id!;
         console.log(id);
         getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
             // .then(resp => createTable(resp.data))

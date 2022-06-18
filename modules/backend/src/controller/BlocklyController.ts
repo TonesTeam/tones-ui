@@ -2,16 +2,16 @@ import { Liquid } from "@entity/Liquid";
 import { LiquidMapper } from "@mapper/LiquidMapper";
 import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
-import { BaseHttpController, Controller, controller, httpGet, httpPost, request, response } from "inversify-express-utils";
+import { BaseHttpController, Controller, controller, httpGet, httpPost, httpPut, request, requestParam, response } from "inversify-express-utils";
 import * as express from "express";
 import { JSDOM } from "jsdom";
 import { ProtocolXmlParsingService } from "@service/ProtocolXmlParsingService";
-import { Protocol } from "@entity/Protocol";
+import { Protocol, PROTOCOL_STEP_RELATIONS } from "@entity/Protocol";
 import { safeJSONSerialize } from "@util/JSONSerializer";
 import { Logger } from "tslog";
 
 
-@controller("")
+@controller("/blockly")
 export class BlocklyController extends BaseHttpController implements Controller {
 
     @inject(Logger)
@@ -35,14 +35,22 @@ export class BlocklyController extends BaseHttpController implements Controller 
         const DOMParser = new JSDOM("").window.DOMParser;
         const doc = new DOMParser().parseFromString(req.body, "text/xml");
         const protocolXml = doc.querySelector('[type=begin_protocol]')!;
-        const pr = await this.protocolParsingService.parseProtocolXml(protocolXml);
-        try {
-            await (await this.dbservice.getRepository(Protocol)).save(pr);
-        } catch (error) {
-            this.logger.error("Failed to save:", error);
-            res.status(500).send(error);
-            return;
-        }
+        const pr = await this.protocolParsingService.createProtocolFromXml(protocolXml);
+        await (await this.dbservice.getRepository(Protocol)).save(pr);
         res.status(200).send(safeJSONSerialize(pr));
+    }
+
+    @httpPut("/protocol/:id")
+    public async updateProtocol(@requestParam("id") id: string, @request() req: express.Request, @response() res: express.Response) {
+        const DOMParser = new JSDOM("").window.DOMParser;
+        const doc = new DOMParser().parseFromString(req.body, "text/xml");
+        const createdProtocol = await this.protocolParsingService.createProtocolFromXml(doc.querySelector('[type=begin_protocol]')!);
+        createdProtocol.id = parseInt(id);
+        await (await this.dbservice.getConnection()).transaction<Protocol>(async em => {
+            const p = await em.findOneOrFail(Protocol, parseInt(id), { relations: PROTOCOL_STEP_RELATIONS })
+            await em.remove<Protocol>(p)
+            return em.save<Protocol>(createdProtocol)
+        });
+        res.status(200).send(safeJSONSerialize(createdProtocol));
     }
 }

@@ -1,5 +1,5 @@
 import { Liquid } from "@entity/Liquid";
-import { Protocol } from "@entity/Protocol";
+import { Protocol, PROTOCOL_STEP_RELATIONS } from "@entity/Protocol";
 import { LiquidMapper } from "@mapper/LiquidMapper";
 import ProtocolMapper from "@mapper/ProtocolMapper";
 import { CommandType, LiquidApplicationCommand } from "@service/commands/Commands";
@@ -7,7 +7,7 @@ import { ProtocolCommandsMapper } from "@service/commands/ProtocolCommandsMapper
 import { DatabaseService } from "@service/DatabaseService";
 import { LiquidConfigurationResolver } from "@service/deployment/LiquidConfigurationResolver";
 import { inject } from "inversify";
-import { BaseHttpController, controller, httpGet, queryParam, requestParam } from "inversify-express-utils";
+import { BaseHttpController, controller, httpDelete, httpGet, queryParam, requestParam } from "inversify-express-utils";
 
 @controller("/protocol")
 export default class ProtocolController extends BaseHttpController {
@@ -26,19 +26,31 @@ export default class ProtocolController extends BaseHttpController {
     @httpGet("/all")
     public async allProtocols() {
         const protocols = await (await this.dbService.getRepository(Protocol)).find({
-            relations: ["creator", "steps", "steps.liquidApplication",
-                "steps.liquidApplication.liquid", "steps.liquidApplication.liquid.liquidType"]
+            relations: ["creator", ...PROTOCOL_STEP_RELATIONS]
         })
         return this.json(protocols.map(p => this.protocolMapper.toDto(p)), 200)
+    }
+
+    @httpGet("/:id/xml")
+    public async getProtocolXml(@requestParam("id") id: string) {
+        const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(parseInt(id), {
+            relations: ["protocolXml"]
+        })
+        return this.json(protocol.protocolXml.xml, 200)
+    }
+
+    @httpDelete("/:id")
+    public async deleteProtocol(@requestParam("id") id: string) {
+        const repo = await this.dbService.getRepository(Protocol);
+        const p = await repo.findOneOrFail(parseInt(id));
+        await repo.remove(p)
+        return this.statusCode(200);
     }
 
     @httpGet("/configuration/:id")
     public async getProtocolLiquidConfiguration(@requestParam("id") id: string, @queryParam("slots") slots: string) {
         slots = slots ?? 1;
-        const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(id, {
-            relations: ["steps", "steps.liquidApplication", "steps.waiting", "steps.temperatureChange",
-                "steps.liquidApplication.liquid", "steps.liquidApplication.liquid.liquidType"]
-        });
+        const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(id, { relations: PROTOCOL_STEP_RELATIONS });
         const slotArray = Array.from(Array(parseInt(slots)).keys())
         const commands = protocol.steps.flatMap(s => this.protocolCommandsMapper.stepToCommand(s, slotArray));
         let iOrder = 1;

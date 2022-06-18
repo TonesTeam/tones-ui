@@ -4,23 +4,23 @@ CREATE TABLE IF NOT EXISTS protocol_type (
   type_name varchar(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS protocol_xml (
-  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  xml BLOB NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS protocol (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   protocol_name varchar(255) not NULL,
   creation_date DATETIME NOT NULL,
-  protocol_xml_id int,
   comment TEXT,
   creator_id int NOT NULL,
   standard_temp int NOT NULL,
   protocol_type_id int NOT NULL,
   FOREIGN KEY (creator_id) REFERENCES user (id),
-  FOREIGN KEY (protocol_xml_id) REFERENCES protocol_xml (id)
-  FOREIGN KEY (protocol_type_id) REFERENCES protocol_type (id)
+  FOREIGN KEY (protocol_type_id) REFERENCES protocol_type (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS protocol_xml (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  xml BLOB NOT NULL,
+  protocol_id int NOT NULL,
+  FOREIGN KEY (protocol_id) REFERENCES protocol (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS step (
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS step (
   protocol_id int NOT NULL,
   sequence_order int NOT NULL,
   step_type varchar(255) CHECK(step_type in ('liquid_application', 'temperature_change','waiting')),
-  FOREIGN KEY (protocol_id) REFERENCES protocol (id)
+  FOREIGN KEY (protocol_id) REFERENCES protocol (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS liquid_application (
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS liquid_application (
   step_id int NOT NULL,
   liquid_id int NOT NULL,
   FOREIGN KEY (liquid_id) REFERENCES liquid (id),
-  FOREIGN KEY (step_id) REFERENCES step (id)
+  FOREIGN KEY (step_id) REFERENCES step (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS waiting (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   waiting_time int NOT NULL,
   step_id int NOT NULL,
-  FOREIGN KEY (step_id) REFERENCES step (id)
+  FOREIGN KEY (step_id) REFERENCES step (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS temperature_change (
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS temperature_change (
   step_id int NOT NULL,
   target_temperature int NOT NULL,
   blocking BOOLEAN NOT NULL CHECK (blocking IN (0, 1)),
-  FOREIGN KEY (step_id) REFERENCES step (id)
+  FOREIGN KEY (step_id) REFERENCES step (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user (
@@ -154,7 +154,7 @@ INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES
   ("Trypsin", (select id from liquid_type where type_name="Antigen retrieval"), NULL);
 
 --- Temporary Data (sorta) ---
-INSERT INTO protocol VALUES(2,'test_protocol','2022-06-06 10:17:17.387',1,NULL,1,12,1);
+INSERT INTO protocol VALUES(2,'test_protocol','2022-06-06 10:17:17.387',NULL,1,12,1);
 INSERT INTO step VALUES(1,2,1,'temperature_change');
 INSERT INTO step VALUES(2,2,2,'liquid_application');
 INSERT INTO step VALUES(3,2,3,'waiting');
@@ -169,3 +169,26 @@ INSERT INTO waiting VALUES(1,0,3);
 INSERT INTO waiting VALUES(2,0,5);
 INSERT INTO waiting VALUES(3,0,7);
 INSERT INTO temperature_change VALUES(1,1,0,1);
+
+--- Protocol 3 ---
+INSERT INTO "protocol"("id", "protocol_name", "creation_date", "comment", "standard_temp", "creator_id", "protocol_type_id") VALUES (3, "new test", "2022-06-19 09:58:48.568", NULL, 12, 1, 1);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 1, "liquid_application", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 2, "temperature_change", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 3, "liquid_application", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 4, "temperature_change", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 5, "waiting", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 6, "liquid_application",3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 7, "waiting", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 8, "liquid_application", 3);
+INSERT INTO "step"("id", "sequence_order", "step_type", "protocol_id") VALUES (NULL, 9, "waiting", 3);
+INSERT INTO "waiting"("id", "waiting_time", "step_id") VALUES (NULL, 180,12);
+INSERT INTO "waiting"("id", "waiting_time", "step_id") VALUES (NULL, 180,14);
+INSERT INTO "waiting"("id", "waiting_time", "step_id") VALUES (NULL, 120,16);
+INSERT INTO "temperature_change"("id", "target_temperature", "blocking", "step_id") VALUES (NULL, 20,1,9);
+INSERT INTO "temperature_change"("id", "target_temperature", "blocking", "step_id") VALUES (NULL, 20,1,11);
+INSERT INTO "liquid_application"("id", "liquid_id", "step_id") VALUES (NULL, 1,8);
+INSERT INTO "liquid_application"("id", "liquid_id", "step_id") VALUES (NULL, 1,10);
+INSERT INTO "liquid_application"("id", "liquid_id", "step_id") VALUES (NULL, 11,13);
+INSERT INTO "liquid_application"("id", "liquid_id", "step_id") VALUES (NULL, 5,15);
+INSERT INTO "protocol_xml"("id", "protocol_id", "xml") VALUES (NULL, 3, '<block xmlns="https://developers.google.com/blockly/xml" type="begin_protocol" id="2wwy![(Yq|u3jSBlzk3]" x="240" y="30"><field name="protocol_name">new test</field><field name="type_1">type_1</field><field name="temp">12</field><statement name="protocol_content"><block type="apply_reagent" id="16Al#FGI:*D?JH-pqs|S"><field name="reagent_type">black subtype</field><field name="reagent">Schwartz reagent</field><field name="time">3</field><field name="times">2</field><field name="degrees">20</field><next><block type="apply_antigen_liquid" id="3n[Z_r1$IVkp=]q*y1|H"><field name="liquid">Trypsin</field><field name="time">3</field><next><block type="apply_washing_liquid" id="5pV=.gzKZ@_Fp?dJi`tj"><field name="liquid">Distilled Water</field><field name="time">2</field><field name="times">3</field></block></next></block></next></block></statement></block>');
+--UPDATE "protocol_xml" SET "protocol_id" = 3 WHERE "id" IN (1);

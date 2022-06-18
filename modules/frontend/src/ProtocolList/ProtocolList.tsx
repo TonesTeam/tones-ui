@@ -4,8 +4,10 @@ import './ProtocolList.css'
 import 'common/style.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
-import {ProtocolDto} from 'sharedlib/dto/protocol.dto'
+import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { getRequest } from 'common/util'
+import { useNavigate } from "react-router-dom";
+
 
 export const p1: ProtocolDto = {
     id: 1,
@@ -14,45 +16,54 @@ export const p1: ProtocolDto = {
     creationDate: new Date(),
     usedLiquids: [
         {
-        liquidName: 'APR-220',
-        liquidType: 'Zhizha 1',
-        amount: 40,
+            liquidName: 'APR-220',
+            liquidType: 'Zhizha 1',
+            amount: 40,
         },
-        {liquidName: 'Some very long name of a liquid',
-        liquidType: 'Zhizha 2',
-        amount: 100,
+        {
+            liquidName: 'Some very long name of a liquid',
+            liquidType: 'Zhizha 2',
+            amount: 100,
         },
-        {liquidName: 'Xelenium',
-        liquidType: 'Zhizha 3',
-        amount: 20,
+        {
+            liquidName: 'Xelenium',
+            liquidType: 'Zhizha 3',
+            amount: 20,
         },
-        {liquidName: 'Liquid gold',
-        liquidType: 'Zhizha 2',
-        amount: 100,
+        {
+            liquidName: 'Liquid gold',
+            liquidType: 'Zhizha 2',
+            amount: 100,
         },
-        {liquidName: 'Another very long name',
-        liquidType: 'Zhizha 2',
-        amount: 30,
+        {
+            liquidName: 'Another very long name',
+            liquidType: 'Zhizha 2',
+            amount: 30,
         },
-        {liquidName: 'ABC-123',
-        liquidType: 'Zhizha 2',
-        amount: 11,
+        {
+            liquidName: 'ABC-123',
+            liquidType: 'Zhizha 2',
+            amount: 11,
         },
-        {liquidName: 'Alcohol',
-        liquidType: 'Zhizha 21',
-        amount: 400,
+        {
+            liquidName: 'Alcohol',
+            liquidType: 'Zhizha 21',
+            amount: 400,
         },
-        {liquidName: 'Lorem ipsum',
-        liquidType: 'Zhizha 2',
-        amount: 50,
+        {
+            liquidName: 'Lorem ipsum',
+            liquidType: 'Zhizha 2',
+            amount: 50,
         },
-        {liquidName: 'One more liquid with very long name',
-        liquidType: 'Zhizha 2',
-        amount: 23,
+        {
+            liquidName: 'One more liquid with very long name',
+            liquidType: 'Zhizha 2',
+            amount: 23,
         },
-        {liquidName: 'Holy water',
-        liquidType: 'Zhizha 2',
-        amount: 10,
+        {
+            liquidName: 'Holy water',
+            liquidType: 'Zhizha 2',
+            amount: 10,
         }
     ]
 }
@@ -96,9 +107,11 @@ function setEventListeners() {
         checks[i].onclick = selectiveCheck;
 }
 
-function Protocol(props: any){
-    return(
-        
+function Protocol(props: any) {
+    let navigate = useNavigate();
+
+    return (
+
         <div className="protocol">
             <div className="protocol-general">
                 <div className="info-cell" id="check">
@@ -153,7 +166,8 @@ function Protocol(props: any){
 
                     <div className="protocol-options">
                         <div className="protocol-options">
-                            <button className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
+                            <button onClick={() => navigate(`/edit/protocol/${props.id}`)}
+                                className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
                             <button className="proto-btn"><i className="fas fa-code-branch"></i>Use as template</button>
                         </div>
 
@@ -161,7 +175,7 @@ function Protocol(props: any){
                             <button className="proto-btn"><a href={`/launch/${props.id}`}><i className="fas fa-play"></i>Launch</a></button>
                             <button className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -177,12 +191,12 @@ const protocol = protocolList[0];
 console.log(protocol)
 export default function ProtocolList() {
     useEffect(setEventListeners)
-    const [isVisible, setToVisible] = useState(false) 
+    const [isVisible, setToVisible] = useState(false)
 
     const onBackdropClick = () => {
         setToVisible(false)
     }
-    
+
     return (
         <><NavigationBar />
             <div id="main">
@@ -196,7 +210,7 @@ export default function ProtocolList() {
                     </div>
                     <div className="launch-container">
                         <div className="protocol-counter">
-                            {/* <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development*/} 
+                            {/* <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development*/}
                             {/* <a href={`/launch/${p1.id}`}> */}
                             {/* </a> */}
                         </div>
@@ -205,11 +219,10 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-                {protocolList.map(function(protocol){
-                    return <Protocol id={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()}/>
-                })}
+                    {protocolList.map(function (protocol) {
+                        return <Protocol id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
+                    })}
 
-                
 
                     <Protocol id="PA-001" name="Protocol Alpha" 
                     authorName="James Doe" creationDate="10.01.2021"/>

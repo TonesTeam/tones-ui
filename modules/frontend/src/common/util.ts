@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosResponse } from 'axios'
+import axios, { Axios, AxiosResponse, Method } from 'axios'
 import { parseISO } from "date-fns"
 
 const client = axios.create();
@@ -39,9 +39,14 @@ export async function getRequest<T>(path: string): Promise<AxiosResponse<T, any>
     return await client.get(fullpath)
 }
 
-export async function postRequest<T>(path: string, payload: string): Promise<AxiosResponse<T, any>> {
+export async function makeRequest<R>(method: Method, path: string, payload: string): Promise<AxiosResponse<R, any>> {
     const fullpath = domain + prefix + path
-    console.log("POST: " + fullpath)
-    return await client.post(fullpath, payload, { validateStatus: null })
+    console.log(`${method}: ${fullpath}`)
+    return await client.request({
+        method: method,
+        url: fullpath,
+        data: payload,
+        validateStatus: null,
+    });
 }
 

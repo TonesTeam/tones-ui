@@ -18,7 +18,7 @@ export class ProtocolXmlParsingService {
     @inject(BlockSequenceParser)
     blockParser: BlockSequenceParser;
 
-    public async parseProtocolXml(protocolXml: Element): Promise<Protocol> {
+    public async createProtocolFromXml(protocolXml: Element): Promise<Protocol> {
         const protocol = new Protocol();
         protocol.steps = [];
         const cleanProtocolXml = this.scrubIdsFromDocument(protocolXml);

@@ -6,7 +6,7 @@ import { LiquidDto } from "sharedlib/dto/liquid.dto";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import './BlocklyFunction';
 
-const liquids = (await getRequest<LiquidDto[]>("/liquids")).data;
+const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
 console.log(liquids)
 const typesMap = groupByMapped(liquids, l => l.type, l => l.name);
 const reagentSubTypeMap = groupByMapped(liquids.filter(l => l.type === LiquidTypeName.REAGENT), r => r.subType, l => l.name)

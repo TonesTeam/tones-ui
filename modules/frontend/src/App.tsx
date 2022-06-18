@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtocolList from './ProtocolList/ProtocolList';
 import History from 'History/History';
 import BlocklyPage from 'Blockly/Blockly';
-import Recommendations from './ProtocolList/Recommendations';
+import Recommendations from './Reccomendations/Recommendations';
 
 // import {NavBarItem} from 'navbar/NavigationBar'
 
@@ -20,7 +20,8 @@ function App() {
         <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
         <Route path="/" element={<BlocklyPage />} />
-        <Route path="/launch/*" element={<Recommendations />} />
+        <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
+        <Route path="/launch/:id" element={<Recommendations />} />
       </Routes>
     </Router>
   )
