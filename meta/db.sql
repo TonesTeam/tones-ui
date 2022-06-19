@@ -169,6 +169,7 @@ INSERT INTO waiting VALUES(1,0,3);
 INSERT INTO waiting VALUES(2,0,5);
 INSERT INTO waiting VALUES(3,0,7);
 INSERT INTO temperature_change VALUES(1,1,0,1);
+INSERT INTO "protocol_xml"("id", "protocol_id", "xml") VALUES (NULL, 2, '<block xmlns="https://developers.google.com/blockly/xml" type="begin_protocol" id="2wwy![(Yq|u3jSBlzk3]" x="240" y="30"></block>');
 
 --- Protocol 3 ---
 INSERT INTO "protocol"("id", "protocol_name", "creation_date", "comment", "standard_temp", "creator_id", "protocol_type_id") VALUES (3, "new test", "2022-06-19 09:58:48.568", NULL, 12, 1, 1);

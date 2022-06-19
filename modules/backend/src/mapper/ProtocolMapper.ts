@@ -1,12 +1,11 @@
+import { Liquid } from "@entity/Liquid";
+import { LiquidApplication } from "@entity/LiquidApplication";
 import { Protocol } from "@entity/Protocol";
 import { StepType } from "@entity/Step";
-import { ProtocolDto, UsedProtocolLiquid } from "sharedlib/dto/protocol.dto"
-import { groupBy, groupByMapped } from "sharedlib/collection.util"
-import { ident } from "sharedlib/functional.util"
-import { LiquidApplication } from "@entity/LiquidApplication";
-import { Liquid, LiquidType } from "@entity/Liquid";
-import config from "sharedlib/tones-config.json";
 import { provide } from "inversify-binding-decorators";
+import { groupBy, toMap } from "sharedlib/collection.util";
+import { ProtocolDto, UsedProtocolLiquid } from "sharedlib/dto/protocol.dto";
+import config from "sharedlib/tones-config.json";
 
 @provide(ProtocolMapper)
 export default class ProtocolMapper {
@@ -25,17 +24,16 @@ export default class ProtocolMapper {
         const liquidSteps = p.steps
             .filter(s => StepType.LIQUID_APPLICATION === s.stepType)
             .map(s => s.liquidApplication!);
-        const liquidsNameMap = groupBy(liquidSteps.map(l => l.liquid), l => l.liquidName)
+        const liquidsNameMap = toMap(liquidSteps.map(l => l.liquid), l => l.liquidName)
         const liquidsMap = groupBy(liquidSteps, s => s.liquid.liquidName);
         return Array.from(liquidsMap.entries())
             .map(e => this.mapUsedLiquid(e, liquidsNameMap))
-
     }
 
-    private mapUsedLiquid(ent: [string, LiquidApplication[]], liquidsNameMap: Map<string, Liquid[]>): UsedProtocolLiquid {
+    private mapUsedLiquid(ent: [string, LiquidApplication[]], liquidsNameMap: Map<string, Liquid>): UsedProtocolLiquid {
         return {
             liquidName: ent[0],
-            liquidType: liquidsNameMap.get(ent[0])!.at(0)!.liquidType.typeName,
+            liquidType: liquidsNameMap.get(ent[0])!.liquidType.typeName,
             amount: ent[1].length * config["liquid-application-volume"]
         }
     }

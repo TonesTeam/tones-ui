@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { CenteringFlexBox } from 'common/components'
 
 function NavBarItem(props: any | { route: String }) {
-    let id = props.isSelected ? "selected-navbar-item" : undefined;
-    const isOpen = props.isOpen
+    let id = props.itemData.selectedItem === props.text ? "selected-navbar-item" : undefined;
+    const isOpen = props.itemData.isOpen
     let route = { href: props.route }
     return (
         <a id={id} {...route} className={`nav-item-link ${isOpen ? 'nav-item-link-open' : 'nav-item-link-closed'}`}>
@@ -24,8 +24,12 @@ const setMainMargin = (mgl: String) => {
     document.getElementById("main").style.marginLeft = mgl;
 }
 
-export default function NavigationBar() {
+export default function NavigationBar(props: { selectedItem?: string }) {
     const [isOpen, setOpen] = useState(false)
+    const itemData: { selectedItem: string, isOpen: boolean } = {
+        selectedItem: props.selectedItem ?? "",
+        isOpen
+    };
     useEffect(() => {
         const w = getComputedStyle(document.documentElement).getPropertyValue("--navbar-width")
         if (!isOpen) setMainMargin("75px")
@@ -54,13 +58,13 @@ export default function NavigationBar() {
             </>}
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
                 <div style={{ flexGrow: 1 }}></div>
-                <NavBarItem isOpen={isOpen} isSelected icon="list" text="Protocol List" route="/list" />
-                <NavBarItem isOpen={isOpen} icon="edit" text="Create Protocol" />
-                <NavBarItem isOpen={isOpen} icon="history" text="History" route="/history" />
-                <NavBarItem isOpen={isOpen} icon="user-cog" text="Profile Settings" />
-                <NavBarItem isOpen={isOpen} icon="cogs" text="System Settings" />
-                <NavBarItem isOpen={isOpen} icon="file" text="Reports" />
-                <NavBarItem isOpen={isOpen} icon="sign-out-alt" text="Log out" route="/" />
+                <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
+                <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol" />
+                <NavBarItem itemData={itemData} icon="history" text="History" route="/history" />
+                <NavBarItem itemData={itemData} icon="user-cog" text="Profile Settings" />
+                <NavBarItem itemData={itemData} icon="cogs" text="System Settings" />
+                <NavBarItem itemData={itemData} icon="file" text="Reports" />
+                <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
                 <div style={{ flexGrow: 2 }}></div>
             </div>
         </div>

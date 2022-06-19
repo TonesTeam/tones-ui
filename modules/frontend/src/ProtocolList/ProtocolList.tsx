@@ -1,5 +1,5 @@
-import NavigationBar from 'navbar/NavigationBar'
-import 'navbar/NavigationBar.css'
+import NavigationBar from 'NavigationBar/NavigationBar'
+import 'NavigationBar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
 import { useEffect } from 'react'
@@ -198,9 +198,9 @@ export default function ProtocolList() {
     }
 
     return (
-        <><NavigationBar />
+        <>
+            <NavigationBar selectedItem='Protocol List' />
             <div id="main">
-
                 <div className="page-header" id="sticker">
                     <div className="open-menu-btn">
                     </div>
@@ -224,32 +224,32 @@ export default function ProtocolList() {
                     })}
 
 
-                    <Protocol id="PA-001" name="Protocol Alpha" 
-                    authorName="James Doe" creationDate="10.01.2021"/>
+                    <Protocol id="PA-001" name="Protocol Alpha"
+                        authorName="James Doe" creationDate="10.01.2021" />
 
-                    <Protocol id="PB-002" name="Protocol Beta" 
-                    authorName="Janette Smith" creationDate="11.07.2026"/>
+                    <Protocol id="PB-002" name="Protocol Beta"
+                        authorName="Janette Smith" creationDate="11.07.2026" />
 
-                    <Protocol id="PY-003" name="Protocol Gamma" 
-                    authorName="Bellatrix Lestrange " creationDate="22.12.2020"/>
+                    <Protocol id="PY-003" name="Protocol Gamma"
+                        authorName="Bellatrix Lestrange " creationDate="22.12.2020" />
 
-                    <Protocol id="PD-004" name="Protocol Delta" 
-                    authorName="Godric Gryffindor" creationDate="02.03.1126"/>
+                    <Protocol id="PD-004" name="Protocol Delta"
+                        authorName="Godric Gryffindor" creationDate="02.03.1126" />
 
-                    <Protocol id="PE-005" name="Protocol Epsilon" 
-                    authorName="Rubeus Hagrid" creationDate="11.07.2026"/>
+                    <Protocol id="PE-005" name="Protocol Epsilon"
+                        authorName="Rubeus Hagrid" creationDate="11.07.2026" />
 
-                    <Protocol id="PD-006" name="Protocol Zeta" 
-                    authorName="Helga Hufflepuff" creationDate="11.07.1111"/>
+                    <Protocol id="PD-006" name="Protocol Zeta"
+                        authorName="Helga Hufflepuff" creationDate="11.07.1111" />
 
-                    <Protocol id="PD-007" name="Protocol Eta" 
-                    authorName="Viktor Krum" creationDate="10.07.2323"/>
+                    <Protocol id="PD-007" name="Protocol Eta"
+                        authorName="Viktor Krum" creationDate="10.07.2323" />
 
-                    <Protocol id="PO-008" name="Protocol Theta" 
-                    authorName="Luna Lovegood" creationDate="12.09.2052"/>
+                    <Protocol id="PO-008" name="Protocol Theta"
+                        authorName="Luna Lovegood" creationDate="12.09.2052" />
 
-                    <Protocol id="PK-009" name="Protocol Kappa" 
-                    authorName="Minerva McGonagall" creationDate="11.07.2022"/>
+                    <Protocol id="PK-009" name="Protocol Kappa"
+                        authorName="Minerva McGonagall" creationDate="11.07.2022" />
                 </div>
             </div></>
     )

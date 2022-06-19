@@ -83,7 +83,7 @@
 
 
 #main {
-    transition: margin-left .5s;
+    transition: margin-left .2s;
     margin-left: var(--navbar-width);
     font-size: var(--navbar-font-size);
 }

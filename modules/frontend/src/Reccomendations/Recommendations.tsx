@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import "common/style.css";
 import { getRequest } from 'common/util';
-import NavigationBar from "navbar/NavigationBar";
-import "navbar/NavigationBar.css";
+import NavigationBar from "NavigationBar/NavigationBar";
+import "NavigationBar/NavigationBar.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
@@ -51,7 +51,6 @@ export default function Recommendations() {
         let id = params.id!;
         console.log(id);
         getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
-            // .then(resp => createTable(resp.data))
             .then(resp => setLiquidConfig(resp.data))
     }, [])
 

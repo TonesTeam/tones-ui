@@ -1,4 +1,4 @@
-import NavigationBar from "navbar/NavigationBar";
+import NavigationBar from "NavigationBar/NavigationBar";
 import './History.css'
 import { LiquidUseInstance } from 'sharedlib'
 import { getComparator } from 'sharedlib/collection.util'

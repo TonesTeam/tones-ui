@@ -15,12 +15,13 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<ProtocolList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/list" element={<ProtocolList />} />
         <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
-        <Route path="/" element={<BlocklyPage />} />
         <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
+        <Route path="/create/protocol" element={<BlocklyPage />} />
         <Route path="/launch/:id" element={<Recommendations />} />
       </Routes>
     </Router>

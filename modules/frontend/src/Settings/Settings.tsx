@@ -1,3 +1,3 @@
-import NavigationBar from 'navbar/NavigationBar'
+import NavigationBar from 'NavigationBar/NavigationBar'
 import 'navbar/NavigationBar.css'
 

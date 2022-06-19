@@ -1,18 +1,17 @@
 // import "./App.css";
 import SaveIcon from '@mui/icons-material/Save';
 import { Fab } from "@mui/material";
-import Blockly from "blockly";
+import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
-import NavigationBar from "navbar/NavigationBar";
+import NavigationBar from "NavigationBar/NavigationBar";
 import { useEffect, useState } from "react";
 import { BlocklyWorkspace } from "react-blockly";
+import { Audio } from 'react-loader-spinner';
 import { useParams } from 'react-router-dom';
 import format from "xml-formatter";
 import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
-import { Audio } from 'react-loader-spinner'
-import { CenteringFlexBox } from 'common/components';
 
 
 
@@ -29,7 +28,7 @@ function saveProtocol(xml: string) {
         })
 }
 
-function updateProtocol(id: number, xml: string) {
+function updateProtocol(id: string, xml: string) {
     makeRequest('PUT', `/blockly/protocol/${id}`, xml)
         .then(resp => {
             if (resp.status === 200) {
@@ -112,7 +111,7 @@ export default function BlocklyPage() {
     }
     return (
         <>
-            <NavigationBar />
+            <NavigationBar selectedItem={params.id ?? "Create Protocol"} />
             <div id="main">
                 <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended"
                     onClick={() => saveFunction(xml)} >
