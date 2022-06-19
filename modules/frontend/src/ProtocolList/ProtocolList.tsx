@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
+import { makeRequest } from 'common/util'
 
 
 export const p1: ProtocolDto = {
@@ -173,7 +174,8 @@ function Protocol(props: any) {
 
                         <div className="protocol-options">
                             <button className="proto-btn"><a href={`/launch/${props.id}`}><i className="fas fa-play"></i>Launch</a></button>
-                            <button className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
+                            <button onClick={() => makeRequest('DELETE', `/protocol/${props.id}`).then(() => props.listInitializer())}
+                                className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
 
                     </div>
@@ -183,15 +185,16 @@ function Protocol(props: any) {
     );
 }
 
-const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all")).data;
-const protocol = protocolList[0];
+// const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all")).data;
+// const protocol = protocolList[0];
 
-// console.log(protocolList.data.length);
-
-console.log(protocol)
 export default function ProtocolList() {
-    useEffect(setEventListeners)
+    const [protocols, setProtocols] = useState<ProtocolDto[]>([])
     const [isVisible, setToVisible] = useState(false)
+    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)).then(setEventListeners) }
+    useEffect(listInitilizer, []);
+    // useEffect(setEventListeners)
+
 
     const onBackdropClick = () => {
         setToVisible(false)
@@ -219,8 +222,8 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-                    {protocolList.map(function (protocol) {
-                        return <Protocol id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
+                    {protocols.map(function (protocol) {
+                        return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
 
 
