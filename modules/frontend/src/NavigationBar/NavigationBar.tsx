@@ -24,16 +24,27 @@ const setMainMargin = (mgl: String) => {
     document.getElementById("main").style.marginLeft = mgl;
 }
 
+const setOpacity = (opct: String) => {
+    // @ts-ignore
+    document.getElementById("main").style.filter = "blur("+opct+")";
+}
+
+
 export default function NavigationBar(props: { selectedItem?: string }) {
     const [isOpen, setOpen] = useState(false)
     const itemData: { selectedItem: string, isOpen: boolean } = {
         selectedItem: props.selectedItem ?? "",
         isOpen
     };
-    useEffect(() => {
+/*     useEffect(() => {
         const w = getComputedStyle(document.documentElement).getPropertyValue("--navbar-width")
         if (!isOpen) setMainMargin("75px")
         else setMainMargin(w)
+    }) */
+    useEffect(() => {
+        const op = '3px';
+        if (!isOpen) setOpacity("0");
+        else setOpacity(op);
     })
     return (
         <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'}`}>
@@ -43,6 +54,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                         &#9776;
                     </CenteringFlexBox>
                     <div id="openbtn-buffer"></div>
+                    <div className="user-prof"></div>
                 </>
             }
             {isOpen && <>
@@ -52,12 +64,12 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                     </div>
                 </div>
                 <div className="user-prof">
-                    <span className="fas fa-user"></span>
+                    <span className="fas fa-user-circle"></span>
                     <div>Test Username</div>
                 </div>
             </>}
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
-                <div style={{ flexGrow: 1 }}></div>
+                {/* <div style={{ flexGrow: 1 }}></div> */}
                 <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
                 <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol" />
                 <NavBarItem itemData={itemData} icon="history" text="History" route="/history" />
@@ -65,7 +77,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 <NavBarItem itemData={itemData} icon="cogs" text="System Settings" />
                 <NavBarItem itemData={itemData} icon="file" text="Reports" />
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
-                <div style={{ flexGrow: 2 }}></div>
+                {/* <div style={{ flexGrow: 2 }}></div> */}
             </div>
         </div>
     )
