@@ -78,10 +78,8 @@ function selectiveCheck(_event: any) {
 }
 
 function setEventListeners() {
-    console.log("Setting listerners")
     const protocolGenerals: NodeListOf<HTMLElement> = document.querySelectorAll(".protocol-general");
     const checkBoxes = document.querySelectorAll("#check");
-    console.log(`Generals ${protocolGenerals.length}`)
 
     protocolGenerals.forEach(protocolGeneral => {
         protocolGeneral.addEventListener("click", event => {
@@ -193,11 +191,9 @@ function Protocol(props: any) {
 export default function ProtocolList() {
     const [protocols, setProtocols] = useState<ProtocolDto[]>([])
     const [isVisible, setToVisible] = useState(false)
-    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
+    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)).then(setEventListeners) }
     useEffect(listInitilizer, []);
-    useEffect(setEventListeners, [protocols]);
-    useEffect(setEventListeners, [])
-
+    // useEffect(setEventListeners)
 
 
     const onBackdropClick = () => {
