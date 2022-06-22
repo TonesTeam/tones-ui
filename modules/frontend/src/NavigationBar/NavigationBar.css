@@ -40,7 +40,6 @@
     /* align-items: center; */
    position: fixed;
    bottom: 15%;
-   width: 100%
 }
 
 .nav-item-txt-box {
@@ -60,7 +59,7 @@
 .nav-item-link {
     --item-border: 2px solid #335a85;
     display: flex;
-    height: 80px;
+    height: 8vh;
     flex-direction: row;
     border-bottom: var(--item-border);
     align-items: center;
@@ -121,6 +120,7 @@
 .openbtn:hover {
     color: #fff;
 }
+
 
 /*---------------------------------------*/
 
