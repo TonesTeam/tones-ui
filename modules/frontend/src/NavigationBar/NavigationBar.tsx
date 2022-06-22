@@ -5,14 +5,19 @@ import { CenteringFlexBox } from 'common/components'
 function NavBarItem(props: any | { route: String }) {
     let id = props.itemData.selectedItem === props.text ? "selected-navbar-item" : undefined;
     const isOpen = props.itemData.isOpen
+
     let route = { href: props.route }
     return (
         <a id={id} {...route} className={`nav-item-link ${isOpen ? 'nav-item-link-open' : 'nav-item-link-closed'}`}>
             <div className="nav-item">
                 <div><span className={`fas fa-${props.icon}`}></span></div>
-                {isOpen &&
+                <div className="nav-item-txt-box">
+                    {props.text}
+                </div>
+
+{/*                 {isOpen &&
                     <div className="nav-item-txt-box">{props.text}</div>
-                }
+                } */}
             </div>
         </a>
     );
