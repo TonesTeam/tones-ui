@@ -1,6 +1,7 @@
 @import '@/common/style.css';
 
 :root {
+    --navbar-transition-time: 0.5s;
     --navbar-width: clamp(350px, 15em, 30vw);
     --navbar-width-collapsed: 85px;
     --navbar-lr-padding: 20px;
@@ -44,6 +45,7 @@
 
 .nav-item-txt-box {
     margin-left: 1em;
+    white-space: nowrap;
 }
 
 .nav-item-link-closed .nav-item-txt-box {
@@ -65,7 +67,8 @@
     align-items: center;
     box-sizing: border-box;
     padding-left: 30px;
-    transition: width 0.5s ease-in-out;
+    transition: width var(--navbar-transition-time) ease-in-out;
+    overflow: hidden;
 }
 
 .nav-item-link-open {
@@ -130,6 +133,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    white-space: nowrap;
 }
 
 .user-prof>[class~="fas"] {
@@ -163,7 +167,7 @@
     background-color: #123d5f;
     font-size: 14px;
     text-transform: uppercase;
-    transition: 0.5s;
+    transition: var(--navbar-transition-time);
 }
 
 #upper-nav #log-out-btn:hover,
@@ -189,7 +193,7 @@
     left: 0;
     background-color: #111;
     overflow-x: hidden;
-    transition: 0.5s ease-in-out;
+    transition: var(--navbar-transition-time) ease-in-out;
 }
 
 .sidenav-open {
