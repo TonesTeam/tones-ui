@@ -1,12 +1,9 @@
-import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
-import { LiquidApplicationCommand } from "../../service/commands/Commands";
 import { provide } from "inversify-binding-decorators";
+import * as lodash from "lodash";
 import { getComparator, groupBy } from "sharedlib/collection.util";
+import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
 import config from "sharedlib/tones-config.json";
-import * as lodash from "lodash"
-import { DatabaseService } from "@service/DatabaseService";
-import { inject } from "inversify";
-import { Liquid } from "@entity/Liquid";
+import { LiquidApplicationCommand } from "../../service/commands/Commands";
 
 class TubeConfigState {
     tubeSizeCountMap: Map<number, number> = new Map(
@@ -57,10 +54,10 @@ export class LiquidConfigurationResolver {
         const liquidConfig: DeploymentLiquidConfiguration[] = []
         for (let i = 0; i < commands.length; i++) {
             const command = commands[i];
-            if (command.volume / 100 > Math.max(...state.getAvailableSizes())) {
+            if (command.volume > Math.max(...state.getAvailableSizes())) {
                 throw new Error("Impossible to configure liquids for protocol deployment");
             }
-            acc += command.volume / 100;
+            acc += command.volume;
             if (state.getAvailableSizes().every(s => acc > s)) {
                 const maxAvailableSize = Math.max(...state.getAvailableSizes())
                 const dlc: DeploymentLiquidConfiguration = {

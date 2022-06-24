@@ -18,14 +18,14 @@ export class ProtocolCommandsMapper {
     }
 
     private liquidApplicationStep(lq: Step, slots: number[]): Command[] {
-        const vol = config["liquid-application-volume"] * 1000; // milligram to microgram conversion
+        const vol = config["liquid-application-volume"];
         const liquid = lq.liquidApplication!.liquid;
         const liquidInfo = { id: liquid.id, isWashing: liquid.liquidType.typeName === LiquidTypeName.WASHING };
         return slots.map(s => new LiquidApplicationCommand(undefined, s, vol, liquidInfo))
     }
 
     private waitingStep(w: Step): Command[] {
-        return [new WaitingCommand(w.waiting!.waitingTime * 1000)]; // second to millisecond conversion
+        return [new WaitingCommand(w.waiting!.waitingTime)]
     }
 
     private tempChangeStep(tc: Step): Command[] {

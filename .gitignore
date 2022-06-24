@@ -5,6 +5,8 @@ logs
 # Vite production files
 **/dist/**
 **/build/**
+**/.nyc_output/**
+**/backend/coverage/**
 
 
 # Runtime data
