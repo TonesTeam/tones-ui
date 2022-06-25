@@ -99,7 +99,7 @@ export default function Recommendations() {
                         <p></p>
                     </div>
                     <div id="launchBtn" style={{ visibility: "hidden" }}>
-                        <a href="#">START</a>
+                        <a href={`/start/`}>START</a>
                     </div>
                 </div>
             </div></>

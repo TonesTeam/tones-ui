@@ -1,0 +1,79 @@
+.progress-container{
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#progress {
+    width: 80%;
+    background-color: rgb(242, 242, 242);
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 30px 2px rgba(97, 144, 174, 0.645); 
+    box-shadow: 0px 0px 30px 2px rgba(97, 144, 174, 0.645); 
+}
+  
+#progress-bar {
+    border-radius: 10px;
+    width: 1%;
+    height: 30px;
+    background: #6191ae;
+    transition: all .5s;
+}
+
+/*----------- STOP / ERROR / RESUME ---------*/
+.footer{
+    box-sizing: border-box;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10vh;
+}
+
+.btn-panel{
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#stop-btn{
+    background: #ff0040;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 10px;
+    border: 3px solid #d00031;
+    text-decoration: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#resume-btn{
+    visibility: hidden;
+    background: #4b7289;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 10px;
+    border: 3px solid #36607a;
+    text-decoration: none;
+    padding: 10px;
+    transition: visibility .2s;
+    cursor: pointer;
+}
+
+#comment-body{
+    visibility: hidden;
+}
+
+#error-header{
+    font-weight: 600;
+}
+
+#error-guide li{
+    margin-top: 20px;
+}
+
+
+

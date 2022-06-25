@@ -6,6 +6,7 @@ import ProtocolList from './ProtocolList/ProtocolList';
 import History from 'History/History';
 import BlocklyPage from 'Blockly/Blockly';
 import Recommendations from './Reccomendations/Recommendations';
+import LauchPage from './LaunchPage/LaunchPage';
 
 // import {NavBarItem} from 'navbar/NavigationBar'
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
         <Route path="/create/protocol" element={<BlocklyPage />} />
         <Route path="/launch/:id" element={<Recommendations />} />
+        <Route path="/start" element={<LauchPage />} />
       </Routes>
     </Router>
   )
