@@ -54,3 +54,15 @@ export function getComparator<T>(fieldExtractor: ToNumberFunction<T>): ObjectCom
         return -1;
     }
 }
+
+export function countMap<T>(arr: T[]): Map<T, number> {
+    const m = new Map<T, number>()
+    for (const v of arr) {
+        if (m.has(v)) {
+            m.set(v, m.get(v)! + 1)
+        } else {
+            m.set(v, 0)
+        }
+    }
+    return m;
+}
