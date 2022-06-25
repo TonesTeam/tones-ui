@@ -29,4 +29,15 @@ describe('Resolve liquid configuration', () => {
         expect(liquidsConf.get(1)).to.have.ordered.members([5])
         expect(liquidsConf.get(2)).to.have.ordered.members([50])
     })
+
+    it('1 liquid: [25 30 5]', () => {
+        const r = new LiquidConfigurationResolver()
+        const conf = r.resolveLiquidConfiguration([
+            new LiquidApplicationCommand(undefined, 1, 25, { id: 1, isWashing: false }),
+            new LiquidApplicationCommand(undefined, 1, 30, { id: 1, isWashing: false }),
+            new LiquidApplicationCommand(undefined, 1, 5, { id: 1, isWashing: false }),
+        ])
+        const liquidsConf = groupByMapped(conf, d => d.liquidId, d => d.liquidAmount)
+        expect(liquidsConf.get(1)).to.have.ordered.members([50, 50])
+    })
 })
