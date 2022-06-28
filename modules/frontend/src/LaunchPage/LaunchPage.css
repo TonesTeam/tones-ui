@@ -63,8 +63,8 @@
     cursor: pointer;
 }
 
-#comment-body{
-    visibility: hidden;
+#comment-body {
+    /* visibility: hidden; */
 }
 
 #error-header{
