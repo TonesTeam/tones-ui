@@ -50,8 +50,7 @@
     cursor: pointer;
 }
 
-#resume-btn{
-    visibility: hidden;
+#resume-btn, #toList-btn{
     background: #4b7289;
     color: #fff;
     text-transform: uppercase;
@@ -63,8 +62,16 @@
     cursor: pointer;
 }
 
-#comment-body {
-    /* visibility: hidden; */
+#toList-btn a{
+    text-decoration: none;
+    color: #fff;
+}
+
+ .comment-body {
+    border: 2px dashed #36607a;
+    border-radius: 20px;
+    padding: 15px;
+    background-color: #6190ae29;
 }
 
 #error-header{
