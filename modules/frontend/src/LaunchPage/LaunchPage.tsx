@@ -118,8 +118,9 @@ const stateMessage: Map<ProtocolState, JSX.Element> = new Map([
     [ProtocolState.FORCE_STOPPED, <div>Force Stopped</div>],
 ]);
 
-let prevTimeout: NodeJS.Timeout = setTimeout(function () { });
 export default function LaunchPage() {
+    const secondsForBar = 25;
+    const incrementWidthPerSecond = 100 / secondsForBar;
 
     const [ps, setProtocolState] = useState(ProtocolState.ONGOING);
     const [progress, setProgress] = useState(0)
@@ -130,9 +131,8 @@ export default function LaunchPage() {
             return;
         }
         if (ps == ProtocolState.ONGOING) {
-            prevTimeout = setTimeout(() => setProgress(progress + 5), 1000);
-        } else {
-            clearTimeout(prevTimeout);
+            const timeout = setTimeout(() => setProgress(progress + incrementWidthPerSecond), 1000);
+            return () => clearTimeout(timeout)
         }
     })
 
