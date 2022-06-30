@@ -18,10 +18,11 @@ import { GenerateAll } from "./LibraryCodeGen";
 GenerateAll();
 
 function saveProtocol(xml: string) {
-    makeRequest('POST', "/blockly/protocol", xml)
+    makeRequest<number>('POST', "/blockly/protocol", xml)
         .then(resp => {
             if (resp.status === 200) {
                 alert("Success save")
+                location.assign(`/edit/protocol/${resp.data}`)
             } else {
                 alert(`Error:${resp.data}`);
             }

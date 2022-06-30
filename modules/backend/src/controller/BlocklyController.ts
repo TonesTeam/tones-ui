@@ -37,7 +37,7 @@ export class BlocklyController extends BaseHttpController implements Controller 
         const protocolXml = doc.querySelector('[type=begin_protocol]')!;
         const pr = await this.protocolParsingService.createProtocolFromXml(protocolXml);
         await (await this.dbservice.getRepository(Protocol)).save(pr);
-        res.status(200).send(safeJSONSerialize(pr));
+        res.status(200).send(pr.id.toString());
     }
 
     @httpPut("/protocol/:id")

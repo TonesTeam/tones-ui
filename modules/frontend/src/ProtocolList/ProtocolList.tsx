@@ -8,6 +8,7 @@ import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
+import classNames from 'classnames'
 
 
 export const p1: ProtocolDto = {
@@ -77,44 +78,53 @@ function selectiveCheck(_event: any) {
     document.getElementById("protocolCount")!.textContent = checkedChecks.length.toString();
 }
 
-function setEventListeners() {
-    const protocolGenerals: NodeListOf<HTMLElement> = document.querySelectorAll(".protocol-general");
-    const checkBoxes = document.querySelectorAll("#check");
+// function setEventListeners() {
+//     const protocolGenerals: NodeListOf<HTMLElement> = document.querySelectorAll(".protocol-general");
+//     const checkBoxes = document.querySelectorAll("#check");
 
-    protocolGenerals.forEach(protocolGeneral => {
-        protocolGeneral.addEventListener("click", event => {
-            protocolGeneral.classList.toggle("active");
-            // @ts-ignore
-            const protocolBody: HTMLElement = protocolGeneral.nextElementSibling!;
-            if (protocolGeneral.classList.contains("active")) {
-                protocolBody.style.maxHeight = protocolBody.scrollHeight + "px";
-            } else {
-                // @ts-ignore
-                protocolBody.style.maxHeight = 0;
-            }
-        })
-    })
+//     protocolGenerals.forEach(protocolGeneral => {
+//         protocolGeneral.addEventListener("click", event => {
+//             protocolGeneral.classList.toggle("active");
+//             // @ts-ignore
+//             const protocolBody: HTMLElement = protocolGeneral.nextElementSibling!;
+//             if (protocolGeneral.classList.contains("active")) {
+//                 protocolBody.style.maxHeight = protocolBody.scrollHeight + "px";
+//             } else {
+//                 // @ts-ignore
+//                 protocolBody.style.maxHeight = 0;
+//             }
+//         })
+//     })
 
 
-    checkBoxes.forEach(checkBox => {
-        checkBox.addEventListener("click", function (e) {
-            e.stopPropagation();
-        })
-    })
-    //checkbox limit
-    //+ checkbox counter
-    var checks: NodeListOf<HTMLElement> = document.querySelectorAll(".check-to-run");
-    for (var i = 0; i < checks.length; i++)
-        checks[i].onclick = selectiveCheck;
-}
+//     checkBoxes.forEach(checkBox => {
+//         checkBox.addEventListener("click", function (e) {
+//             e.stopPropagation();
+//         })
+//     })
+//     //checkbox limit
+//     //+ checkbox counter
+//     var checks: NodeListOf<HTMLElement> = document.querySelectorAll(".check-to-run");
+//     for (var i = 0; i < checks.length; i++)
+//         checks[i].onclick = selectiveCheck;
+// }
 
 function Protocol(props: any) {
     let navigate = useNavigate();
+    const [open, setActive] = useState(false)
+    const [height, setHeight] = useState(0);
+    const [div, setDiv] = useState<HTMLDivElement | null>(null);
+    useEffect(() => setHeight(div?.scrollHeight ?? 0));
+
 
     return (
 
-        <div className="protocol">
-            <div className="protocol-general">
+        <div
+            ref={div => setDiv(div)}
+            className="protocol">
+            <div
+                className={classNames("protocol-general", { active: open })}
+                onClick={() => setActive(!open)}>
                 <div className="info-cell" id="check">
                     <input type="checkbox" className="check-to-run" name="protocol"></input>
                 </div>
@@ -145,7 +155,7 @@ function Protocol(props: any) {
 
             </div>
 
-            <div className="protocol-body">
+            <div className="protocol-body" style={{ maxHeight: open ? `${height}px` : 0 }}>
                 <div className="protocol-body-content">
                     <table className="dropdown-table">
                         <tbody>
@@ -191,7 +201,7 @@ function Protocol(props: any) {
 export default function ProtocolList() {
     const [protocols, setProtocols] = useState<ProtocolDto[]>([])
     const [isVisible, setToVisible] = useState(false)
-    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)).then(setEventListeners) }
+    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
     useEffect(listInitilizer, []);
     // useEffect(setEventListeners)
 

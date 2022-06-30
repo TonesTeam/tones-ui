@@ -93,6 +93,8 @@ export default function LaunchPage() {
     const [ps, setProtocolState] = useState(ProtocolState.ONGOING);
     const [progress, setProgress] = useState(0)
 
+    const statusStrat = launchStatus.get(ps)!
+
     useEffect(() => {
         if (progress == 100) {
             setProtocolState(ProtocolState.FINISHED);
@@ -114,13 +116,13 @@ export default function LaunchPage() {
                     </div>
 
                     <div id="progress">
-                        <div id="progress-bar" style={{ width: `${progress}%`, backgroundColor: launchStatus.get(ps)!.getColor() }}></div>
+                        <div id="progress-bar" style={{ width: `${progress}%`, backgroundColor: statusStrat.getColor() }}></div>
                     </div>
                 </div>
 
                 <div className="footer">
                     <div id="comment">
-                        {launchStatus.get(ps)!.getMessage()}
+                        {statusStrat.getMessage()}
                     </div> {/* to be filled according to current status */}
 
                     <div className="btn-panel">
