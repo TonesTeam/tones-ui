@@ -91,7 +91,7 @@ export default function LaunchPage() {
     const incrementWidthPerSecond = 100 / secondsForBar;
 
     const [ps, setProtocolState] = useState(ProtocolState.ONGOING);
-    const [progress, setProgress] = useState(0)
+    const [progress, setProgress] = useState(0);
 
     const statusStrat = launchStatus.get(ps)!
 
@@ -109,7 +109,7 @@ export default function LaunchPage() {
     return (
         <>
             <NavigationBar />
-            <div id="main">
+            <div className="font-rb" id="main">
                 <div className="progress-container">
                     <div>
                         <h2><i>Approximate protocol duration: 4 minutes</i></h2>

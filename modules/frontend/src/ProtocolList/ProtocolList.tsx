@@ -9,6 +9,8 @@ import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
+import e from 'express'
+import { getComparator } from 'sharedlib/collection.util'
 
 
 export const p1: ProtocolDto = {
@@ -90,12 +92,12 @@ function Protocol(props: any) {
 
         <div
             ref={div => setDiv(div)}
-            className="protocol">
+            className="protocol font-rb">
             <div
                 className={classNames("protocol-general", { active: open })}
                 onClick={() => setActive(!open)}>
                 <div className="info-cell" id="check">
-                    <input type="checkbox" className="check-to-run" name="protocol"></input>
+                    <input type="checkbox" className="check-to-run" name="protocol" disabled title='In current development version parallel protocol deployment is not supported'></input>
                 </div>
                 <div className="info-cell-container">
                     <div className="info-cell-container">
@@ -164,23 +166,6 @@ function Protocol(props: any) {
     );
 }
 
-
-// function FilterList(list: ProtocolDto[], filter: string){
-//     const filteredList = list.filter((elem) => {
-//         if (filter === '') {
-//             return elem;
-//         } else {
-//             return elem.name.includes(filter);
-//         }
-//     })
-// }
-
-
-    
-
-// const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all")).data;
-// const protocol = protocolList[0];
-
 export default function ProtocolList() {
     const [protocols, setProtocols] = useState<ProtocolDto[]>([])
     const [isVisible, setToVisible] = useState(false)
@@ -199,19 +184,10 @@ export default function ProtocolList() {
     };
 
     function filterAndSort(){
-        let filteredList =  protocols.filter(function(elem) {
-            if(filterInput === ''){
-                return elem;
-            }
-            else{
-                return elem.name.includes(filterInput);
-            }            
-        })
+        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
 
-        let sortedList = filteredList.sort((elem1, elem2) =>{
-            return (elem1.creationDate<elem2.creationDate) ? 1 : -1;
-        })
-
+        let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
+        
         return sortedList;
     }
 
@@ -219,21 +195,25 @@ export default function ProtocolList() {
     return (
         <>
             <NavigationBar selectedItem='Protocol List' />
-            <div id="main">
+            <div className="font-rb" id="main">
                 <div className="page-header" id="sticker">
-                    <div className="open-menu-btn">
-                    </div>
+                    {/* <div className="open-menu-btn">
+                    </div> */}
+                    {/* 
                     <div className="search-bar-container">
                         <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                         <button type="submit"><i className="fa fa-search"></i></button>
                     </div>
                     <div className="launch-container">
                         <div className="protocol-counter">
-                            {/* <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development*/}
-                            {/* <a href={`/launch/${p1.id}`}> */}
-                            {/* </a> */}
+                            <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development
+                            <a href={`/launch/${p1.id}`}>
+                            </a>
                         </div>
-                    </div>
+                    </div> 
+                    */}
+
+                    <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                 </div>
 
                 <div className="protocol-list">

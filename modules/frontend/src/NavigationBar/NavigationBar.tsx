@@ -52,7 +52,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         else setOpacity(op);
     })
     return (
-        <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'}`}>
+        <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'} font-rb`}>
             {!isOpen &&
                 <>
                     <CenteringFlexBox className="openbtn" onClick={() => setOpen(true)}>

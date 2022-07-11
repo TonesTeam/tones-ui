@@ -58,7 +58,7 @@ export default function Recommendations() {
     return (
         <>
             <NavigationBar />
-            <div id="main">
+            <div className="font-rb" id="main">
                 <div className="open-menu-btn"></div>
                 <div className="body">
 
