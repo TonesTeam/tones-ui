@@ -10,7 +10,6 @@ export abstract class Command {
     constructor(
         public commandType: CommandType
     ) { }
-    abstract serialize(): string
 }
 
 export class LiquidApplicationCommand extends Command {
@@ -22,9 +21,9 @@ export class LiquidApplicationCommand extends Command {
     ) { super(CommandType.LiquidApplication); }
 
 
-    serialize(): string {
-        return `LA_${this.from}_${this.to}_${this.volume * 1000}`
-    }
+    // serialize(): string {
+        // return `LA_${this.from}_${this.to}_${this.volume * 1000}`
+    // }
 }
 
 export class WaitingCommand extends Command {

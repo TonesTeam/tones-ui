@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r reflect-metadata -r ts-node/register src/**/*.test.ts",
-	"coverage": "nyc -r html -r lcov -e .ts -x \"*.test.ts\" npm run test",
+    "coverage": "nyc -r html -r lcov -e .ts -x \"*.test.ts\" npm run test",
     "prepare": "tsc",
     "build": "tsc",
     "dev": "nodemon src/index.ts",
@@ -38,6 +38,7 @@
   "dependencies": {
     "@types/http-proxy": "^1.17.8",
     "@types/jsdom": "^16.2.14",
+    "crc-32": "^1.2.2",
     "http-proxy": "^1.18.1",
     "inversify": "^6.0.1",
     "inversify-binding-decorators": "^4.0.0",
@@ -46,6 +47,7 @@
     "jsdom": "^19.0.0",
     "nodemon": "^2.0.15",
     "reflect-metadata": "^0.1.13",
+    "serialport": "^10.4.0",
     "sharedlib": "file:../sharedlib",
     "sqlite3": "^5.0.2",
     "tslog": "^3.3.3",

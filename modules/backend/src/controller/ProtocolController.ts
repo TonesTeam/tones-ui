@@ -2,12 +2,13 @@ import { Liquid } from "@entity/Liquid";
 import { Protocol, PROTOCOL_STEP_RELATIONS } from "@entity/Protocol";
 import { LiquidMapper } from "@mapper/LiquidMapper";
 import ProtocolMapper from "@mapper/ProtocolMapper";
-import { CommandType, LiquidApplicationCommand } from "@service/commands/Commands";
+import { Command, CommandType, LiquidApplicationCommand } from "@service/commands/Commands";
 import { ProtocolCommandsMapper } from "@service/commands/ProtocolCommandsMapper";
 import { DatabaseService } from "@service/DatabaseService";
 import { LiquidConfigurationResolver } from "@service/deployment/LiquidConfigurationResolver";
 import { inject } from "inversify";
 import { BaseHttpController, controller, httpDelete, httpGet, queryParam, requestParam } from "inversify-express-utils";
+import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
 
 @controller("/protocol")
 export default class ProtocolController extends BaseHttpController {
@@ -58,17 +59,30 @@ export default class ProtocolController extends BaseHttpController {
     @httpGet("/configuration/:id")
     public async getProtocolLiquidConfiguration(@requestParam("id") id: string, @queryParam("slots") slots: string) {
         slots = slots ?? 1;
+        const res = (await this.resolveProtocolConfig(id, slots))[0];
+        await Promise.all(res.map(async la => la.liquid = await this.liquidMapper.toDtoFromId(la.liquidId)))
+        return this.json(res, 200)
+    }
+
+    @httpGet("/start/:id")
+    public async startProtocol(@requestParam("id") id: string, @queryParam("slots") slots: string) {
+        slots = slots ?? 1;
+        const commands = (await this.resolveProtocolConfig(id, slots))[1];
+
+    }
+
+    private async resolveProtocolConfig(id: string, slots: string): Promise<[DeploymentLiquidConfiguration[], Command[]]> {
         const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(id, { relations: PROTOCOL_STEP_RELATIONS });
-        const slotArray = Array.from(Array(parseInt(slots)).keys())
+        const slotArray = Array.from(Array(parseInt(slots)).keys());
         const commands = protocol.steps.flatMap(s => this.protocolCommandsMapper.stepToCommand(s, slotArray));
         let iOrder = 1;
         commands.forEach(c => c.order = iOrder++);
         const applicationCommands = commands
             .filter(c => c.commandType == CommandType.LiquidApplication)
-            .map(c => c as LiquidApplicationCommand)
-        const res = this.liquidConfigurationResolver.resolveLiquidConfiguration(applicationCommands)
-        await Promise.all(res.map(async la => la.liquid = await this.liquidMapper.toDtoFromId(la.liquidId)))
-        return this.json(res, 200)
+            .map(c => c as LiquidApplicationCommand);
+        const res = this.liquidConfigurationResolver.resolveLiquidConfiguration(applicationCommands);
+        return [res, commands];
     }
+
 
 }
