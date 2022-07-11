@@ -78,37 +78,6 @@ function selectiveCheck(_event: any) {
     document.getElementById("protocolCount")!.textContent = checkedChecks.length.toString();
 }
 
-// function setEventListeners() {
-//     const protocolGenerals: NodeListOf<HTMLElement> = document.querySelectorAll(".protocol-general");
-//     const checkBoxes = document.querySelectorAll("#check");
-
-//     protocolGenerals.forEach(protocolGeneral => {
-//         protocolGeneral.addEventListener("click", event => {
-//             protocolGeneral.classList.toggle("active");
-//             // @ts-ignore
-//             const protocolBody: HTMLElement = protocolGeneral.nextElementSibling!;
-//             if (protocolGeneral.classList.contains("active")) {
-//                 protocolBody.style.maxHeight = protocolBody.scrollHeight + "px";
-//             } else {
-//                 // @ts-ignore
-//                 protocolBody.style.maxHeight = 0;
-//             }
-//         })
-//     })
-
-
-//     checkBoxes.forEach(checkBox => {
-//         checkBox.addEventListener("click", function (e) {
-//             e.stopPropagation();
-//         })
-//     })
-//     //checkbox limit
-//     //+ checkbox counter
-//     var checks: NodeListOf<HTMLElement> = document.querySelectorAll(".check-to-run");
-//     for (var i = 0; i < checks.length; i++)
-//         checks[i].onclick = selectiveCheck;
-// }
-
 function Protocol(props: any) {
     let navigate = useNavigate();
     const [open, setActive] = useState(false)
@@ -195,6 +164,20 @@ function Protocol(props: any) {
     );
 }
 
+
+// function FilterList(list: ProtocolDto[], filter: string){
+//     const filteredList = list.filter((elem) => {
+//         if (filter === '') {
+//             return elem;
+//         } else {
+//             return elem.name.includes(filter);
+//         }
+//     })
+// }
+
+
+    
+
 // const protocolList = (await getRequest<ProtocolDto[]>("/protocol/all")).data;
 // const protocol = protocolList[0];
 
@@ -203,12 +186,35 @@ export default function ProtocolList() {
     const [isVisible, setToVisible] = useState(false)
     const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
     useEffect(listInitilizer, []);
-    // useEffect(setEventListeners)
 
 
     const onBackdropClick = () => {
         setToVisible(false)
     }
+
+    const [filterInput, setfilterInput] = useState("");
+    let inputHandler = (e:React.ChangeEvent<HTMLInputElement>) => {
+      var lowerCase = e.target.value.toLowerCase();
+      setfilterInput(lowerCase);
+    };
+
+    function filterAndSort(){
+        let filteredList =  protocols.filter(function(elem) {
+            if(filterInput === ''){
+                return elem;
+            }
+            else{
+                return elem.name.includes(filterInput);
+            }            
+        })
+
+        let sortedList = filteredList.sort((elem1, elem2) =>{
+            return (elem1.creationDate<elem2.creationDate) ? 1 : -1;
+        })
+
+        return sortedList;
+    }
+
 
     return (
         <>
@@ -218,7 +224,7 @@ export default function ProtocolList() {
                     <div className="open-menu-btn">
                     </div>
                     <div className="search-bar-container">
-                        <input type="text" className="search-bar" placeholder="Search for protocols..."></input>
+                        <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                         <button type="submit"><i className="fa fa-search"></i></button>
                     </div>
                     <div className="launch-container">
@@ -232,37 +238,37 @@ export default function ProtocolList() {
 
                 <div className="protocol-list">
 
-                    {protocols.map(function (protocol) {
+                    {filterAndSort().map(function (protocol) {
                         return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
 
 
-                    <Protocol id="PA-001" name="Protocol Alpha"
-                        authorName="James Doe" creationDate="10.01.2021" />
+                    {/* <Protocol id="PA-001" name="Protocol Alpha"
+                        authorName="James Doe" creationDate="10/01/2021" />
 
                     <Protocol id="PB-002" name="Protocol Beta"
-                        authorName="Janette Smith" creationDate="11.07.2026" />
+                        authorName="Janette Smith" creationDate="11/07/2026" />
 
                     <Protocol id="PY-003" name="Protocol Gamma"
-                        authorName="Bellatrix Lestrange " creationDate="22.12.2020" />
+                        authorName="Bellatrix Lestrange " creationDate="22/12/2020" />
 
                     <Protocol id="PD-004" name="Protocol Delta"
-                        authorName="Godric Gryffindor" creationDate="02.03.1126" />
+                        authorName="Godric Gryffindor" creationDate="02/03/1126" />
 
                     <Protocol id="PE-005" name="Protocol Epsilon"
-                        authorName="Rubeus Hagrid" creationDate="11.07.2026" />
+                        authorName="Rubeus Hagrid" creationDate="11/07/2026" />
 
                     <Protocol id="PD-006" name="Protocol Zeta"
-                        authorName="Helga Hufflepuff" creationDate="11.07.1111" />
+                        authorName="Helga Hufflepuff" creationDate="11/07/1111" />
 
                     <Protocol id="PD-007" name="Protocol Eta"
-                        authorName="Viktor Krum" creationDate="10.07.2323" />
+                        authorName="Viktor Krum" creationDate="10/07/2323" />
 
                     <Protocol id="PO-008" name="Protocol Theta"
-                        authorName="Luna Lovegood" creationDate="12.09.2052" />
+                        authorName="Luna Lovegood" creationDate="12/09/2052" />
 
                     <Protocol id="PK-009" name="Protocol Kappa"
-                        authorName="Minerva McGonagall" creationDate="11.07.2022" />
+                        authorName="Minerva McGonagall" creationDate="11/07/2022" /> */}
                 </div>
             </div></>
     )
