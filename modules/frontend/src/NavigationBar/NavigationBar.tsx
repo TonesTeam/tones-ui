@@ -1,6 +1,9 @@
 import './NavigationBar.css'
 import { useEffect, useState } from 'react';
 import { CenteringFlexBox } from 'common/components'
+import { Provider, useSelector } from "react-redux";
+import { State } from 'state/reducers'
+import {store} from 'main'
 
 function NavBarItem(props: any | { route: String }) {
     let id = props.itemData.selectedItem === props.text ? "selected-navbar-item" : undefined;
@@ -14,10 +17,6 @@ function NavBarItem(props: any | { route: String }) {
                 <div className="nav-item-txt-box">
                     {props.text}
                 </div>
-
-{/*                 {isOpen &&
-                    <div className="nav-item-txt-box">{props.text}</div>
-                } */}
             </div>
         </a>
     );
@@ -31,7 +30,7 @@ const setMainMargin = (mgl: String) => {
 
 const setOpacity = (opct: String) => {
     // @ts-ignore
-    document.getElementById("main").style.filter = "blur("+opct+")";
+    document.getElementById("main").style.filter = "blur(" + opct + ")";
 }
 
 
@@ -41,17 +40,17 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         selectedItem: props.selectedItem ?? "",
         isOpen
     };
-/*     useEffect(() => {
-        const w = getComputedStyle(document.documentElement).getPropertyValue("--navbar-width")
-        if (!isOpen) setMainMargin("75px")
-        else setMainMargin(w)
-    }) */
+    const status = useSelector((state: State) => state.protocolState);
+
     useEffect(() => {
         const op = '3px';
         if (!isOpen) setOpacity("0");
         else setOpacity(op);
     })
     return (
+        <Provider store={store}>
+
+
         <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'} font-rb`}>
             {!isOpen &&
                 <>
@@ -82,9 +81,13 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 <NavBarItem itemData={itemData} icon="cogs" text="System Settings" />
                 <NavBarItem itemData={itemData} icon="file" text="Reports" />
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
+                {status? <h5>Ongoing protocol</h5>: <h5>No ongoing protocol</h5>}
+                
+
                 {/* <div style={{ flexGrow: 2 }}></div> */}
             </div>
         </div>
+        </Provider>
     )
 }
 

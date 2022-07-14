@@ -32,10 +32,16 @@
     },
     "homepage": "https://github.com/drewzxcvbnm/tones-ui#readme",
     "devDependencies": {
+        "@types/react-redux": "^7.1.24",
         "cross-env": "^7.0.3",
+        "electron-devtools-installer": "^3.2.0",
         "npm-run-all": "^4.1.5"
     },
     "dependencies": {
-        "@types/lodash": "^4.14.182"
+        "@types/lodash": "^4.14.182",
+        "react-redux": "^8.0.2",
+        "redux": "^4.2.0",
+        "redux-devtools-extension": "^2.13.9",
+        "redux-thunk": "^2.4.1"
     }
 }
