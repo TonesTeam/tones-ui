@@ -1,9 +1,9 @@
 import './NavigationBar.css'
 import { useEffect, useState } from 'react';
 import { CenteringFlexBox } from 'common/components'
-import { Provider, useSelector } from "react-redux";
-import { State } from 'state/reducers'
-import {store} from 'main'
+import type { RootState } from '../state/store'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
+
 
 function NavBarItem(props: any | { route: String }) {
     let id = props.itemData.selectedItem === props.text ? "selected-navbar-item" : undefined;
@@ -40,7 +40,10 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         selectedItem: props.selectedItem ?? "",
         isOpen
     };
-    const status = useSelector((state: State) => state.protocolState);
+
+    const count = useAppSelector((state) => state.progress.protocols.length)
+    const status = useAppSelector((state) => state.progress.isRunning)
+    
 
     useEffect(() => {
         const op = '3px';
@@ -48,7 +51,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         else setOpacity(op);
     })
     return (
-        <Provider store={store}>
+        //<Provider store={store}>
 
 
         <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'} font-rb`}>
@@ -81,13 +84,14 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 <NavBarItem itemData={itemData} icon="cogs" text="System Settings" />
                 <NavBarItem itemData={itemData} icon="file" text="Reports" />
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
-                {status? <h5>Ongoing protocol</h5>: <h5>No ongoing protocol</h5>}
-                
 
+                <span>How many protocols: {count}</span>
+                <span>System status: {status}</span>
+                
                 {/* <div style={{ flexGrow: 2 }}></div> */}
             </div>
         </div>
-        </Provider>
+        //</Provider>
     )
 }
 

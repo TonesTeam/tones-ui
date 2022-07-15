@@ -9,8 +9,11 @@ import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
-import e from 'express'
 import { getComparator } from 'sharedlib/collection.util'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
+import { RootState } from 'state/store'
+import { run, moveProgress, discard } from 'state/progress'
+import { forEach } from 'lodash'
 
 
 export const p1: ProtocolDto = {
@@ -72,6 +75,10 @@ export const p1: ProtocolDto = {
     ]
 }
 
+
+
+
+
 const max = 2;
 function selectiveCheck(_event: any) {
     var checkedChecks = document.querySelectorAll(".check-to-run:checked");
@@ -86,7 +93,7 @@ function Protocol(props: any) {
     const [height, setHeight] = useState(0);
     const [div, setDiv] = useState<HTMLDivElement | null>(null);
     useEffect(() => setHeight(div?.scrollHeight ?? 0));
-
+    const dispatch = useAppDispatch();
 
     return (
 
@@ -150,7 +157,8 @@ function Protocol(props: any) {
                         <div className="protocol-options">
                             <button onClick={() => navigate(`/edit/protocol/${props.id}`)}
                                 className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
-                            <button className="proto-btn"><i className="fas fa-code-branch"></i>Use as template</button>
+                            <button className="proto-btn" onClick={() => dispatch(run(props))}>Toggle 'run'</button>
+                            {/* <button className="proto-btn" onClick={() => dispatch(moveProgress({protocolToMove: props, progressToAdd: 1}))}>Toggle 'moveProgress'</button> */}
                         </div>
 
                         <div className="protocol-options">
@@ -178,16 +186,23 @@ export default function ProtocolList() {
     }
 
     const [filterInput, setfilterInput] = useState("");
-    let inputHandler = (e:React.ChangeEvent<HTMLInputElement>) => {
-      var lowerCase = e.target.value.toLowerCase();
-      setfilterInput(lowerCase);
+    let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        var lowerCase = e.target.value.toLowerCase();
+        setfilterInput(lowerCase);
     };
 
-    function filterAndSort(){
-        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
+    const activeProtocols = useAppSelector((state) => state.progress.protocols);
+    const status = useAppSelector((state) => state.progress.isRunning);
 
+    //TEST - OUTPUT LAST ADDED PROTOCOL NAME
+    if(activeProtocols.length != 0){
+        console.log(activeProtocols[activeProtocols.length - 1].protocol.name);
+    }
+
+
+    function filterAndSort() {
+        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
-        
         return sortedList;
     }
 
@@ -221,35 +236,9 @@ export default function ProtocolList() {
                     {filterAndSort().map(function (protocol) {
                         return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
-
-
-                    {/* <Protocol id="PA-001" name="Protocol Alpha"
-                        authorName="James Doe" creationDate="10/01/2021" />
-
-                    <Protocol id="PB-002" name="Protocol Beta"
-                        authorName="Janette Smith" creationDate="11/07/2026" />
-
-                    <Protocol id="PY-003" name="Protocol Gamma"
-                        authorName="Bellatrix Lestrange " creationDate="22/12/2020" />
-
-                    <Protocol id="PD-004" name="Protocol Delta"
-                        authorName="Godric Gryffindor" creationDate="02/03/1126" />
-
-                    <Protocol id="PE-005" name="Protocol Epsilon"
-                        authorName="Rubeus Hagrid" creationDate="11/07/2026" />
-
-                    <Protocol id="PD-006" name="Protocol Zeta"
-                        authorName="Helga Hufflepuff" creationDate="11/07/1111" />
-
-                    <Protocol id="PD-007" name="Protocol Eta"
-                        authorName="Viktor Krum" creationDate="10/07/2323" />
-
-                    <Protocol id="PO-008" name="Protocol Theta"
-                        authorName="Luna Lovegood" creationDate="12/09/2052" />
-
-                    <Protocol id="PK-009" name="Protocol Kappa"
-                        authorName="Minerva McGonagall" creationDate="11/07/2022" /> */}
                 </div>
+
+
             </div></>
     )
 }
