@@ -9,32 +9,47 @@ export class ControllerMessageInterface {
 
     @inject(Logger)
     private logger: Logger;
+    @inject(SerialPort)
+    private serialPort: SerialPort;
+    @inject(DelimiterParser)
+    private parser: DelimiterParser;
 
-    constructor(@inject(SerialPort) serialport: SerialPort) {
-        const parser = serialport.pipe(new DelimiterParser({ delimiter: ';\n', includeDelimiter: false }))
-        parser.on('data', (data: string) => {
-            if (typeof data != "string") {
-                console.log(`ACTUAL TYPE ${typeof data} ${data}`)
-                throw new Error();
+    public async readMsgFromChannel(channel: MessageChannel): Promise<Message> {
+        while (true) {
+            const msg = await this.readMsg();
+            if (msg.channel === channel) {
+                return msg;
             }
-            const msgMonad = Message.parse(data)
-            if (!msgMonad.isPresent()) {
-                this.logger.error(`Invalid data: ${data}`)
-                return
-            }
-            const msg = msgMonad.getOrThrow(() => new Error());
-            if (!msg.isValid()) {
-                // request retransmision of request (specify channel probably)
-                this.logger.error(`Invalid message received: ${msg}`)
-                return
-            }
-            if (msg.channel == MessageChannel.ERROR) {
-                this.logger.error(msg.body)
-                return
-            }
-            
-        })
+        }
     }
 
+    public sendMsg(msg: Message) {
+        this.logger.trace(`Sending message: ${msg.toString()}`)
+        this.serialPort.write(msg.toString());
+    }
+
+    private readMsg(): Promise<Message> {
+        return new Promise((resolve, reject) => {
+            this.parser.on('data', (buf: Buffer) => {
+                const data = buf.toString();
+                const msgMonad = Message.parse(data)
+                if (!msgMonad.isPresent()) {
+                    this.logger.error(`Invalid data: ${data}`)
+                    return
+                }
+                const msg = msgMonad.getOrThrow(() => new Error());
+                if (!msg.isValid()) {
+                    // request retransmision of request (specify channel probably)
+                    this.logger.error(`Invalid message received: ${msg}`)
+                    return
+                }
+                if (msg.channel == MessageChannel.ERROR) {
+                    this.logger.error(msg.body)
+                    return
+                }
+                resolve(msg);
+            })
+        });
+    }
 
 }

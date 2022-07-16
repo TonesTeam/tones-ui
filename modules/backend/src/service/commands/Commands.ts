@@ -20,10 +20,6 @@ export class LiquidApplicationCommand extends Command {
         public liquidInfo: { id: number, isWashing: boolean }
     ) { super(CommandType.LiquidApplication); }
 
-
-    // serialize(): string {
-        // return `LA_${this.from}_${this.to}_${this.volume * 1000}`
-    // }
 }
 
 export class WaitingCommand extends Command {

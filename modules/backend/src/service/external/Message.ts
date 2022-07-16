@@ -29,7 +29,7 @@ export class Message {
     static parse(msg: string): Maybe<Message> {
         try {
             const parts = msg.split(',')
-            return Maybe.fromValue(new Message(REVERSE_MAPPING.get(parseInt(parts[0]))!, parts[1], parseInt(parts[3]) >>> 0))
+            return Maybe.fromValue(new Message(REVERSE_MAPPING.get(parseInt(parts[0]))!, parts[1], parseInt(parts[2], 16) >>> 0))
         } catch {
             return Maybe.none();
         }
@@ -37,6 +37,10 @@ export class Message {
 
     public isValid() {
         return (CRC32.str(this.body, 0) >>> 0) === this.crc
+    }
+
+    public toString() {
+        return `${this.channel},${this.body},${this.crc.toString(16)}`
     }
 
 }

@@ -1,7 +1,9 @@
 import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
 import { Command, CommandType, LiquidApplicationCommand, TemperatureChangeCommand, WaitingCommand } from "./Commands";
 import config from "sharedlib/tones-config.json";
+import { provide } from "inversify-binding-decorators";
 
+@provide(CommandSerializer)
 export class CommandSerializer {
 
     public serialize(c: Command, deploymentConfig: DeploymentLiquidConfiguration[]): string {

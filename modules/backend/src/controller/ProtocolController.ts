@@ -3,9 +3,12 @@ import { Protocol, PROTOCOL_STEP_RELATIONS } from "@entity/Protocol";
 import { LiquidMapper } from "@mapper/LiquidMapper";
 import ProtocolMapper from "@mapper/ProtocolMapper";
 import { Command, CommandType, LiquidApplicationCommand } from "@service/commands/Commands";
+import { CommandSerializer } from "@service/commands/CommandSerializer";
 import { ProtocolCommandsMapper } from "@service/commands/ProtocolCommandsMapper";
 import { DatabaseService } from "@service/DatabaseService";
 import { LiquidConfigurationResolver } from "@service/deployment/LiquidConfigurationResolver";
+import { ControllerMessageInterface } from "@service/external/ControllerMessageInterface";
+import { Message, MessageChannel } from "@service/external/Message";
 import { inject } from "inversify";
 import { BaseHttpController, controller, httpDelete, httpGet, queryParam, requestParam } from "inversify-express-utils";
 import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
@@ -19,8 +22,12 @@ export default class ProtocolController extends BaseHttpController {
     private liquidMapper: LiquidMapper;
     @inject(ProtocolMapper)
     private protocolMapper: ProtocolMapper;
+    @inject(CommandSerializer)
+    private commandSerializer: CommandSerializer;
     @inject(ProtocolCommandsMapper)
     private protocolCommandsMapper: ProtocolCommandsMapper;
+    @inject(ControllerMessageInterface)
+    private controllerMessageInterface: ControllerMessageInterface;
     @inject(LiquidConfigurationResolver)
     private liquidConfigurationResolver: LiquidConfigurationResolver;
 
@@ -67,8 +74,13 @@ export default class ProtocolController extends BaseHttpController {
     @httpGet("/start/:id")
     public async startProtocol(@requestParam("id") id: string, @queryParam("slots") slots: string) {
         slots = slots ?? 1;
-        const commands = (await this.resolveProtocolConfig(id, slots))[1];
-
+        const [config, commands] = (await this.resolveProtocolConfig(id, slots));
+        const body = commands
+            .map(c => this.commandSerializer.serialize(c, config))
+            .join(" ");
+        const msg = Message.from(MessageChannel.PROTOCOL_TRANSFER, body)
+        this.controllerMessageInterface.sendMsg(msg);
+        //finish later
     }
 
     private async resolveProtocolConfig(id: string, slots: string): Promise<[DeploymentLiquidConfiguration[], Command[]]> {
