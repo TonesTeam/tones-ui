@@ -180,7 +180,6 @@ export default function ProtocolList() {
     const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
     useEffect(listInitilizer, []);
 
-
     const onBackdropClick = () => {
         setToVisible(false)
     }
@@ -191,8 +190,8 @@ export default function ProtocolList() {
         setfilterInput(lowerCase);
     };
 
-    const activeProtocols = useAppSelector((state) => state.progress.protocols);
-    const status = useAppSelector((state) => state.progress.isRunning);
+    const activeProtocols = useAppSelector((state) => state.protocols);
+    const status = useAppSelector((state) => state.isRunning);
 
     //TEST - OUTPUT LAST ADDED PROTOCOL NAME
     if(activeProtocols.length != 0){

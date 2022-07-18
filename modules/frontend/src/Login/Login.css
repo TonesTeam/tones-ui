@@ -4,19 +4,23 @@
 
 form {
     margin-bottom: 15vh;
+    display:flex;
+    flex-direction:column;
 }
 
-form input {
-    display: block;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    padding: 12px 20px;
-    width: var(--main-width);
+#background{
+    background: url("../static/login-backgroud.png");
+    background-size: 150px 150px;
+    background-repeat: repeat;
+
 }
 
 form button {
     padding: 8px 20px;
     width: 100%;
+    border: 3px solid #123d5f;
+    border-radius: 15px;
+    background-color: #fff;
 }
 
 .login-form {
@@ -27,4 +31,38 @@ form button {
     flex-direction: column;
     width: 100vw;
     height: 100vh;
+}
+
+
+label{
+    margin-bottom:15px;
+    position:relative;
+    border-bottom:1px solid #ddd;
+}
+input{
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    width: var(--main-width);
+    padding: 20px 20px;
+    margin-top:20px;
+    outline:none;
+}
+input::placeholder{
+    opacity:0;
+}
+label span{
+    position:absolute;
+    top:0;
+    left:20px;
+    transform:translateY(30px);
+    font-size:0.825em;
+    transition-duration:0.3s;
+    color: rgb(114, 114, 114);
+}
+
+label:focus-within > span,
+input:not(:placeholder-shown) + span{
+    color:#123d5f;
+    transform:translateY(0px);
 }

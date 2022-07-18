@@ -41,8 +41,8 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         isOpen
     };
 
-    const count = useAppSelector((state) => state.progress.protocols.length)
-    const status = useAppSelector((state) => state.progress.isRunning)
+    const count = useAppSelector((state) => state.protocols.length)
+    const status = useAppSelector((state) => state.isRunning)
     
 
     useEffect(() => {
