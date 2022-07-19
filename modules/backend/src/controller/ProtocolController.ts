@@ -31,6 +31,14 @@ export default class ProtocolController extends BaseHttpController {
         return this.json(protocols.map(p => this.protocolMapper.toDto(p)), 200)
     }
 
+    @httpGet("/:id")
+    public async protocolById(@requestParam("id") id: string) {
+        const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(parseInt(id), {
+            relations: ["creator", ...PROTOCOL_STEP_RELATIONS]
+        })
+        return this.json(this.protocolMapper.toDto(protocol), 200)
+    }
+
     @httpGet("/:id/xml")
     public async getProtocolXml(@requestParam("id") id: string) {
         const protocol = await (await this.dbService.getRepository(Protocol)).findOneOrFail(parseInt(id), {
