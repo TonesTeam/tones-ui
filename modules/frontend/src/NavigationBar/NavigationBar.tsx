@@ -41,9 +41,10 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         isOpen
     };
 
-    const count = useAppSelector((state) => state.protocols.length)
-    const status = useAppSelector((state) => state.isRunning)
-    
+    const count = useAppSelector((state) => state.protocols.length);
+    const activeProtocols = useAppSelector((state) => state.protocols);
+    const status = useAppSelector((state) => state.isRunning);
+
 
     useEffect(() => {
         const op = '3px';
@@ -86,8 +87,18 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
 
                 <span>How many protocols: {count}</span>
-                <span>System status: {status}</span>
-                
+                <span>
+                    {activeProtocols.map((p) => {
+                        return (
+                            <div>
+                                <a href={`/start/${p.protocol.id}`}><p>Protocol: {p.protocol.name}</p></a>
+                                <p>Progress: {p.progress}</p>
+                            </div>
+                        )
+                    })}
+                </span>
+
+
                 {/* <div style={{ flexGrow: 2 }}></div> */}
             </div>
         </div>

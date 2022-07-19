@@ -179,7 +179,7 @@ export default function ProtocolList() {
     const [isVisible, setToVisible] = useState(false)
     const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
     useEffect(listInitilizer, []);
-    localStorage.clear(); //clear redux state manually when needed
+    //localStorage.clear(); //clear redux state manually when needed
     const onBackdropClick = () => {
         setToVisible(false)
     }

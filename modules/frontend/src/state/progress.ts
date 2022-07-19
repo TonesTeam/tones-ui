@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 
-interface ProtocolState {
+export interface ProtocolState {
     protocol: ProtocolDto
     progress: number //percents
     status: Status
@@ -39,7 +39,6 @@ export const progressSlice = createSlice({
         },
 
         moveProgress: (state, action) => {
-            
             state.protocols[action.payload.protocolIndexToMove].progress += action.payload.progressToAdd
         },
 
