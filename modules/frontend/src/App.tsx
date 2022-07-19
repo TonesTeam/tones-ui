@@ -24,7 +24,7 @@ function App() {
         <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
         <Route path="/create/protocol" element={<BlocklyPage />} />
         <Route path="/launch/:id" element={<Recommendations />} />
-        <Route path="/start" element={<LauchPage />} />
+        <Route path="/start/:id" element={<LauchPage />} />
       </Routes>
     </Router>
   )

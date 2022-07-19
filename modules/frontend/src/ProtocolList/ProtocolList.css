@@ -216,12 +216,13 @@
     padding-bottom: 20px;
 }
 
-.protocol-body-content .protocol-options button {
+.proto-btn {
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #123d5f;
+    /* border: 1px solid #123d5f; */
+    border: none;
     border-radius: 3px;
     color: #123d5f;
     background-color: #fff;
@@ -229,6 +230,15 @@
     text-transform: uppercase;
     transition: 0.2s;
     font-size: large;
+    cursor: pointer;
+}
+
+.proto-btn:disabled{
+    cursor: auto;
+}
+
+.proto-btn:disabled a{
+    color: #757575;
 }
 
 .protocol-options button a{
@@ -240,7 +250,7 @@
 
 .protocol-body-content .protocol-options button:active,
 .protocol-body-content .protocol-options button:hover {
-    border: 2px solid #123d5f;
+    border: 1px solid #123d5f;
     color: #000;
 }
 

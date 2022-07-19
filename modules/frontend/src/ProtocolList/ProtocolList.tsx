@@ -12,7 +12,7 @@ import classNames from 'classnames'
 import { getComparator } from 'sharedlib/collection.util'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
 import { RootState } from 'state/store'
-import { run, moveProgress, discard } from 'state/progress'
+import { addAndRun, moveProgress, discard } from 'state/progress'
 import { forEach } from 'lodash'
 
 
@@ -75,10 +75,6 @@ export const p1: ProtocolDto = {
     ]
 }
 
-
-
-
-
 const max = 2;
 function selectiveCheck(_event: any) {
     var checkedChecks = document.querySelectorAll(".check-to-run:checked");
@@ -93,7 +89,10 @@ function Protocol(props: any) {
     const [height, setHeight] = useState(0);
     const [div, setDiv] = useState<HTMLDivElement | null>(null);
     useEffect(() => setHeight(div?.scrollHeight ?? 0));
+    
     const dispatch = useAppDispatch();
+    let disableLaunch = useAppSelector((state) => state.isRunning);
+
 
     return (
 
@@ -157,12 +156,13 @@ function Protocol(props: any) {
                         <div className="protocol-options">
                             <button onClick={() => navigate(`/edit/protocol/${props.id}`)}
                                 className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
-                            <button className="proto-btn" onClick={() => dispatch(run(props))}>Toggle 'run'</button>
-                            {/* <button className="proto-btn" onClick={() => dispatch(moveProgress({protocolToMove: props, progressToAdd: 1}))}>Toggle 'moveProgress'</button> */}
+                            <button className="proto-btn"><i className="fas fa-code-branch"></i>Use as template</button>
                         </div>
 
                         <div className="protocol-options">
-                            <button className="proto-btn"><a href={`/launch/${props.id}`}><i className="fas fa-play"></i>Launch</a></button>
+                            <button className="proto-btn" disabled={disableLaunch ? true : false}>
+                                <a href={`/launch/${props.id}`} style={{ pointerEvents: disableLaunch? "none" : "auto" }}><i className="fas fa-play"></i>Launch</a>
+                            </button>
                             <button onClick={() => makeRequest('DELETE', `/protocol/${props.id}`).then(() => props.listInitializer())}
                                 className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
@@ -179,7 +179,7 @@ export default function ProtocolList() {
     const [isVisible, setToVisible] = useState(false)
     const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
     useEffect(listInitilizer, []);
-
+    localStorage.clear(); //clear redux state manually when needed
     const onBackdropClick = () => {
         setToVisible(false)
     }
@@ -193,10 +193,10 @@ export default function ProtocolList() {
     const activeProtocols = useAppSelector((state) => state.protocols);
     const status = useAppSelector((state) => state.isRunning);
 
-    //TEST - OUTPUT LAST ADDED PROTOCOL NAME
-    if(activeProtocols.length != 0){
-        console.log(activeProtocols[activeProtocols.length - 1].protocol.name);
-    }
+    // //TEST - OUTPUT LAST ADDED PROTOCOL NAME
+    // if(activeProtocols.length != 0){
+    //     console.log(activeProtocols[activeProtocols.length - 1].protocol.name);
+    // }
 
 
     function filterAndSort() {

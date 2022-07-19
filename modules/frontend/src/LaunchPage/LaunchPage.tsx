@@ -2,106 +2,141 @@ import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
 import "./LaunchPage.css";
 import "common/style.css";
-import { ClassicElement, useEffect, useState } from "react";
+import { getRequest } from 'common/util'
+import { useEffect, useState } from "react";
+import { useAppSelector, useAppDispatch } from 'state/hooks'
+import { addAndRun, moveProgress, discard, finish, error, resume, Status} from 'state/progress'
+import { useParams } from "react-router-dom";
+import { ProtocolDto } from "sharedlib/dto/protocol.dto";
+import { data } from "jquery";
+import { useNavigate } from "react-router-dom";
 
-/* var someError = false;
-var forceStopped = false;
-var finished = false; */
 
-interface Status {
-    getColor(): string;
-    getMessage(): JSX.Element;
-}
+// interface Status {
+//     getColor(): string;
+//     getMessage(): JSX.Element;
+// }
 
-class Ongoing implements Status {
-    getMessage(): JSX.Element {
-        return (
-            <div></div>
-        );
-    }
-    getColor(): string {
-        return "#6191ae";
-    }
-}
+// class Ongoing implements Status {
+//     getMessage(): JSX.Element {
+//         return (
+//             <div></div>
+//         );
+//     }
+//     getColor(): string {
+//         return "#6191ae";
+//     }
+// }
 
-class ForceStopped implements Status {
-    getMessage(): JSX.Element {
-        return (
-            <div className="comment-body">
-                <h4 id="comment-header">Protocol have been force-stopped. It cannot be resumed, but you can launch it again.</h4>
-                <button id="toList-btn"><a href="/list">Go to Protocol List</a></button>
-            </div>
-        );
-    }
-    getColor(): string {
-        return "#ddd";
-    }
-}
-class SysError implements Status {
-    getMessage(): JSX.Element {
-        return (
-            <div className="comment-body">
-                <h4 id="comment-header">Some error occured! Please follow the guide below to detect and fix the error.</h4>
-                <ol id="error-guide">
-                    <li>Check if any slots are displaced. If any - fix the placing.</li>
-                    <li>Make sure that sealing slots cover is closed.</li>
-                    <li>Here will be a more precise fixing guide based on the type of error.</li>
-                    <li>Or not. In that case, pretend like this is not your fault and act casual.</li>
-                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia sunt eaque.</li>
-                </ol>
-            </div>
-        );
-    }
-    getColor(): string {
-        return "#ae616a";
-    }
-}
-class Finished implements Status {
-    getMessage(): JSX.Element {
-        return (
-            <div className="comment-body">
-                <h4 id="comment-header">Protocol have successfully finished!</h4>
-                <button><a href="/list">Go to Protocol List</a></button>
-            </div>
-        );
-    }
-    getColor(): string {
-        return "#6f8b6c";
-    }
-}
+// class ForceStopped implements Status {
+//     getMessage(): JSX.Element {
+//         return (
+//             <div className="comment-body">
+//                 <h4 id="comment-header">Protocol have been force-stopped. It cannot be resumed, but you can launch it again.</h4>
+//                 <button id="toList-btn"><a href="/list">Go to Protocol List</a></button>
+//             </div>
+//         );
+//     }
+//     getColor(): string {
+//         return "#ddd";
+//     }
+// }
+// class SysError implements Status {
+//     getMessage(): JSX.Element {
+//         return (
+//             <div className="comment-body">
+//                 <h4 id="comment-header">Some error occured! Please follow the guide below to detect and fix the error.</h4>
+//                 <ol id="error-guide">
+//                     <li>Check if any slots are displaced. If any - fix the placing.</li>
+//                     <li>Make sure that sealing slots cover is closed.</li>
+//                     <li>Here will be a more precise fixing guide based on the type of error.</li>
+//                     <li>Or not. In that case, pretend like this is not your fault and act casual.</li>
+//                     <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia sunt eaque.</li>
+//                 </ol>
+//             </div>
+//         );
+//     }
+//     getColor(): string {
+//         return "#ae616a";
+//     }
+// }
+// class Finished implements Status {
+//     getMessage(): JSX.Element {
+//         return (
+//             <div className="comment-body">
+//                 <h4 id="comment-header">Protocol have successfully finished!</h4>
+//                 <button><a href="/list">Go to Protocol List</a></button>
+//             </div>
+//         );
+//     }
+//     getColor(): string {
+//         return "#6f8b6c";
+//     }
+// }
 
-var i = 0;
-var width = 1;
-enum ProtocolState {
-    ONGOING,
-    FORCE_STOPPED,
-    ERROR,
-    FINISHED
-}
+// var i = 0;
+// var width = 1;
+// enum ProtocolState {
+//     ONGOING,
+//     FORCE_STOPPED,
+//     ERROR,
+//     FINISHED
+// }
 
-const launchStatus: Map<ProtocolState, Status> = new Map([
-    [ProtocolState.FINISHED, new Finished()],
-    [ProtocolState.ERROR, new SysError()],
-    [ProtocolState.FORCE_STOPPED, new ForceStopped()],
-    [ProtocolState.ONGOING, new Ongoing()]
-]);
+// const launchStatus: Map<ProtocolState, Status> = new Map([
+//     [ProtocolState.FINISHED, new Finished()],
+//     [ProtocolState.ERROR, new SysError()],
+//     [ProtocolState.FORCE_STOPPED, new ForceStopped()],
+//     [ProtocolState.ONGOING, new Ongoing()]
+// ]);
+
+const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
 
 export default function LaunchPage() {
-    const secondsForBar = 25;
-    const incrementWidthPerSecond = 100 / secondsForBar;
 
-    const [ps, setProtocolState] = useState(ProtocolState.ONGOING);
+    //0. Helper functions
+    let findIndexByProtocol = function(protocol: ProtocolDto){
+        let stateProtocols = useAppSelector((state) => state.protocols);
+        return stateProtocols.findIndex(e => { return e.protocol?.id === protocol.id });
+    }
+
+    let findProtocolByIndex = function(index: number){
+        return useAppSelector((state) => state.protocols[index]);
+    }
+
+    //1. Find protocol (DTO) by ID passed in param
+    const params = useParams();
+    const newProto: ProtocolDto | undefined = protocolsInDB.find(e => e.id.toString() === params.id);
+    if (newProto === undefined){
+        let navigate = useNavigate();
+        navigate("/list");
+    }
+    
+    // //2. Activate current protocol by adding it to active protocols with action run()
+    const dispatch = useAppDispatch();
+    // dispatch(addAndRun(newProto!)); <----- RELOCATED TO RECOMMENDATIONS
+
+    let index = findIndexByProtocol(newProto!);
+    const activeProto = useAppSelector((state) => state.protocols[index]);
     const [progress, setProgress] = useState(0);
+    const activeProgress = useAppSelector((state) => state.protocols[index].progress)
+    const activeStatus = useAppSelector((state) => state.protocols[index].status)
 
-    const statusStrat = launchStatus.get(ps)!
-
+    //3. Move progress by 1 percent in useEffect (for now)
+    const duration = 23;
+    const incrementWidthPerSecond = 100 / duration;
     useEffect(() => {
         if (progress == 100) {
-            setProtocolState(ProtocolState.FINISHED);
+            dispatch(finish(index));
             return;
         }
-        if (ps == ProtocolState.ONGOING) {
-            const timeout = setTimeout(() => setProgress(progress + incrementWidthPerSecond), 1000);
+        if (activeProto.status == Status.Ongoing) {
+            //smooth increase
+            const timeout = setTimeout(() => {
+                setProgress(progress + 1);
+                dispatch(moveProgress({protocolIndexToMove: index, progressToAdd: 1}));
+            }, duration*10);
+            
             return () => clearTimeout(timeout)
         }
     })
@@ -112,25 +147,29 @@ export default function LaunchPage() {
             <div className="font-rb" id="main">
                 <div className="progress-container">
                     <div>
-                        <h2><i>Approximate protocol duration: 4 minutes</i></h2>
+                        <h2><i>Approximate protocol duration: {duration} seconds</i></h2>
                     </div>
 
                     <div id="progress">
-                        <div id="progress-bar" style={{ width: `${progress}%`, backgroundColor: statusStrat.getColor() }}></div>
+                        <div id="progress-bar" style={{ width: `${progress}%`, backgroundColor: "#121212" }}></div>
                     </div>
                 </div>
 
                 <div className="footer">
                     <div id="comment">
-                        {statusStrat.getMessage()}
-                    </div> {/* to be filled according to current status */}
+                        {/* {statusStrat.getMessage()} */}
+                        Active protocol: {activeProto.protocol.name}
+                        Progress: {activeProgress}
+                        Protocol status: {activeStatus}
+                        Progress local state: {progress}
+                    </div> 
 
                     <div className="btn-panel">
-                        <button onClick={() => setProtocolState(ProtocolState.FORCE_STOPPED)} id="stop-btn">Force stop</button>
-                        <button onClick={() => setProtocolState(ProtocolState.ERROR)} id="fake-error"
-                            style={{ visibility: ps == ProtocolState.ERROR ? "hidden" : "visible" }}>Toggle fake error</button>
-                        <button onClick={() => setProtocolState(ProtocolState.ONGOING)} id="resume-btn"
-                            style={{ visibility: ps == ProtocolState.ERROR ? "visible" : "hidden" }}>Resume</button>
+                        <button onClick={() => dispatch(error(index))} id="stop-btn">Force stop</button>
+                        <button onClick={() => dispatch(error(index))} id="fake-error"
+                            style={{ visibility: activeProto.status == Status.Ongoing ? "hidden" : "visible" }}>Toggle fake error</button>
+                        <button onClick={() => dispatch(resume(index))} id="resume-btn"
+                            style={{ visibility: activeProto.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
                     </div>
                 </div>
             </div>

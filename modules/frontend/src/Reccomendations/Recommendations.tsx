@@ -4,11 +4,17 @@ import { getRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
+import { ProtocolDto } from "sharedlib/dto/protocol.dto";
+import { useAppDispatch } from "state/hooks";
+import { addAndRun } from "state/progress";
 import "./Recommendations.css";
 
+
+
+const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
 
 function showBtn() {
     const checkbox = document.getElementById('confirmCheck') as HTMLInputElement | null;
@@ -39,6 +45,7 @@ function resolveCell(cid: number, rid: number, configMap: Map<number, Deployment
 }
 
 
+
 export default function Recommendations() {
     const headers = ['A', 'B', 'C', 'D', 'E', 'F'];
     const rows = 6;
@@ -46,10 +53,17 @@ export default function Recommendations() {
     const [liquidConfig, setLiquidConfig] = useState<DeploymentLiquidConfiguration[]>([])
     const configMap = toMap(liquidConfig, i => i.liquidSlotNumber);
     const params = useParams()
+    const id = params.id!;
+    let navigate = useNavigate();
+    const newProto = protocolsInDB.find(e => e.id.toString() === params.id);
+    const dispatch = useAppDispatch();
+    
+    function startProtocol(){
+        dispatch(addAndRun(newProto!));
+        navigate(`/start/${id}`);
+     }
 
     useEffect(() => {
-        let id = params.id!;
-        console.log(id);
         getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
             .then(resp => setLiquidConfig(resp.data))
     }, [])
@@ -99,7 +113,12 @@ export default function Recommendations() {
                         <p></p>
                     </div>
                     <div id="launchBtn" style={{ visibility: "hidden" }}>
-                        <a href={`/start/`}>START</a>
+                        <button onClick={() => {
+                            startProtocol();
+                        }}>
+                            Start
+                        </button>
+                        
                     </div>
                 </div>
             </div></>

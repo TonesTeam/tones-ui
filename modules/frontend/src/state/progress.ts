@@ -27,18 +27,20 @@ export const progressSlice = createSlice({
     name: 'progress',
     initialState,
     reducers: {
-        run: (state, action: PayloadAction<ProtocolDto>) => {
-            let newLaunchedProtocol: ProtocolState = {
+        addAndRun: (state, action: PayloadAction<ProtocolDto>) => {
+            let newLaunchedProtocol:ProtocolState = 
+            {
                 protocol: action.payload,
-                progress: 0,
-                status: Status.Ongoing
-            };
+                status: Status.Ongoing,
+                progress: 0
+            }
             state.protocols.push(newLaunchedProtocol);
             state.isRunning = true;
         },
 
         moveProgress: (state, action) => {
-            state.protocols[action.payload.protocolToMove].progress = action.payload.progressToAdd
+            
+            state.protocols[action.payload.protocolIndexToMove].progress += action.payload.progressToAdd
         },
 
         finish: (state, action: PayloadAction<number>) => {
@@ -55,9 +57,13 @@ export const progressSlice = createSlice({
         error: (state, action: PayloadAction<number>) => {
             state.protocols[action.payload].status = Status.Error;
         },
+
+        resume: (state, action: PayloadAction<number>) => {
+            state.protocols[action.payload].status = Status.Ongoing;
+        }
     },
 })
 
-export const { run, moveProgress, finish, discard, error } = progressSlice.actions;
+export const { addAndRun, moveProgress, finish, discard, error, resume } = progressSlice.actions;
 
 export default progressSlice.reducer
