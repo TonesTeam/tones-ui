@@ -63,7 +63,7 @@ class Finished implements StatusElements {
         return (
             <div className="comment-body">
                 <h4 id="comment-header">Protocol have successfully finished!</h4>
-                <button><a href="/list">Go to Protocol List</a></button>
+                <h4>Do stuff that you need to do and then press Discard button</h4>
             </div>
         );
     }
@@ -72,12 +72,6 @@ class Finished implements StatusElements {
     }
 }
 
-// enum ProtocolState {
-//     ONGOING,
-//     FORCE_STOPPED,
-//     ERROR,
-//     FINISHED
-// }
 
 const launchStatus: Map<ProtocolState["status"], StatusElements> = new Map([
     [Status.Finished, new Finished()],
@@ -85,59 +79,50 @@ const launchStatus: Map<ProtocolState["status"], StatusElements> = new Map([
     [Status.Ongoing, new Ongoing()]
 ]);
 
-const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
+//const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
 
 export default function LaunchPage() {
 
     //0. Helper functions
-    let findIndexByProtocol = function(protocol: ProtocolDto){
+    let findIndexByProtocol = function(protocol: ProtocolState){
         let stateProtocols = useAppSelector((state) => state.protocols);
-        return stateProtocols.findIndex(e => { return e.protocol?.id === protocol.id });
+        return stateProtocols.findIndex(e => { return e.protocol?.id === protocol.protocol.id });
     }
 
     let findProtocolByIndex = function(index: number){
         return useAppSelector((state) => state.protocols[index]);
     }
     const dispatch = useAppDispatch();
+    let navigate = useNavigate();
 
     //1. Find protocol (DTO) by ID passed in param
     const params = useParams();
-    console.log(params.id);
-    const newProto = protocolsInDB.find(e => e.id.toString() === params.id);
-    if (newProto === undefined){
-        let navigate = useNavigate();
-        navigate("/list");
-    }
+    const activeProto = useAppSelector((state) => state.protocols).find(e => e.protocol.id.toString() === params.id)!;
+    // if (newProto === undefined){
+    //     let navigate = useNavigate();
+    //     navigate("/list");
+    // }
     // dispatch(addAndRun(newProto!)); <----- RELOCATED TO RECOMMENDATIONS
     
     // //2. Select interface elements according to protocol status
-    let index = findIndexByProtocol(newProto!);
-    const activeProto = useAppSelector((state) => state.protocols[index]);
+    let index = findIndexByProtocol(activeProto);
+    //const activeProto = useAppSelector((state) => state.protocols[index]);
     const statusStrat = launchStatus.get(activeProto?.status)
 
 
     //3. Move progress gradually by 1 percent in useEffect (for now)
     const activeProgress = useAppSelector((state) => state.protocols[index]?.progress)
-    const [progress, setProgress] = useState(activeProgress);
+    //const [progress, setProgress] = useState(activeProgress);
     const activeStatus = useAppSelector((state) => state.protocols[index]?.status)
 
-    const duration = 23;
     //const incrementWidthPerSecond = 100 / duration;
-    useEffect(() => {
-        if (progress == 100) {
-            dispatch(finish(index));
-            return;
-        }
-        if (activeProto?.status == Status.Ongoing) {
-            //smooth increase
-            const timeout = setTimeout(() => {
-                setProgress(progress + 1);
-                dispatch(moveProgress({protocolIndexToMove: index, progressToAdd: 1}));
-            }, duration*10);
-            
-            return () => clearTimeout(timeout)
-        }
-    })
+    // useEffect(() => {
+    //     if (progress == 100) {
+    //         dispatch(finish(index));
+    //         return;
+    //     }
+    //     if (activeProto?.status == Status.Ongoing) 
+    // })
 
     return (
         <>
@@ -145,11 +130,11 @@ export default function LaunchPage() {
             <div className="font-rb" id="main">
                 <div className="progress-container">
                     <div>
-                        <h2><i>Approximate protocol duration: {duration} seconds</i></h2>
+                        <h2><i>Approximate protocol duration: {activeProto.duration} seconds</i></h2>
                     </div>
 
                     <div id="progress">
-                        <div id="progress-bar" style={{ width: `${progress}%`, backgroundColor: statusStrat?.getColor() }}></div>
+                        <div id="progress-bar" style={{ width: `${activeProto.progress}%`, backgroundColor: statusStrat?.getColor() }}></div>
                     </div>
                 </div>
 
@@ -159,17 +144,23 @@ export default function LaunchPage() {
                         Active protocol: {activeProto?.protocol.name} <br/>
                         Progress: {activeProgress} <br/>
                         Protocol status: {activeStatus} <br/>
-                        Progress local state: {progress} <br/>
+                        Progress local state: {activeProto.progress} <br/>
 
                         {statusStrat?.getMessage()}
                     </div> 
 
                     <div className="btn-panel">
-                        <button onClick={() => dispatch(error(index))} id="stop-btn">Toggle fake error</button>
+                        <button onClick={() => dispatch(error(index))} id="stop-btn"
+                            style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
                         {/* <button onClick={() => dispatch(error(index))} id="fake-error"
                             style={{ visibility: activeProto.status == Status.Ongoing ? "hidden" : "visible" }}>Toggle fake error</button> */}
                         <button onClick={() => dispatch(resume(index))} id="resume-btn"
                             style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
+                        <button onClick={() => {
+                            dispatch(discard(index));
+                            navigate(`/list`)
+                        }} id="discard-btn"
+                            style={{ visibility: activeProto?.status == Status.Finished ? "visible" : "hidden" }}>Discard</button>
                     </div>
                 </div>
             </div>

@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
+import { duration } from '@mui/material'
 
 export interface ProtocolState {
     protocol: ProtocolDto
     progress: number //percents
     status: Status
+    duration: number
 }
 
 interface SystemState {
@@ -32,7 +34,8 @@ export const progressSlice = createSlice({
             {
                 protocol: action.payload,
                 status: Status.Ongoing,
-                progress: 0
+                progress: 0,
+                duration: 23
             }
             state.protocols.push(newLaunchedProtocol);
             state.isRunning = true;
@@ -43,13 +46,16 @@ export const progressSlice = createSlice({
         },
 
         finish: (state, action: PayloadAction<number>) => {
+            state.protocols[action.payload].progress = 100;
             state.protocols[action.payload].status = Status.Finished;
+            
         },
 
         discard: (state, action: PayloadAction<number>) => {
-            state.protocols = state.protocols.filter((e) => {
-                return e.protocol.id !== action.payload;
-            })
+            // state.protocols = state.protocols.filter((e) => {
+            //     return e.protocol.id != action.payload;
+            // })
+            state.protocols.splice(action.payload, 1);
             if(state.protocols.length == 0) state.isRunning = false;
         },
 

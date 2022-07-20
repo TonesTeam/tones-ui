@@ -43,7 +43,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
 
     const count = useAppSelector((state) => state.protocols.length);
     const activeProtocols = useAppSelector((state) => state.protocols);
-    const status = useAppSelector((state) => state.isRunning);
+    //const status = useAppSelector((state) => state.isRunning);
 
 
     useEffect(() => {
@@ -86,13 +86,12 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 <NavBarItem itemData={itemData} icon="file" text="Reports" />
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
 
-                <span>How many protocols: {count}</span>
+                <span>Active protocols: {count}</span>
                 <span>
                     {activeProtocols.map((p) => {
                         return (
                             <div>
-                                <a href={`/start/${p.protocol.id}`}><p>Protocol: {p.protocol.name}</p></a>
-                                <p>Progress: {p.progress}</p>
+                                <a href={`/start/${p.protocol.id}`}><p>{p.protocol.name} : {p.progress}%</p></a>
                             </div>
                         )
                     })}

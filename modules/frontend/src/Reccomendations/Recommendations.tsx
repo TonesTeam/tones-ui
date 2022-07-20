@@ -8,13 +8,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
 import { ProtocolDto } from "sharedlib/dto/protocol.dto";
-import { useAppDispatch } from "state/hooks";
-import { addAndRun } from "state/progress";
+import { useAppSelector, useAppDispatch } from "state/hooks";
+import { addAndRun, moveProgress, finish, Status } from "state/progress";
+import { store } from "state/store";
 import "./Recommendations.css";
 
 
 
 const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
+// const dispatch = useAppDispatch();
 
 function showBtn() {
     const checkbox = document.getElementById('confirmCheck') as HTMLInputElement | null;
@@ -44,7 +46,25 @@ function resolveCell(cid: number, rid: number, configMap: Map<number, Deployment
     return <td key={cid} className={classNames('emptyCell', { washing })}><span className="emptyCell">Empty </span></td>
 }
 
+const duration = 23;
 
+function incProtocol() {
+    const st = store.getState()
+    const activePr = st.protocols.filter(e => { return e.status === Status.Ongoing })!;
+    for (let i = 0; i < st.protocols.length; i++) {
+        const pr = st.protocols[i];
+        if(pr.progress >= 100) {
+            store.dispatch(finish(i))
+            continue;
+        }
+        if(pr.status != Status.Ongoing) {
+            continue;
+        }
+        store.dispatch(moveProgress({ protocolIndexToMove: i, progressToAdd: 1 }));
+    }
+    setTimeout(incProtocol, duration * 10)
+}
+setTimeout(incProtocol, duration * 10)
 
 export default function Recommendations() {
     const headers = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -55,13 +75,14 @@ export default function Recommendations() {
     const params = useParams()
     const id = params.id!;
     let navigate = useNavigate();
+    const dispatch =  useAppDispatch();
     const newProto = protocolsInDB.find(e => e.id.toString() === params.id);
-    const dispatch = useAppDispatch();
     
-    function startProtocol(){
-        dispatch(addAndRun(newProto!));
+
+    function startProtocol() {
+       dispatch(addAndRun(newProto!));
         navigate(`/start/${id}`);
-     }
+    }
 
     useEffect(() => {
         getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
@@ -118,7 +139,7 @@ export default function Recommendations() {
                         }}>
                             Start
                         </button>
-                        
+
                     </div>
                 </div>
             </div></>

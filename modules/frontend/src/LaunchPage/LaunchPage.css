@@ -62,6 +62,18 @@
     cursor: pointer;
 }
 
+#discard-btn{
+    background: #5e4b89;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 10px;
+    border: 3px solid #56367a;
+    text-decoration: none;
+    padding: 10px;
+    transition: visibility .2s;
+    cursor: pointer;
+}
+
 #toList-btn a{
     text-decoration: none;
     color: #fff;

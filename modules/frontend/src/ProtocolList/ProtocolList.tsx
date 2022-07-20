@@ -200,7 +200,7 @@ export default function ProtocolList() {
 
 
     function filterAndSort() {
-        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
+        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput));
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
         return sortedList;
     }
