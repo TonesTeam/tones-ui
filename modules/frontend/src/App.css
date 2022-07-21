@@ -43,5 +43,9 @@ button {
 }
 
 .font-rb {
-    font-family: "Rubik";
+    font-family: "RubikRegular";
+}
+
+.font-rb-bold {
+    font-family: "RubikBold";
 }

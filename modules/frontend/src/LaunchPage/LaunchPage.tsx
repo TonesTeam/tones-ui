@@ -5,7 +5,7 @@ import "common/style.css";
 import { getRequest } from 'common/util'
 import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from 'state/hooks'
-import { addAndRun, moveProgress, discard, finish, error, resume, ProtocolState, Status} from 'state/progress'
+import { addAndRun, moveProgress, discard, finish, error, resume, ProtocolState, Status } from 'state/progress'
 import { useParams } from "react-router-dom";
 import { ProtocolDto } from "sharedlib/dto/protocol.dto";
 import { data } from "jquery";
@@ -41,6 +41,8 @@ class Ongoing implements StatusElements {
 //         return "#ddd";
 //     }
 // }
+
+
 class SysError implements StatusElements {
     getMessage(): JSX.Element {
         return (
@@ -72,7 +74,6 @@ class Finished implements StatusElements {
     }
 }
 
-
 const launchStatus: Map<ProtocolState["status"], StatusElements> = new Map([
     [Status.Finished, new Finished()],
     [Status.Error, new SysError()],
@@ -83,46 +84,27 @@ const launchStatus: Map<ProtocolState["status"], StatusElements> = new Map([
 
 export default function LaunchPage() {
 
-    //0. Helper functions
-    let findIndexByProtocol = function(protocol: ProtocolState){
+    //Helper functions
+    let findIndexByProtocol = function (protocol: ProtocolState) {
         let stateProtocols = useAppSelector((state) => state.protocols);
         return stateProtocols.findIndex(e => { return e.protocol?.id === protocol.protocol.id });
     }
 
-    let findProtocolByIndex = function(index: number){
+    let findProtocolByIndex = function (index: number) {
         return useAppSelector((state) => state.protocols[index]);
     }
+
+
     const dispatch = useAppDispatch();
     let navigate = useNavigate();
-
-    //1. Find protocol (DTO) by ID passed in param
     const params = useParams();
+
+
     const activeProto = useAppSelector((state) => state.protocols).find(e => e.protocol.id.toString() === params.id)!;
-    // if (newProto === undefined){
-    //     let navigate = useNavigate();
-    //     navigate("/list");
-    // }
-    // dispatch(addAndRun(newProto!)); <----- RELOCATED TO RECOMMENDATIONS
-    
-    // //2. Select interface elements according to protocol status
-    let index = findIndexByProtocol(activeProto);
-    //const activeProto = useAppSelector((state) => state.protocols[index]);
+    const index = findIndexByProtocol(activeProto);
     const statusStrat = launchStatus.get(activeProto?.status)
-
-
-    //3. Move progress gradually by 1 percent in useEffect (for now)
     const activeProgress = useAppSelector((state) => state.protocols[index]?.progress)
-    //const [progress, setProgress] = useState(activeProgress);
     const activeStatus = useAppSelector((state) => state.protocols[index]?.status)
-
-    //const incrementWidthPerSecond = 100 / duration;
-    // useEffect(() => {
-    //     if (progress == 100) {
-    //         dispatch(finish(index));
-    //         return;
-    //     }
-    //     if (activeProto?.status == Status.Ongoing) 
-    // })
 
     return (
         <>
@@ -140,27 +122,37 @@ export default function LaunchPage() {
 
                 <div className="footer">
                     <div id="comment">
-                        {/* {statusStrat.getMessage()} */}
-                        Active protocol: {activeProto?.protocol.name} <br/>
-                        Progress: {activeProgress} <br/>
-                        Protocol status: {activeStatus} <br/>
-                        Progress local state: {activeProto.progress} <br/>
+                        Active protocol: {activeProto?.protocol.name} <br />
+                        Protocol status: {activeProto.status} <br />
+                        Progress local state: {activeProto.progress} <br />
 
                         {statusStrat?.getMessage()}
-                    </div> 
+                    </div>
 
                     <div className="btn-panel">
-                        <button onClick={() => dispatch(error(index))} id="stop-btn"
-                            style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
+                        {(() => {
+                            switch (activeProto.status) {
+                                case Status.Ongoing:
+                                    return <button className="launch-opt" onClick={() => dispatch(error(index))}  id="stop-btn"
+                                    style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
+                                case Status.Finished:
+                                    return <button className="launch-opt" onClick={() => {
+                                        dispatch(discard(index));
+                                        navigate(`/list`)
+                                    }} id="discard-btn"
+                                        style={{ visibility: activeProto?.status == Status.Finished ? "visible" : "hidden" }}>Discard</button>
+                                case Status.Error:
+                                    return <button className="launch-opt" onClick={() => dispatch(resume(index))} id="resume-btn"
+                                    style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
+                                default:
+                                    return null
+                            }
+                        })()}
+                        
                         {/* <button onClick={() => dispatch(error(index))} id="fake-error"
                             style={{ visibility: activeProto.status == Status.Ongoing ? "hidden" : "visible" }}>Toggle fake error</button> */}
-                        <button onClick={() => dispatch(resume(index))} id="resume-btn"
-                            style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
-                        <button onClick={() => {
-                            dispatch(discard(index));
-                            navigate(`/list`)
-                        }} id="discard-btn"
-                            style={{ visibility: activeProto?.status == Status.Finished ? "visible" : "hidden" }}>Discard</button>
+                        
+                        
                     </div>
                 </div>
             </div>

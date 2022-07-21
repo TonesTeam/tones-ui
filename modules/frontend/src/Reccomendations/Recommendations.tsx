@@ -99,7 +99,7 @@ export default function Recommendations() {
 
                 </div>
                 <div className="tableContainer">
-                    <h4><i>Fill in tubes and place them according to the configuration table:</i></h4>
+                    <h3>Fill in tubes and place them according to the configuration table:</h3>
                     <table id="recom-table">
                         <colgroup>
                             <col className="small" span={5} />

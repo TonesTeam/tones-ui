@@ -52,9 +52,6 @@ export const progressSlice = createSlice({
         },
 
         discard: (state, action: PayloadAction<number>) => {
-            // state.protocols = state.protocols.filter((e) => {
-            //     return e.protocol.id != action.payload;
-            // })
             state.protocols.splice(action.payload, 1);
             if(state.protocols.length == 0) state.isRunning = false;
         },

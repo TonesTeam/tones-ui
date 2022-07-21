@@ -13,8 +13,15 @@ code {
 }
 
 @font-face {
-    font-family: "Rubik";
-    src: local("Rubik"),
+    font-family: "RubikRegular";
+    src: local("RubikRegular"),
      url("./fonts/Rubik-Regular.ttf") format("truetype");
     font-weight:300;
-    }
+}
+
+@font-face {
+    font-family: "RubikBold";
+    src: local("RubikBold"),
+     url("./fonts/Rubik-Bold.ttf") format("truetype");
+    font-weight:300;
+}

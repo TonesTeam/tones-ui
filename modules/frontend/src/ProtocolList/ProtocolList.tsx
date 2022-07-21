@@ -5,15 +5,13 @@ import 'common/style.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
+import { getComparator } from 'sharedlib/collection.util'
 import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
-import { getComparator } from 'sharedlib/collection.util'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
-import { RootState } from 'state/store'
-import { addAndRun, moveProgress, discard } from 'state/progress'
-import { forEach } from 'lodash'
+import { Status } from 'state/progress'
 
 
 export const p1: ProtocolDto = {
@@ -89,9 +87,36 @@ function Protocol(props: any) {
     const [height, setHeight] = useState(0);
     const [div, setDiv] = useState<HTMLDivElement | null>(null);
     useEffect(() => setHeight(div?.scrollHeight ?? 0));
-    
+
     const dispatch = useAppDispatch();
     let disableLaunch = useAppSelector((state) => state.isRunning);
+
+
+
+    let protocolStatus: string;
+    let protoInList = useAppSelector((state) => state.protocols).find(e => e.protocol.id == props.id)
+    if (protoInList != undefined) {
+        switch (protoInList.status) {
+            case "ONGOING":
+                protocolStatus = "Ongoing";
+                break;
+            case "ERROR":
+                protocolStatus = "Error occured";
+                break;
+            case "FINISHED":
+                protocolStatus = "Finished";
+                break;
+            default:
+                protocolStatus = "Undefined";
+        }
+    }
+    else if (useAppSelector((state) => state.protocols).length == 0){
+        protocolStatus = "Ready to launch";
+    }
+    else{
+        protocolStatus = "Launch prohibited"
+    }
+    
 
 
     return (
@@ -134,15 +159,19 @@ function Protocol(props: any) {
 
             <div className="protocol-body" style={{ maxHeight: open ? `${height}px` : 0 }}>
                 <div className="protocol-body-content">
-                    <table className="dropdown-table">
+                    <div>
+                        <p>Status: {protocolStatus}</p>
+                    </div>
+
+                    {/* <table className="dropdown-table">
                         <tbody>
                             <tr>
-                                <td>Duration: IN DEVELOPEMNT{/* {props.infoDuration} */}</td>
-                                <td>Slots used: IN DEVELOPMENT{/* {props.infoSlots} */}</td>
+                                <td>Duration: IN DEVELOPEMNT{props.infoDuration}</td>
+                                <td>Slots used: IN DEVELOPMENT{props.infoSlots }</td>
                             </tr>
                             <tr>
-                                <td>Status: IN DEVELOPEMNT {/* {props.infoStatus} */}</td>
-                                <td>Blockly Scheme: IN DEVELOPEMNT {/* {props.infoBlockly} */}</td>
+                                <td>Status: IN DEVELOPEMNT {props.infoStatus}</td>
+                                <td>Blockly Scheme: IN DEVELOPEMNT {props.infoBlockly}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -150,7 +179,7 @@ function Protocol(props: any) {
                         augue
                         convallis tincidunt at eget lacus.
                         Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p>
+                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p> */}
 
                     <div className="protocol-options">
                         <div className="protocol-options">
@@ -161,7 +190,7 @@ function Protocol(props: any) {
 
                         <div className="protocol-options">
                             <button className="proto-btn" disabled={disableLaunch ? true : false}>
-                                <a href={`/launch/${props.id}`} style={{ pointerEvents: disableLaunch? "none" : "auto" }}><i className="fas fa-play"></i>Launch</a>
+                                <a href={`/launch/${props.id}`} style={{ pointerEvents: disableLaunch ? "none" : "auto" }}><i className="fas fa-play"></i>Launch</a>
                             </button>
                             <button onClick={() => makeRequest('DELETE', `/protocol/${props.id}`).then(() => props.listInitializer())}
                                 className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
@@ -193,11 +222,6 @@ export default function ProtocolList() {
     const activeProtocols = useAppSelector((state) => state.protocols);
     const status = useAppSelector((state) => state.isRunning);
 
-    // //TEST - OUTPUT LAST ADDED PROTOCOL NAME
-    // if(activeProtocols.length != 0){
-    //     console.log(activeProtocols[activeProtocols.length - 1].protocol.name);
-    // }
-
 
     function filterAndSort() {
         let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput));
@@ -211,27 +235,11 @@ export default function ProtocolList() {
             <NavigationBar selectedItem='Protocol List' />
             <div className="font-rb" id="main">
                 <div className="page-header" id="sticker">
-                    {/* <div className="open-menu-btn">
-                    </div> */}
-                    {/* 
-                    <div className="search-bar-container">
-                        <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
-                        <button type="submit"><i className="fa fa-search"></i></button>
-                    </div>
-                    <div className="launch-container">
-                        <div className="protocol-counter">
-                            <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development
-                            <a href={`/launch/${p1.id}`}>
-                            </a>
-                        </div>
-                    </div> 
-                    */}
-
+                    {/* <span>&f002</span> */}
                     <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                 </div>
 
                 <div className="protocol-list">
-
                     {filterAndSort().map(function (protocol) {
                         return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
