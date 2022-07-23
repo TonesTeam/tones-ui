@@ -1,7 +1,5 @@
 import NavigationBar from 'NavigationBar/NavigationBar'
 import 'NavigationBar/NavigationBar.css'
-import './ProtocolList.css'
-import 'common/style.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
@@ -9,8 +7,10 @@ import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
-import e from 'express'
 import { getComparator } from 'sharedlib/collection.util'
+import './ProtocolList.css'
+import 'common/style.css'
+import MainKeyboard from './MainKeyboard';
 
 
 export const p1: ProtocolDto = {
@@ -166,28 +166,25 @@ function Protocol(props: any) {
     );
 }
 
+
 export default function ProtocolList() {
-    const [protocols, setProtocols] = useState<ProtocolDto[]>([])
-    const [isVisible, setToVisible] = useState(false)
-    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
+    const [protocols, setProtocols] = useState<ProtocolDto[]>([]);
+    const [showKeyboard, setShowKeyboard] = useState(false);
+
+    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) };
     useEffect(listInitilizer, []);
 
-
-    const onBackdropClick = () => {
-        setToVisible(false)
-    }
-
     const [filterInput, setfilterInput] = useState("");
-    let inputHandler = (e:React.ChangeEvent<HTMLInputElement>) => {
-      var lowerCase = e.target.value.toLowerCase();
-      setfilterInput(lowerCase);
+    let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        var lowerCase = e.target.value.toLowerCase();
+        setfilterInput(lowerCase);
     };
 
-    function filterAndSort(){
+    function filterAndSort() {
         let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
 
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
-        
+
         return sortedList;
     }
 
@@ -197,25 +194,9 @@ export default function ProtocolList() {
             <NavigationBar selectedItem='Protocol List' />
             <div className="font-rb" id="main">
                 <div className="page-header" id="sticker">
-                    {/* <div className="open-menu-btn">
-                    </div> */}
-                    {/* 
-                    <div className="search-bar-container">
-                        <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
-                        <button type="submit"><i className="fa fa-search"></i></button>
-                    </div>
-                    <div className="launch-container">
-                        <div className="protocol-counter">
-                            <p>Launch <span id="protocolCount">0</span>/2 protocols</p>  - Selected protocol count. For future development
-                            <a href={`/launch/${p1.id}`}>
-                            </a>
-                        </div>
-                    </div> 
-                    */}
-
-                    <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
+                    <input onFocus={() => setShowKeyboard(true)} value={filterInput}
+                        type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                 </div>
-
                 <div className="protocol-list">
 
                     {filterAndSort().map(function (protocol) {
@@ -250,6 +231,8 @@ export default function ProtocolList() {
                     <Protocol id="PK-009" name="Protocol Kappa"
                         authorName="Minerva McGonagall" creationDate="11/07/2022" /> */}
                 </div>
-            </div></>
+            </div>
+            <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setfilterInput} />
+        </>
     )
 }
