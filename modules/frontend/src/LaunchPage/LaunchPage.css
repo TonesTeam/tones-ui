@@ -22,7 +22,6 @@
     transition: all .5s;
 }
 
-/*----------- STOP / ERROR / RESUME ---------*/
 .footer{
     box-sizing: border-box;
     height: 60vh;
@@ -37,24 +36,6 @@
     width: 80%;
     display: flex;
     justify-content: center;
-}
-
-.launch-opt{
-    color: #000;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-#stop-btn{
-    background: #ddbac3;
-}
-
-#resume-btn, #toList-btn{
-    background: #9fb8c7;
-}
-
-#discard-btn{
-    background: #bdb9c5;
 }
 
 #toList-btn a{
@@ -77,5 +58,21 @@
     margin-top: 20px;
 }
 
+/*-----------  ERROR / RESUME / DISCARD ---------*/
+.launch-opt-btn{
+    color: #000;
+    padding: 10px 20px;
+    cursor: pointer;
+}
 
+#stop-btn{
+    background: #ddbac3;
+}
 
+#resume-btn, #toList-btn{
+    background: #9fb8c7;
+}
+
+#discard-btn{
+    background: #bdb9c5;
+}

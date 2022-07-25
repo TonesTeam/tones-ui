@@ -133,16 +133,16 @@ export default function LaunchPage() {
                         {(() => {
                             switch (activeProto.status) {
                                 case Status.Ongoing:
-                                    return <button className="launch-opt" onClick={() => dispatch(error(index))}  id="stop-btn"
+                                    return <button className="launch-opt-btn" onClick={() => dispatch(error(index))}  id="stop-btn"
                                     style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
                                 case Status.Finished:
-                                    return <button className="launch-opt" onClick={() => {
+                                    return <button className="launch-opt-btn" onClick={() => {
                                         dispatch(discard(index));
                                         navigate(`/list`)
                                     }} id="discard-btn"
                                         style={{ visibility: activeProto?.status == Status.Finished ? "visible" : "hidden" }}>Discard</button>
                                 case Status.Error:
-                                    return <button className="launch-opt" onClick={() => dispatch(resume(index))} id="resume-btn"
+                                    return <button className="launch-opt-btn" onClick={() => dispatch(resume(index))} id="resume-btn"
                                     style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
                                 default:
                                     return null
