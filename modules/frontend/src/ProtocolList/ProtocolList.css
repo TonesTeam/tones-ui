@@ -233,7 +233,7 @@
     color: #757575;
 }
 
-.protocol-options button a{
+.protocol-options button a {
     display: flex;
     text-decoration: none;
     color: #123d5f;
@@ -246,7 +246,19 @@
     color: #000;
 }
 
-.proto-btn i{
+.proto-btn i {
     font-size: 1.5em;
     margin-right: 10px;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s linear;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.2s, opacity 0.2s linear;
 }

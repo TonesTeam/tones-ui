@@ -1,7 +1,5 @@
 import NavigationBar from 'NavigationBar/NavigationBar'
 import 'NavigationBar/NavigationBar.css'
-import './ProtocolList.css'
-import 'common/style.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
@@ -12,6 +10,9 @@ import { makeRequest } from 'common/util'
 import classNames from 'classnames'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
 import { Status } from 'state/progress'
+import './ProtocolList.css'
+import 'common/style.css'
+import MainKeyboard from './MainKeyboard';
 
 
 export const p1: ProtocolDto = {
@@ -203,15 +204,14 @@ function Protocol(props: any) {
     );
 }
 
+
 export default function ProtocolList() {
-    const [protocols, setProtocols] = useState<ProtocolDto[]>([])
-    const [isVisible, setToVisible] = useState(false)
-    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) }
+    const [protocols, setProtocols] = useState<ProtocolDto[]>([]);
+    const [showKeyboard, setShowKeyboard] = useState(false);
+
+    const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) };
     useEffect(listInitilizer, []);
     //localStorage.clear(); //clear redux state manually when needed
-    const onBackdropClick = () => {
-        setToVisible(false)
-    }
 
     const [filterInput, setfilterInput] = useState("");
     let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,6 +226,7 @@ export default function ProtocolList() {
     function filterAndSort() {
         let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput));
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
+
         return sortedList;
     }
 
@@ -235,17 +236,18 @@ export default function ProtocolList() {
             <NavigationBar selectedItem='Protocol List' />
             <div className="font-rb" id="main">
                 <div className="page-header" id="sticker">
-                    {/* <span>&f002</span> */}
-                    <input type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
-                </div>
 
+                    <input onFocus={() => setShowKeyboard(true)} value={filterInput}
+                        type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
+                </div>
                 <div className="protocol-list">
                     {filterAndSort().map(function (protocol) {
                         return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
                 </div>
 
-
-            </div></>
+            </div>
+            <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setfilterInput} />
+        </>
     )
 }

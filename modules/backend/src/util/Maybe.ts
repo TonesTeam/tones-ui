@@ -47,4 +47,8 @@ export class Maybe<T> {
         }
     }
 
+    isPresent(): boolean {
+        return this.value !== null;
+    }
+
 }
