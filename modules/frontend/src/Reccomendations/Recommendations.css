@@ -2,51 +2,27 @@
     text-align: center;
     padding: 30px;
 }
-
-/* ------------------UNCOMMENT TO RETURN TO UNGROUPED TABLE COLOURS------------------ */
-/* #recom-table{
-    margin: auto;
-    justify-content: center; 
-    width: 90%;
-    border-collapse: collapse;
-    background: rgb(18,61,95);
-    background: linear-gradient(160deg, rgba(18,61,95,1) 0%, rgb(0, 139, 185) 100%);
-    color: #fff;
-    font-weight: 600;
-    -webkit-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
-    -moz-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
-    box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.5);
-} */
-/* ---------------------------------------------------------------------------------------- */
-
-/* ------------------COMMENT TO RETURN TO UNGROUPED TABLE COLOURS------------------ */
 #recom-table{
     margin: auto;
     justify-content: center; 
     width: 95%;
     border-collapse: collapse;
     color: #fff;
-    font-weight: 600;
+    /* font-weight: 500; */
     table-layout: fixed;
-    -webkit-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
-    -moz-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
-    box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.7);
+    -webkit-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.3);
+    -moz-box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.3);
+    box-shadow: 10px 10px 59px -15px rgba(18, 61, 95, 0.3);
 }
 
 col.small{
     background: #8c976b;
-/*     background: rgb(60,100,161);
-    background: radial-gradient(circle, rgba(60,100,161,1) 0%, rgba(31,59,103,1) 100%); */
 }
 col.medium{
     background: #6f8b6c;
-/*     background: rgb(60,86,161);
-    background: radial-gradient(circle, rgba(60,86,161,1) 0%, rgba(31,39,103,1) 100%); */
 }
 col.large{
     background: #7090a3;
-/*     background: rgb(26,75,179);
-    background: linear-gradient(45deg, rgba(26,75,179,1) 0%, rgba(77,82,176,1) 100%); */
 }
 
 .washing{
@@ -131,10 +107,12 @@ to {background:initial;}
 }
 .confirm input[type='checkbox']:checked:after {
     content: '\2713';
-    font-size: 30px;
+    font-size: 40px;
     font-weight: bold;
     color:white;
-    align-content: center;
+    position: relative;
+    bottom: 25px;
+    right: 10px;
 }
 .confirm input[type='checkbox']{
     text-align: center;
@@ -142,7 +120,7 @@ to {background:initial;}
     vertical-align: middle;
     height: 50px;
     width: 50px;
-    margin-right: 20px;
+    margin: 0;
     appearance:none;
     border-radius:10%;
     border: 2px solid #0b7200;
@@ -151,13 +129,12 @@ to {background:initial;}
 }
 
 .confirm input[type='checkbox']:checked ~ p::before{ 
-    content: 'I have completed all liquid recommendations!';
-    font-style: italic;
+    content: 'I have completed liquid recommendations!';
 }
 
 .confirm p::before{
     content: 'Have you completed liquid recommendations?';
-    font-size: 30px;
+    margin-left: 24px;
 }
 
 #launchBtn{
@@ -165,14 +142,10 @@ to {background:initial;}
     align-items: center;
 }
 
-#launchBtn a{
-    border: 2px solid #0f9500;
-    border-radius: 10px;
-    padding: 20px;
-    text-decoration: none;
+#launchBtn button{
+    border: 2px solid #0b7200;
+    padding: 15px 25px;
     color: #000;
-    font-weight: 600;
-    font-size: 30px;
-    background-color: #bee1ba;
+    background-color: #fff;
 }
 /*----------------------------------------*/

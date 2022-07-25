@@ -4,11 +4,19 @@ import { getRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
+import { ProtocolDto } from "sharedlib/dto/protocol.dto";
+import { useAppSelector, useAppDispatch } from "state/hooks";
+import { addAndRun, moveProgress, finish, Status } from "state/progress";
+import { store } from "state/store";
 import "./Recommendations.css";
 
+
+
+const protocolsInDB = (await getRequest<ProtocolDto[]>("/protocol/all")).data
+// const dispatch = useAppDispatch();
 
 function showBtn() {
     const checkbox = document.getElementById('confirmCheck') as HTMLInputElement | null;
@@ -38,6 +46,25 @@ function resolveCell(cid: number, rid: number, configMap: Map<number, Deployment
     return <td key={cid} className={classNames('emptyCell', { washing })}><span className="emptyCell">Empty </span></td>
 }
 
+const duration = 23;
+
+function incProtocol() {
+    const st = store.getState()
+    const activePr = st.protocols.filter(e => { return e.status === Status.Ongoing })!;
+    for (let i = 0; i < st.protocols.length; i++) {
+        const pr = st.protocols[i];
+        if(pr.progress >= 100) {
+            store.dispatch(finish(i))
+            continue;
+        }
+        if(pr.status != Status.Ongoing) {
+            continue;
+        }
+        store.dispatch(moveProgress({ protocolIndexToMove: i, progressToAdd: 1 }));
+    }
+    setTimeout(incProtocol, duration * 10)
+}
+setTimeout(incProtocol, duration * 10)
 
 export default function Recommendations() {
     const headers = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -46,10 +73,18 @@ export default function Recommendations() {
     const [liquidConfig, setLiquidConfig] = useState<DeploymentLiquidConfiguration[]>([])
     const configMap = toMap(liquidConfig, i => i.liquidSlotNumber);
     const params = useParams()
+    const id = params.id!;
+    let navigate = useNavigate();
+    const dispatch =  useAppDispatch();
+    const newProto = protocolsInDB.find(e => e.id.toString() === params.id);
+    
+
+    function startProtocol() {
+       dispatch(addAndRun(newProto!));
+        navigate(`/start/${id}`);
+    }
 
     useEffect(() => {
-        let id = params.id!;
-        console.log(id);
         getRequest<DeploymentLiquidConfiguration[]>(`/protocol/configuration/${id}`)
             .then(resp => setLiquidConfig(resp.data))
     }, [])
@@ -64,7 +99,7 @@ export default function Recommendations() {
 
                 </div>
                 <div className="tableContainer">
-                    <h4><i>Fill in tubes and place them according to the configuration table:</i></h4>
+                    <h3>Fill in tubes and place them according to the configuration table:</h3>
                     <table id="recom-table">
                         <colgroup>
                             <col className="small" span={5} />
@@ -99,7 +134,12 @@ export default function Recommendations() {
                         <p></p>
                     </div>
                     <div id="launchBtn" style={{ visibility: "hidden" }}>
-                        <a href={`/start/`}>START</a>
+                        <button onClick={() => {
+                            startProtocol();
+                        }}>
+                            Start
+                        </button>
+
                     </div>
                 </div>
             </div></>

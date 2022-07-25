@@ -3,11 +3,13 @@ import 'NavigationBar/NavigationBar.css'
 import { useEffect } from 'react'
 import { useState } from 'react';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
+import { getComparator } from 'sharedlib/collection.util'
 import { getRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
-import { getComparator } from 'sharedlib/collection.util'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
+import { Status } from 'state/progress'
 import './ProtocolList.css'
 import 'common/style.css'
 import MainKeyboard from './MainKeyboard';
@@ -87,6 +89,36 @@ function Protocol(props: any) {
     const [div, setDiv] = useState<HTMLDivElement | null>(null);
     useEffect(() => setHeight(div?.scrollHeight ?? 0));
 
+    const dispatch = useAppDispatch();
+    let disableLaunch = useAppSelector((state) => state.isRunning);
+
+
+
+    let protocolStatus: string;
+    let protoInList = useAppSelector((state) => state.protocols).find(e => e.protocol.id == props.id)
+    if (protoInList != undefined) {
+        switch (protoInList.status) {
+            case "ONGOING":
+                protocolStatus = "Ongoing";
+                break;
+            case "ERROR":
+                protocolStatus = "Error occured";
+                break;
+            case "FINISHED":
+                protocolStatus = "Finished";
+                break;
+            default:
+                protocolStatus = "Undefined";
+        }
+    }
+    else if (useAppSelector((state) => state.protocols).length == 0){
+        protocolStatus = "Ready to launch";
+    }
+    else{
+        protocolStatus = "Launch prohibited"
+    }
+    
+
 
     return (
 
@@ -128,15 +160,19 @@ function Protocol(props: any) {
 
             <div className="protocol-body" style={{ maxHeight: open ? `${height}px` : 0 }}>
                 <div className="protocol-body-content">
-                    <table className="dropdown-table">
+                    <div>
+                        <p>Status: {protocolStatus}</p>
+                    </div>
+
+                    {/* <table className="dropdown-table">
                         <tbody>
                             <tr>
-                                <td>Duration: IN DEVELOPEMNT{/* {props.infoDuration} */}</td>
-                                <td>Slots used: IN DEVELOPMENT{/* {props.infoSlots} */}</td>
+                                <td>Duration: IN DEVELOPEMNT{props.infoDuration}</td>
+                                <td>Slots used: IN DEVELOPMENT{props.infoSlots }</td>
                             </tr>
                             <tr>
-                                <td>Status: IN DEVELOPEMNT {/* {props.infoStatus} */}</td>
-                                <td>Blockly Scheme: IN DEVELOPEMNT {/* {props.infoBlockly} */}</td>
+                                <td>Status: IN DEVELOPEMNT {props.infoStatus}</td>
+                                <td>Blockly Scheme: IN DEVELOPEMNT {props.infoBlockly}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -144,7 +180,7 @@ function Protocol(props: any) {
                         augue
                         convallis tincidunt at eget lacus.
                         Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p>
+                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p> */}
 
                     <div className="protocol-options">
                         <div className="protocol-options">
@@ -154,7 +190,9 @@ function Protocol(props: any) {
                         </div>
 
                         <div className="protocol-options">
-                            <button className="proto-btn"><a href={`/launch/${props.id}`}><i className="fas fa-play"></i>Launch</a></button>
+                            <button className="proto-btn" disabled={disableLaunch ? true : false}>
+                                <a href={`/launch/${props.id}`} style={{ pointerEvents: disableLaunch ? "none" : "auto" }}><i className="fas fa-play"></i>Launch</a>
+                            </button>
                             <button onClick={() => makeRequest('DELETE', `/protocol/${props.id}`).then(() => props.listInitializer())}
                                 className="proto-btn"><i className="fas fa-trash-alt"></i>Delete</button>
                         </div>
@@ -173,6 +211,7 @@ export default function ProtocolList() {
 
     const listInitilizer = () => { getRequest<ProtocolDto[]>("/protocol/all").then(r => setProtocols(r.data)) };
     useEffect(listInitilizer, []);
+    //localStorage.clear(); //clear redux state manually when needed
 
     const [filterInput, setfilterInput] = useState("");
     let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,9 +219,12 @@ export default function ProtocolList() {
         setfilterInput(lowerCase);
     };
 
-    function filterAndSort() {
-        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.includes(filterInput));
+    const activeProtocols = useAppSelector((state) => state.protocols);
+    const status = useAppSelector((state) => state.isRunning);
 
+
+    function filterAndSort() {
+        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput));
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
 
         return sortedList;
@@ -194,43 +236,16 @@ export default function ProtocolList() {
             <NavigationBar selectedItem='Protocol List' />
             <div className="font-rb" id="main">
                 <div className="page-header" id="sticker">
+
                     <input onFocus={() => setShowKeyboard(true)} value={filterInput}
                         type="text" className="search-bar" placeholder="Search for protocols..." onChange={inputHandler}></input>
                 </div>
                 <div className="protocol-list">
-
                     {filterAndSort().map(function (protocol) {
                         return <Protocol listInitializer={listInitilizer} id={protocol.id} key={protocol.id} name={protocol.name} authorName={protocol.authorName} creationDate={protocol.creationDate.toLocaleDateString()} />
                     })}
-
-
-                    {/* <Protocol id="PA-001" name="Protocol Alpha"
-                        authorName="James Doe" creationDate="10/01/2021" />
-
-                    <Protocol id="PB-002" name="Protocol Beta"
-                        authorName="Janette Smith" creationDate="11/07/2026" />
-
-                    <Protocol id="PY-003" name="Protocol Gamma"
-                        authorName="Bellatrix Lestrange " creationDate="22/12/2020" />
-
-                    <Protocol id="PD-004" name="Protocol Delta"
-                        authorName="Godric Gryffindor" creationDate="02/03/1126" />
-
-                    <Protocol id="PE-005" name="Protocol Epsilon"
-                        authorName="Rubeus Hagrid" creationDate="11/07/2026" />
-
-                    <Protocol id="PD-006" name="Protocol Zeta"
-                        authorName="Helga Hufflepuff" creationDate="11/07/1111" />
-
-                    <Protocol id="PD-007" name="Protocol Eta"
-                        authorName="Viktor Krum" creationDate="10/07/2323" />
-
-                    <Protocol id="PO-008" name="Protocol Theta"
-                        authorName="Luna Lovegood" creationDate="12/09/2052" />
-
-                    <Protocol id="PK-009" name="Protocol Kappa"
-                        authorName="Minerva McGonagall" creationDate="11/07/2022" /> */}
                 </div>
+
             </div>
             <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setfilterInput} />
         </>

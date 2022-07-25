@@ -22,7 +22,6 @@
     transition: all .5s;
 }
 
-/*----------- STOP / ERROR / RESUME ---------*/
 .footer{
     box-sizing: border-box;
     height: 60vh;
@@ -36,30 +35,7 @@
 .btn-panel{
     width: 80%;
     display: flex;
-    justify-content: space-between;
-}
-
-#stop-btn{
-    background: #ff0040;
-    color: #fff;
-    text-transform: uppercase;
-    border-radius: 10px;
-    border: 3px solid #d00031;
-    text-decoration: none;
-    padding: 10px;
-    cursor: pointer;
-}
-
-#resume-btn, #toList-btn{
-    background: #4b7289;
-    color: #fff;
-    text-transform: uppercase;
-    border-radius: 10px;
-    border: 3px solid #36607a;
-    text-decoration: none;
-    padding: 10px;
-    transition: visibility .2s;
-    cursor: pointer;
+    justify-content: center;
 }
 
 #toList-btn a{
@@ -82,5 +58,21 @@
     margin-top: 20px;
 }
 
+/*-----------  ERROR / RESUME / DISCARD ---------*/
+.launch-opt-btn{
+    color: #000;
+    padding: 10px 20px;
+    cursor: pointer;
+}
 
+#stop-btn{
+    background: #ddbac3;
+}
 
+#resume-btn, #toList-btn{
+    background: #9fb8c7;
+}
+
+#discard-btn{
+    background: #bdb9c5;
+}
