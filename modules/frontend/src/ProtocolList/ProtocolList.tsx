@@ -104,24 +104,6 @@ function Protocol(props: any) {
                         <p>Status: {protocolStatus}</p>
                     </div>
 
-                    {/* <table className="dropdown-table">
-                        <tbody>
-                            <tr>
-                                <td>Duration: IN DEVELOPEMNT{props.infoDuration}</td>
-                                <td>Slots used: IN DEVELOPMENT{props.infoSlots }</td>
-                            </tr>
-                            <tr>
-                                <td>Status: IN DEVELOPEMNT {props.infoStatus}</td>
-                                <td>Blockly Scheme: IN DEVELOPEMNT {props.infoBlockly}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p>Description:<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et sem sed
-                        augue
-                        convallis tincidunt at eget lacus.
-                        Duis et orci nisi. Donec commodo lacinia augue, sit amet ullamcorper turpis tempus bibendum.
-                        Proin aliquam ipsum ac neque gravida, vel porta elit consectetur.</p> */}
-
                     <div className="protocol-options">
                         <div className="protocol-options">
                             <button onClick={() => navigate(`/edit/protocol/${props.id}`)}

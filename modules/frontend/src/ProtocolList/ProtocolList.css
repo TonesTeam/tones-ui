@@ -1,11 +1,12 @@
 /*HEADER*/
 
 .page-header {
+    width: 100%;
     position: sticky;
     top: 0px;
     background-color: #b0c8e2;
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-    padding: 20px;
+    padding-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,7 +23,7 @@
     text-align: center;
 }
 
-.search-bar-container {
+/* .search-bar-container {
     display: flex;
     height: var(--search-bar-height);
     width: 100%;
@@ -39,7 +40,7 @@
     border-top: var(--bar-border);
     border-bottom: var(--bar-border);
     border-right: var(--bar-border);
-}
+} */
 
 .search-bar {
     box-sizing: border-box;
@@ -64,7 +65,7 @@
     box-shadow: 0px 0px 0px 2px #345e7ec2;
 }
 
-.launch-container {
+/* .launch-container {
     display: flex;
     margin-right: 30px;
     justify-content: flex-end;
@@ -82,15 +83,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
+} */
 
-.protocol-submit-btn a {
+/* .protocol-submit-btn a {
     height: 30px;
     width: 30px;
-    /* height: calc(var(--search-bar-height) * 12);
-    width: var(--search-bar-height); */
     margin-left: 2vw;
-    /* font-size: calc(var(--search-bar-height) * 0.5); */
     background-color: #fff;
     color: #4242ff;
     border-radius: 5px;
@@ -99,7 +97,7 @@
 
 .protocol-submit-btn button i {
     font-size: 30px;
-}
+} */
 
 /*-------------------------*/
 /* PROTOCOL LIST*/
@@ -110,7 +108,6 @@
 }
 
 .protocol {
-    /* max-height: fit-content; */
     background-color: #b0c8e2;
     margin: 1rem 0;
     overflow: hidden;
@@ -149,8 +146,7 @@
 }
 
 .protocol-general::after {
-    content: "\002B";
-    /*plus icon*/
+    content: "\002B";/*plus icon*/
     font-size: 2rem;
     position: absolute;
     right: 1rem;
@@ -177,14 +173,12 @@
 
 .protocol-body {
     max-height: 0;
-    /* overflow-y: scroll; */
     transition: all 0.4s ease-out;
 }
 
 .protocol-body-content {
     padding: 1rem;
     line-height: 1.5rem;
-    /* border-top: 2px dashed #110d634d; */
 }
 
 #check input.check-to-run {

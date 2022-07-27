@@ -19,9 +19,9 @@ export default function MainKeyboard(props: { show: boolean, showSetter: (s: boo
     };
     return <>
         <div className={showKeyboard ? "visible" : "hidden"} style={{
-            position: "absolute",
+            position: "fixed",
             zIndex: 20,
-            width: "100vw",
+            width: "100%",
             bottom: 0,
         }}>
             <style>
