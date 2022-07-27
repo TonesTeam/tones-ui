@@ -10,7 +10,7 @@ export interface ProtocolState {
     duration: number
 }
 
-interface SystemState {
+export interface SystemState {
     protocols: ProtocolState[]
     isRunning: boolean //true if at least one protocol (of any current status) is deployed 
 }

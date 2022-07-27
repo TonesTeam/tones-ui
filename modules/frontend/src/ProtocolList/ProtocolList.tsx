@@ -9,70 +9,10 @@ import { useNavigate } from "react-router-dom";
 import { makeRequest } from 'common/util'
 import classNames from 'classnames'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
-import { Status } from 'state/progress'
 import './ProtocolList.css'
 import 'common/style.css'
 import MainKeyboard from './MainKeyboard';
 
-
-export const p1: ProtocolDto = {
-    id: 1,
-    name: 'TestName',
-    authorName: 'Test Author',
-    creationDate: new Date(),
-    usedLiquids: [
-        {
-            liquidName: 'APR-220',
-            liquidType: 'Zhizha 1',
-            amount: 40,
-        },
-        {
-            liquidName: 'Some very long name of a liquid',
-            liquidType: 'Zhizha 2',
-            amount: 100,
-        },
-        {
-            liquidName: 'Xelenium',
-            liquidType: 'Zhizha 3',
-            amount: 20,
-        },
-        {
-            liquidName: 'Liquid gold',
-            liquidType: 'Zhizha 2',
-            amount: 100,
-        },
-        {
-            liquidName: 'Another very long name',
-            liquidType: 'Zhizha 2',
-            amount: 30,
-        },
-        {
-            liquidName: 'ABC-123',
-            liquidType: 'Zhizha 2',
-            amount: 11,
-        },
-        {
-            liquidName: 'Alcohol',
-            liquidType: 'Zhizha 21',
-            amount: 400,
-        },
-        {
-            liquidName: 'Lorem ipsum',
-            liquidType: 'Zhizha 2',
-            amount: 50,
-        },
-        {
-            liquidName: 'One more liquid with very long name',
-            liquidType: 'Zhizha 2',
-            amount: 23,
-        },
-        {
-            liquidName: 'Holy water',
-            liquidType: 'Zhizha 2',
-            amount: 10,
-        }
-    ]
-}
 
 const max = 2;
 function selectiveCheck(_event: any) {
@@ -111,13 +51,13 @@ function Protocol(props: any) {
                 protocolStatus = "Undefined";
         }
     }
-    else if (useAppSelector((state) => state.protocols).length == 0){
+    else if (useAppSelector((state) => state.protocols).length == 0) {
         protocolStatus = "Ready to launch";
     }
-    else{
+    else {
         protocolStatus = "Launch prohibited"
     }
-    
+
 
 
     return (
@@ -219,12 +159,9 @@ export default function ProtocolList() {
         setfilterInput(lowerCase);
     };
 
-    const activeProtocols = useAppSelector((state) => state.protocols);
-    const status = useAppSelector((state) => state.isRunning);
-
 
     function filterAndSort() {
-        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput));
+        let filteredList = protocols.filter(e => filterInput === '' ? e : e.name.toLowerCase().includes(filterInput.toLowerCase()));
         let sortedList = filteredList.sort(getComparator(e => e.creationDate.getTime())).reverse();
 
         return sortedList;
