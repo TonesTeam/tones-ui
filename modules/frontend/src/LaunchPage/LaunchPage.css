@@ -1,5 +1,37 @@
+
+
+/*-------------------header-------------------*/
+#header{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; 
+    height: 15vh; 
+}
+
+.header-tile{
+    margin-top: 5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #6193b3;
+}
+
+.header-tile p{
+    margin: 0;
+}
+
+.title{
+    font-weight: bold;
+    color: #123d5f;
+}
+
+.info{
+    padding-top: 10px;
+}
+/*--------------------------------------------*/
+
 .progress-container{
-    height: 40vh;
+    height: 25vh;
     display: flex;
     flex-direction: column;
     align-items: center;

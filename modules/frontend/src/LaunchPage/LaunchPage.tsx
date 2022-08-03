@@ -110,11 +110,25 @@ export default function LaunchPage() {
         <>
             <NavigationBar />
             <div className="font-rb" id="main">
+                <div id="header">
+                        <div className="header-tile">
+                            <p className="title">Active protocol: </p>
+                            <p className="info">{activeProto.protocol.name}</p>
+                        </div>
+                        <div className="header-tile">
+                            <p className="title">Status: </p>
+                            <p className="info">{activeProto.status.toLowerCase()}</p>
+                        </div>
+                        <div className="header-tile">
+                            <p className="title">Approximate duration: </p>
+                            <p className="info">{activeProto.duration} seconds</p>
+                        </div>
+                        <div className="header-tile">
+                            <p className="title">Progress: </p>
+                            <p className="info">{activeProto.progress}%</p>
+                        </div>
+                </div>
                 <div className="progress-container">
-                    <div>
-                        <h2><i>Approximate protocol duration: {activeProto.duration} seconds</i></h2>
-                    </div>
-
                     <div id="progress">
                         <div id="progress-bar" style={{ width: `${activeProto.progress}%`, backgroundColor: statusStrat?.getColor() }}></div>
                     </div>
@@ -122,10 +136,6 @@ export default function LaunchPage() {
 
                 <div className="footer">
                     <div id="comment">
-                        Active protocol: {activeProto?.protocol.name} <br />
-                        Protocol status: {activeProto.status} <br />
-                        Progress local state: {activeProto.progress} <br />
-
                         {statusStrat?.getMessage()}
                     </div>
 
@@ -133,8 +143,8 @@ export default function LaunchPage() {
                         {(() => {
                             switch (activeProto.status) {
                                 case Status.Ongoing:
-                                    return <button className="launch-opt-btn" onClick={() => dispatch(error(index))}  id="stop-btn"
-                                    style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
+                                    return <button className="launch-opt-btn" onClick={() => dispatch(error(index))} id="stop-btn"
+                                        style={{ visibility: activeProto?.status == Status.Ongoing ? "visible" : "hidden" }}>Toggle fake error</button>
                                 case Status.Finished:
                                     return <button className="launch-opt-btn" onClick={() => {
                                         dispatch(discard(index));
@@ -143,16 +153,16 @@ export default function LaunchPage() {
                                         style={{ visibility: activeProto?.status == Status.Finished ? "visible" : "hidden" }}>Discard</button>
                                 case Status.Error:
                                     return <button className="launch-opt-btn" onClick={() => dispatch(resume(index))} id="resume-btn"
-                                    style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
+                                        style={{ visibility: activeProto?.status == Status.Error ? "visible" : "hidden" }}>Resume</button>
                                 default:
                                     return null
                             }
                         })()}
-                        
+
                         {/* <button onClick={() => dispatch(error(index))} id="fake-error"
                             style={{ visibility: activeProto.status == Status.Ongoing ? "hidden" : "visible" }}>Toggle fake error</button> */}
-                        
-                        
+
+
                     </div>
                 </div>
             </div>
