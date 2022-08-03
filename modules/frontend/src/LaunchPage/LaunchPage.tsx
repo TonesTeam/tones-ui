@@ -24,7 +24,7 @@ class Ongoing implements StatusElements {
         );
     }
     getColor(): string {
-        return "#6191ae";
+        return "#3e6a94";
     }
 }
 
@@ -57,7 +57,7 @@ class SysError implements StatusElements {
         );
     }
     getColor(): string {
-        return "#ae616a";
+        return "#c25b67";
     }
 }
 class Finished implements StatusElements {
@@ -70,7 +70,7 @@ class Finished implements StatusElements {
         );
     }
     getColor(): string {
-        return "#6f8b6c";
+        return "#52914b";
     }
 }
 

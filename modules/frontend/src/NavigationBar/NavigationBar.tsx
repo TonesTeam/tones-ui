@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { CenteringFlexBox } from 'common/components'
 import type { RootState } from '../state/store'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
+import classNames from 'classnames';
+import { ProtocolState, Status } from 'state/progress';
 
 
 function NavBarItem(props: any | { route: String }) {
@@ -35,18 +37,31 @@ const setOpacityMain = (opct: String) => {
 }
 
 const setOpacityUserProf = (open: Boolean) => {
-    if(open){
+    if (open) {
         document.getElementById("user-prof")!.style.opacity = "1";
         document.getElementById("user-prof")!.style.visibility = "visible";
         document.getElementById("user-prof")!.style.width = "auto"
     }
-    else{
+    else {
         document.getElementById("user-prof")!.style.opacity = "0";
         document.getElementById("user-prof")!.style.visibility = "hidden";
         document.getElementById("user-prof")!.style.width = "0";
     }
 }
 
+const progressIconStyle = (actProtocols: ProtocolState[]) => {
+    if(document.getElementById("progress-icon")){
+        let blinkIcon = document.getElementById("progress-icon")!
+        if (actProtocols.find((p) => { return (p.status == Status.Error) })) {
+            blinkIcon.className = "fa fa-flask ERROR";
+        }
+        else if (actProtocols.find((p) => { return (p.status == Status.Finished) })) {
+            blinkIcon.className = "fa fa-flask FINISHED";
+        }
+        else blinkIcon.className = "fa fa-flask ONGOING";
+    }
+
+}
 
 
 
@@ -69,6 +84,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
         }
         else setOpacityMain(op);
         setOpacityUserProf(isOpen);
+        progressIconStyle(activeProtocols);
     })
     return (
         <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'} font-rb`}>
@@ -107,27 +123,51 @@ export default function NavigationBar(props: { selectedItem?: string }) {
             </div>
 
             <div id="progress-track">
-                {isOpen &&
+                {count > 0
+                    ?
                     <>
-                        {count > 0
+                        {isOpen
                             ?
                             <span>
                                 {activeProtocols.map((p) => {
                                     return (
-                                        <div className='protocol-progress-body'>
-                                            <div id="bliking-led"></div>
-                                            <a href={`/start/${p.protocol.id}`}><p>{p.protocol.name} : {p.progress}%</p></a>
-                                        </div>
+                                        <a className="progress-link" href={`/start/${p.protocol.id}`}>
+                                            <div className="progress-item">
+                                                <div className={`bliking-led ${p.status}`}></div>
+                                                <div className="progress">
+                                                    <p>{p.protocol.name} :</p>
+                                                    <p>{p.progress}%</p>
+                                                </div>
+
+                                            </div>
+                                        </a>
                                     )
                                 })}
                             </span>
                             :
                             <span>
-                                <div>No active protocols</div>
+                                <i id='progress-icon' className="fa fa-flask"></i>
                             </span>
+
+
                         }
                     </>
+                    :
+                    <>
+                        {isOpen ?
+                            <span>
+                                <div>No active protocols</div>
+                            </span>
+                            :
+                            <></>
+                        }
+
+                    </>
+
                 }
+
+
+
             </div>
             <div></div>
 
