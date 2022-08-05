@@ -20,7 +20,7 @@
     overflow: hidden;
     z-index: 11;
     display: grid;
-    grid-template-rows: 1fr 3fr 8fr auto 1fr;
+    grid-template-rows: 1fr 3fr 8fr 1fr 1fr;
 }
 
 #navbar-menu [class~="fas"] {
@@ -225,7 +225,7 @@
     width: auto;
     font-size: calc(var(--navbar-width)/10);
     animation: blink 1s linear infinite;
-    padding: 30px;
+    padding: 20px;
 }
 
 .bliking-led.ERROR {
@@ -262,6 +262,7 @@
     padding-left: 30px;
     transition: width var(--navbar-transition-time) ease-in-out;
     overflow: hidden;
+    
 }
 .progress-item{
     display: flex;

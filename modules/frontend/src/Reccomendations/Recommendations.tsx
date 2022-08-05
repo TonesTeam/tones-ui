@@ -31,6 +31,11 @@ function resolveCell(cid: number, rid: number, configMap: Map<number, Deployment
     const id = cid * 6 + rid + 1
     const liq = configMap.get(id)
     const washing = cid == 5 && rid > 3;
+    if(id === 34){
+        return (
+            <td key={cid} className="blank-cell"></td>
+        )
+    }
     if (liq !== undefined) {
         return (
             <td key={cid} className={classNames('liquidCell', { washing })}>

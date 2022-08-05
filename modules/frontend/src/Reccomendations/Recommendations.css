@@ -16,15 +16,14 @@
 }
 
 col.small{
-    background: #8c976b;
+    background: #809151;
 }
 col.medium{
-    background: #6f8b6c;
+    background: #aa8758;
 }
 col.large{
     background: #7090a3;
 }
-
 .washing{
     background: #6b738a;
 }
@@ -61,6 +60,11 @@ col.large{
     font-weight: 100;
     font-size: smaller;
     letter-spacing: 2px;
+}
+
+.blank-cell{
+    background-color: #123d5f;
+    border: 1px solid #f1f1f14b;
 }
 
 /*------Hover animations---------*/
@@ -103,13 +107,13 @@ to {background:initial;}
 
 
 .confirm input[type='checkbox']:checked {
-    background-color: #0f9500;
+    background-color: #4e994e;
 }
 .confirm input[type='checkbox']:checked:after {
     content: '\2713';
     font-size: 40px;
     font-weight: bold;
-    color:white;
+    color:#fff;
     position: relative;
     bottom: 25px;
     right: 10px;
@@ -143,9 +147,9 @@ to {background:initial;}
 }
 
 #launchBtn button{
-    border: 2px solid #0b7200;
+    /* border: 2px solid #4e994e; */
     padding: 15px 25px;
-    color: #000;
-    background-color: #fff;
+    color: #fff;
+    background-color: #4e994e;
 }
 /*----------------------------------------*/

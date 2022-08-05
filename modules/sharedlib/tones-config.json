@@ -17,13 +17,13 @@
         {
             "size": 50,
             "depth": 450,
-            "count": 4,
+            "count": 3,
             "for-washing": false
         },
         {
             "size": 500,
             "depth": 2000,
-            "count": 1,
+            "count": 2,
             "for-washing": true
         }
     ],
