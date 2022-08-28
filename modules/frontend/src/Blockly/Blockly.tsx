@@ -4,6 +4,7 @@ import { Fab } from "@mui/material";
 import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
+import MainKeyboard from 'ProtocolList/MainKeyboard';
 import { useEffect, useState } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';
@@ -12,6 +13,7 @@ import format from "xml-formatter";
 import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
+import Blockly from 'blockly';
 
 
 
@@ -90,11 +92,21 @@ function wrapXml(xml: string) {
 // const initialXml = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="begin_protocol" x="240" y="30"></block></xml>';
 const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>');
 
-
 export default function BlocklyPage() {
     const [xml, setXml] = useState(initialXml);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
+    const [showKeyboard, setShowKeyboard] = useState(false);
+    const [value, setValue] = useState(0);
+
+    useEffect(() => {
+        Array.from(document.getElementsByClassName('blocklyEditableText')).forEach(element => {
+            element.addEventListener('click', (ev) => {
+                setShowKeyboard(true);
+                setValue(value + 1); // forces a rerender which updates keyboards input value
+            })
+        });
+    })
     useEffect(() => {
         if (!params.id) {
             return;
@@ -138,6 +150,13 @@ export default function BlocklyPage() {
                     onImportXmlError={(er) => console.error("XML IMPORT ERROR:", er)}
                 />
                 <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre>
+                <MainKeyboard
+                    inputValue={document.getElementsByClassName('blocklyHtmlInput')[0]?.value}
+                    show={showKeyboard} showSetter={setShowKeyboard} inputSetter={(inp) => {
+                        const input = document.getElementsByClassName('blocklyHtmlInput')[0] as HTMLInputElement;
+                        input.value = inp;
+                        input.dispatchEvent(new Event('input'));
+                    }} />
             </div>
         </>
     );

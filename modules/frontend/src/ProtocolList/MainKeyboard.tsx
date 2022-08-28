@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Keyboard from 'react-simple-keyboard';
+import Keyboard, { SimpleKeyboard } from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 
 
@@ -8,11 +8,16 @@ const layoutMap = new Map<string, string>([
     ["shift", "default"],
 ]);
 
-export default function MainKeyboard(props: { show: boolean, showSetter: (s: boolean) => void, inputSetter: (inp: string) => void }) {
+let keyboard: SimpleKeyboard | undefined = undefined;
+
+export default function MainKeyboard(props: { inputValue?: string, show: boolean, showSetter: (s: boolean) => void, inputSetter: (inp: string) => void }) {
+    if (props.inputValue != undefined) {
+        keyboard?.setInput(props.inputValue);
+    }
     const showKeyboard = props.show;
     const [keyboardLayout, setKeyboardLayout] = useState("default")
 
-    const onChange = (inp: string) => props.inputSetter(inp)
+    const onChange = (inp: string) => props.inputSetter(inp);
     const onKeyPress = (k: string) => {
         if (k == "{enter}") props.showSetter(false);
         if (k == "{shift}" || k == "{lock}") setKeyboardLayout(layoutMap.get(keyboardLayout)!)
@@ -28,6 +33,7 @@ export default function MainKeyboard(props: { show: boolean, showSetter: (s: boo
                 {`.hg-theme-default .hg-button {height: 10vh}`}
             </style>
             <Keyboard
+                onInit={(inst) => keyboard = inst}
                 layoutName={keyboardLayout}
                 onChange={onChange}
                 onKeyPress={onKeyPress}
