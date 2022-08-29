@@ -4,8 +4,12 @@ import { Fab } from "@mui/material";
 import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
+<<<<<<< HEAD
 import MainKeyboard from 'ProtocolList/MainKeyboard';
 import { useEffect, useState } from "react";
+=======
+import { SetStateAction, useEffect, useState } from "react";
+>>>>>>> bbcc9f5 (Fix)
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';
 import { useParams } from 'react-router-dom';
@@ -13,7 +17,12 @@ import format from "xml-formatter";
 import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
+<<<<<<< HEAD
 import Blockly from 'blockly';
+=======
+import MainKeyboard from 'ProtocolList/MainKeyboard';
+import { forEach } from 'lodash';
+>>>>>>> bbcc9f5 (Fix)
 
 
 
@@ -94,6 +103,7 @@ const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>
 
 export default function BlocklyPage() {
     const [xml, setXml] = useState(initialXml);
+    const [showKeyboard, setShowKeyboard] = useState(true);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
     const [showKeyboard, setShowKeyboard] = useState(false);
@@ -115,6 +125,37 @@ export default function BlocklyPage() {
             setXml(wrapXml(resp.data));
         });
     }, [])
+
+    const [input, setInput] = useState("");
+    let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+         setInput(e.target.value);
+    };
+
+    useEffect(() => triggerKeyboard());
+
+    function triggerKeyboard() {
+        let editables = Array.from(document.getElementsByClassName("blocklyEditableText")) as HTMLElement[];
+        editables.forEach(function (editable) {
+            if(editable.querySelector('.blocklyDropdownText') == null){ //isn't a select field
+                editable.addEventListener('click', function () {
+                    let editableInput = editable.querySelector('.blocklyText');
+                    setInput(editableInput!.innerHTML as SetStateAction<string>);
+                    editableInput!.innerHTML = input;
+                    let whyTheFuckNotPutASecondPseudoInputElementBecauseFuckYouThatsWhy = document.querySelector(".blocklyHtmlInput") as HTMLInputElement
+                    whyTheFuckNotPutASecondPseudoInputElementBecauseFuckYouThatsWhy.value = input;
+                    editableInput!.addEventListener('change', function(){inputHandler})
+                    //editableInput!.setAttribute("value", "");
+                    //editableInput!.value = 
+                    //editableInput!.setAttribute("onchange", "{inputHandler}");
+                    setShowKeyboard(true);
+                })
+                editable.addEventListener('blur', function () {
+                    setShowKeyboard(false);
+                })
+            }
+        })
+    }
+
     if (params.id !== undefined && xml == initialXml) {
         return (
             <CenteringFlexBox style={{ height: "80vh" }}>
@@ -122,6 +163,7 @@ export default function BlocklyPage() {
             </CenteringFlexBox>
         )
     }
+
     return (
         <>
             <NavigationBar selectedItem={params.id ?? "Create Protocol"} />
@@ -158,6 +200,7 @@ export default function BlocklyPage() {
                         input.dispatchEvent(new Event('input'));
                     }} />
             </div>
+            <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setInput} />
         </>
     );
 }
