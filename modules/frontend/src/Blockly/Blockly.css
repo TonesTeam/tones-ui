@@ -5,3 +5,10 @@
 .boldit {
   font-weight: bold !important;
 }
+
+svg.blocklySvg {
+  height: 100vh;
+}
+.fill-height {
+  height: 100vh;
+}
