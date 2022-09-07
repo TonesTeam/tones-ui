@@ -5,7 +5,7 @@ import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
 import MainKeyboard from 'ProtocolList/MainKeyboard';
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';
 import { useParams } from 'react-router-dom';
@@ -14,7 +14,6 @@ import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
 import Blockly from 'blockly';
-import { forEach } from 'lodash';
 
 
 
@@ -95,7 +94,6 @@ const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>
 
 export default function BlocklyPage() {
     const [xml, setXml] = useState(initialXml);
-    //const [showKeyboard, setShowKeyboard] = useState(true);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
     const [showKeyboard, setShowKeyboard] = useState(false);
@@ -103,12 +101,17 @@ export default function BlocklyPage() {
 
     useEffect(() => {
         Array.from(document.getElementsByClassName('blocklyEditableText')).forEach(element => {
-            element.addEventListener('click', (ev) => {
-                setShowKeyboard(true);
-                setValue(value + 1); // forces a rerender which updates keyboards input value
-            })
+            if (!element.getElementsByClassName('blocklyDropdownText')[0]){ //should not show for dropdowns
+                element.addEventListener('pointerdown', (ev) => {
+                    setShowKeyboard(true);
+                    setValue(value + 1); // forces a rerender which updates keyboards input value
+                    ev.preventDefault();
+                })
+            }
+            
         });
     })
+    
     useEffect(() => {
         if (!params.id) {
             return;
@@ -117,7 +120,6 @@ export default function BlocklyPage() {
             setXml(wrapXml(resp.data));
         });
     }, [])
-
     useEffect(() =>{
         if(!showKeyboard){
             Array.from(document.getElementsByClassName('blocklyHtmlInput') as HTMLCollectionOf<HTMLElement>).forEach(element => {
@@ -125,7 +127,6 @@ export default function BlocklyPage() {
             });
         }
     });
-
     if (params.id !== undefined && xml == initialXml) {
         return (
             <CenteringFlexBox style={{ height: "80vh" }}>
@@ -133,7 +134,6 @@ export default function BlocklyPage() {
             </CenteringFlexBox>
         )
     }
-
     return (
         <>
             <NavigationBar selectedItem={params.id ?? "Create Protocol"} />
@@ -143,6 +143,8 @@ export default function BlocklyPage() {
                     <SaveIcon />
                     Save
                 </Fab>
+
+
                 <BlocklyWorkspace
                     toolboxConfiguration={toolboxCategories}
                     initialXml={xml}
@@ -155,12 +157,19 @@ export default function BlocklyPage() {
                             colour: "#ccc",
                             snap: true,
                         },
+                        zoom: {
+                            controls: true,
+                            wheel: true,
+                            startScale: 2.0,
+                            maxScale: 3,
+                            minScale: 0.3,
+                            scaleSpeed: 1.2,
+                            pinch: true
+                        },
                     }}
                     onXmlChange={setXml}
                     onImportXmlError={(er) => console.error("XML IMPORT ERROR:", er)}
                 />
-                {/* <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre> */}
-
             </div>
             <MainKeyboard
                 inputValue={(document.getElementsByClassName('blocklyHtmlInput')[0] as HTMLInputElement)?.value}

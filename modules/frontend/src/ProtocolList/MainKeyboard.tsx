@@ -35,6 +35,15 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
             <Keyboard
                 onInit={(inst) => keyboard = inst}
                 layoutName={keyboardLayout}
+                layout={{
+                    default: [
+                        "1 2 3 4 5 6 7 8 9 0 _ - {bksp}",
+                        "q w e r t y u i o p \\",
+                        "{lock} a s d f g h j k l {enter}",
+                        ". z x c v b n m , /",
+                        "{space}"
+                    ]
+                }}
                 onChange={onChange}
                 onKeyPress={onKeyPress}
                 mergeDisplay={true} display={{
@@ -44,6 +53,7 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
                     "{bksp}": "⌫",
                     "{lock}": "caps ⇪",
                     "{shift}": "⇧",
+                    "{space}": "space"
                 }} />
         </div>
     </>
