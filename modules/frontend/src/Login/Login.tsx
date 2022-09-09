@@ -1,53 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import MainKeyboard from 'ProtocolList/MainKeyboard';
 import "./Login.css"
-import { event } from "jquery";
 
 export default function Login() {
 
-    // interface UserData {
-    //     username: string;
-    //     password: string;
-    // }
+    function credReducer (state: any, action: { type: any; payload: any; }){
+        switch(action.type){
+            case "username": return { ...state, username: [action.payload]}
+            case "password": return { ...state, password: [action.payload]}
+            default: break;
+        }
+    }
 
-    const [credentials, setCredentials] = useState({username: "", password: ""});
-    const {username, password} = credentials;
-
-    const [showKeyboard, setShowKeyboard] = useState(false);
+    const [credentials, setCredentials] = useReducer(credReducer, {username:"", password:""});
     const [input, setInput] = useState("");
-    const [inputName, setInputName] = useState(""); //current selected
-    //const [inputs, setInputs] = useState({}); //storage of both input values
-    const [value, setValue] = useState(0);
+    const [showKeyboard, setShowKeyboard] = useState(false);
 
-    // const onChangeAll = inputs => {
-    //     setInputs({ ...inputs })
-    //     console.log("Input change: ", inputs);
-    // };
-
-    const onChangeInput = (event:React.ChangeEvent) =>  {
-        let input = event.target as HTMLInputElement;
+    const handleInput = (e:React.ChangeEvent<HTMLInputElement>) => {
         setCredentials({
-            ...credentials,
-            [input.name]: [input.value]
-        });
-        console.log(credentials);
-    };
+            type: e.target.name,
+            payload: e.target.value
+        })
+    }
 
-    // const getInputVal = (inputName: string) => {
-    //     return inputs[inputName as keyof typeof inputs] || "";
-    // };
-
-    useEffect(() => {
-        Array.from(document.getElementsByTagName('input')).forEach(element => {
-                element.addEventListener('click', (ev) => {
-                    setShowKeyboard(true);
-                    //setValue(value + 1); // forces a rerender which updates keyboards input value
-                    ev.preventDefault();
-                })
-            
-        });
-    })
+    const handleFocus  = (e:React.FocusEvent<HTMLInputElement>) => {
+        console.log("Focus event!!!");
+        setInput(e.target.name);
+        console.log("Name: "+e.target.name)
+        console.log("Value: "+e.target.value)
+        console.log("The input state will not be rerendered for now: "+input);
+        setShowKeyboard(true)
+    }
 
     return (
         <div id="background">
@@ -55,12 +39,14 @@ export default function Login() {
                 <form>
                     <label htmlFor="username">
                         <input  id="username" type="text" placeholder="Enter Username" name="username" 
-                        value={username} onFocus={() => setInputName("username")} onChange={onChangeInput} required></input>
+                        value={credentials.username} onChange={handleInput} required 
+                        onFocus={handleFocus}></input>
                         <span>Username</span>
                     </label>
                     <label htmlFor="password">
                         <input id="password" type="password" placeholder="Enter Password" name="password" 
-                        value={password} onFocus={() => setInputName("password")} onChange={onChangeInput} required></input>
+                        value={credentials.password} onChange={handleInput} required
+                        onFocus={handleFocus}></input>
                         <span>Password</span>
                     </label>
                     <Link to={'/list'}>
@@ -68,7 +54,17 @@ export default function Login() {
                     </Link>
                 </form>
             </div >
-            {/* <MainKeyboard inputValue={input} show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setInputs} /> */}
+            <MainKeyboard inputValue={credentials[`${input}`]?.toString()}
+                        show={showKeyboard} 
+                        showSetter={setShowKeyboard} 
+                        inputSetter={(inp) => {
+                            let elem = document.getElementsByName(`${input}`)[0] as HTMLInputElement;
+                            setCredentials({
+                                type: input,
+                                payload: inp
+                            })
+                        }}
+            />
         </div>
     );
 }
