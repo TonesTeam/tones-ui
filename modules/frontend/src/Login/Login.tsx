@@ -1,7 +1,10 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import MainKeyboard from 'ProtocolList/MainKeyboard';
-import "./Login.css"
+import "./Login.css";
+import histoLogo from "../static/TSI_logo.png";
+import tsiLogo from "../static/HistOne_logo.png";
+import blocklyLogo from "../static/Blockly_logo.png";
 
 export default function Login() {
 
@@ -34,8 +37,9 @@ export default function Login() {
     }
 
     return (
+        <>
         <div id="background">
-            <div className="login-form" >
+            <div className="login-form font-rb" >
                 <form>
                     <label htmlFor="username">
                         <input  id="username" type="text" placeholder="Enter Username" name="username" 
@@ -54,7 +58,15 @@ export default function Login() {
                     </Link>
                 </form>
             </div >
-            <MainKeyboard inputValue={credentials[`${input}`]?.toString()}
+            <div id="credits" className="font-rb">
+                <div id="copyright">Copyrigth © Tones Inc.</div>
+                <div className="logo" id="tsi"><img src={histoLogo}/></div> 
+                <div className="logo" id="histoone"><img src={tsiLogo}/></div>
+                <div className="logo" id="blockly"><img src={blocklyLogo}/></div>
+            </div>
+            
+        </div>
+        <MainKeyboard inputValue={credentials[`${input}`]?.toString()}
                         show={showKeyboard} 
                         showSetter={setShowKeyboard} 
                         inputSetter={(inp) => {
@@ -65,6 +77,6 @@ export default function Login() {
                             })
                         }}
             />
-        </div>
+        </>
     );
 }
