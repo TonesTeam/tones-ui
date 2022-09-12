@@ -12,3 +12,11 @@ svg.blocklySvg {
 .fill-height {
   height: 100vh;
 }
+
+.blocklyTreeLabel{
+  font-size: 1.1rem;
+}
+
+.blocklyToolboxCategory{
+  padding-top: 20%;
+}

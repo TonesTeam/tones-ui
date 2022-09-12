@@ -5,7 +5,7 @@
 form {
     display:flex;
     flex-direction:column;
-    font-size: 30px;
+    font-size:1.2rem;
     font-weight: 400;
     justify-content: center;
     background-color: rgba(22, 29, 81, 0.597);
@@ -34,7 +34,7 @@ form button {
 }
 
 .login-form {
-    padding-top: 5%;
+    padding-top: 5vh;
     display: flex;
     justify-content: flex-start;
     align-content: center;
@@ -56,6 +56,7 @@ input{
     padding: 20px 20px;
     margin-top:20px;
     outline:none;
+    font-size:1.2rem;
 }
 
 .login-form button {
@@ -71,7 +72,6 @@ label span{
     top:-10px;
     left:20px;
     transform:translateY(40px);
-    font-size:0.825em;
     transition: all 0.3s;
     color: rgb(114, 114, 114);
 }

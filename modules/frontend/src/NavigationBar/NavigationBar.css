@@ -3,7 +3,7 @@
 :root {
     --navbar-transition-time: 0.5s;
     --navbar-width: clamp(350px, 15em, 30vw);
-    --navbar-width-collapsed: 85px;
+    --navbar-width-collapsed: 130px;
     --navbar-lr-padding: 20px;
     --navbar-font-size: calc(var(--navbar-width)/15);
 }
@@ -64,7 +64,7 @@
 .nav-item-link {
     --item-border: 1px solid #335a85;
     display: flex;
-    height: 8vh;
+    height: 10vh;
     flex-direction: row;
     border-bottom: var(--item-border);
     align-items: center;

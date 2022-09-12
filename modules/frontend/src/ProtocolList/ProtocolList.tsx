@@ -68,11 +68,11 @@ function Protocol(props: any) {
             <div
                 className={classNames("protocol-general", { active: open })}
                 onClick={() => setActive(!open)}>
-                <div className="info-cell" id="check">
+                {/* <div className="info-cell" id="check">
                     <input type="checkbox" className="check-to-run" name="protocol" disabled title='In current development version parallel protocol deployment is not supported'></input>
-                </div>
+                </div> */}
                 <div className="info-cell-container">
-                    <div className="info-cell-container">
+                    {/* <div className="info-cell-container"> */}
                         <div className="info-cell">
                             <p className="label">ID: </p>
                             <p>{props.id}</p>
@@ -81,9 +81,9 @@ function Protocol(props: any) {
                             <p className="label">Name: </p>
                             <p>{props.name}</p>
                         </div>
-                    </div>
+                    {/* </div> */}
 
-                    <div className="info-cell-container">
+                    {/* <div className="info-cell-container"> */}
                         <div className="info-cell">
                             <p className="label">Author: </p>
                             <p>{props.authorName}</p>
@@ -92,7 +92,7 @@ function Protocol(props: any) {
                             <p className="label">Date of creation: </p>
                             <p>{props.creationDate}</p>
                         </div>
-                    </div>
+                    {/* </div> */}
 
                 </div>
 

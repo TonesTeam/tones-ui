@@ -138,7 +138,7 @@ export default function BlocklyPage() {
         <>
             <NavigationBar selectedItem={params.id ?? "Create Protocol"} />
             <div id="main">
-                <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended"
+                <Fab style={{ position: "fixed", float: "right", right: 30, top: 20 }} variant="extended"
                     onClick={() => saveFunction(xml)} >
                     <SaveIcon />
                     Save
@@ -162,8 +162,7 @@ export default function BlocklyPage() {
                             wheel: true,
                             startScale: 2.0,
                             maxScale: 3,
-                            minScale: 0.3,
-                            scaleSpeed: 1.2,
+                            minScale: 0.7,
                             pinch: true
                         },
                     }}
