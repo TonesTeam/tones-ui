@@ -10,6 +10,8 @@ import { useParams } from "react-router-dom";
 import { ProtocolDto } from "sharedlib/dto/protocol.dto";
 import { data } from "jquery";
 import { useNavigate } from "react-router-dom";
+import progressGif from "../static/progress.gif";
+import { height, width } from "@mui/system";
 
 
 interface StatusElements {
@@ -20,7 +22,7 @@ interface StatusElements {
 class Ongoing implements StatusElements {
     getMessage(): JSX.Element {
         return (
-            <div></div>
+            <div><img src={progressGif} style={{height:"400px"}}/></div>
         );
     }
     getColor(): string {

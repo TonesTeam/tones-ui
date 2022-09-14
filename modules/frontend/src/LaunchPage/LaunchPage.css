@@ -99,7 +99,8 @@
 /*-----------  ERROR / RESUME / DISCARD ---------*/
 .launch-opt-btn{
     color: #000;
-    padding: 10px 20px;
+    width: 20vw;
+    padding: 20px 0;
     cursor: pointer;
 }
 

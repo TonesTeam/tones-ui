@@ -60,7 +60,7 @@ export default function Login() {
                         <button type="submit">Login</button>
                     </Link> */}
                         <div>
-                            <button type="submit"
+                            {/* <button type="submit"
                                 onClick={(e) => {
                                     //e.preventDefault();
                                     if (credentials.username == "" || credentials.password == "" || credentials.username == " " || credentials.password == " ") {
@@ -70,7 +70,8 @@ export default function Login() {
                                         navigate("/list");
                                     }
                                 }}>
-                                Login</button>
+                                Login</button> */}
+                                <button type="submit" onClick={() => {navigate("/list")}}>Login</button>
                         </div>
                     </form>
                 </div >

@@ -93,6 +93,8 @@ function wrapXml(xml: string) {
 const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>');
 
 export default function BlocklyPage() {
+    console.log("Check");
+    console.log(document.getElementsByClassName('thisisnumber'));
     const [xml, setXml] = useState(initialXml);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
