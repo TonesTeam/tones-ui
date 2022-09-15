@@ -115,7 +115,7 @@ Blockly.Blocks['apply_reagent'] = {
             .appendField("apply")
             .appendField(new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i])), "reagent")
             .appendField("for")
-            .appendField(new Blockly.FieldNumber(0, "thisisnumber"), "time")
+            .appendField(new Blockly.FieldNumber(0), "time")
             .appendField("minutes.")
         this.appendDummyInput()
             .appendField("Times - ")

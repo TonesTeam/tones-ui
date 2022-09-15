@@ -135,7 +135,7 @@
     flex-direction: column;
     margin-bottom: 5vh;
     opacity: 0;
-    visibility: hidden; 
+    visibility: hidden;
     transition: all var(--navbar-transition-time);
     width: auto;
     /* align-items: center; */
@@ -158,7 +158,7 @@
 #upper-nav {
     display: table;
     width: 100%;
-    height:fit-content;
+    height: fit-content;
     table-layout: fixed;
     z-index: 100;
     overflow: hidden
@@ -204,10 +204,20 @@
 }
 
 /*---------------- PROTOCOL PROGRESS--------------*/
- #progress-track{
+#progress-track {
     white-space: nowrap;
     background-color: #051325cb;
-} 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidenav-open > #progress-track{
+    display: block;
+}
+
+
+
 .protocol-progress-body {
     display: flex;
     flex-direction: row;
@@ -221,11 +231,11 @@
     animation: blink 1s linear infinite;
 }
 
-#progress-icon{
+#progress-icon {
     width: auto;
-    font-size: calc(var(--navbar-width)/10);
+    font-size: calc(var(--navbar-width)/8);
     animation: blink 1s linear infinite;
-    padding: 20px;
+    padding: 0;
 }
 
 .bliking-led.ERROR {
@@ -244,16 +254,17 @@
     color: #3e6a94;
 }
 
-.bliking-led.FINISHED{
+.bliking-led.FINISHED {
     background-color: #52914b;
     animation: none;
 }
-#progress-icon.FINISHED{
+
+#progress-icon.FINISHED {
     color: #52914b;
     animation: none;
 }
 
-.progress-link{
+.progress-link {
     display: flex;
     height: 8vh;
     flex-direction: row;
@@ -262,25 +273,27 @@
     padding-left: 30px;
     transition: width var(--navbar-transition-time) ease-in-out;
     overflow: hidden;
-    
+
 }
-.progress-item{
+
+.progress-item {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 }
-.progress{
+
+.progress {
     display: flex;
     flex-direction: column;
     margin-left: 1em;
 }
 
-.progress p{
+.progress p {
     margin: 0;
 }
 
-.bliking-icon i{
+.bliking-icon i {
     width: 40px;
     height: auto;
     color: #fff;
