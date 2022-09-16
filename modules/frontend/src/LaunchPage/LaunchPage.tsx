@@ -49,8 +49,8 @@ class SysError implements StatusElements {
     getMessage(): JSX.Element {
         return (
             <div className="comment-body">
-                <i className="fas fa-exclamation"></i>
-                <h4 id="comment-header">Some error occured! Please follow the guide below to detect and fix the error.</h4>
+                {/* <i className="fas fa-exclamation"></i> */}
+                <p id="comment-header">Some error occured! Please follow the guide below to detect and fix the error.</p>
                 <ol id="error-guide">
                     <li>Check if any slots are displaced. If any - fix the placing.</li>
                     <li>Make sure that sealing slots cover is closed.</li>
@@ -67,9 +67,9 @@ class Finished implements StatusElements {
     getMessage(): JSX.Element {
         return (
             <div className="comment-body">
-                <i className="fas fa-check"></i>
-                <h4 id="comment-header">Protocol have successfully finished!</h4>
-                <h4>Do stuff that you need to do and then press Discard button</h4>
+                {/* <i className="fas fa-check"></i><i className="fas fa-check"></i> */}
+                <p id="comment-header">Protocol have successfully finished!</p>
+                <p>Do stuff that you need to do and then press Discard button</p>
             </div>
         );
     }
