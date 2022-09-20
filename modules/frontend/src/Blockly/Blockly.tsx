@@ -4,12 +4,8 @@ import { Fab } from "@mui/material";
 import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
-<<<<<<< HEAD
 import MainKeyboard from 'ProtocolList/MainKeyboard';
-import { useEffect, useState } from "react";
-=======
 import { SetStateAction, useEffect, useState } from "react";
->>>>>>> bbcc9f5 (Fix)
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';
 import { useParams } from 'react-router-dom';
@@ -17,12 +13,8 @@ import format from "xml-formatter";
 import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
-<<<<<<< HEAD
 import Blockly from 'blockly';
-=======
-import MainKeyboard from 'ProtocolList/MainKeyboard';
 import { forEach } from 'lodash';
->>>>>>> bbcc9f5 (Fix)
 
 
 
@@ -103,7 +95,6 @@ const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>
 
 export default function BlocklyPage() {
     const [xml, setXml] = useState(initialXml);
-    const [showKeyboard, setShowKeyboard] = useState(true);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
     const [showKeyboard, setShowKeyboard] = useState(false);
