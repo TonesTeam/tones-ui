@@ -1,14 +1,12 @@
-import NavigationBar from 'NavigationBar/NavigationBar'
-import 'NavigationBar/NavigationBar.css'
-import { useEffect } from 'react'
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { getComparator } from 'sharedlib/collection.util'
-import { getRequest } from 'common/util'
+import { getRequest, makeRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
-import { makeRequest } from 'common/util'
 import classNames from 'classnames'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
+import NavigationBar from 'NavigationBar/NavigationBar'
+import 'NavigationBar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
 import MainKeyboard from './MainKeyboard';
