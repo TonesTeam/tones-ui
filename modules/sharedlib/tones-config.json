@@ -4,22 +4,22 @@
     "liquids-tube-holders": [
         {
             "size": 5,
-            "depth": 50,
+            "depth": -75,
             "count": 24,
             "for-washing": false
         },
         {
             "size": 15,
-            "depth": 150,
+            "depth": -100,
             "count": 6,
             "for-washing": false
         },
         {
             "size": 50,
-            "depth": 450,
+            "depth": -100,
             "count": 3,
             "for-washing": false
-        },
+        }
         {
             "size": 500,
             "depth": 2000,
