@@ -1,14 +1,12 @@
-import NavigationBar from 'NavigationBar/NavigationBar'
-import 'NavigationBar/NavigationBar.css'
-import { useEffect } from 'react'
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { getComparator } from 'sharedlib/collection.util'
-import { getRequest } from 'common/util'
+import { getRequest, makeRequest } from 'common/util'
 import { useNavigate } from "react-router-dom";
-import { makeRequest } from 'common/util'
 import classNames from 'classnames'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
+import NavigationBar from 'NavigationBar/NavigationBar'
+import 'NavigationBar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
 import MainKeyboard from './MainKeyboard';
@@ -68,11 +66,11 @@ function Protocol(props: any) {
             <div
                 className={classNames("protocol-general", { active: open })}
                 onClick={() => setActive(!open)}>
-                <div className="info-cell" id="check">
+                {/* <div className="info-cell" id="check">
                     <input type="checkbox" className="check-to-run" name="protocol" disabled title='In current development version parallel protocol deployment is not supported'></input>
-                </div>
+                </div> */}
                 <div className="info-cell-container">
-                    <div className="info-cell-container">
+                    {/* <div className="info-cell-container"> */}
                         <div className="info-cell">
                             <p className="label">ID: </p>
                             <p>{props.id}</p>
@@ -81,9 +79,9 @@ function Protocol(props: any) {
                             <p className="label">Name: </p>
                             <p>{props.name}</p>
                         </div>
-                    </div>
+                    {/* </div> */}
 
-                    <div className="info-cell-container">
+                    {/* <div className="info-cell-container"> */}
                         <div className="info-cell">
                             <p className="label">Author: </p>
                             <p>{props.authorName}</p>
@@ -92,7 +90,7 @@ function Protocol(props: any) {
                             <p className="label">Date of creation: </p>
                             <p>{props.creationDate}</p>
                         </div>
-                    </div>
+                    {/* </div> */}
 
                 </div>
 

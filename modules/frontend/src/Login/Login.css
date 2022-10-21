@@ -3,16 +3,25 @@
 }
 
 form {
-    margin-bottom: 15vh;
     display:flex;
     flex-direction:column;
+    font-size:1.2rem;
+    font-weight: 400;
+    justify-content: center;
+    background-color: rgba(22, 29, 81, 0.597);
+    padding: 50px;
+    border-radius: 15px;
 }
 
 #background{
+    height: 100vh;
     background: url("../static/login-backgroud.png");
     background-size: 150px 150px;
     background-repeat: repeat;
-
+    display: grid;
+    grid-template-rows: 4fr 1fr;
+    /* align-items: center; */
+    justify-items: center;
 }
 
 form button {
@@ -25,15 +34,15 @@ form button {
 }
 
 .login-form {
+    padding-top: 5vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100vw;
-    height: 100vh;
+    width: 50vw;
+    /* height: 100vh; */
 }
-
 
 label{
     margin-bottom:15px;
@@ -43,26 +52,65 @@ input{
     display: block;
     border: none;
     border-radius: 15px;
-    width: var(--main-width);
-    padding: 20px 20px;
+    width: 100%;
+    padding: 20px 0 20px 20px;
     margin-top:20px;
+    box-sizing: border-box;
     outline:none;
+    font-size:1.2rem;
 }
+
+#error-msg{
+    /* font-style: italic; */
+    color: rgb(255, 224, 152);
+    opacity: 1;
+    transition-duration: 0.4s;
+    transition-property: opacity;
+    text-align: center;
+}
+
+.login-form button {
+    border-radius: 15px;
+    padding: 20px 20px;
+}
+
 input::placeholder{
     opacity:0;
 }
 label span{
     position:absolute;
-    top:0;
+    top:-10px;
     left:20px;
-    transform:translateY(30px);
-    font-size:0.825em;
+    transform:translateY(40px);
     transition: all 0.3s;
     color: rgb(114, 114, 114);
 }
 
 label:focus-within > span,
 input:not(:placeholder-shown) + span{
-    color:#123d5f;
+    color:#ffffff;
     transform:translateY(0px);
 }
+
+#credits{
+    margin-top: auto;
+    background-color:  rgba(22, 29, 81, 0.597);
+    color: #fff;
+    width: 100vw;
+    padding: 15px 10%;
+    height: fit-content;
+    box-sizing: border-box;
+    font-size: 18px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+}
+
+
+.logo img{
+    height: 50px;
+    width: auto;
+}
+

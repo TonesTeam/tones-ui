@@ -266,6 +266,7 @@ Blockly.Blocks['begin_protocol'] = {
         this.setColour(270);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setDeletable(false);
     }
 };
 

@@ -1,12 +1,20 @@
 import { useState } from "react";
 import Keyboard, { SimpleKeyboard } from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
+import useSound from 'use-sound';
+import keypress from '../static/key_press.wav';
+import backpress from '../static/backspace_press.wav';
+
+
+// const keypress = require("..static/key_press.wav");
 
 
 const layoutMap = new Map<string, string>([
     ["default", "shift"],
     ["shift", "default"],
 ]);
+
+ 
 
 let keyboard: SimpleKeyboard | undefined = undefined;
 
@@ -16,10 +24,18 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
     }
     const showKeyboard = props.show;
     const [keyboardLayout, setKeyboardLayout] = useState("default")
+    const [playRegularPress] = useSound(keypress);
+    const [playBackPress] = useSound(backpress);
 
     const onChange = (inp: string) => props.inputSetter(inp);
     const onKeyPress = (k: string) => {
-        if (k == "{enter}") props.showSetter(false);
+        if (k == "{enter}"){
+            props.showSetter(false);
+        } 
+        else if (k == "{bksp}") playBackPress();
+        else{
+            playRegularPress();
+        }
         if (k == "{shift}" || k == "{lock}") setKeyboardLayout(layoutMap.get(keyboardLayout)!)
     };
     return <>
@@ -35,6 +51,15 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
             <Keyboard
                 onInit={(inst) => keyboard = inst}
                 layoutName={keyboardLayout}
+                layout={{
+                    default: [
+                        "1 2 3 4 5 6 7 8 9 0 _ - {bksp}",
+                        "q w e r t y u i o p \\",
+                        "{lock} a s d f g h j k l {enter}",
+                        ". z x c v b n m , /",
+                        "{space}"
+                    ]
+                }}
                 onChange={onChange}
                 onKeyPress={onKeyPress}
                 mergeDisplay={true} display={{
@@ -44,6 +69,7 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
                     "{bksp}": "⌫",
                     "{lock}": "caps ⇪",
                     "{shift}": "⇧",
+                    "{space}": "space"
                 }} />
         </div>
     </>

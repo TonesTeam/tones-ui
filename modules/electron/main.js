@@ -6,7 +6,8 @@ const {
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 1366,
-        height: 768
+        height: 768,
+        autoHideMenuBar: true
     })
     win.loadURL('http://localhost:' + process.env.ROUTER_PORT);
 

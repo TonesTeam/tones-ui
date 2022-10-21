@@ -5,7 +5,7 @@ import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
 import MainKeyboard from 'ProtocolList/MainKeyboard';
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';
 import { useParams } from 'react-router-dom';
@@ -14,7 +14,6 @@ import "./Blockly.css";
 import "./Library";
 import { GenerateAll } from "./LibraryCodeGen";
 import Blockly from 'blockly';
-import { forEach } from 'lodash';
 
 
 
@@ -94,6 +93,8 @@ function wrapXml(xml: string) {
 const initialXml = wrapXml('<block type="begin_protocol" x="240" y="30"></block>');
 
 export default function BlocklyPage() {
+    // console.log("Check");
+    // console.log(document.getElementsByClassName('thisisnumber'));
     const [xml, setXml] = useState(initialXml);
     const params = useParams()
     const saveFunction = params.id ? ((xml: string) => updateProtocol(params.id!, xml)) : ((xml: string) => saveProtocol(xml));
@@ -102,12 +103,17 @@ export default function BlocklyPage() {
 
     useEffect(() => {
         Array.from(document.getElementsByClassName('blocklyEditableText')).forEach(element => {
-            element.addEventListener('click', (ev) => {
-                setShowKeyboard(true);
-                setValue(value + 1); // forces a rerender which updates keyboards input value
-            })
+            if (!element.getElementsByClassName('blocklyDropdownText')[0]){ //should not show for dropdowns
+                element.addEventListener('pointerdown', (ev) => {
+                    setShowKeyboard(true);
+                    setValue(value + 1); // forces a rerender which updates keyboards input value
+                    ev.preventDefault();
+                })
+            }
+            
         });
     })
+    
     useEffect(() => {
         if (!params.id) {
             return;
@@ -116,37 +122,13 @@ export default function BlocklyPage() {
             setXml(wrapXml(resp.data));
         });
     }, [])
-
-    const [input, setInput] = useState("");
-    let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-         setInput(e.target.value);
-    };
-
-    useEffect(() => triggerKeyboard());
-
-    function triggerKeyboard() {
-        let editables = Array.from(document.getElementsByClassName("blocklyEditableText")) as HTMLElement[];
-        editables.forEach(function (editable) {
-            if(editable.querySelector('.blocklyDropdownText') == null){ //isn't a select field
-                editable.addEventListener('click', function () {
-                    let editableInput = editable.querySelector('.blocklyText');
-                    setInput(editableInput!.innerHTML as SetStateAction<string>);
-                    editableInput!.innerHTML = input;
-                    let whyTheFuckNotPutASecondPseudoInputElementBecauseFuckYouThatsWhy = document.querySelector(".blocklyHtmlInput") as HTMLInputElement
-                    whyTheFuckNotPutASecondPseudoInputElementBecauseFuckYouThatsWhy.value = input;
-                    editableInput!.addEventListener('change', function(){inputHandler})
-                    //editableInput!.setAttribute("value", "");
-                    //editableInput!.value = 
-                    //editableInput!.setAttribute("onchange", "{inputHandler}");
-                    setShowKeyboard(true);
-                })
-                editable.addEventListener('blur', function () {
-                    setShowKeyboard(false);
-                })
-            }
-        })
-    }
-
+    useEffect(() =>{
+        if(!showKeyboard){
+            Array.from(document.getElementsByClassName('blocklyHtmlInput') as HTMLCollectionOf<HTMLElement>).forEach(element => {
+                if(!element.classList.contains('blocklyInvalidInput')) element.style.display = 'none';
+            });
+        }
+    });
     if (params.id !== undefined && xml == initialXml) {
         return (
             <CenteringFlexBox style={{ height: "80vh" }}>
@@ -154,12 +136,11 @@ export default function BlocklyPage() {
             </CenteringFlexBox>
         )
     }
-
     return (
         <>
             <NavigationBar selectedItem={params.id ?? "Create Protocol"} />
             <div id="main">
-                <Fab style={{ position: "fixed", float: "right", right: 10, top: 10 }} variant="extended"
+                <Fab style={{ position: "fixed", float: "right", right: 30, top: 20 }} variant="extended"
                     onClick={() => saveFunction(xml)} >
                     <SaveIcon />
                     Save
@@ -178,20 +159,26 @@ export default function BlocklyPage() {
                             colour: "#ccc",
                             snap: true,
                         },
+                        zoom: {
+                            controls: true,
+                            wheel: true,
+                            startScale: 2.0,
+                            maxScale: 3,
+                            minScale: 0.7,
+                            pinch: true
+                        },
                     }}
                     onXmlChange={setXml}
                     onImportXmlError={(er) => console.error("XML IMPORT ERROR:", er)}
                 />
-                <pre id="generated-xml" style={{ fontSize: "0.5em" }}>{format(`<root>${xml}</root>`, { collapseContent: true })}</pre>
-                <MainKeyboard
-                    inputValue={document.getElementsByClassName('blocklyHtmlInput')[0]?.value}
-                    show={showKeyboard} showSetter={setShowKeyboard} inputSetter={(inp) => {
-                        const input = document.getElementsByClassName('blocklyHtmlInput')[0] as HTMLInputElement;
-                        input.value = inp;
-                        input.dispatchEvent(new Event('input'));
-                    }} />
             </div>
-            <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setInput} />
+            <MainKeyboard
+                inputValue={(document.getElementsByClassName('blocklyHtmlInput')[0] as HTMLInputElement)?.value}
+                show={showKeyboard} showSetter={setShowKeyboard} inputSetter={(inp) => {
+                    const input = document.getElementsByClassName('blocklyHtmlInput')[0] as HTMLInputElement;
+                    input.value = inp;
+                    input.dispatchEvent(new Event('input'));
+                }} />
         </>
     );
 }

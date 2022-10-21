@@ -23,25 +23,6 @@
     text-align: center;
 }
 
-/* .search-bar-container {
-    display: flex;
-    height: var(--search-bar-height);
-    width: 100%;
-}
-
-.search-bar-container button {
-    width: calc(var(--search-bar-height) * 1.5);
-    height: var(--search-bar-height);
-    font-size: calc(var(--search-bar-height) * 0.4);
-    background-color: #4242ff;
-    color: white;
-    border-radius: 0px;
-    border-left: 1px solid #d8d8da;
-    border-top: var(--bar-border);
-    border-bottom: var(--bar-border);
-    border-right: var(--bar-border);
-} */
-
 .search-bar {
     box-sizing: border-box;
     font-weight: 300;
@@ -65,41 +46,6 @@
     box-shadow: 0px 0px 0px 2px #345e7ec2;
 }
 
-/* .launch-container {
-    display: flex;
-    margin-right: 30px;
-    justify-content: flex-end;
-}
-
-.launch-container .protocol-counter {
-    width: auto;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(var(--search-bar-height) * 0.4);
-}
-
-.launch-container .protocol-submit-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-} */
-
-/* .protocol-submit-btn a {
-    height: 30px;
-    width: 30px;
-    margin-left: 2vw;
-    background-color: #fff;
-    color: #4242ff;
-    border-radius: 5px;
-    border: 2px solid #d8d8da;
-}
-
-.protocol-submit-btn button i {
-    font-size: 30px;
-} */
-
-/*-------------------------*/
 /* PROTOCOL LIST*/
 
 .protocol-list {
@@ -116,8 +62,7 @@
 
 .protocol-general {
     display: grid;
-    grid-template-columns: 10% auto;
-    padding: 0.5rem 4rem 0.5rem 1rem;
+    padding: 0.5rem 4rem;
     min-height: 3.5rem;
     line-height: 1.25rem;
     align-items: center;
@@ -128,8 +73,20 @@
 
 .info-cell-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    column-gap: 7%;
+    grid-template-columns: 1fr 3fr 3fr 2fr;
+    column-gap: 2%;
+}
+
+@media (max-width: 1200px){
+    .info-cell-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px){
+    .info-cell-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 
 .info-cell {
@@ -137,7 +94,7 @@
     grid-template-columns: auto auto;
     column-gap: 10px;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
 }
 
 .protocol-general .info-cell .label {
