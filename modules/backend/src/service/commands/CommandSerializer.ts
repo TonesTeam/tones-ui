@@ -20,10 +20,7 @@ export class CommandSerializer {
     }
 
     private serializeLiqiuidApplication(c: LiquidApplicationCommand, deploymentConfig: DeploymentLiquidConfiguration[]): string {
-        const tubeSize = deploymentConfig.filter(dc => dc.liquidSlotNumber == c.from).at(0)!.liquidAmount;
-        const coord = new Map(Object.entries(config["tube-holder-coordinates"])).get(c.from!.toString())!;
-        const depth = config["liquids-tube-holders"].filter(th => th.size === tubeSize).at(0)!.depth;
-        return `LA_${coord}:${depth}_${c.to}_${c.volume * 1000}`
+        return `LA_${c.from!.toString()}_${c.to}_${c.volume * 1000}`
     }
 }
 
