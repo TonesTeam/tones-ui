@@ -12,10 +12,13 @@ import { Message, MessageChannel } from "@service/external/Message";
 import { inject } from "inversify";
 import { BaseHttpController, controller, httpDelete, httpGet, queryParam, requestParam } from "inversify-express-utils";
 import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
+import { Logger } from "tslog";
 
 @controller("/protocol")
 export default class ProtocolController extends BaseHttpController {
 
+    @inject(Logger)
+    private logger: Logger;
     @inject(DatabaseService)
     private dbService: DatabaseService;
     @inject(LiquidMapper)
@@ -80,7 +83,7 @@ export default class ProtocolController extends BaseHttpController {
             .join(" ");
         const msg = Message.from(MessageChannel.PROTOCOL_TRANSFER, body)
         this.controllerMessageInterface.sendMsg(msg);
-        //finish later
+        return this.statusCode(200);
     }
 
     private async resolveProtocolConfig(id: string, slots: string): Promise<[DeploymentLiquidConfiguration[], Command[]]> {

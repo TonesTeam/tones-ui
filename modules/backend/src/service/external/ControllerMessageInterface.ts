@@ -25,7 +25,7 @@ export class ControllerMessageInterface {
 
     public sendMsg(msg: Message) {
         this.logger.trace(`Sending message: ${msg.toString()}`)
-        this.serialPort.write(msg.toString());
+        this.serialPort.write(msg.toString() + "\n");
     }
 
     private readMsg(): Promise<Message> {

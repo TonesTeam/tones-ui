@@ -31,7 +31,7 @@ function resolveCell(cid: number, rid: number, configMap: Map<number, Deployment
     const id = cid * 6 + rid + 1
     const liq = configMap.get(id)
     const washing = cid == 5 && rid > 3;
-    if(id === 34){
+    if (id === 34) {
         return (
             <td key={cid} className="blank-cell"></td>
         )
@@ -58,11 +58,11 @@ function incProtocol() {
     const activePr = st.protocols.filter(e => { return e.status === Status.Ongoing })!;
     for (let i = 0; i < st.protocols.length; i++) {
         const pr = st.protocols[i];
-        if(pr.progress >= 100) {
+        if (pr.progress >= 100) {
             store.dispatch(finish(i))
             continue;
         }
-        if(pr.status != Status.Ongoing) {
+        if (pr.status != Status.Ongoing) {
             continue;
         }
         store.dispatch(moveProgress({ protocolIndexToMove: i, progressToAdd: 1 }));
@@ -80,12 +80,13 @@ export default function Recommendations() {
     const params = useParams()
     const id = params.id!;
     let navigate = useNavigate();
-    const dispatch =  useAppDispatch();
+    const dispatch = useAppDispatch();
     const newProto = protocolsInDB.find(e => e.id.toString() === params.id);
-    
+
 
     function startProtocol() {
-       dispatch(addAndRun(newProto!));
+        getRequest(`/protocol/start/${id}`);
+        dispatch(addAndRun(newProto!));
         navigate(`/start/${id}`);
     }
 
