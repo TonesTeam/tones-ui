@@ -20,7 +20,7 @@ container.load(buildProviderModule());
 container.bind<Logger>(Logger).toConstantValue(logger);
 function getPort() {
 	if (process.arch === "arm64") {
-		return new SerialPort({ path: '/dev/ttyS0', baudRate: 115200 })
+		return new SerialPort({ path: '/tmp/app2', baudRate: 9600 })
 	}
 	SerialPortMock.binding.createPort("/dev/test", { echo: true, record: true })
 	return new SerialPortMock({ path: "/dev/test", baudRate: 9600 })
