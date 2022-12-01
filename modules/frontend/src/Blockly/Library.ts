@@ -106,14 +106,18 @@ Blockly.Blocks['set_normal_temp'] = {
 
 Blockly.Blocks['apply_reagent'] = {
     init: function () {
-        const rtype = new Blockly.FieldDropdown(Array.from(reagentSubTypeMap.keys()).map(i => [i, i]))
+        const rtype = new Blockly.FieldDropdown(Array.from(reagentSubTypeMap.keys()).map(i => [i, i]), (newval: string) => {
+            dropdown.setValue(reagentSubTypeMap.get(newval)?.at(0));
+            return newval;
+        });
+        var dropdown = new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i]));
         this.appendDummyInput()
             .appendField(createLabel("Reagent:", "boldit"))
             .appendField("From")
             .appendField(rtype, "reagent_type");
         this.appendDummyInput()
             .appendField("apply")
-            .appendField(new Blockly.FieldDropdown(() => reagentSubTypeMap.get(rtype.getValue())?.map(i => [i, i])), "reagent")
+            .appendField(dropdown, "reagent")
             .appendField("for")
             .appendField(new Blockly.FieldNumber(0), "time")
             .appendField("minutes.")
