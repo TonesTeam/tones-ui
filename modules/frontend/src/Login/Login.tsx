@@ -35,7 +35,7 @@ export default function Login() {
         }
     }
 
-    const [credentials, setCredentials] = useReducer(credReducer, { username: "", password: "" });
+    const [credentials, setCredentials] = useReducer(credReducer, { username: "tones", password: "admin" });
     const [input, setInput] = useState(""); //name of currently active input
     const [showKeyboard, setShowKeyboard] = useState(false);
     const [invalidCreds, setInvalidCreds] = useState(false);

@@ -20,7 +20,11 @@ export class ProtocolCommandsMapper {
     private liquidApplicationStep(lq: Step, slots: number[]): Command[] {
         const vol = config["liquid-application-volume"];
         const liquid = lq.liquidApplication!.liquid;
-        const liquidInfo = { id: liquid.id, isWashing: liquid.liquidType.typeName === LiquidTypeName.WASHING };
+        const liquidInfo = {
+            id: liquid.id,
+            isWashing: liquid.liquidType.typeName === LiquidTypeName.WASHING,
+            isWater: liquid.liquidName === "Distilled Water",
+        };
         return slots.map(s => new LiquidApplicationCommand(undefined, s, vol, liquidInfo))
     }
 

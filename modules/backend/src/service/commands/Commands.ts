@@ -17,7 +17,7 @@ export class LiquidApplicationCommand extends Command {
         public from: number | undefined, //tube from which to extract liquid. Temporarily undefined while generaing reccomendations
         public to: number, //slot into which to pump liquid
         public volume: number, //volume of liquid to use (milliliters)
-        public liquidInfo: { id: number, isWashing: boolean }
+        public liquidInfo: { id: number, isWashing: boolean, isWater: boolean }
     ) { super(CommandType.LiquidApplication); }
 
 }

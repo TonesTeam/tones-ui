@@ -1,3 +1,4 @@
+import { CommandSerializer } from "@service/commands/CommandSerializer";
 import { provide } from "inversify-binding-decorators";
 import * as lodash from "lodash";
 import { getComparator, groupBy } from "sharedlib/collection.util";
@@ -25,7 +26,11 @@ class TubeConfigState {
             .map(th => th["count"])
             .reduce((a, b) => a + b, 0)
         this.tubeSizeCountMap.set(size, this.tubeSizeCountMap.get(size)! - 1)
-        return previousLiquidSlots + sizeCount - this.tubeSizeCountMap.get(size)!;
+        let allocatedSlot = previousLiquidSlots + sizeCount - this.tubeSizeCountMap.get(size)!
+        if (size == 500) {
+            return allocatedSlot + 1; // +1 because slot 34 is for water so must be skipped
+        }
+        return allocatedSlot;
     }
 }
 
@@ -38,8 +43,24 @@ export class LiquidConfigurationResolver {
         const nonWashingDeploymentConfig = this.getLiquidsConfiguration(nonWashingCommands, state)
         const washingTubeConfig = config["liquids-tube-holders"].filter(t => t["for-washing"])[0]
         state.tubeSizeCountMap.set(washingTubeConfig.size, washingTubeConfig.count);
-        const washingDeploymentConfig = this.getLiquidsConfiguration(commands.filter(la => la.liquidInfo.isWashing), state)
+        const washingDeploymentConfig = this.getWashingConfiguration(commands, state);
         return lodash.concat(nonWashingDeploymentConfig, washingDeploymentConfig)
+    }
+
+    private getWashingConfiguration(commands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration[] {
+        let washCommands = commands.filter(la => la.liquidInfo.isWashing);
+        return Array.from(groupBy(washCommands, lac => lac.liquidInfo.id).values())
+            .map(locs => this.washingCommandsToDeploymentConfig(locs, state));
+    }
+
+    private washingCommandsToDeploymentConfig(sameLiquidWashingCommands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration {
+        let liquid = sameLiquidWashingCommands[0].liquidInfo;
+        return {
+            liquid: undefined,
+            liquidAmount: lodash.sum(sameLiquidWashingCommands.map(i => i.volume)),
+            liquidId: liquid.id!,
+            liquidSlotNumber: liquid.isWater ? 34 : state.allocateLiquidSlotOfSize(500)
+        };
     }
 
     private getLiquidsConfiguration(commands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration[] {
