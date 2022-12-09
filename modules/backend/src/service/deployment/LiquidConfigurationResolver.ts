@@ -55,11 +55,13 @@ export class LiquidConfigurationResolver {
 
     private washingCommandsToDeploymentConfig(sameLiquidWashingCommands: LiquidApplicationCommand[], state: TubeConfigState): DeploymentLiquidConfiguration {
         let liquid = sameLiquidWashingCommands[0].liquidInfo;
+        let slot = liquid.isWater ? 34 : state.allocateLiquidSlotOfSize(500)
+        sameLiquidWashingCommands.forEach(c => c.from = slot)
         return {
             liquid: undefined,
             liquidAmount: lodash.sum(sameLiquidWashingCommands.map(i => i.volume)),
             liquidId: liquid.id!,
-            liquidSlotNumber: liquid.isWater ? 34 : state.allocateLiquidSlotOfSize(500)
+            liquidSlotNumber: slot
         };
     }
 

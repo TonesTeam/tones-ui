@@ -10,7 +10,7 @@ export const connectionOptions: ConnectionOptions = {
    "namingStrategy": new SnakeNamingStrategy(),
    "database": "./testdb",
    "synchronize": false,
-   "logging": true,
+   "logging": false,
    "entities": [
       "src/entity/**/*.ts"
    ],
