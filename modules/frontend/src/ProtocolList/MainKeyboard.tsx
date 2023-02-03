@@ -58,6 +58,13 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
                         "{lock} a s d f g h j k l {enter}",
                         ". z x c v b n m , /",
                         "{space}"
+                    ],
+                    shift: [
+                        "1 2 3 4 5 6 7 8 9 0 _ - {bksp}",
+                        "Q W E R T Y U I O P \\",
+                        "{lock} A S D F G H J K L {enter}",
+                        ". Z X C V B N M , /",
+                        "{space}"
                     ]
                 }}
                 onChange={onChange}

@@ -23,6 +23,7 @@
     "@types/chai": "^4.3.1",
     "@types/express": "^4.17.13",
     "@types/jest": "^28.1.1",
+    "@types/lodash": "^4.14.191",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.21",
     "chai": "^4.3.6",
@@ -47,10 +48,10 @@
     "jsdom": "^19.0.0",
     "nodemon": "^2.0.15",
     "reflect-metadata": "^0.1.13",
-    "serialport": "^10.4.0",
+    "serialport": "^10.5.0",
     "sharedlib": "file:../sharedlib",
     "sqlite3": "^5.0.2",
-    "tslog": "^3.3.3",
+    "tslog": "^3.3.4",
     "typeorm": "^0.2.45",
     "typeorm-naming-strategies": "^4.0.0"
   }

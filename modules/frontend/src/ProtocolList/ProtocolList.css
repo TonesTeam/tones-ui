@@ -178,6 +178,7 @@
 
 .proto-btn:disabled{
     cursor: auto;
+    color: #757575;
 }
 
 .proto-btn:disabled a{
