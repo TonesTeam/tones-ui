@@ -68,7 +68,7 @@ class Finished implements StatusElements {
         return (
             <div className="comment-body">
                 {/* <i className="fas fa-check"></i><i className="fas fa-check"></i> */}
-                <p id="comment-header">Protocol have successfully finished!</p>
+                <p id="comment-header">Protocol have successfully uploaded!</p>
                 <p>Do stuff that you need to do and then press Discard button</p>
             </div>
         );
