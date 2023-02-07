@@ -46,4 +46,3 @@ npm-debug.log
 .yarn/install-state.gz
 .pnp.*
 
-modules/backend/testdb
