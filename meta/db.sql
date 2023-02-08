@@ -139,12 +139,15 @@ INSERT INTO user (name, surname, role) VALUES ('John', 'Smith', 'Administrator')
 INSERT INTO protocol_type (type_name) VALUES ("protocol type 1");
 -- INSERT INTO protocol (protocol_name, creation_date, creator_id, standard_temp, protocol_type_id) VALUES ("alpha", date(), 1, 22, 1);
 INSERT INTO liquid_type (type_name) VALUES ("Washing"), ("Deparafinization"), ("Reagent"), ("Blocking"), ("Antigen retrieval");
-INSERT INTO liquid_sub_type (sub_type_name) VALUES ("black subtype"), ("red subtype");
+INSERT INTO liquid_sub_type (sub_type_name) VALUES ("black subtype"), ("red subtype"), ("Cat-A");
 INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES 
-  ("Schwartz reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="black subtype")),
-  ("Black reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="black subtype")),
-  ("Stryker's reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="red subtype")),
-  ("Red reagent", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="red subtype")),
+  ("Hematoxylin", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("D-Water", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("Eosin", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("Tap-Water", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("Ethanol 100%", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("Ethanol 75%", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
+  ("Xylene", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
   ("Distilled Water", (select id from liquid_type where type_name="Washing"), NULL),
   ("Alcohol", (select id from liquid_type where type_name="Washing"), NULL),
   ("Formalin", (select id from liquid_type where type_name="Deparafinization"), NULL),
