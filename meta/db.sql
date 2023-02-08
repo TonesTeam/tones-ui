@@ -148,7 +148,7 @@ INSERT INTO liquid (liquid_name, liquid_type_id, liquid_sub_type_id) VALUES
   ("Ethanol 100%", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
   ("Ethanol 75%", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
   ("Xylene", (select id from liquid_type where type_name="Reagent"), (select id from liquid_sub_type where sub_type_name="Cat-A")),
-  ("Distilled Water", (select id from liquid_type where type_name="Washing"), NULL),
+  ("Tap Water", (select id from liquid_type where type_name="Washing"), NULL),
   ("Alcohol", (select id from liquid_type where type_name="Washing"), NULL),
   ("Formalin", (select id from liquid_type where type_name="Deparafinization"), NULL),
   ("Bovine serum albumin", (select id from liquid_type where type_name="Blocking"), NULL),
