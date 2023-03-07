@@ -32,7 +32,7 @@
     font-size: calc(var(--list-header-height) * 0.35);
     border: none;
     transition: all 0.3s ease;
-    background: url(../static/search-icon.svg) no-repeat;
+    background: url(@/static/search-icon.svg) no-repeat;
     background-color: #fff;
     background-position: 15px 10px;
     background-size: 20px;

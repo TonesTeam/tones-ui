@@ -2,15 +2,14 @@ import { useState } from 'react'
 import logo from 'static/logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ProtocolList from './ProtocolList/ProtocolList';
-import History from 'History/History';
-import BlocklyPage from 'Blockly/Blockly';
-import Recommendations from './Reccomendations/Recommendations';
-import LauchPage from './LaunchPage/LaunchPage';
+import ProtocolList from './Pages/ProtocolList/ProtocolList';
+import BlocklyPage from 'Pages/Blockly/Blockly';
+import Recommendations from './Pages/Reccomendations/Recommendations';
+import LauchPage from './Pages/LaunchPage/LaunchPage';
 
 // import {NavBarItem} from 'navbar/NavigationBar'
 
-import Login from 'Login/Login';
+import Login from 'Pages/Login/Login';
 
 function App() {
   return (
@@ -19,7 +18,6 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/list" element={<ProtocolList />} />
-        <Route path="/history" element={<History />} />
         <Route path="/test" element={<h1>TEST</h1>} />
         <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
         <Route path="/create/protocol" element={<BlocklyPage />} />

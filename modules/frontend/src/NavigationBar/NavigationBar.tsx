@@ -1,10 +1,8 @@
-import './NavigationBar.css'
+import { CenteringFlexBox } from 'common/components';
 import { useEffect, useState } from 'react';
-import { CenteringFlexBox } from 'common/components'
-import type { RootState } from '../state/store'
-import { useAppSelector, useAppDispatch } from 'state/hooks'
-import classNames from 'classnames';
+import { useAppSelector } from 'state/hooks';
 import { ProtocolState, Status } from 'state/progress';
+import './NavigationBar.css';
 
 
 function NavBarItem(props: any | { route: String }) {

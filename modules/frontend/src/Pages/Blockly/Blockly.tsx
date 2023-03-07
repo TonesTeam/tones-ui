@@ -4,7 +4,7 @@ import { Fab } from "@mui/material";
 import { CenteringFlexBox } from 'common/components';
 import { getRequest, makeRequest } from 'common/util';
 import NavigationBar from "NavigationBar/NavigationBar";
-import MainKeyboard from 'ProtocolList/MainKeyboard';
+import MainKeyboard from 'common/MainKeyboard';
 import { useEffect, useState } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { Audio } from 'react-loader-spinner';

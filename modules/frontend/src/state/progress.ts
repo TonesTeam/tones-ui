@@ -1,7 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
-import { duration } from '@mui/material'
 
 export interface ProtocolState {
     protocol: ProtocolDto

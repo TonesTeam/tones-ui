@@ -2,16 +2,11 @@ import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
 import "./LaunchPage.css";
 import "common/style.css";
-import { getRequest } from 'common/util'
-import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from 'state/hooks'
-import { addAndRun, moveProgress, discard, finish, error, resume, ProtocolState, Status } from 'state/progress'
+import { useAppSelector, useAppDispatch } from 'state/hooks';
+import { discard, error, resume, ProtocolState, Status } from 'state/progress';
 import { useParams } from "react-router-dom";
-import { ProtocolDto } from "sharedlib/dto/protocol.dto";
-import { data } from "jquery";
 import { useNavigate } from "react-router-dom";
-import progressGif from "../static/progress.gif";
-import { height, width } from "@mui/system";
+import progressGif from "static/progress.gif";
 
 
 interface StatusElements {
@@ -22,7 +17,7 @@ interface StatusElements {
 class Ongoing implements StatusElements {
     getMessage(): JSX.Element {
         return (
-            <div><img src={progressGif} style={{height:"400px"}}/></div>
+            <div><img src={progressGif} style={{ height: "400px" }} /></div>
         );
     }
     getColor(): string {
@@ -115,22 +110,22 @@ export default function LaunchPage() {
             <NavigationBar />
             <div className="font-rb" id="main">
                 <div id="header">
-                        <div className="header-tile">
-                            <p className="title">Active protocol: </p>
-                            <p className="info">{activeProto.protocol.name}</p>
-                        </div>
-                        <div className="header-tile">
-                            <p className="title">Status: </p>
-                            <p className="info">{activeProto.status.toLowerCase()}</p>
-                        </div>
-                        <div className="header-tile">
-                            <p className="title">Approximate duration: </p>
-                            <p className="info">{activeProto.duration} seconds</p>
-                        </div>
-                        <div className="header-tile">
-                            <p className="title">Progress: </p>
-                            <p className="info">{activeProto.progress}%</p>
-                        </div>
+                    <div className="header-tile">
+                        <p className="title">Active protocol: </p>
+                        <p className="info">{activeProto.protocol.name}</p>
+                    </div>
+                    <div className="header-tile">
+                        <p className="title">Status: </p>
+                        <p className="info">{activeProto.status.toLowerCase()}</p>
+                    </div>
+                    <div className="header-tile">
+                        <p className="title">Approximate duration: </p>
+                        <p className="info">{activeProto.duration} seconds</p>
+                    </div>
+                    <div className="header-tile">
+                        <p className="title">Progress: </p>
+                        <p className="info">{activeProto.progress}%</p>
+                    </div>
                 </div>
                 <div className="progress-container">
                     <div id="progress">

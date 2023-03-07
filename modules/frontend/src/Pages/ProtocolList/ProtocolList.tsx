@@ -9,7 +9,7 @@ import NavigationBar from 'NavigationBar/NavigationBar'
 import 'NavigationBar/NavigationBar.css'
 import './ProtocolList.css'
 import 'common/style.css'
-import MainKeyboard from './MainKeyboard';
+import MainKeyboard from '../../common/MainKeyboard';
 
 
 const max = 2;

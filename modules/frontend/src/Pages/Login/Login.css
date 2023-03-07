@@ -15,7 +15,7 @@ form {
 
 #background{
     height: 100vh;
-    background: url("../static/login-backgroud.png");
+    background: url("@/static/login-backgroud.png");
     background-size: 150px 150px;
     background-repeat: repeat;
     display: grid;

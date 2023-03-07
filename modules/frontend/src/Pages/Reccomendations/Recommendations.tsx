@@ -8,8 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toMap } from "sharedlib/collection.util";
 import { DeploymentLiquidConfiguration } from 'sharedlib/dto/liquidconfiguration.dto';
 import { ProtocolDto } from "sharedlib/dto/protocol.dto";
-import { useAppSelector, useAppDispatch } from "state/hooks";
-import { addAndRun, moveProgress, finish, Status } from "state/progress";
+import { useAppDispatch } from "state/hooks";
+import { addAndRun, finish, moveProgress, Status } from "state/progress";
 import { store } from "state/store";
 import "./Recommendations.css";
 
