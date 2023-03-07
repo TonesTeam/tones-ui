@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import logo from 'static/logo.svg'
+import logo from '/static/logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtocolList from './Pages/ProtocolList/ProtocolList';

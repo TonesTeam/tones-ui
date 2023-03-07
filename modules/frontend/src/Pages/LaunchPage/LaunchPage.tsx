@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { discard, error, resume, ProtocolState, Status } from 'state/progress';
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import progressGif from "static/progress.gif";
+import progressGif from "/static/progress.gif";
 
 
 interface StatusElements {

@@ -1,8 +1,8 @@
 import MainKeyboard from 'common/MainKeyboard';
 import React, { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import tsiLogo from "static/HistOne_logo.png";
-import histoLogo from "static/TSI_logo.png";
+import tsiLogo from "/static/HistOne_logo.png";
+import histoLogo from "/static/TSI_logo.png";
 import "./Login.css";
 
 

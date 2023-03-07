@@ -2,8 +2,8 @@ import { useState } from "react";
 import Keyboard, { SimpleKeyboard } from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import useSound from 'use-sound';
-import keypress from "static/key_press.wav";
-import backpress from 'static/backspace_press.wav';
+import keypress from "/static/key_press.wav";
+import backpress from '/static/backspace_press.wav';
 
 
 // const keypress = require("..static/key_press.wav");
