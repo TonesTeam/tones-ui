@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Logger } from "tslog";
-import { Connection, createConnection, EntityTarget, ObjectType, Repository } from "typeorm";
+import { Connection, createConnection, EntityTarget, ObjectLiteral, ObjectType, Repository } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { connectionOptions } from "./ormconfig";
 @provide(DatabaseService)
@@ -33,7 +33,7 @@ export class DatabaseService {
         return await connection.getCustomRepository<T>(repository);
     }
 
-    public async getRepository<T>(tg: EntityTarget<T>): Promise<Repository<T>> {
+    public async getRepository<T extends ObjectLiteral>(tg: EntityTarget<T>): Promise<Repository<T>> {
         const connection = await this.getConnection();
         return await connection.getRepository<T>(tg);
     }

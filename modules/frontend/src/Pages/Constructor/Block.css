@@ -1,0 +1,97 @@
+.handle{
+    position: absolute;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #000;
+    padding: 10px;
+}
+
+.block{
+    width: auto;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    align-items: center;
+    text-align: center;
+}
+
+.block input{
+    width: 100px;
+    height: 20px;
+    margin: 0;
+}
+
+.block select{
+    height: 40px;
+    margin: 0;
+    /* padding: 20px 0 20px 20px; */
+    border-radius: 15px;
+    border: none;
+}
+
+.block button{
+    font-weight: 400;
+    letter-spacing: normal;
+    font-family: "RubikRegular";
+    height: fit-content;
+    width: fit-content;
+}
+
+.block-header{
+    margin: 0;
+}
+
+.block-reagent{
+    border: 2px solid #fff;
+    background-color: var(--reagent-block-color);
+}
+.block-reagent .block-header{
+    text-transform: uppercase;
+    color: #04ea00;
+}
+
+
+.block-washing{
+    border: 2px solid #fff;
+    background-color: var(--washing-block-color);
+}
+.block-washing .block-header{
+    text-transform: uppercase;
+    color: #065be4;
+}
+
+
+.block-temperat{
+    border: 2px solid #fff;
+    background-color: var(--temperat-block-color);
+}
+.block-temperat .block-header{
+    text-transform: uppercase;
+    color: #ffbb00;
+}
+
+.block-body{
+    display: inline-flex;  
+}
+
+.block-inp{
+    display: grid;
+    margin-left: 10px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 4vh 7vh;
+    justify-items: left;
+}
+
+.block-inp label{
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #000000b5;
+}
+
+div.react-draggable-dragging{
+    border-width: 4px;
+}

@@ -164,7 +164,7 @@ export default function ProtocolList() {
                 </div>
 
             </div>
-            <MainKeyboard show={showKeyboard} showSetter={setShowKeyboard} inputSetter={setfilterInput} />
+            <MainKeyboard show={showKeyboard} layout="default" showSetter={setShowKeyboard} inputSetter={setfilterInput} />
         </>
     )
 }

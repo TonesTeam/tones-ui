@@ -91,6 +91,7 @@ export default function Login() {
             </div>
 
             <MainKeyboard inputValue={credentials[`${input}`]?.toString()}
+                layout="default"
                 show={showKeyboard}
                 showSetter={setShowKeyboard}
                 inputSetter={(inp) => {
