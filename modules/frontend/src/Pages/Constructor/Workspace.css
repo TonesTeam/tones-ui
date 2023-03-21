@@ -6,7 +6,7 @@
 
 /*-------- MAIN: SECTION LAYOUT & DESIGN -------------*/
 
-#constructor {
+/* #constructor {
     height: 100vh;
     display: grid;
     grid-template-rows: 4fr 15fr 15fr;
@@ -34,11 +34,11 @@
     display: grid;
     grid-template-rows: 1fr 4fr;
     padding: 10px 2vw;
-}
+} */
 
 /*-------- CONTROL PANEL: BUTTON STYLES -------------*/
 
-.btn-group {
+/* .btn-group {
     display: block;
     text-align: center;
 }
@@ -78,11 +78,11 @@
 #cb-info {
     background-color: #111;
     color: #fff;
-}
+} */
 
 /*-------- TIMELINE: STEP BOXES -------------*/
 
-#info-panel{
+/* #info-panel{
     display: flex;
     justify-content: space-between;
 }
@@ -110,4 +110,4 @@
 }
 .tl-step:last-child{
     background-color: #ff4c4f;
-}
+} */

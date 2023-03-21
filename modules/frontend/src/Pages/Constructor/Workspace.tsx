@@ -2,39 +2,21 @@ import NavigationBar from "NavigationBar/NavigationBar";
 import MainKeyboard from "common/MainKeyboard";
 import { useEffect, useRef, useState } from 'react';
 import './Workspace.css'
-import { DragBlock, BlockType, DragBlockProps } from './Block';
+//import { Block, BlockProps, BlockType } from './Block';
 
 export default function Workspace() {
-    const [showKeyboard, setShowKeyboard] = useState(false);
-    const [testInput, setTestInput] = useState("");
-    const nodeRef = useRef(null);
-    const [currentZIndex, setCurrentZIndex] = useState(31);
-    const [blocks, setBlocks] = useState<DragBlockProps[]>([]);
+    //const [showKeyboard, setShowKeyboard] = useState(false);
+    //const [testInput, setTestInput] = useState("");
+    //const [blocks, setBlocks] = useState<BlockProps[]>([]);
 
-    const handleZindex = (elem: HTMLElement) => {
-        elem.parentElement!.style.zIndex = currentZIndex.toString();
-        setCurrentZIndex((state) => state + 1);
-    };
+    // const handleZindex = (elem: HTMLElement) => {
+    //     elem.parentElement!.style.zIndex = currentZIndex.toString();
+    //     setCurrentZIndex((state) => state + 1);
+    // };
 
-    const addBlock = (type: BlockType) => {
-        //console.log((e.target as HTMLSelectElement).value);
-        //setSelected((e.target as HTMLSelectElement).value);
-        setBlocks(blocks.concat(<DragBlock key={Math.random()} type={type} />))
-    }
-
-    // useEffect(()=>{
-    //     let inputs = document.querySelectorAll('input');
-    //     console.log(inputs.length);
-    //     inputs.forEach((inp)=>{
-    //         inp.addEventListener("focus", () => {
-    //             console.log("focus event!");
-    //         });
-    //         inp.addEventListener("click", () => {
-    //         console.log("click event!");
-    //         });
-    //     })
-    // }, [])
-
+    // const addBlock = (type: BlockType) => {
+    //     setBlocks([...blocks, { type: type, other: 'test' }])
+    // }
 
 
     return (
@@ -43,11 +25,11 @@ export default function Workspace() {
             <div className="font-rb" id="main">
                 <div id='constructor'>
                     <div id='control-panel'>
-                        <div className="btn-group">
-                            <button className="construct-btn" id="cb-washing" onClick={() => addBlock(BlockType.Washing)}><span className="fas fa-water"></span></button>
+                         {/* <div className="btn-group">
+                           <button className="construct-btn" id="cb-washing" onClick={() => addBlock(BlockType.Washing)}><span className="fas fa-water"></span></button>
                             <button className="construct-btn" id="cb-reagent" onClick={() => addBlock(BlockType.Reagent)}><span className="fas fa-flask"></span></button>
                             <button className="construct-btn" id="cb-temperat" onClick={() => addBlock(BlockType.Temperature)}><span className="fas fa-temperature-low"></span></button>
-                        </div>
+                        </div> */}
 
                         <div className="btn-group">
                             <button className="construct-btn" id="cb-delete"><span className="fas fa-trash"></span></button>
@@ -60,7 +42,7 @@ export default function Workspace() {
                         </div>
                     </div>
                     <div id="workspace">
-                        {blocks}
+                        {/* {blocks} */}
                     </div>
                     <div id="timeline">
                         <div id="info-panel">
@@ -80,7 +62,7 @@ export default function Workspace() {
                     </div>
                 </div>
             </div>
-            <MainKeyboard show={showKeyboard} layout={"numpad"} showSetter={setShowKeyboard} inputSetter={setTestInput} />
+            {/* <MainKeyboard show={showKeyboard} layout={"numpad"} showSetter={setShowKeyboard} inputSetter={setTestInput} /> */}
         </>
     )
 }

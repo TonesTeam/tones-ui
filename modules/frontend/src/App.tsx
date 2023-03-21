@@ -11,6 +11,7 @@ import LauchPage from './Pages/LaunchPage/LaunchPage';
 
 import Login from 'Pages/Login/Login';
 import Workspace from 'Pages/Constructor/Workspace';
+import WorkspaceReorg from 'Pages/Constructor/Constructor_2side';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/test" element={<h1>TEST</h1>} />
         <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
         <Route path="/create/protocol" element={<Workspace />} />
+        <Route path="/create2/protocol" element={<WorkspaceReorg />} />
         <Route path="/launch/:id" element={<Recommendations />} />
         <Route path="/start/:id" element={<LauchPage />} />
       </Routes>

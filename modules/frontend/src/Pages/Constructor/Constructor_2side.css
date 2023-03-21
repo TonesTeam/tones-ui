@@ -1,0 +1,79 @@
+:root {
+    --reagent-block-color: #a1ff54;
+    --washing-block-color: #34b8ff;
+    --temperat-block-color: #fff534;
+}
+
+
+/*----------- GRID LAYOUTS --------------*/
+#container{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#workspace{
+    display: grid;
+    grid-template-rows: 1fr 5fr 1fr;
+}
+
+#timeline{
+    height: 100%;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+    background-color: #8f8f8f;
+}
+
+
+
+/*-------- CONTROL PANEL: BUTTON STYLES -------------*/
+.options{
+    background-color: #c7c7c7;
+    display: block;
+    text-align: center;
+}
+
+.construct-btn {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    margin: 0 5%;
+    font-size: 1.5em;
+}
+
+#cb-reagent {
+    background-color: var(--reagent-block-color);
+}
+
+#cb-washing {
+    background-color: var(--washing-block-color);
+}
+
+#cb-temperat {
+    background-color: var(--temperat-block-color);
+}
+
+#cb-delete {
+    background-color: #ff4c4f;
+}
+
+#cb-save {
+    background-color: #ffffff;
+}
+
+#cb-settings {
+    background-color: #999999;
+}
+
+#cb-info {
+    background-color: #111;
+    color: #fff;
+} 
+
+/*----------- TIMELINE -------------*/
+
+#steps{
+    padding: 0 5vw;
+    overflow-y:scroll;
+}

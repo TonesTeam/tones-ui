@@ -1,16 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import Draggable from "react-draggable";
 import './Block.css'
 
 interface BlockFields {
     getContent(): JSX.Element;
+    getStepContent(): JSX.Element;
     getClass(): string;
 }
 
 class Washing implements BlockFields {
     getContent(): JSX.Element {
         return (
-            <div className="block">
+            <>
                 <p className="block-header">Washing step</p>
                 <div className="block-body">
                     <div className="block-inp">
@@ -30,11 +29,21 @@ class Washing implements BlockFields {
                         <input id="inp-times" type="number" />
                     </div>
                 </div>
-                <div><button>Save</button></div>
-
-            </div>
+            </>
         );
     }
+
+    getStepContent():JSX.Element {
+        return (
+            <>
+                <h3>Washing</h3>
+                <div>
+                    <p>With 111</p>
+                    <p>for 111 minutes</p>
+                </div>
+            </>
+    )}
+
     getClass(): string {
         return "block-washing";
     }
@@ -43,7 +52,7 @@ class Washing implements BlockFields {
 class Reagent implements BlockFields {
     getContent(): JSX.Element {
         return (
-            <div className="block">
+            <>
                 <p className="block-header">Reagent step</p>
                 <div className="block-body">
                     <div className="block-inp">
@@ -66,14 +75,22 @@ class Reagent implements BlockFields {
                         <label htmlFor="reag-min">Minutes</label>
                         <input id="reag-min" type="number" />
                     </div>
-
                 </div>
-                <div>
-                    <button>Save</button>
-                </div>
-            </div>
+            </>
         );
     }
+
+    getStepContent():JSX.Element {
+        return (
+            <>
+                <h3>Reagent</h3>
+                <div>
+                    <p>With 111</p>
+                    <p>for 111 minutes</p>
+                </div>
+            </>
+    )}
+
     getClass(): string {
         return "block-reagent";
     }
@@ -82,7 +99,7 @@ class Reagent implements BlockFields {
 class Temperature implements BlockFields {
     getContent(): JSX.Element {
         return (
-            <div className="block">
+            <>
                 <p className="block-header">Temperature change</p>
                 <div className="block-body">
                 <div className="block-inp">
@@ -94,74 +111,83 @@ class Temperature implements BlockFields {
                         <input id="reag-min" type="number" />
                     </div>
                 </div>
-                <div>
-                    <button>Save</button>
-                </div>
-            </div>
+            </>
         );
     }
+
+    getStepContent():JSX.Element {
+        return (
+            <>
+                <h3>Temperature</h3>
+                <div>
+                    <p>From 111</p>
+                    <p>To 222</p>
+                </div>
+            </>
+    )}
+
     getClass(): string {
         return "block-temperat";
     }
 }
 
-export const enum BlockType {
+export enum BlockType {
     Reagent = "reagent",
     Washing = "washing",
     Temperature = "temperat"
 }
 
-export interface DragBlockProps {
+export interface BlockProps {
     type: BlockType,
+    id:number,
     other?: string
 }
 
-export const DragBlock = (props: any) => {
+
+export interface WorkBlockProps{
+    type: BlockType,
+    addBlock: (type: BlockType)=>void
+}
+export const WorkBlock: React.FC<WorkBlockProps> = ({type, addBlock}) => {
+
+    //console.log("Passed props:");
+    //console.log(props.type);
+    const blockClass: Map<BlockType, BlockFields> = new Map([
+        [BlockType.Reagent, new Reagent()],
+        [BlockType.Washing, new Washing()],
+        [BlockType.Temperature, new Temperature()]
+    ]);
+    const block = blockClass.get(type);
+
+    return (
+        <div>
+            <div className={`${block?.getClass()}`}>
+                {block?.getContent()}
+            </div>
+            <div>
+                    <button onClick={()=>addBlock(type)}>Save</button>
+            </div>
+        </div>
+    )
+}
+
+export interface StepBlockProps{
+    type: BlockType,
+    id: number,
+    removeBlock: (id: number)=>void
+}
+export const StepBlock:React.FC<StepBlockProps> = ({type, id, removeBlock}) => {
 
     const blockClass: Map<BlockType, BlockFields> = new Map([
         [BlockType.Reagent, new Reagent()],
         [BlockType.Washing, new Washing()],
         [BlockType.Temperature, new Temperature()]
     ]);
-
-    const block = blockClass.get(props.type);
-    const nodeRef = useRef(null);
-    const [currentZIndex, setCurrentZIndex] = useState(30);
-
-    useEffect(() => {
-        console.log("Current Z: " + currentZIndex);
-    }, [currentZIndex])
-
-    const setActive = (elem: HTMLElement) => {
-        let block = elem.closest('.handle') as HTMLElement;
-        console.log(block);
-        console.log("Current Z: " + currentZIndex);
-        block!.style.zIndex = currentZIndex.toString();
-        //setCurrentZIndex((state) => state + 1);
-    };
-
-    const setNotActive = (elem: HTMLElement) => {
-        let block = elem.closest('.handle') as HTMLElement;
-        //block!.style.zIndex = currentZIndex.toString();
-        setCurrentZIndex((state) => state + 1);
-    };
-
-
+    const block = blockClass.get(type);
     return (
-        <Draggable
-            nodeRef={nodeRef}
-            axis="both"
-            handle=".handle"
-            defaultPosition={{ x: 30, y: 30 }}
-            grid={[180, 180]}
-            scale={1}
-            disabled={true}
-            onStart={(e) => { setActive(e.target as HTMLElement) }}
-            onStop={(e) => { setNotActive(e.target as HTMLElement) }}
-        >
-            <div ref={nodeRef} className={`handle ${block?.getClass()}`}>
-                {block?.getContent()}
-            </div>
-        </Draggable>
+        <div className={`step ${block?.getClass()}`}>
+            {block?.getStepContent()}
+            <button onClick={()=>removeBlock(id)}><span className="fas fa-trash">{id}</span></button>
+        </div>
     )
 }

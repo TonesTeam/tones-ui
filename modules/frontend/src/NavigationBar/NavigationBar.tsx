@@ -111,6 +111,7 @@ export default function NavigationBar(props: { selectedItem?: string }) {
                 {/* <div style={{ flexGrow: 1 }}></div> */}
                 <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
                 <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol" />
+                <NavBarItem itemData={itemData} icon="edit" text="Constructor New" route="/create2/protocol" />
                 <NavBarItem itemData={itemData} icon="history" text="History" />
                 {/* <NavBarItem itemData={itemData} icon="user-cog" text="Profile Settings" /> */}
                 <NavBarItem itemData={itemData} icon="cogs" text="Settings" />
