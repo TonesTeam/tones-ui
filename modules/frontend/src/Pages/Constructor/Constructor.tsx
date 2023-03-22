@@ -1,9 +1,8 @@
 import NavigationBar from "NavigationBar/NavigationBar";
 import { useEffect, useState } from 'react';
-import './Constructor_2side.css'
-import { WorkBlock, BlockProps, BlockType, StepBlock, Insertable } from './Block';
+import './Constructor.css'
+import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
-import { bool } from "prop-types";
 
 //TODO: optimize getStyle()
 const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
@@ -12,17 +11,12 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
     ...draggableStyle
 })
 
-export default function WorkspaceReorg() {
+export default function Constructor() {
     const [blocks, setBlocks] = useState<BlockProps[]>([]);
     const [workBlock, setWorkBlock] = useState<BlockProps>();
 
-    const addWorkBlock = (edit:boolean, block: BlockProps) =>{
-        if(edit){
-            setWorkBlock(block)
-        }
-        // else{
-        //     setWorkBlock({type: block.type, id:-1, params:[] as Insertable[]})
-        // }
+    const addWorkBlock = (block: BlockProps) =>{
+        setWorkBlock(block)
     } 
 
     const addBlock = (props: BlockProps) => {
@@ -77,10 +71,9 @@ export default function WorkspaceReorg() {
                 <div id='container'>
                     <div id="workspace">
                         <div className="options">
-                            <button className="construct-btn" id="cb-washing" onClick={() => addWorkBlock(true, ({type:BlockType.Washing, id:-1, params:[]} as BlockProps))}><span className="fas fa-water"></span></button>
-                            <button className="construct-btn" id="cb-reagent" onClick={() => addWorkBlock(true, ({type:BlockType.Reagent, id:-1, params:[]} as BlockProps))}><span className="fas fa-flask"></span></button>
-                            <button className="construct-btn" id="cb-temperat" onClick={() => addWorkBlock(true, ({type:BlockType.Temperature, id:-1, params:[]} as BlockProps))}><span className="fas fa-temperature-low"></span></button>
-                            {/* <button className="construct-btn" id="cb-delete"><span className="fas fa-trash"></span></button> */}
+                            <button className="construct-btn" id="cb-washing" onClick={() => addWorkBlock(({type:BlockType.Washing, id:-1, params:[]} as BlockProps))}><span className="fas fa-water"></span></button>
+                            <button className="construct-btn" id="cb-reagent" onClick={() => addWorkBlock(({type:BlockType.Reagent, id:-1, params:[]} as BlockProps))}><span className="fas fa-flask"></span></button>
+                            <button className="construct-btn" id="cb-temperat" onClick={() => addWorkBlock(({type:BlockType.Temperature, id:-1, params:[]} as BlockProps))}><span className="fas fa-temperature-low"></span></button>
                         </div>
                         <div id="block-edit">
                             {workBlock != undefined &&
@@ -100,9 +93,6 @@ export default function WorkspaceReorg() {
                                 {(provided1) => (
                                     <div id="steps" {...provided1.droppableProps} ref={provided1.innerRef}>
                                         {
-                                            // blocks.map(function (block, index) {
-                                            //     return <StepBlock key={index} type={block.type} id={block.id} removeBlock={removeBlock}></StepBlock>
-                                            // })
                                             blocks.map((block, index) =>{
                                                 let active = block.id==workBlock?.id? true : false
                                                 return (
@@ -111,7 +101,7 @@ export default function WorkspaceReorg() {
                                                             <div ref={provided.innerRef} 
                                                                 {...provided.dragHandleProps} 
                                                                 {...provided.draggableProps} 
-                                                                onClick={() => addWorkBlock(true, block)}
+                                                                onClick={() => addWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock>
                                                                 {provided1.placeholder}
