@@ -1,0 +1,26 @@
+{
+	"nodes":[
+		{"type":"file","file":"Login Page.md","id":"df505d7ca05bac8c","x":-440,"y":-400,"width":400,"height":66},
+		{"type":"file","file":"Protocol List.md","id":"96f55e3d437e55ba","x":-197,"y":-214,"width":400,"height":54},
+		{"type":"file","file":"Navigation bar.md","id":"a7bb94be992b2e48","x":288,"y":-720,"width":400,"height":50,"color":"5"},
+		{"type":"file","file":"Protocol preparation.md","id":"22fb0f620b099780","x":-869,"y":7,"width":400,"height":50},
+		{"type":"file","file":"Progress Page.md","id":"8874aff3807d80d3","x":-869,"y":163,"width":400,"height":50},
+		{"type":"file","file":"Protocol constructor.md","id":"6804ca65c0d77638","x":-197,"y":-5,"width":400,"height":62},
+		{"type":"file","file":"Settings.md","id":"0f5b9b7e6a62b38e","x":560,"y":-120,"width":400,"height":50},
+		{"type":"file","file":"Protocol table summary.md","id":"db1d37a80e20afd4","x":-197,"y":213,"width":485,"height":50},
+		{"type":"file","file":"History & Reports.md","id":"54c3dc92fe0884f0","x":1026,"y":-323,"width":400,"height":50}
+	],
+	"edges":[
+		{"id":"617f13882417eaae","fromNode":"df505d7ca05bac8c","fromSide":"bottom","toNode":"96f55e3d437e55ba","toSide":"top"},
+		{"id":"bea6889e05813f16","fromNode":"22fb0f620b099780","fromSide":"bottom","toNode":"8874aff3807d80d3","toSide":"top"},
+		{"id":"f4f7287baffa649b","fromNode":"a7bb94be992b2e48","fromSide":"left","toNode":"df505d7ca05bac8c","toSide":"top"},
+		{"id":"888eb7955c90df1a","fromNode":"a7bb94be992b2e48","fromSide":"bottom","toNode":"96f55e3d437e55ba","toSide":"right","fromEnd":"arrow"},
+		{"id":"2870b3e001d5ad32","fromNode":"96f55e3d437e55ba","fromSide":"left","toNode":"22fb0f620b099780","toSide":"top"},
+		{"id":"106ab53e6e6f037e","fromNode":"96f55e3d437e55ba","fromSide":"bottom","toNode":"6804ca65c0d77638","toSide":"top"},
+		{"id":"76bd35451fd8143c","fromNode":"a7bb94be992b2e48","fromSide":"bottom","toNode":"6804ca65c0d77638","toSide":"right","fromEnd":"arrow"},
+		{"id":"243db167a335a214","fromNode":"a7bb94be992b2e48","fromSide":"bottom","toNode":"0f5b9b7e6a62b38e","toSide":"top","fromEnd":"arrow"},
+		{"id":"c8ae615bd84497d2","fromNode":"6804ca65c0d77638","fromSide":"bottom","toNode":"db1d37a80e20afd4","toSide":"top"},
+		{"id":"71009b6560b46a96","fromNode":"db1d37a80e20afd4","fromSide":"top","toNode":"6804ca65c0d77638","toSide":"bottom"},
+		{"id":"26e823b91bab0460","fromNode":"a7bb94be992b2e48","fromSide":"bottom","toNode":"54c3dc92fe0884f0","toSide":"top","fromEnd":"arrow"}
+	]
+}
