@@ -1,82 +1,35 @@
 {
   "main": {
-    "id": "8c569f71657a255f",
+    "id": "75a286ed6fae85bb",
     "type": "split",
     "children": [
       {
-        "id": "135babddbca90095",
+        "id": "69cc88eed4d2f443",
         "type": "tabs",
         "children": [
           {
-            "id": "c8230b0ad2570eeb",
+            "id": "f763f4f8f98c5e80",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Protocol Preparation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "fb44d8b239187030",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Screen Navigation.canvas",
-                "viewState": {
-                  "x": 86.24639149333683,
-                  "y": -190.1432662967524,
-                  "zoom": -0.5
-                }
-              }
-            }
-          },
-          {
-            "id": "ee17334a5d926e5d",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Screen Navigation.canvas",
-                "viewState": {
-                  "x": 614.6147834655173,
-                  "y": -43.20549852470394,
-                  "zoom": -1.3373302296549079
-                }
-              }
-            }
-          },
-          {
-            "id": "6869d0ef761dc0e3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Protocol table summary.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "91fc33fadca0d52d",
+    "id": "722931cde81023f6",
     "type": "split",
     "children": [
       {
-        "id": "a26831ffced8bec9",
+        "id": "c5e685ad22e4a302",
         "type": "tabs",
         "children": [
           {
-            "id": "837b46b9b8b80a12",
+            "id": "49f74a36eac506c2",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -86,7 +39,7 @@
             }
           },
           {
-            "id": "823d035e0c8acf32",
+            "id": "e0d8ee7b33d15a8c",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -101,7 +54,7 @@
             }
           },
           {
-            "id": "4f82865842778bdf",
+            "id": "a8943925581e8d68",
             "type": "leaf",
             "state": {
               "type": "starred",
@@ -112,23 +65,22 @@
       }
     ],
     "direction": "horizontal",
-    "width": 209.5
+    "width": 300
   },
   "right": {
-    "id": "57e656791085f93d",
+    "id": "e45a524a83b33bed",
     "type": "split",
     "children": [
       {
-        "id": "fdc06370a8a7c54c",
+        "id": "68e6dab8678b4037",
         "type": "tabs",
         "children": [
           {
-            "id": "191d47db563eaf43",
+            "id": "6d7e2856f4bb3d62",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Screen Navigation.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -140,19 +92,18 @@
             }
           },
           {
-            "id": "c2065198a28666b5",
+            "id": "9b9a80c9ea24f236",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Screen Navigation.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "518f4a52a6641f1d",
+            "id": "cfaf9b0b23c3bfcc",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -163,13 +114,11 @@
             }
           },
           {
-            "id": "7a40985a1dd01acf",
+            "id": "61244b30f2911ca4",
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Screen Navigation.canvas"
-              }
+              "state": {}
             }
           }
         ]
@@ -189,21 +138,6 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "fb44d8b239187030",
-  "lastOpenFiles": [
-    "Protocol table summary.md",
-    "Protocol Preparation.md",
-    "Protocol List.md",
-    "Protocol constructor.md",
-    "Progress Page.md",
-    "Navigation bar.md",
-    "Login Page.md",
-    "Leica_protocol_summary.png",
-    "History & Reports.md",
-    "Settings.md",
-    "Screen Navigation.canvas",
-    "Pasted image 20230419155612.png",
-    "Pasted image 20230419155616.png.md",
-    "Pasted image 20230419155616.png"
-  ]
+  "active": "f763f4f8f98c5e80",
+  "lastOpenFiles": []
 }
