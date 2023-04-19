@@ -7,8 +7,8 @@
 		{"type":"file","file":"Protocol table summary.md","id":"db1d37a80e20afd4","x":-267,"y":188,"width":417,"height":50,"color":"6"},
 		{"type":"file","file":"Settings.md","id":"0f5b9b7e6a62b38e","x":488,"y":-100,"width":200,"height":50,"color":"4"},
 		{"type":"file","file":"History & Reports.md","id":"54c3dc92fe0884f0","x":760,"y":-380,"width":334,"height":50,"color":"5"},
-		{"type":"file","file":"Protocol Preparation.md","id":"22fb0f620b099780","x":-724,"y":-214,"width":369,"height":50,"color":"4"},
-		{"type":"file","file":"Progress Page.md","id":"8874aff3807d80d3","x":-684,"y":-440,"width":289,"height":50,"color":"5"}
+		{"type":"file","file":"Progress Page.md","id":"8874aff3807d80d3","x":-684,"y":-440,"width":289,"height":50,"color":"5"},
+		{"type":"file","file":"Protocol preparation.md","id":"22fb0f620b099780","x":-764,"y":-214,"width":369,"height":94,"color":"4"}
 	],
 	"edges":[
 		{"id":"617f13882417eaae","fromNode":"df505d7ca05bac8c","fromSide":"bottom","toNode":"96f55e3d437e55ba","toSide":"top"},
