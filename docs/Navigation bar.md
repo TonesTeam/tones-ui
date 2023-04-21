@@ -7,7 +7,7 @@
 	* Color-coded indication of status (In progress, Finished, Error)
 
 ### 🛠 Actions
-* Go to navigation path clicking on the collapsed menu option (❓ are we keeping this option)
+* Go to navigation path clicking on the collapsed menu option
 * Go to navigation path clicking on the expanded menu option
 * Go to Protocol Progress page by clikcing on the (according, if many) protocol status bar.
 

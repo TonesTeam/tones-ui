@@ -1,5 +1,6 @@
 ### 👀 View
 * Login form: username + password
+* Box for comment about incorrect credentials
 * Credentials footer (which organisations to attribute❓)
 
 ### 🛠 Actions

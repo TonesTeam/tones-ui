@@ -12,7 +12,7 @@ List of protocol deployments
 	* Error logs, interruptions
 	* Time of each event
 	* General info
-	❓ Accessable by pressing button "Generate report" or the name of protocol serves as link to report?
+	* Accessable by pressing button "Generate report" near the protocol deployment row (in the table).
 
 ### 🎨Models
 *To be added*
