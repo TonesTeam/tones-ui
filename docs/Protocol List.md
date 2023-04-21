@@ -5,7 +5,7 @@
 * Expandable protocol cards:
 	* Description (optinal -> can be empty)
 	* Launch permission (restricted because system is busy or allowed)
-	* Options: Edit, Delete, Launch, Use as template (❓)
+	* Options: Edit, Delete, Launch, Use as template
 
 ### 🛠 Actions
 * Search by protocol name

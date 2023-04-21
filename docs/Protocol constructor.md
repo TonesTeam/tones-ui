@@ -16,7 +16,7 @@
 	* Toggle default injection of washing step after each reagent step.
 * Edit timeline:
 	* Edit sequence (move steps)
-	* Add step under particular place (❓ how exactly)
+	* Add step under particular place (Select Block -> Click button "New (type)" -> Place under selected block is highlighted -> Enter new block params -> Save)
 	* Delete steps
 * See manual or help docs (FOR FUTURE VERSIONS)
 * Prepare to save protocol (saving only in the screen "Protocol table summary")

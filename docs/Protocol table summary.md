@@ -1,9 +1,9 @@
 
 ### 👀 View
-* Popup OR Separate screen (❓)
+* Popup
 * Table (Like in leica)
 ![[Leica_protocol_summary.png]]
-* Button panel: Save or Return to editing (Save As ❓)
+* Button panel: Save or Return to editing
 
 ### 🛠 Actions
 * View finalized step sequence
