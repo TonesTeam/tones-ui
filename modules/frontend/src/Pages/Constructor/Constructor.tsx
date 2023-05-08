@@ -2,7 +2,7 @@ import NavigationBar from "NavigationBar/NavigationBar";
 import { useEffect, useState } from 'react';
 import './Constructor.css'
 import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
-import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
+import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
 
 //TODO: optimize getStyle()
 const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
@@ -14,14 +14,18 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
 export default function Constructor() {
     const [blocks, setBlocks] = useState<BlockProps[]>([]);
     const [workBlock, setWorkBlock] = useState<BlockProps>();
+    const [currentPosition, setCurrentPosition] = useState(null);
 
     const addWorkBlock = (block: BlockProps) =>{
         setWorkBlock(block)
     } 
 
     const addBlock = (props: BlockProps) => {
-        console.log(props);
-        let id = blocks.length == 0 ? 0 : Number(blocks[blocks.length - 1].id + 1);
+        //new ID = maxID+1
+        let id = blocks.length == 0 ? 0 : ((blocks.reduce(function(prev, current) {
+            return (prev.id > current.id) ? prev : current
+        })).id +1) // reduce() returns object
+        
         setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
     }
 
@@ -55,9 +59,12 @@ export default function Constructor() {
         setBlocks(steps)
     }
 
-    const test = () =>{
-        console.log(blocks);
+    const test = ()=>{
+        let steps = document.body
+        console.log(steps)
+        console.log("Offset width: ", steps?.offsetWidth)
     }
+
 
     useEffect(() => {
         setWorkBlock(undefined); // Nullifying working block when added to timeline
@@ -88,15 +95,16 @@ export default function Constructor() {
                     </div>
                     <div id="timeline">
                         <div>Protocol name: <b>Test prt</b></div>
-                        <DragDropContext onDragEnd={onDragEnd} onDragStart={test}>
+                        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={test}>
                             <Droppable droppableId="item">
-                                {(provided1) => (
-                                    <div id="steps" {...provided1.droppableProps} ref={provided1.innerRef}>
+                                {(provided) => (
+                                    <div id="steps" {...provided.droppableProps} ref={provided.innerRef}>
                                         {
                                             blocks.map((block, index) =>{
                                                 let active = block.id==workBlock?.id? true : false
                                                 return (
-                                                    <Draggable key={String(block.id)} draggableId={String(block.id)} index={index}>
+                                                    <Draggable key={String(block.id)} draggableId={String(block.id)} index={index} 
+                                                    >
                                                         {(provided, snapshot)=>(
                                                             <div ref={provided.innerRef} 
                                                                 {...provided.dragHandleProps} 
@@ -104,15 +112,16 @@ export default function Constructor() {
                                                                 onClick={() => addWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock>
-                                                                {provided1.placeholder}
+                                                                
                                                             </div>
                                                         )}
-                                                    </Draggable>
+                                                    </Draggable> 
                                                 )
-
                                             })
                                         }
+                                        {provided.placeholder}
                                     </div>
+                                    
                                 )}
                             </Droppable>
                         </DragDropContext>

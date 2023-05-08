@@ -7,10 +7,10 @@ import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import './BlocklyFunction';
 
 const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
-console.log(liquids)
+//console.log(liquids)
 const typesMap = groupByMapped(liquids, l => l.type, l => l.name);
 const reagentSubTypeMap = groupByMapped(liquids.filter(l => l.type === LiquidTypeName.REAGENT), r => r.subType, l => l.name)
-console.log(reagentSubTypeMap);
+//console.log(reagentSubTypeMap);
 const antigens = typesMap.get(LiquidTypeName.ANTIGEN)?.map(r => [r, r])!
 
 function createLabel(text: string, clazz: string) {

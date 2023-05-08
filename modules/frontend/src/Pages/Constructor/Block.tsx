@@ -173,7 +173,7 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
     ]);
     const wBlock = blockClass.get(block.type);
 
-    console.log(block);
+    //console.log(block);
 
     const addBlockToParent = () =>{
         let params = [] as Insertable[];
@@ -196,7 +196,6 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
                 params = [{name:"temperature", value:temper}] as Insertable[];
             }
         }
-
 
         block.id==-1 ? addBlock({type: block.type, id:block.id, params: params} as BlockProps) : editBlock({type: block.type, id:block.id, params: params} as BlockProps)
     }

@@ -15,7 +15,7 @@ export function handleDates(body: any) {
     for (const key of Object.keys(body)) {
         const value = body[key];
         if (isIsoDateString(value)) {
-            console.log("Parsing ", value)
+            //console.log("Parsing ", value)
             body[key] = parseISO(value);
         }
         else if (typeof value === "object") handleDates(value);
