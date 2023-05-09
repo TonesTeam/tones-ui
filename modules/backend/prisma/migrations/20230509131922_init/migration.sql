@@ -6,6 +6,7 @@ CREATE TABLE "Protocol" (
     "comment" TEXT,
     "userId" INTEGER NOT NULL,
     "liquidId" INTEGER NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT "Protocol_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Protocol_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -82,6 +83,9 @@ CREATE TABLE "ExecutedStep" (
 -- CreateTable
 CREATE TABLE "LiquidApplication" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "liquidIncubationTime" INTEGER NOT NULL,
+    "washingIncubationTime" INTEGER,
+    "doWash" BOOLEAN NOT NULL DEFAULT true,
     "liquidId" INTEGER NOT NULL,
     "stepId" INTEGER NOT NULL,
     CONSTRAINT "LiquidApplication_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -93,6 +97,8 @@ CREATE TABLE "Washing" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "times" INTEGER NOT NULL,
     "stepId" INTEGER NOT NULL,
+    "liquidId" INTEGER NOT NULL,
+    CONSTRAINT "Washing_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Washing_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -101,6 +107,7 @@ CREATE TABLE "TemperatureChange" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "targetTemperature" INTEGER NOT NULL,
     "blocking" BOOLEAN NOT NULL,
+    "returnToNormal" BOOLEAN NOT NULL,
     "stepId" INTEGER NOT NULL,
     CONSTRAINT "TemperatureChange_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -110,8 +117,17 @@ CREATE TABLE "Liquid" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "shortname" TEXT,
-    "type" TEXT NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT false
+    "deleted" BOOLEAN NOT NULL DEFAULT false,
+    "requiresCooling" BOOLEAN NOT NULL,
+    "maxTemp" INTEGER NOT NULL,
+    "liquidTypeId" INTEGER NOT NULL,
+    CONSTRAINT "Liquid_liquidTypeId_fkey" FOREIGN KEY ("liquidTypeId") REFERENCES "LiquidType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "LiquidType" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL
 );
 
 -- CreateIndex

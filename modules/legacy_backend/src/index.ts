@@ -41,7 +41,7 @@ server.setErrorConfig(app => {
 	})
 })
 let app = server.build();
-const port = process.env.BE_PORT ?? 8080
+const port = process.env.LEGACY_BE_PORT ?? 8080
 
 app.listen(port, () => {
 	console.log("Magic word is", config["magic-word"])

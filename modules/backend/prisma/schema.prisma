@@ -29,6 +29,7 @@ model Protocol {
   protocolDeployment ProtocolDeployment[]
   liquidId           Int
   executedStep       ExecutedStep[]
+  deleted            Boolean              @default(false)
 }
 
 model ProtocolDeployment {
@@ -103,24 +104,30 @@ model ExecutedStep {
 }
 
 model LiquidApplication {
-  id       Int    @id @default(autoincrement())
-  liquid   Liquid @relation(fields: [liquidId], references: [id])
-  step     Step   @relation(fields: [stepId], references: [id])
-  liquidId Int
-  stepId   Int    @unique
+  id                    Int     @id @default(autoincrement())
+  liquid                Liquid  @relation(fields: [liquidId], references: [id])
+  step                  Step    @relation(fields: [stepId], references: [id])
+  liquidIncubationTime  Int
+  washingIncubationTime Int?
+  doWash                Boolean @default(true)
+  liquidId              Int
+  stepId                Int     @unique
 }
 
 model Washing {
-  id     Int  @id @default(autoincrement())
-  times  Int
-  Step   Step @relation(fields: [stepId], references: [id])
-  stepId Int  @unique
+  id            Int    @id @default(autoincrement())
+  times         Int
+  washingLiquid Liquid @relation(fields: [liquidId], references: [id])
+  Step          Step   @relation(fields: [stepId], references: [id])
+  stepId        Int    @unique
+  liquidId      Int
 }
 
 model TemperatureChange {
   id                Int     @id @default(autoincrement())
   targetTemperature Int
   blocking          Boolean
+  returnToNormal    Boolean
   step              Step    @relation(fields: [stepId], references: [id])
   stepId            Int     @unique
 }
@@ -129,9 +136,19 @@ model Liquid {
   id                     Int                      @id @default(autoincrement())
   name                   String
   shortname              String?
-  type                   String
+  type                   LiquidType               @relation(fields: [liquidTypeId], references: [id])
   liquidApplication      LiquidApplication[]
   deleted                Boolean                  @default(false)
+  requiresCooling        Boolean
+  maxTemp                Int
   Protocol               Protocol[]
   DeploymentLiquidConfig DeploymentLiquidConfig[]
+  liquidTypeId           Int
+  Washing                Washing[]
+}
+
+model LiquidType {
+  id      Int      @id @default(autoincrement())
+  name    String
+  liquids Liquid[]
 }
