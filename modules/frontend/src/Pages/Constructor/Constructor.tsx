@@ -14,10 +14,20 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
 export default function Constructor() {
     const [blocks, setBlocks] = useState<BlockProps[]>([]);
     const [workBlock, setWorkBlock] = useState<BlockProps>();
-    const [currentPosition, setCurrentPosition] = useState(null);
 
     const addWorkBlock = (block: BlockProps) =>{
-        setWorkBlock(block)
+        if(workBlock!=undefined){
+            block.id=workBlock.id
+            editBlock({type:block.type, id:workBlock.id, params:[]} as BlockProps)
+            let newWorkBlock = workBlock
+            newWorkBlock.type = block.type
+            newWorkBlock.params = []
+            setWorkBlock(newWorkBlock)
+        }
+        else{
+            setWorkBlock(block)
+        }
+        
     } 
 
     const addBlock = (props: BlockProps) => {
@@ -27,6 +37,8 @@ export default function Constructor() {
         })).id +1) // reduce() returns object
         
         setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+
+        setWorkBlock(undefined)
     }
 
     const removeBlock = (id: number) => {
@@ -45,6 +57,7 @@ export default function Constructor() {
 
         newBlocks[index] = editedBlock;
         setBlocks([...newBlocks])
+        setWorkBlock(undefined);
     }
 
     const onDragEnd = (result: DropResult) => {
@@ -59,16 +72,7 @@ export default function Constructor() {
         setBlocks(steps)
     }
 
-    const test = ()=>{
-        let steps = document.body
-        console.log(steps)
-        console.log("Offset width: ", steps?.offsetWidth)
-    }
 
-
-    useEffect(() => {
-        setWorkBlock(undefined); // Nullifying working block when added to timeline
-    }, [blocks]);
 
 
     return (
@@ -95,7 +99,7 @@ export default function Constructor() {
                     </div>
                     <div id="timeline">
                         <div>Protocol name: <b>Test prt</b></div>
-                        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={test}>
+                        <DragDropContext onDragEnd={onDragEnd}>
                             <Droppable droppableId="item">
                                 {(provided) => (
                                     <div id="steps" {...provided.droppableProps} ref={provided.innerRef}>
