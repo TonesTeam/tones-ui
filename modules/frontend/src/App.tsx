@@ -3,7 +3,7 @@ import logo from '/static/logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtocolList from './Pages/ProtocolList/ProtocolList';
-import BlocklyPage from 'Pages/Blockly/Blockly';
+// import BlocklyPage from 'Pages/Blockly/Blockly';
 import Recommendations from './Pages/Reccomendations/Recommendations';
 import LauchPage from './Pages/LaunchPage/LaunchPage';
 import Login from 'Pages/Login/Login';
@@ -17,7 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/list" element={<ProtocolList />} />
         <Route path="/test" element={<h1>TEST</h1>} />
-        <Route path="/edit/protocol/:id" element={<BlocklyPage />} />
+        {/* <Route path="/edit/protocol/:id" element={<BlocklyPage />} /> */}
         <Route path="/create/protocol" element={<Constructor />} />
         <Route path="/launch/:id" element={<Recommendations />} />
         <Route path="/start/:id" element={<LauchPage />} />

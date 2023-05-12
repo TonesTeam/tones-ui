@@ -38,7 +38,10 @@ export default function Constructor() {
             return (prev.id > current.id) ? prev : current
         })).id +1) // reduce() returns object
         
-        setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+        //setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+        const finalBlocks = updateTempParam([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+        setBlocks(finalBlocks)
+        
         setWorkBlock(undefined)
 
         if(props.type == BlockType.Temperature){
@@ -81,10 +84,11 @@ export default function Constructor() {
         const [newSteps] = steps.splice(source.index, 1)
         steps.splice(destination.index, 0, newSteps)
 
-        const refactored = refactorTempBlocks(steps)
-        setBlocks(refactored)
+        const refactored = refactorTemperature(steps)
+        const updatedTemp = updateTempParam(refactored)
+        setBlocks(updatedTemp)
 
-        let temps = refactored.filter((block) => {
+        let temps = updatedTemp.filter((block) => {
             return block.type == BlockType.Temperature;
         });
 
@@ -94,7 +98,7 @@ export default function Constructor() {
 
     }
 
-    function refactorTempBlocks(blocks: BlockProps[]){
+    function refactorTemperature(blocks: BlockProps[]){
         let refactBlocks = [...blocks]
         let current = defTemp;
 
@@ -122,6 +126,25 @@ export default function Constructor() {
 
         return result
     }
+
+    function updateTempParam(blocks: BlockProps[]){
+        let refactBlocks = [...blocks]
+        let currentTemp = defTemp
+        for (let i=0; i<refactBlocks.length; i++){
+            if(refactBlocks[i].type==BlockType.Temperature){
+                currentTemp = refactBlocks[i].params[1].value as number
+            }
+            else{
+                console.log("Existing temp param: ",refactBlocks[i].params.find(i=>i.name=='temp')!.value)
+                refactBlocks[i].params.find(i=>i.name=='temp')!.value=currentTemp
+            }
+        }   
+        return refactBlocks
+    }
+
+
+
+
 
 
 
