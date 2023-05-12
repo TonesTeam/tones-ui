@@ -3,7 +3,7 @@ import './Block.css'
 import { getRequest } from 'common/util';
 
 const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
-console.log(liquids)
+//console.log(liquids)
 
 interface BlockFields {
     getContent(params:Insertable[]): JSX.Element;
@@ -32,26 +32,27 @@ export type Insertable = {
 class Washing implements BlockFields {
     getContent(params:Insertable[]): JSX.Element {
         const liquid = (params.find(i=>i.name=='liquid'))?.value
-        const times = (params.find(i=>i.name=='times'))?.value
+        const iters = (params.find(i=>i.name=='iters'))?.value
+        const time = (params.find(i=>i.name=='time'))?.value
         return (
             <>
                 <p className="block-header">Washing step</p>
                 <div className="block-body">
                     <div className="block-inp">
                         <label>Category:</label>
-                        <select id="wash-sel-liquid">
-                            <option value="0">Select washing liquid</option>
-                            <option value="1">Liquid 1</option>
-                            <option value="2">lqd 2</option>
-                            <option value="3">random option</option>
-                            <option value="4">relatively short list</option>
-                            <option value="5">but names are quite long aekwjfnaiwef</option>
-                            <option value="6">Liquid 3</option>
+                        <select id="wash-sel-liquid" defaultValue={liquid}>
+                        {liquids.map((liq, index)=>{
+                            return(
+                                <option value={liq.name} key={index}>{liq.name}</option>
+                            )
+                        })}
                         </select>
                     </div>
                     <div className="block-inp">
-                        <label htmlFor="wash-inp-times">Times: {times}</label>
-                        <input id="wash-inp-times" type="number" />
+                        <label htmlFor="wash-inp-iters">Iterations:</label>
+                        <input id="wash-inp-iters" type="number" defaultValue={iters} />
+                        <label htmlFor="wash-inp-time">Inc. time: </label>
+                        <input id="wash-inp-time" type="number" defaultValue={time} />
                     </div>
                 </div>
             </>
@@ -60,13 +61,15 @@ class Washing implements BlockFields {
 
     getStepContent(params: Insertable[]): JSX.Element {
         const liquid = (params.find(i=>i.name=='liquid'))?.value
-        const times = (params.find(i=>i.name=='times'))?.value
+        const iters = (params.find(i=>i.name=='iters'))?.value
+        const time = (params.find(i=>i.name=='time'))?.value
         return (
             <>
                 <h3>Washing</h3>
                 <div>
                     <p>With {liquid}</p>
-                    <p>for {times} times</p>
+                    <p>for {iters} times </p>
+                    <p>x {time} minutes</p>
                 </div>
             </>
         )
@@ -79,6 +82,8 @@ class Washing implements BlockFields {
 
 class Reagent implements BlockFields {
     getContent(params:Insertable[]): JSX.Element {
+        const liquid = (params.find(i=>i.name=='liquid'))?.value
+        const time = (params.find(i=>i.name=='time'))?.value
         return (
             <>
                 <p className="block-header">Reagent step</p>
@@ -86,27 +91,24 @@ class Reagent implements BlockFields {
                     <div className="block-inp">
                         <label>Category:</label>
                         <select id='reag-sel-categ'>
-                            <option value="a">Liquid 1</option>
-                            <option value="b">aasd 2</option>
-                            <option value="c">Liquid 3</option>
+                            <option value="a">Category 1</option>
+                            <option value="b">Category 2</option>
+                            <option value="c">Category 3</option>
                         </select>
                     </div>
                     <div className="block-inp">
                         <label>Liquid:</label>
-                        <select id='reag-sel-liquid'>
+                        <select id='reag-sel-liquid' defaultValue={liquid}>
                             {liquids.map((liq, index)=>{
                                 return(
                                     <option value={liq.name} key={index}>{liq.name}</option>
                                 )
                             })}
-                            {/* <option value="a">Liquid 1</option>
-                            <option value="b">aasd 2</option>
-                            <option value="c">Liquid 3</option> */}
                         </select>
                     </div>
                     <div className="block-inp">
-                        <label htmlFor="reag-inp-min">Minutes</label>
-                        <input id="reag-inp-min" type="number"/>
+                        <label htmlFor="reag-inp-min">Inc. time:</label>
+                        <input id="reag-inp-min" type="number" defaultValue={time}/>
                     </div>
                 </div>
             </>
@@ -134,17 +136,20 @@ class Reagent implements BlockFields {
 
 class Temperature implements BlockFields {
     getContent(params:Insertable[]): JSX.Element {
+        const fromTemp = (params.find(i=>i.name=='from'))?.value
+        const target = (params.find(i=>i.name=='targetTemp'))?.value
+
         return (
             <>
                 <p className="block-header">Temperature change</p>
                 <div className="block-body">
                     <div className="block-inp">
                         <label>From: </label>
-                        <p>25'</p>
+                        <p id="fromTemp">{fromTemp}</p>
                     </div>
                     <div className="block-inp">
-                        <label htmlFor="temper-inp-min">To:</label>
-                        <input id="temper-inp-min" type="number" />
+                        <label htmlFor="temper-inp-target">To:</label>
+                        <input id="temper-inp-target" type="number" defaultValue={target}/>
                     </div>
                 </div>
             </>
@@ -152,13 +157,14 @@ class Temperature implements BlockFields {
     }
 
     getStepContent(params: Insertable[]): JSX.Element {
-        const temperat = (params.find(i=>i.name=='temperature'))?.value
+        const fromTemp = (params.find(i=>i.name=='from'))?.value
+        const target = (params.find(i=>i.name=='targetTemp'))?.value
         return (
             <>
                 <h3>Temperature</h3>
                 <div>
-                    <p>From 111</p>
-                    <p>To {temperat}</p>
+                    <p>From {fromTemp}</p>
+                    <p>To {target}</p>
                 </div>
             </>
         )
@@ -183,15 +189,14 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
     ]);
     const wBlock = blockClass.get(block.type);
 
-    //console.log(block);
-
     const addBlockToParent = () =>{
         let params = [] as Insertable[];
         switch(block.type){
             case BlockType.Washing:{
                 let liquid = (document.querySelector('#wash-sel-liquid') as HTMLSelectElement).value;
-                let times = (document.querySelector('#wash-inp-times') as HTMLInputElement).value;
-                params=([{name:"liquid", value:liquid},{name:"times", value:times}] as Insertable[])//]
+                let iters = (document.querySelector('#wash-inp-iters') as HTMLInputElement).value;
+                let time = (document.querySelector('#wash-inp-time') as HTMLInputElement).value;
+                params = [{name:"liquid", value:liquid},{name:"iters", value:iters},{name:"time", value:time}] as Insertable[]
 
             }break;
             case BlockType.Reagent:{
@@ -202,8 +207,9 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
 
             }break;
             case BlockType.Temperature:{
-                let temper = (document.querySelector('#temper-inp-min') as HTMLInputElement).value;
-                params = [{name:"temperature", value:temper}] as Insertable[];
+                let from = (document.querySelector('#fromTemp') as HTMLInputElement).textContent;
+                let target = (document.querySelector('#temper-inp-target') as HTMLInputElement).value;
+                params = [{name:"from", value:from}, {name:"targetTemp", value:target}] as Insertable[];
             }
         }
 
@@ -238,6 +244,7 @@ export const StepBlock: React.FC<StepBlockProps> = ({ type, id, params, removeBl
     ]);
     const block = blockClass.get(type);
     return (
+
         <div className={`step ${block?.getClass()}`}>
             {block?.getStepContent(params)}
             <button onClick={() => removeBlock(id)}><span className="fas fa-trash"></span></button>

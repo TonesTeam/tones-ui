@@ -4,6 +4,8 @@ import './Constructor.css'
 import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
 
+const defTemp = 25;
+
 //TODO: optimize getStyle()
 const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
     margin: `0 0 10px 0`,
@@ -14,6 +16,7 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
 export default function Constructor() {
     const [blocks, setBlocks] = useState<BlockProps[]>([]);
     const [workBlock, setWorkBlock] = useState<BlockProps>();
+    const [currentTemp, setCurrentTemp] = useState(defTemp);
 
     const addWorkBlock = (block: BlockProps) =>{
         if(workBlock!=undefined && block.id==-1){
@@ -37,6 +40,11 @@ export default function Constructor() {
         
         setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
         setWorkBlock(undefined)
+
+        if(props.type == BlockType.Temperature){
+            let newTemp = props.params.find(i=>i.name=='targetTemp')!.value as number
+            setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
+        }
     }
 
     const removeBlock = (id: number) => {
@@ -48,6 +56,12 @@ export default function Constructor() {
     const editBlock = (block:BlockProps) =>{
         let index = blocks.findIndex(x=>x.id==block.id);
         let newBlocks = [...blocks]
+
+        if(block.type == BlockType.Temperature){
+            let newTemp = block.params.find(i=>i.name=='targetTemp')!.value as number
+            setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
+            
+        }
 
         let editedBlock = {...newBlocks[index]}
         editedBlock.params=block.params;
@@ -67,7 +81,46 @@ export default function Constructor() {
         const [newSteps] = steps.splice(source.index, 1)
         steps.splice(destination.index, 0, newSteps)
 
-        setBlocks(steps)
+        const refactored = refactorTempBlocks(steps)
+        setBlocks(refactored)
+
+        let temps = refactored.filter((block) => {
+            return block.type == BlockType.Temperature;
+        });
+
+        let lastTemp = temps[temps.length-1].params[1].value as number
+        setCurrentTemp(lastTemp)
+
+
+    }
+
+    function refactorTempBlocks(blocks: BlockProps[]){
+        let refactBlocks = [...blocks]
+        let current = defTemp;
+
+        for (let i=0; i<refactBlocks.length; i++){
+            if(refactBlocks[i].type==BlockType.Temperature){
+                const fromTemp = refactBlocks[i].params[0].value
+                const target = refactBlocks[i].params[1].value
+                let editedBlock = {...refactBlocks[i]}
+                editedBlock.params[0].value = current;
+                editedBlock.params[1].value = target;
+                
+                //filter redundant blocks later
+                if(editedBlock.params[0].value == editedBlock.params[1].value){
+                    editedBlock.id=-1
+                }
+                refactBlocks[i] = editedBlock;
+
+                current=target as number
+            }
+        }
+
+        const result = refactBlocks.filter((block) => {
+            return block.id != -1;
+        });
+
+        return result
     }
 
 
@@ -82,7 +135,7 @@ export default function Constructor() {
                         <div className="options">
                             <button className="construct-btn" id="cb-washing" onClick={() => addWorkBlock(({type:BlockType.Washing, id:-1, params:[]} as BlockProps))}><span className="fas fa-water"></span></button>
                             <button className="construct-btn" id="cb-reagent" onClick={() => addWorkBlock(({type:BlockType.Reagent, id:-1, params:[]} as BlockProps))}><span className="fas fa-flask"></span></button>
-                            <button className="construct-btn" id="cb-temperat" onClick={() => addWorkBlock(({type:BlockType.Temperature, id:-1, params:[]} as BlockProps))}><span className="fas fa-temperature-low"></span></button>
+                            <button className="construct-btn" id="cb-temperat" onClick={() => addWorkBlock(({type:BlockType.Temperature, id:-1, params:[{name:"from", value:currentTemp}]} as BlockProps))}><span className="fas fa-temperature-low"></span></button>
                         </div>
                         <div id="block-edit">
                             {workBlock != undefined &&
@@ -105,7 +158,8 @@ export default function Constructor() {
                                             blocks.map((block, index) =>{
                                                 let active = block.id==workBlock?.id? true : false
                                                 return (
-                                                    <Draggable key={String(index)} draggableId={String(block.id)} index={index} 
+                                                    <div key={index}>
+                                                    <Draggable key={String(block.id)} draggableId={String(block.id)} index={index} 
                                                     >
                                                         {(provided, snapshot)=>(
                                                             <div ref={provided.innerRef} 
@@ -114,11 +168,12 @@ export default function Constructor() {
                                                                 onClick={() => addWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock>
-                                                                <span>Key: {index}</span>
+
                                                                 
                                                             </div>
                                                         )}
                                                     </Draggable> 
+                                                    </div>
                                                 )
                                             })
                                         }

@@ -75,7 +75,7 @@
 /*----------- TIMELINE -------------*/
 
 #steps{
-    padding: 0 5vw 20vh 5vw;
+    padding: 0 5vw 5vh 5vw;
     overflow-y:scroll;
 }
 
@@ -83,5 +83,4 @@
 /* Fixing off-positioning while dragging */
 [data-rbd-draggable-id] { 
     left: auto !important; 
-    top: auto !important; 
 }
