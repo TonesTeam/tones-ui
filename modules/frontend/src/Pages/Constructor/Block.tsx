@@ -1,4 +1,9 @@
+import { LiquidDto } from 'sharedlib/dto/liquid.dto';
 import './Block.css'
+import { getRequest } from 'common/util';
+
+const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
+console.log(liquids)
 
 interface BlockFields {
     getContent(params:Insertable[]): JSX.Element;
@@ -89,9 +94,14 @@ class Reagent implements BlockFields {
                     <div className="block-inp">
                         <label>Liquid:</label>
                         <select id='reag-sel-liquid'>
-                            <option value="a">Liquid 1</option>
+                            {liquids.map((liq, index)=>{
+                                return(
+                                    <option value={liq.name} key={index}>{liq.name}</option>
+                                )
+                            })}
+                            {/* <option value="a">Liquid 1</option>
                             <option value="b">aasd 2</option>
-                            <option value="c">Liquid 3</option>
+                            <option value="c">Liquid 3</option> */}
                         </select>
                     </div>
                     <div className="block-inp">
@@ -204,6 +214,7 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
         <div>
             <div className={`${wBlock?.getClass()}`}>
                 {wBlock?.getContent(block.params)}
+                
             </div>
             <div>
                 <button onClick={() => addBlockToParent()}>Save</button>

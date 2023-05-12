@@ -16,7 +16,7 @@ export default function Constructor() {
     const [workBlock, setWorkBlock] = useState<BlockProps>();
 
     const addWorkBlock = (block: BlockProps) =>{
-        if(workBlock!=undefined){
+        if(workBlock!=undefined && block.id==-1){
             block.id=workBlock.id
             editBlock({type:block.type, id:workBlock.id, params:[]} as BlockProps)
             let newWorkBlock = workBlock
@@ -27,7 +27,6 @@ export default function Constructor() {
         else{
             setWorkBlock(block)
         }
-        
     } 
 
     const addBlock = (props: BlockProps) => {
@@ -37,7 +36,6 @@ export default function Constructor() {
         })).id +1) // reduce() returns object
         
         setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
-
         setWorkBlock(undefined)
     }
 
@@ -107,7 +105,7 @@ export default function Constructor() {
                                             blocks.map((block, index) =>{
                                                 let active = block.id==workBlock?.id? true : false
                                                 return (
-                                                    <Draggable key={String(block.id)} draggableId={String(block.id)} index={index} 
+                                                    <Draggable key={String(index)} draggableId={String(block.id)} index={index} 
                                                     >
                                                         {(provided, snapshot)=>(
                                                             <div ref={provided.innerRef} 
@@ -116,6 +114,7 @@ export default function Constructor() {
                                                                 onClick={() => addWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock>
+                                                                <span>Key: {index}</span>
                                                                 
                                                             </div>
                                                         )}
