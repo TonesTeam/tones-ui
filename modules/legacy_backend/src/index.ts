@@ -30,7 +30,7 @@ const parser = serialport.pipe(new DelimiterParser({ delimiter: ';\n', includeDe
 container.bind(SerialPort).toConstantValue(serialport);
 container.bind<DelimiterParser>(DelimiterParser).toConstantValue(parser);
 
-let server = new InversifyExpressServer(container, null, { rootPath: "/api" });
+let server = new InversifyExpressServer(container, null, { rootPath: "/api/v1" });
 server.setConfig(app => {
 	app.use(bodyParser.text({ type: '*/*' }));
 })

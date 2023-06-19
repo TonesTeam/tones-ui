@@ -84,7 +84,7 @@ CREATE TABLE "ExecutedStep" (
 CREATE TABLE "LiquidApplication" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "liquidIncubationTime" INTEGER NOT NULL,
-    "washingIncubationTime" INTEGER,
+    "incubationTemperature" INTEGER NOT NULL,
     "doWash" BOOLEAN NOT NULL DEFAULT true,
     "liquidId" INTEGER NOT NULL,
     "stepId" INTEGER NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE "Liquid" (
     "name" TEXT NOT NULL,
     "shortname" TEXT,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
-    "requiresCooling" BOOLEAN NOT NULL,
+    "requiresCooling" BOOLEAN NOT NULL DEFAULT false,
     "maxTemp" INTEGER NOT NULL,
     "liquidTypeId" INTEGER NOT NULL,
     CONSTRAINT "Liquid_liquidTypeId_fkey" FOREIGN KEY ("liquidTypeId") REFERENCES "LiquidType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -131,6 +131,9 @@ CREATE TABLE "LiquidType" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "LiquidApplication_stepId_key" ON "LiquidApplication"("stepId");
 
 -- CreateIndex
@@ -138,3 +141,6 @@ CREATE UNIQUE INDEX "Washing_stepId_key" ON "Washing"("stepId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TemperatureChange_stepId_key" ON "TemperatureChange"("stepId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LiquidType_name_key" ON "LiquidType"("name");

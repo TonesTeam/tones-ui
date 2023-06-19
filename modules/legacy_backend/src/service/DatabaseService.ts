@@ -33,7 +33,7 @@ export class DatabaseService {
         return await connection.getCustomRepository<T>(repository);
     }
 
-    public async getRepository<T>(tg: EntityTarget<T>): Promise<Repository<T>> {
+    public async getRepository<T>(tg: EntityTarget<T>) {
         const connection = await this.getConnection();
         return await connection.getRepository<T>(tg);
     }
