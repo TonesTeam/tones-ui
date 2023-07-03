@@ -4,7 +4,6 @@ import { useAppSelector } from 'state/hooks';
 import { ProtocolState, Status } from 'state/progress';
 import './NavigationBar.css';
 
-
 function NavBarItem(props: any | { route: String }) {
     let id = props.itemData.selectedItem === props.text ? "selected-navbar-item" : undefined;
     const isOpen = props.itemData.isOpen
@@ -21,7 +20,6 @@ function NavBarItem(props: any | { route: String }) {
         </a>
     );
 }
-
 
 const setMainMargin = (mgl: String) => {
     // @ts-ignore
@@ -63,115 +61,74 @@ const progressIconStyle = (actProtocols: ProtocolState[]) => {
 
 
 
-export default function NavigationBar(props: { selectedItem?: string }) {
-    const [isOpen, setOpen] = useState(false)
+export default function NavigationBar(props: any) {
+    const [isOpen, setOpen] = useState(false);
+
+    const count = useAppSelector((state) => state.protocols.length);
+    const activeProtocols = useAppSelector((state) => state.protocols);
+
     const itemData: { selectedItem: string, isOpen: boolean } = {
         selectedItem: props.selectedItem ?? "",
         isOpen
     };
 
-    const count = useAppSelector((state) => state.protocols.length);
-    const activeProtocols = useAppSelector((state) => state.protocols);
-    //const status = useAppSelector((state) => state.isRunning);
-
-
-    useEffect(() => {
-        const op = '3px';
-        if (!isOpen) {
-            setOpacityMain("0");
-        }
-        else setOpacityMain(op);
-        setOpacityUserProf(isOpen);
-        progressIconStyle(activeProtocols);
-    })
     return (
-        <div id="navbar" className={`sidenav ${isOpen ? 'sidenav-open' : 'sidenav-closed'} font-rb`}>
+        <div id="navbar" className={`${isOpen ? 'sidenav-open' : 'sidenav-closed'}`}>
 
             {!isOpen &&
-                <>
-                    <CenteringFlexBox className="openbtn" onClick={() => setOpen(true)}>
-                        &#9776;
-                    </CenteringFlexBox>
-                    <CenteringFlexBox id="user-prof">
-                        <span className="fas fa-user-circle"></span>
-                        <div>Test Username</div>
-                    </CenteringFlexBox>
-                </>
+                <div>
+                    <img src="../static/navbar_icons/Open.png" onClick={() => setOpen(true)}></img>
+                </div>
             }
-            {isOpen && <>
 
-                <button className="closebtn" onClick={() => setOpen(false)} >&times;</button>
+            {isOpen &&
+                <div id="nav-header-open">
+                    <h3>💙TONES💙</h3>
+                    <img src="../static/navbar_icons/Close.png" onClick={() => setOpen(false)}></img>
+                </div>
+            }
 
-                <CenteringFlexBox id="user-prof">
-                    <span className="fas fa-user-circle"></span>
-                    <div>Test Username</div>
-                </CenteringFlexBox>
-            </>}
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
-                {/* <div style={{ flexGrow: 1 }}></div> */}
                 <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
                 <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol" />
                 <NavBarItem itemData={itemData} icon="history" text="History" />
-                {/* <NavBarItem itemData={itemData} icon="user-cog" text="Profile Settings" /> */}
                 <NavBarItem itemData={itemData} icon="cogs" text="Settings" />
-                {/* <NavBarItem itemData={itemData} icon="file" text="Reports" /> */}
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
-
-                {/* <span>Active protocols: {count}</span> */}
             </div>
 
+            {!isOpen &&
             <div id="progress-track">
-                {count > 0
-                    ?
-                    <>
-                        {isOpen
-                            ?
-                            <span>
-                                {activeProtocols.map((p) => {
-                                    return (
-                                        <a className="progress-link" href={`/start/${p.protocol.id}`}>
-                                            <div className="progress-item">
-                                                <div className={`bliking-led ${p.status}`}></div>
-                                                <div className="progress">
-                                                    <p>{p.protocol.name} :</p>
-                                                    <p>{p.progress}%</p>
-                                                </div>
-
-                                            </div>
-                                        </a>
-                                    )
-                                })}
-                            </span>
-                            :
-                            <span>
-                                <i id='progress-icon' className="fa fa-flask"></i>
-                            </span>
-
-
-                        }
-                    </>
-                    :
-                    <>
-                        {isOpen ?
-                            <span>
-                                <div>No active protocols</div>
-                            </span>
-                            :
-                            <></>
-                        }
-
-                    </>
-
-                }
-
-
-
+                <div className="progress-bar">
+                    <progress style={{visibility:'hidden', height:0, width:0}}>75%</progress>
+                </div>
             </div>
-            <div></div>
+            }
 
+            {isOpen &&
+            <div id="progress-track-full">
+                <div className="progress-bar" style={{textAlign:"center"}}>
+                    <progress style={{visibility:'hidden', height:0, width:0}}>75%</progress>
+                </div>
+                <div>
+                    <p>Proto Alpha</p>
+                    <p>Sample text</p>
+                </div>
+            </div>
+            }
 
-
+            {!isOpen &&
+                <div id="user-prof">
+                </div>
+            }   
+            {isOpen &&
+                <div id="user-prof">
+                    <span className="fas fa-user-circle"></span>
+                    <div>
+                        <p id="name">Test Admin User</p>
+                        <p id="role">Admin</p>
+                    </div>
+                </div>
+            }   
         </div>
     )
 }
-

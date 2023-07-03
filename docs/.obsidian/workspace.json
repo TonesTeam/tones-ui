@@ -11,15 +11,8 @@
             "id": "aedd6b12c6ea22cc",
             "type": "leaf",
             "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Screen Navigation.canvas",
-                "viewState": {
-                  "x": 165,
-                  "y": -241,
-                  "zoom": -0.8575771853034881
-                }
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -88,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Screen Navigation.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Screen Navigation.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -127,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Screen Navigation.canvas"
-              }
+              "state": {}
             }
           }
         ]
@@ -149,6 +138,8 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "aedd6b12c6ea22cc",
-  "lastOpenFiles": []
+  "active": "6ad60255dde38197",
+  "lastOpenFiles": [
+    "Untitled"
+  ]
 }
