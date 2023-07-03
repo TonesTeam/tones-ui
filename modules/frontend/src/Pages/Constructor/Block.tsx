@@ -1,6 +1,7 @@
 import { LiquidDto } from 'sharedlib/dto/liquid.dto';
 import './Block.css'
 import { getRequest } from 'common/util';
+import React, { useState } from 'react';
 
 const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
 //console.log(liquids)
@@ -31,16 +32,33 @@ export type Insertable = {
 
 class Washing implements BlockFields {
     getContent(params: Insertable[]): JSX.Element {
-        const liquid = (params.find(i => i.name == 'liquid'))?.value
-        const iters = (params.find(i => i.name == 'iters'))?.value
-        const time = (params.find(i => i.name == 'time'))?.value
+        
+        const initialParams = { 
+            liquid: (params.find(i => i.name == 'liquid'))?.value, 
+            iters: (params.find(i => i.name == 'iters'))?.value  == undefined ? '' : (params.find(i => i.name == 'iters'))?.value, 
+            time: (params.find(i => i.name == 'time'))?.value == undefined ? '' : (params.find(i => i.name == 'time'))?.value
+        };
+
+        const [washParams, setWashParams] = useState(initialParams);
+        //const liquid = (params.find(i => i.name == 'liquid'))?.value
+        //const iters = (params.find(i => i.name == 'iters'))?.value
+        //const time = (params.find(i => i.name == 'time'))?.value
+
+        const handleChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+            const { target } = event;
+            setWashParams((prevState) => ({
+                ...prevState,
+                [target.name]: target.value,
+            }));
+        };
+
         return (
             <>
                 <p className="block-header">Washing step</p>
                 <div className="block-body">
                     <div className="block-inp">
                         <label>Category:</label>
-                        <select id="wash-sel-liquid" defaultValue={liquid}>
+                        <select name="liquid" id="wash-sel-liquid" value={washParams.liquid} onChange={handleChange}>
                             {liquids.map((liq, index) => {
                                 return (
                                     <option value={liq.name} key={index}>{liq.name}</option>
@@ -50,9 +68,9 @@ class Washing implements BlockFields {
                     </div>
                     <div className="block-inp">
                         <label htmlFor="wash-inp-iters">Iterations:</label>
-                        <input id="wash-inp-iters" type="number" defaultValue={iters} />
-                        <label htmlFor="wash-inp-time">Inc. time: </label>
-                        <input id="wash-inp-time" type="number" defaultValue={time} />
+                        <input id="wash-inp-iters" type="number" name="iters" value={washParams.iters} onChange={handleChange}/>
+                        <label htmlFor="wash-inp-time">Inc. time{initialParams.time}: </label>
+                        <input id="wash-inp-time" type="number" name="time" value={washParams.time} onChange={handleChange}/>
                     </div>
                 </div>
             </>
@@ -152,7 +170,7 @@ class Temperature implements BlockFields {
                         <p id="fromTemp">{fromTemp}</p>
                     </div>
                     <div className="block-inp">
-                        <label htmlFor="temper-inp-target">To:</label>
+                        <label htmlFor="temper-inp-target">Passed target: {target}</label>
                         <input id="temper-inp-target" type="number" defaultValue={target} />
                     </div>
                 </div>

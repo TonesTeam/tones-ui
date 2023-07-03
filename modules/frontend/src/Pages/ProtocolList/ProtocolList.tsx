@@ -105,7 +105,7 @@ function Protocol(props: any) {
                     <div className="protocol-options">
                         <div className="protocol-options">
                             <button onClick={() => navigate(`/edit/protocol/${props.id}`)}
-                                className="proto-btn"><i className="fas fa-puzzle-piece"></i>Blockly Scheme</button>
+                                className="proto-btn"  disabled={true}><i className="fas fa-puzzle-piece"></i>Edit</button>
                             <button className="proto-btn" disabled={true} style={{pointerEvents:"none"}}><i className="fas fa-code-branch"></i>Use as template</button>
                         </div>
 

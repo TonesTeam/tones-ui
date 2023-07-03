@@ -19,7 +19,9 @@ export default function Constructor() {
     const [currentTemp, setCurrentTemp] = useState(defTemp);
 
     const addWorkBlock = (block: BlockProps) =>{
+
         if(workBlock!=undefined && block.id==-1){
+            //changing type of new (not added) block
             block.id=workBlock.id
             editBlock({type:block.type, id:workBlock.id, params:[]} as BlockProps)
             let newWorkBlock = workBlock
@@ -63,7 +65,6 @@ export default function Constructor() {
         if(block.type == BlockType.Temperature){
             let newTemp = block.params.find(i=>i.name=='targetTemp')!.value as number
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
-            
         }
 
         let editedBlock = {...newBlocks[index]}
@@ -71,8 +72,10 @@ export default function Constructor() {
         editedBlock.type=block.type;
 
         newBlocks[index] = editedBlock;
-        setBlocks([...newBlocks])
+        let refactoredBlocks = updateTempParam(newBlocks)
+        setBlocks([...refactoredBlocks])
         setWorkBlock(undefined);
+
     }
 
     const onDragEnd = (result: DropResult) => {
@@ -133,21 +136,23 @@ export default function Constructor() {
         for (let i=0; i<refactBlocks.length; i++){
             if(refactBlocks[i].type==BlockType.Temperature){
                 currentTemp = refactBlocks[i].params[1].value as number
+                //filter redundant blocks later
+                if(refactBlocks[i].params[0].value == refactBlocks[i].params[1].value){
+                    refactBlocks[i].id=-1
+                }
             }
             else{
-                console.log("Existing temp param: ",refactBlocks[i].params.find(i=>i.name=='temp')!.value)
-                refactBlocks[i].params.find(i=>i.name=='temp')!.value=currentTemp
+                if(refactBlocks[i].params.length != 0){
+                    refactBlocks[i].params.find(i=>i.name=='temp')!.value=currentTemp;
+                }
             }
         }   
-        return refactBlocks
+        const result = refactBlocks.filter((block) => {
+            return block.id != -1;
+        });
+
+        return result
     }
-
-
-
-
-
-
-
 
     return (
         <>
@@ -172,7 +177,10 @@ export default function Constructor() {
                         </div>
                     </div>
                     <div id="timeline">
-                        <div>Protocol name: <b>Test prt</b></div>
+                        <div>
+                            Protocol name: <b>Test Alpha</b>
+                        </div>
+                        
                         <DragDropContext onDragEnd={onDragEnd}>
                             <Droppable droppableId="item">
                                 {(provided) => (
