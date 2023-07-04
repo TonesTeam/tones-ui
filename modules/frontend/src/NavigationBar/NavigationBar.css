@@ -2,6 +2,13 @@
     --navbar-width: clamp(250px, 280px, 300px);
     --navbar-width-collapsed: 130px;
     --navbar-lr-padding: 20px;
+    --animation-time: 0.3s
+}
+
+#main{
+    margin: 0 0 0 var(--navbar-width-collapsed);
+    height: 100%;
+    transition: filter .3s;
 }
 
 #navbar {
@@ -12,13 +19,88 @@
     overflow: hidden;
     z-index: 11;
     display: grid;
-    grid-template-rows: 2fr 5fr 1fr 1fr;
-    padding-bottom: 3vh;
+    grid-template-rows: 2fr 4fr 4fr 2fr;
+    padding: 3vh 0;
 }
 
-#nav-header-open{
+#nav-header{
+    width: 100%;
     display: flex;
-    flex-direction: row;
+    position:relative;
+}
+
+img.nav-btn{
+    position: absolute;
+    right:30px;
+    height: 70px;
+    width: 70px;
+    /* animation: open-to-close 2s  linear; */
+}
+
+img.nav-btn{
+    position: absolute;
+    right:30px;
+    height: 70px;
+    width: 70px;
+    /* animation: open-to-close 2s  linear; */
+}
+
+
+/*----------TRANSITION--------------*/
+#navbar{
+    -webkit-transition: width var(--animation-time);
+    -moz-transition: width var(--animation-time) ;
+    -o-transition: width var(--animation-time);
+    transition: width var(--animation-time);
+}
+
+.nav-btn.closed{
+    animation: open-to-close var(--animation-time) linear;
+    /* animation: transfer-btn 0.3s linear; */
+    -webkit-animation-fill-mode: forwards;
+}
+
+.nav-btn.open{
+    animation: close-to-open var(--animation-time) linear;
+    -webkit-animation-fill-mode: forwards;
+}
+
+@keyframes open-to-close {
+    from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(180deg);
+      }
+}
+
+@keyframes close-to-open {
+    from {
+        transform: rotate(180deg);
+      }
+      to {
+        transform: rotate(0deg);
+      }
+}
+
+/* @keyframes transfer-btn {
+    0% {
+        right: 30px;
+    }
+    50%{
+        right: 40px;
+    }
+    100% {
+        right: 20px;
+    }
+} */
+
+
+
+/*------------------------------------*/
+
+.sidenav-open #nav-logo{
+    padding-left: 30px;
 }
 
 #navbar-menu .nav-item {
@@ -70,11 +152,6 @@
 /*----------SIDE NAV, OPEN/CLOSE BTN----------*/
 #navbar-menu a {
     text-decoration: none;
-}
-
-#navbar img{
-    width: 100px;
-    height: 100px;
 }
 
 /*---------------------------------------*/

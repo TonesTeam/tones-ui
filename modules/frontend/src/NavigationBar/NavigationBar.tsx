@@ -29,20 +29,6 @@ const setMainMargin = (mgl: String) => {
 const setOpacityMain = (opct: String) => {
     // @ts-ignore
     document.getElementById("main").style.filter = "blur(" + opct + ")";
-
-}
-
-const setOpacityUserProf = (open: Boolean) => {
-    if (open) {
-        document.getElementById("user-prof")!.style.opacity = "1";
-        document.getElementById("user-prof")!.style.visibility = "visible";
-        document.getElementById("user-prof")!.style.width = "auto"
-    }
-    else {
-        document.getElementById("user-prof")!.style.opacity = "0";
-        document.getElementById("user-prof")!.style.visibility = "hidden";
-        document.getElementById("user-prof")!.style.width = "0";
-    }
 }
 
 const progressIconStyle = (actProtocols: ProtocolState[]) => {
@@ -72,21 +58,24 @@ export default function NavigationBar(props: any) {
         isOpen
     };
 
+    // useEffect(() => {
+    //     const op = '3px';
+    //     if (!isOpen) {
+    //         setOpacityMain("0");
+    //     }
+    //     else setOpacityMain(op);
+    //     progressIconStyle(activeProtocols);
+    // })
+
     return (
         <div id="navbar" className={`${isOpen ? 'sidenav-open' : 'sidenav-closed'}`}>
 
-            {!isOpen &&
-                <div>
-                    <img src="../static/navbar_icons/Open.png" onClick={() => setOpen(true)}></img>
+                <div id="nav-header">
+                    {isOpen &&
+                        <h3 id="nav-logo">💙TONES💙</h3>
+                    }
+                    <img className={`nav-btn ${isOpen ? 'open' : 'closed'}`} src="../static/navbar_icons/Open.png" onClick={() => setOpen(prevOpen => !prevOpen)}></img>
                 </div>
-            }
-
-            {isOpen &&
-                <div id="nav-header-open">
-                    <h3>💙TONES💙</h3>
-                    <img src="../static/navbar_icons/Close.png" onClick={() => setOpen(false)}></img>
-                </div>
-            }
 
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
                 <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
