@@ -21,6 +21,7 @@
     display: grid;
     grid-template-rows: 2fr 4fr 4fr 2fr;
     padding: 3vh 0;
+    border-right: 10px solid var(--color-back);
 }
 
 #nav-header{

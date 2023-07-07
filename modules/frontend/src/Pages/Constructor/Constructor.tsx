@@ -1,12 +1,15 @@
 import NavigationBar from "NavigationBar/NavigationBar";
+import 'NavigationBar/NavigationBar.css'
 import { useEffect, useState } from 'react';
 import './Constructor.css'
 import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
+import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
+import { StepType } from 'sharedlib/dto/stepType';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
 
-const defTemp = 25;
+const defTemp = 25; //default tempretaure for the system
 
-//TODO: optimize getStyle()
+
 const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
     margin: `0 0 10px 0`,
     border: active ? `5px solid #ff4c4f` : `none`,
@@ -14,27 +17,43 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
 })
 
 export default function Constructor() {
-    const [blocks, setBlocks] = useState<BlockProps[]>([]);
-    const [workBlock, setWorkBlock] = useState<BlockProps>();
+    const [blocks, setBlocks] = useState<StepDTO[]>([]);
+    const [workBlock, setWorkBlock] = useState<StepDTO>();
     const [currentTemp, setCurrentTemp] = useState(defTemp);
 
-    const addWorkBlock = (block: BlockProps) =>{
+    const showWorkBlock = (block: StepDTO) =>{
 
-        if(workBlock!=undefined && block.id==-1){
-            //changing type of new (not added) block
-            block.id=workBlock.id
-            editBlock({type:block.type, id:workBlock.id, params:[]} as BlockProps)
-            let newWorkBlock = workBlock
-            newWorkBlock.type = block.type
-            newWorkBlock.params = []
-            setWorkBlock(newWorkBlock)
-        }
-        else{
-            setWorkBlock(block)
-        }
+        console.log(block.type)
+        //toggle active class of element on button panel by block type
+        let button = document.getElementById("cb-"+block.type);
+        console.log(button)
+
+        //remove active class from other buttons
+        let buttons : NodeListOf<HTMLElement>  = document.querySelectorAll('button.construct-btn');
+        buttons.forEach(b=>{
+            b.classList.remove("active")
+        })
+
+        //add class to current
+        button?.classList.toggle("active")
+
+        // if(workBlock!=undefined && block.id==-1){
+        //     //changing type of new block (e.g. this is not editing, but new block)
+        //     block.id=workBlock.id
+        //     editBlock({type:block.type, id:workBlock.id, params:{}} as StepDTO)
+        //     let newWorkBlock = workBlock
+        //     newWorkBlock.type = block.type
+        //     newWorkBlock.params = {} 
+        //     setWorkBlock(newWorkBlock)
+        // }
+        // else{
+        //     //editing
+        //     setWorkBlock(block)
+        // }
+        setWorkBlock(block);
     } 
 
-    const addBlock = (props: BlockProps) => {
+    const addBlock = (props: StepDTO) => {
         //new ID = maxID+1
         let id = blocks.length == 0 ? 0 : ((blocks.reduce(function(prev, current) {
             return (prev.id > current.id) ? prev : current
@@ -46,7 +65,7 @@ export default function Constructor() {
         
         setWorkBlock(undefined)
 
-        if(props.type == BlockType.Temperature){
+        if(props.type == StepType.Temperature){
             let newTemp = props.params.find(i=>i.name=='targetTemp')!.value as number
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
         }
@@ -58,11 +77,11 @@ export default function Constructor() {
         )
     }
 
-    const editBlock = (block:BlockProps) =>{
+    const editBlock = (block:StepDTO) =>{
         let index = blocks.findIndex(x=>x.id==block.id);
         let newBlocks = [...blocks]
 
-        if(block.type == BlockType.Temperature){
+        if(block.type == StepType.Temperature){
             let newTemp = block.params.find(i=>i.name=='targetTemp')!.value as number
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
         }
@@ -92,7 +111,7 @@ export default function Constructor() {
         setBlocks(updatedTemp)
 
         let temps = updatedTemp.filter((block) => {
-            return block.type == BlockType.Temperature;
+            return block.type == StepType.Temperature;
         });
 
         let lastTemp = temps[temps.length-1].params[1].value as number
@@ -101,12 +120,12 @@ export default function Constructor() {
 
     }
 
-    function refactorTemperature(blocks: BlockProps[]){
+    function refactorTemperature(blocks: StepDTO[]){
         let refactBlocks = [...blocks]
         let current = defTemp;
 
         for (let i=0; i<refactBlocks.length; i++){
-            if(refactBlocks[i].type==BlockType.Temperature){
+            if(refactBlocks[i].type==StepType.Temperature){
                 const fromTemp = refactBlocks[i].params[0].value
                 const target = refactBlocks[i].params[1].value
                 let editedBlock = {...refactBlocks[i]}
@@ -130,11 +149,11 @@ export default function Constructor() {
         return result
     }
 
-    function updateTempParam(blocks: BlockProps[]){
+    function updateTempParam(blocks: StepDTO[]){
         let refactBlocks = [...blocks]
         let currentTemp = defTemp
         for (let i=0; i<refactBlocks.length; i++){
-            if(refactBlocks[i].type==BlockType.Temperature){
+            if(refactBlocks[i].type==StepType.Temperature){
                 currentTemp = refactBlocks[i].params[1].value as number
                 //filter redundant blocks later
                 if(refactBlocks[i].params[0].value == refactBlocks[i].params[1].value){
@@ -156,24 +175,38 @@ export default function Constructor() {
 
     return (
         <>
-            <NavigationBar />
-            <div className="font-rb" id="main">
+            <NavigationBar selectedItem='Create Protocol'/>
+            <div id="main" className="global-constructor">
+                <div id="protocol-meta">
+                    <h2>Protocol Constructor</h2>
+                    <div id="name">
+                        <p>Protocol Name:</p>
+                        <input type="text"/>
+                    </div>
+                    <button>Save Protocol</button>
+                </div>
                 <div id='container'>
                     <div id="workspace">
                         <div className="options">
-                            <button className="construct-btn" id="cb-washing" onClick={() => addWorkBlock(({type:BlockType.Washing, id:-1, params:[]} as BlockProps))}><span className="fas fa-water"></span></button>
-                            <button className="construct-btn" id="cb-reagent" onClick={() => addWorkBlock(({type:BlockType.Reagent, id:-1, params:[]} as BlockProps))}><span className="fas fa-flask"></span></button>
-                            <button className="construct-btn" id="cb-temperat" onClick={() => addWorkBlock(({type:BlockType.Temperature, id:-1, params:[{name:"from", value:currentTemp}]} as BlockProps))}><span className="fas fa-temperature-low"></span></button>
+                            <button className="construct-btn" id="cb-washing" onClick={() => showWorkBlock(({type:StepType.Washing, id:-1, params:{} as WashStep} as StepDTO))}>
+                                <div><span className="fas fa-water"></span></div>
+                                <p>WASHING</p>
+                            </button>
+
+                            <button className="construct-btn" id="cb-reagent" onClick={() => showWorkBlock(({type:StepType.Reagent, id:-1, params:{} as ReagentStep} as StepDTO))}>
+                                <div><span className="fas fa-flask"></span></div>
+                                <p>REAGENT</p>
+                            </button>
+
+                            <button className="construct-btn" id="cb-temperature" onClick={() => showWorkBlock(({type:StepType.Temperature, id:-1, params:{source:currentTemp, target: -1} as TemperatureStep} as StepDTO))}>
+                                <div><span className="fas fa-temperature-low"></span></div>
+                                <p>TEMPTERATURE</p>
+                            </button>
                         </div>
                         <div id="block-edit">
                             {workBlock != undefined &&
                                 <WorkBlock block={workBlock} addBlock={addBlock} editBlock={editBlock}></WorkBlock>
                             }
-                        </div>
-                        <div className="options">
-                            <button className="construct-btn" id="cb-save"><span className="fas fa-download"></span></button>
-                            <button className="construct-btn" id="cb-settings"><span className="fas fa-wrench"></span></button>
-                            <button className="construct-btn" id="cb-info"><span className="fas fa-info"></span></button>
                         </div>
                     </div>
                     <div id="timeline">
@@ -196,9 +229,10 @@ export default function Constructor() {
                                                             <div ref={provided.innerRef} 
                                                                 {...provided.dragHandleProps} 
                                                                 {...provided.draggableProps} 
-                                                                onClick={() => addWorkBlock(block)}
+                                                                onClick={() => showWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
-                                                                <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock>
+                                                                {/* <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock> */}
+                                                                <div>test</div>
 
                                                                 
                                                             </div>

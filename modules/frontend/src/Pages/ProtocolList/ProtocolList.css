@@ -107,9 +107,7 @@
     transition: max-height 0.2s ease-out;
     transition: all 0.2s ease-in;
     padding: 0 5vw;
-
-    /* font-family: "HelveticaNeueLight";
-    font-weight: 100; */
+    font-family: "HelveticaNeueLight";
 }
 
 .protocol.open .protocol-body{

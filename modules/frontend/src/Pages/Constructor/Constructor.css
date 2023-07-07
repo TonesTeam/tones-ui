@@ -1,20 +1,30 @@
 :root {
-    --reagent-block-color: #a1ff54;
-    --washing-block-color: #34b8ff;
-    --temperat-block-color: #fff534;
+    --reagent: #26b65c;
+    --reagent-back: #ddffed;
+    --washing: #2d4cc9;
+    --washing-back: #dff2ff;
+    --temperature: #e19c26;
+    --temperature-back: #ffeed0;
 }
 
-
 /*----------- GRID LAYOUTS --------------*/
+.global-constructor{
+    display: grid;
+    grid-template-rows: 1fr 10fr;
+    text-align: center;
+    background-color: #fff;
+}
+
 #container{
-    height: 100vh;
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
 #workspace{
     display: grid;
-    grid-template-rows: 1fr 5fr 1fr;
+    grid-template-rows: 1fr 7fr 1fr;
+    background-color: #fff;
 }
 
 #timeline{
@@ -26,51 +36,99 @@
     margin: 0;
 }
 
+/*--------- HEADER -----------*/
+#protocol-meta{
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-back);
+}
+
 
 
 /*-------- CONTROL PANEL: BUTTON STYLES -------------*/
 .options{
-    background-color: #c7c7c7;
-    display: block;
-    text-align: center;
+    /* background-color: #fff; */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    border-bottom: 1px solid var(--color-back);
 }
 
 .construct-btn {
-    height: 70px;
-    width: 70px;
+    width: 100%;
+    height: 100%;
+    border-radius: 0px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid var(--color-back);
+}
+
+.construct-btn:last-of-type{
+    border-right: none;
+}
+
+
+.construct-btn>div{
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin: 0 5%;
-    font-size: 1.5em;
+    background-color: var(--color-back);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column  ;
 }
 
-#cb-reagent {
-    background-color: var(--reagent-block-color);
+.construct-btn p{
+    text-transform: uppercase;
+    color: var(--text-faded);
+    font-size: 0.7em;
 }
 
-#cb-washing {
-    background-color: var(--washing-block-color);
+.construct-btn.active p{
+    color: var(--text-primary);
 }
 
-#cb-temperat {
-    background-color: var(--temperat-block-color);
+/*---- active buttons styles------*/
+.construct-btn.active#cb-reagent {
+    background-color: var(--reagent-back);
 }
 
-#cb-delete {
-    background-color: #ff4c4f;
+.construct-btn.active#cb-reagent > div {
+    background-color: var(--reagent);
 }
 
-#cb-save {
-    background-color: #ffffff;
+.construct-btn.active#cb-washing {
+    background-color: var(--washing-back);
 }
 
-#cb-settings {
-    background-color: #999999;
+.construct-btn.active#cb-washing>div {
+    background-color: var(--washing);
 }
 
-#cb-info {
-    background-color: #111;
+.construct-btn.active#cb-temperature {
+    background-color: var(--temperature-back);
+}
+
+.construct-btn.active#cb-temperature>div{
+    background-color: var(--temperature);
+}
+
+.construct-btn.active .fas{
     color: #fff;
-} 
+}
+
+#block-edit{
+    text-align: center;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 2fr auto;
+    margin: 0 2vw;
+}
 
 /*----------- TIMELINE -------------*/
 
