@@ -2,7 +2,8 @@ import NavigationBar from "NavigationBar/NavigationBar";
 import 'NavigationBar/NavigationBar.css'
 import { useEffect, useState } from 'react';
 import './Constructor.css'
-import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
+//import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
+import { StepBlock, WorkBlock } from './Block';
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
 import { StepType } from 'sharedlib/dto/stepType';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
@@ -23,10 +24,8 @@ export default function Constructor() {
 
     const showWorkBlock = (block: StepDTO) =>{
 
-        console.log(block.type)
         //toggle active class of element on button panel by block type
         let button = document.getElementById("cb-"+block.type);
-        console.log(button)
 
         //remove active class from other buttons
         let buttons : NodeListOf<HTMLElement>  = document.querySelectorAll('button.construct-btn');
@@ -53,22 +52,30 @@ export default function Constructor() {
         setWorkBlock(block);
     } 
 
-    const addBlock = (props: StepDTO) => {
+    const addBlock = (blockToAdd: StepDTO) => {
+
+        console.log("This is block to add: ", blockToAdd)
         //new ID = maxID+1
         let id = blocks.length == 0 ? 0 : ((blocks.reduce(function(prev, current) {
             return (prev.id > current.id) ? prev : current
         })).id +1) // reduce() returns object
         
         //setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
-        const finalBlocks = updateTempParam([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+        const finalBlocks = updateTempParam([...blocks,{ type: blockToAdd.type, id: blockToAdd.id == -1? id : blockToAdd.id, params:{...blockToAdd.params, temperature: currentTemp} } as StepDTO ])
         setBlocks(finalBlocks)
         
         setWorkBlock(undefined)
 
-        if(props.type == StepType.Temperature){
-            let newTemp = props.params.find(i=>i.name=='targetTemp')!.value as number
+        if(blockToAdd.type == StepType.Temperature){
+            let newTemp = (blockToAdd.params as TemperatureStep).target;
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
         }
+
+        //Remove active class from buttons
+        let buttons : NodeListOf<HTMLElement>  = document.querySelectorAll('button.construct-btn');
+        buttons.forEach(b=>{
+            b.classList.remove("active")
+        })
     }
 
     const removeBlock = (id: number) => {
@@ -82,7 +89,7 @@ export default function Constructor() {
         let newBlocks = [...blocks]
 
         if(block.type == StepType.Temperature){
-            let newTemp = block.params.find(i=>i.name=='targetTemp')!.value as number
+            let newTemp = (block.params as TemperatureStep).target as number
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
         }
 
@@ -114,9 +121,10 @@ export default function Constructor() {
             return block.type == StepType.Temperature;
         });
 
-        let lastTemp = temps[temps.length-1].params[1].value as number
-        setCurrentTemp(lastTemp)
-
+        if(temps.length!=0){
+            let lastTemp = (temps[temps.length-1].params as TemperatureStep).target as number
+            setCurrentTemp(lastTemp)
+        }
 
     }
 
@@ -126,14 +134,15 @@ export default function Constructor() {
 
         for (let i=0; i<refactBlocks.length; i++){
             if(refactBlocks[i].type==StepType.Temperature){
-                const fromTemp = refactBlocks[i].params[0].value
-                const target = refactBlocks[i].params[1].value
-                let editedBlock = {...refactBlocks[i]}
-                editedBlock.params[0].value = current;
-                editedBlock.params[1].value = target;
+                let temp_params = refactBlocks[i].params as TemperatureStep
+                const fromTemp = temp_params.source;
+                const target = temp_params.target;
+                let editedBlock = {...refactBlocks[i]} as StepDTO
+                (editedBlock.params as TemperatureStep).source = current;
+                (editedBlock.params as TemperatureStep).target = target;
                 
                 //filter redundant blocks later
-                if(editedBlock.params[0].value == editedBlock.params[1].value){
+                if((editedBlock.params as TemperatureStep).source == (editedBlock.params as TemperatureStep).target){
                     editedBlock.id=-1
                 }
                 refactBlocks[i] = editedBlock;
@@ -154,17 +163,15 @@ export default function Constructor() {
         let currentTemp = defTemp
         for (let i=0; i<refactBlocks.length; i++){
             if(refactBlocks[i].type==StepType.Temperature){
-                currentTemp = refactBlocks[i].params[1].value as number
+                currentTemp = (refactBlocks[i].params as TemperatureStep).target as number
                 //filter redundant blocks later
-                if(refactBlocks[i].params[0].value == refactBlocks[i].params[1].value){
+                if((refactBlocks[i].params as TemperatureStep).source == (refactBlocks[i].params as TemperatureStep).target){
                     refactBlocks[i].id=-1
                 }
             }
             else{
-                if(refactBlocks[i].params.length != 0){
-                    refactBlocks[i].params.find(i=>i.name=='temp')!.value=currentTemp;
-                }
-            }
+                (refactBlocks[i].params as WashStep | ReagentStep).temperature=currentTemp;
+            } 
         }   
         const result = refactBlocks.filter((block) => {
             return block.id != -1;
@@ -210,9 +217,7 @@ export default function Constructor() {
                         </div>
                     </div>
                     <div id="timeline">
-                        <div>
-                            Protocol name: <b>Test Alpha</b>
-                        </div>
+                        <h3>Protocol timeline</h3>
                         
                         <DragDropContext onDragEnd={onDragEnd}>
                             <Droppable droppableId="item">
@@ -231,9 +236,8 @@ export default function Constructor() {
                                                                 {...provided.draggableProps} 
                                                                 onClick={() => showWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
-                                                                {/* <StepBlock  key={index} type={block.type} id={block.id} params={block.params} removeBlock={removeBlock} ></StepBlock> */}
-                                                                <div>test</div>
-
+                                                                
+                                                                <StepBlock  key={index} block={block} removeBlock={removeBlock}></StepBlock>
                                                                 
                                                             </div>
                                                         )}

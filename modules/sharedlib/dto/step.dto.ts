@@ -11,14 +11,15 @@ export type WashStep = {
     iters: number;
     incubation: number;
     liquidID: number;
+    temperature: number; //at which step is applied, calculated
 }
 
 export type ReagentStep = {
     //id: number;
     incubation: number;
-    temperature: number;
     liquidID: number;
     autoWash: boolean;
+    temperature: number; //at which step is applied, calculated
 }
 
 export type TemperatureStep = {

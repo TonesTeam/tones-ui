@@ -8,6 +8,34 @@
     padding: 10px;
 }
 
+/* BUTTONS (Workspace)*/
+
+button#info-btn{
+    height: 50px;
+    width: 50px;
+    background-color: var(--color-back);
+}
+
+button.save-btn{
+    height: 50px;
+    width: auto;
+    width: 25vw;
+    color: #fff;
+    margin-left: 1vw;
+}
+
+button.save-btn.washing{
+    background-color: var(--washing);
+}
+
+button.save-btn.reagent{
+    background-color: var(--reagent);
+}
+
+button.save-btn.temperature{
+    background-color: var(--temperature);
+}
+
 /*------- WORKSPACE BLOCK LAYOUTS -------*/
 
 .inputs{
@@ -128,48 +156,94 @@ input[type=number] {
     margin: 0;
 }
 
+
+/*-------- TIMELINE STYLES ------------*/
 .step{
-    height: auto;
     display: grid;
-    grid-template-columns: 3fr 4fr 1fr;
+    grid-template-rows: 1fr auto;
+    color:#fff;
+    height: auto;
+    padding: 0 7%;
+    border-radius: 8px;
 }
 
-.step button{
-    width:50px;
-    height: 50px;
-    background-color: #ff4c4f;
+
+.step>*,
+.step-params,
+.step-params>*,
+.param-cell,
+.param-cell>*{
+    color:#fff;
 }
 
-button#info-btn{
-    height: 50px;
-    width: 50px;
-    background-color: var(--color-back);
-}
-
-button.save-btn{
-    height: 50px;
-    width: auto;
-    width: 25vw;
-    color: #fff;
-    margin-left: 1vw;
-}
-
-button.save-btn.block-washing{
+.step.washing{
     background-color: var(--washing);
 }
 
-button.save-btn.block-reagent{
+.step.reagent{
     background-color: var(--reagent);
 }
 
-button.save-btn.block-temperature{
-    background-color: var(--temperat);
+.step.temperature{
+    background-color: var(--temperature);
+}
+
+.step-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2vh 0;
+}
+
+.step-header>h3{
+    color: #fff;
+    text-transform: capitalize;
+    font-weight: 100;
+    margin: 0;
+}
+
+.step-header>div{
+    display: flex;
+}
+
+button.step-btn{
+    background-color: #0000002b;
+    color: #fff;
+    padding: 5px 2px;
+    width: 90px;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+button.step-btn path{
+    fill: #fff;
+}
+
+button.step-btn svg{
+    margin-right: 5px;
 }
 
 
+.step-params{
+    border-top: 1px solid #ffffff62;
+    padding: 1vh 0;
+}
 
+.param-row{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
 
+.param-cell{
+    font-size: 16px;
+    display: flex;
+}
 
+.param-cell> p{
+    margin: 0;
+    margin-left: 10px;
+}
 
-
-
+.param-cell> span{
+    color: #ffffffb8;
+}

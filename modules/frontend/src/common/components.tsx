@@ -1,6 +1,7 @@
-import { number } from 'prop-types';
-import { ChangeEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LiquidDto } from 'sharedlib/dto/liquid.dto';
+
+
 export function CenteringFlexBox(props: any) {
     const { className, ...other } = props;
     return (
@@ -12,20 +13,31 @@ export function CenteringFlexBox(props: any) {
 
 export function CustomSelect(props: any) {
     let options: LiquidDto[] = props.options;
+    const [selected, setSelected] = useState(1); //mock
 
     function onChangeValue(target: any) {
-        console.log(target.value);
-        let inp: NodeListOf<HTMLInputElement>= document.querySelectorAll(`input[name="${props.opt_name}"]`);
-        console.log(inp)
-        let toPass : HTMLInputElement = inp[0];
-        inp.forEach((i)=>{
-            if(i.value == target.value) {
-                toPass=i;
-            }
-        });
-        console.log(toPass);
-        props.inputChange(toPass);  
+        // let inps: NodeListOf<HTMLInputElement>= document.querySelectorAll(`input[name="${props.opt_name}"]`); //list of all inputs (radios)
+        // let toPass : HTMLInputElement = inps[0]; //initial selected (mock)
+        // inps.forEach((i)=>{
+        //     if(i.value == target.value) {
+        //         toPass=i; //target value somehow contains value of all selected radios that is selected
+        //     }
+        // });
+
+        //let res = {[props.opt_name]: toPass.value};
+        //let res = {[props.opt_name]: target.value};
+        //props.inputChange(target); //parent's onChange call 
+        setSelected(selected+1); 
     }
+
+    useEffect(() => {
+        let onLoadParamPass = document.querySelectorAll("input[name="+props.opt_name+"]:checked");
+        console.log(onLoadParamPass[0])
+        if(props.inputChange){
+            props.inputChange(onLoadParamPass[0]);
+        }
+
+    }, [selected]);
 
     return (
         <>
@@ -35,6 +47,7 @@ export function CustomSelect(props: any) {
                         <div key={index}>
                         {index==1 &&
                         <>
+                        {/* First is selected by default for now. TODO: take selected value as prop*/}
                             <input className="selectopt" name={props.opt_name} value={opt.name} type="radio" id={`opt${index}`} defaultChecked/>
                             <label htmlFor={`opt${index}`} className="option">{opt.name}</label>
                         </>
@@ -50,25 +63,6 @@ export function CustomSelect(props: any) {
                 })}
             </div>
         </>
-    )
-}
-
-
-export function CustomSelect2() {
-      
-    return (
-        <div className="select">
-        <select>
-            <option value="">Lorem.</option>
-            <option value="">Sequi.</option>
-            <option value="">Praesentium!</option>
-            <option value="">Debitis.</option>
-            <option value="">Sequi.</option>
-            <option value="">Praesentium!</option>
-            <option value="">Debitis.</option>
-        </select>
-        <div className="arrow"></div>
-    </div>
     )
 }
 
