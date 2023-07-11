@@ -66,6 +66,7 @@
     flex-direction: column;
     align-items: center;
     border-right: 1px solid var(--color-back);
+    justify-content: center
 }
 
 .construct-btn:last-of-type{
@@ -81,13 +82,18 @@
     display: flex;
     justify-content: center;
     text-align: center;
-    flex-direction: column  ;
+    flex-direction: column;
+    align-items: center
 }
 
 .construct-btn p{
     text-transform: uppercase;
     color: var(--text-faded);
-    font-size: 0.7em;
+    font-size: 0.55em;
+    font-weight: 800;
+    margin: 0;
+    margin-top: 1vh;
+    letter-spacing: 2px;
 }
 
 .construct-btn.active p{
@@ -119,8 +125,11 @@
     background-color: var(--temperature);
 }
 
-.construct-btn.active .fas{
+.construct-btn.active .fas,
+.construct-btn.active svg path
+{
     color: #fff;
+    fill: #fff
 }
 
 #block-edit{
@@ -128,7 +137,7 @@
     height: 100%;
     display: grid;
     grid-template-rows: auto 2fr auto;
-    margin: 0 2vw;
+    margin: 0 5vw;
 }
 
 /*----------- TIMELINE -------------*/

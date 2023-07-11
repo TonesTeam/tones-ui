@@ -115,6 +115,7 @@ input[type=number] {
     text-transform: uppercase;
     color: var(--text-faded);
     padding-bottom: 3%;
+    font-weight: 600;
 }
 
 .block-footer{

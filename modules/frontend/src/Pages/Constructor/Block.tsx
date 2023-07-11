@@ -298,7 +298,7 @@ function ReagentInputs(props: { stepData: StepDTO; change: (arg0: ReagentStep) =
     },[reagParams])
 
     const filterLiquids = (target: HTMLInputElement | HTMLSelectElement) => {
-        console.log("filterLiquids");
+        //console.log("filterLiquids");
     }
 
     return(
@@ -314,7 +314,7 @@ function ReagentInputs(props: { stepData: StepDTO; change: (arg0: ReagentStep) =
             <div className="block-body-row">
                 <div className="block-inp">
                     <label>Liquid:</label>
-                    <CustomSelect options={liquids} opt_name={'liquid'} inputChange={handleChange}></CustomSelect>
+                    <CustomSelect options={liquids} opt_name={'liquidID'} inputChange={handleChange}></CustomSelect>
                     {/* <select id='reag-sel-liquid' defaultValue={liquid}>
                         {liquids.map((liq, index) => {
                             return (
@@ -357,14 +357,19 @@ function TemperatureInputs(props: { stepData: StepDTO; change: (arg0: Temperatur
 
     return(
         <>
+
         <div className="block-body">
-            <div className="block-inp">
-                <label>From: </label>
-                <p id="fromTemp">{temperParams.source}</p>
+            <div className="block-body-row">
+                <div className="block-inp">
+                    <label>From: </label>
+                    <input id="temper-inp-source" type="number" value={temperParams.source} name="source" disabled />
+                </div>
             </div>
-            <div className="block-inp">
-                <label htmlFor="temper-inp-target">Passed target: {temperParams.target}</label>
-                <input id="temper-inp-target" type="number" name="target" onChange={(e)=>handleChange(e.target)} />
+            <div className="block-body-row">
+                <div className="block-inp">
+                    <label htmlFor="temper-inp-target">Target temperature:</label>
+                    <input id="temper-inp-target" type="number" name="target" onChange={(e)=>handleChange(e.target)} />
+                </div>
             </div>
         </div>
         </>
@@ -382,7 +387,6 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
     const [params, setParams] = useState<{[key: string]: any}>({});
 
     const updateParams = (step_params: any) =>{
-        console.log("Updating params: ", step_params)
         setParams(params => ({
             ...params,
             ...step_params

@@ -8,11 +8,6 @@
     justify-items: center;
 }
 
-*{
-    color:var(--text-primary);
-    font-family: "HelveticaNeue";
-}
-
 #login-form {
     padding-top: 10vh;
     display: flex;
