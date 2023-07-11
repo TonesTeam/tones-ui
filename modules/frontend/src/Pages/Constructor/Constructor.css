@@ -125,11 +125,18 @@
     background-color: var(--temperature);
 }
 
+.construct-btn .fas,
+.construct-btn svg path
+{
+    color: var(--text-faded-accent);
+    fill: var(--text-faded-accent);
+}
+
 .construct-btn.active .fas,
 .construct-btn.active svg path
 {
     color: #fff;
-    fill: #fff
+    fill: #fff;
 }
 
 #block-edit{

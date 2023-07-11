@@ -82,10 +82,11 @@ button.save-btn.temperature{
     border: none;
     border-radius: 8px;
     width: 100%;
+    height: 110%;
     background-color: #eae8e8;
     border: 1px solid #d5d5d5;
     box-sizing: border-box;
-    padding: 4px 10px;
+    padding: 4px 20px;
     font-size:1.2rem;
 }
 
@@ -99,6 +100,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .block-inp details{
@@ -247,4 +249,96 @@ button.step-btn svg{
 
 .param-cell> span{
     color: #ffffffb8;
+}
+
+.auto-wash-mark{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #fff;
+    color: var(--text-primary);
+    border-radius: 8px; 
+    font-size: 16px;
+    width: fit-content;
+    padding: 1% 1%;
+    margin-top: 20px;
+}
+
+.param-row.extra{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.auto-wash-mark p,
+.auto-wash-mark h3{
+    margin: 0;
+    width: auto;
+}
+
+.auto-wash-mark>*{
+    padding-right: 20px;
+}
+
+.auto-wash-mark>svg>path{
+    fill: var(--text-faded-accent);
+}
+
+/* -------- SETTINGS MODAL (POP-UP) ---------*/
+.modal{
+    /* display properly is defined and toggled in JSX directly as state */
+    position: absolute;
+    z-index: 101; 
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background-color: #0000001f;
+    align-items: center;
+    justify-items: center;
+}
+
+
+.modal-content{
+    background-color: #fff;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    width: 50%;
+    height: auto;
+    padding: 3%;
+}
+
+.modal-header{
+    display: flex;
+    justify-content: space-between
+}
+
+.modal-part{
+    display: flex;
+}
+
+.modal-part{
+    border-top: 1px solid var(--color-back);
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.modal-part .row{
+    width: 100%;
+}
+
+.modal-part>input[type=checkbox]
+{
+    transform: scale(3);
+    margin-left: 15px;
+}
+
+.modal-part>label{
+    margin-left: 20px;
+}
+
+.modal-part.extra{
+    border-top: none;
 }

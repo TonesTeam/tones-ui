@@ -25,6 +25,7 @@ export default function Constructor() {
     const [blocks, setBlocks] = useState<StepDTO[]>([]);
     const [workBlock, setWorkBlock] = useState<StepDTO>();
     const [currentTemp, setCurrentTemp] = useState(defTemp);
+    const [settingAutoWash, setSettingAutoWash] = useState(true);
 
     const showWorkBlock = (block: StepDTO) =>{
 
@@ -40,39 +41,28 @@ export default function Constructor() {
         //add class to current
         button?.classList.toggle("active")
 
-        // if(workBlock!=undefined && block.id==-1){
-        //     //changing type of new block (e.g. this is not editing, but new block)
-        //     block.id=workBlock.id
-        //     editBlock({type:block.type, id:workBlock.id, params:{}} as StepDTO)
-        //     let newWorkBlock = workBlock
-        //     newWorkBlock.type = block.type
-        //     newWorkBlock.params = {} 
-        //     setWorkBlock(newWorkBlock)
-        // }
-        // else{
-        //     //editing
-        //     setWorkBlock(block)
-        // }
         setWorkBlock(block);
     } 
 
     const addBlock = (blockToAdd: StepDTO) => {
 
         console.log("This is block to add: ", blockToAdd)
-        //new ID = maxID+1
         let id = blocks.length == 0 ? 0 : ((blocks.reduce(function(prev, current) {
             return (prev.id > current.id) ? prev : current
         })).id +1) // reduce() returns object
         
-        //setBlocks([...blocks, { type: props.type, id: props.id == -1? id : props.id, other: 'test', params:props.params }])
+        if(blockToAdd.type == StepType.Reagent){
+            (blockToAdd.params as ReagentStep).autoWash = settingAutoWash;
+        }
+
         const finalBlocks = updateTempParam([...blocks,{ type: blockToAdd.type, id: blockToAdd.id == -1? id : blockToAdd.id, params:{...blockToAdd.params, temperature: currentTemp} } as StepDTO ])
         setBlocks(finalBlocks)
         
-        setWorkBlock(undefined)
+        setWorkBlock(undefined) //remove working block from workspace
 
         if(blockToAdd.type == StepType.Temperature){
             let newTemp = (blockToAdd.params as TemperatureStep).target;
-            setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
+            setCurrentTemp(newTemp) //update current temperature for next steps
         }
 
         //Remove active class from buttons
@@ -94,13 +84,14 @@ export default function Constructor() {
             }
         }
 
-        setBlocks((current) =>
-            current.filter((block) => block.id !== toRemove.id)
-        )
-
+        setBlocks((current) => current.filter((block) => block.id !== toRemove.id))   
     }
 
     const editBlock = (block:StepDTO) =>{
+
+
+        console.log("In Edit: ", block)
+
         let index = blocks.findIndex(x=>x.id==block.id);
         let newBlocks = [...blocks]
 
@@ -234,7 +225,7 @@ export default function Constructor() {
                         </div>
                         <div id="block-edit">
                             {workBlock != undefined &&
-                                <WorkBlock block={workBlock} addBlock={addBlock} editBlock={editBlock}></WorkBlock>
+                                <WorkBlock block={workBlock} addBlock={addBlock} editBlock={editBlock} toggleAutoWash={setSettingAutoWash} currentAutoWash={settingAutoWash}></WorkBlock>
                             }
                         </div>
                     </div>
@@ -256,10 +247,9 @@ export default function Constructor() {
                                                             <div ref={provided.innerRef} 
                                                                 {...provided.dragHandleProps} 
                                                                 {...provided.draggableProps} 
-                                                                //onClick={() => showWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 
-                                                                <StepBlock  key={index} block={block} removeBlock={removeBlock} editToggle={showWorkBlock}></StepBlock>
+                                                                <StepBlock  key={index} block={block} removeBlock={removeBlock} editToggle={showWorkBlock} removeAuto={editBlock}></StepBlock>
                                                                 
                                                             </div>
                                                         )}

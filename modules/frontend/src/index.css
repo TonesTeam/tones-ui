@@ -12,6 +12,7 @@
     --color-warning: #d14633;
     --text-primary: #3b3d44;
     --text-faded:#838488;
+	--text-faded-accent: #48506d;
     --color-back: #ebeced;
 }
 
@@ -38,6 +39,7 @@ body {
     background-color: #f1f1f1;
     margin: 0;
     padding: 0;
+	height: 100%;
     /* -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; */
 }
