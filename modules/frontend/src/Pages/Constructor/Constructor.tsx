@@ -82,10 +82,22 @@ export default function Constructor() {
         })
     }
 
-    const removeBlock = (id: number) => {
+    const removeBlock = (toRemove:StepDTO) => {
+
+        if(toRemove.type==StepType.Temperature){
+            let temps = blocks.filter((block) => {
+                return block.type == StepType.Temperature;
+            });
+    
+            if(temps.length!=0){
+                setCurrentTemp(defTemp)
+            }
+        }
+
         setBlocks((current) =>
-            current.filter((block) => block.id !== id)
+            current.filter((block) => block.id !== toRemove.id)
         )
+
     }
 
     const editBlock = (block:StepDTO) =>{
@@ -244,10 +256,10 @@ export default function Constructor() {
                                                             <div ref={provided.innerRef} 
                                                                 {...provided.dragHandleProps} 
                                                                 {...provided.draggableProps} 
-                                                                onClick={() => showWorkBlock(block)}
+                                                                //onClick={() => showWorkBlock(block)}
                                                                 style={getStyle(snapshot.isDragging, active, provided.draggableProps.style)}>
                                                                 
-                                                                <StepBlock  key={index} block={block} removeBlock={removeBlock}></StepBlock>
+                                                                <StepBlock  key={index} block={block} removeBlock={removeBlock} editToggle={showWorkBlock}></StepBlock>
                                                                 
                                                             </div>
                                                         )}

@@ -13,7 +13,8 @@ export function CenteringFlexBox(props: any) {
 
 export function CustomSelect(props: any) {
     let options: LiquidDto[] = props.options;
-    const [selected, setSelected] = useState(1); //mock
+    let selected = props.selected as String | null;
+    const [choiceCount, setChoiceCount] = useState(1); //mock
 
     function handleZIndex(){
         let selects = document.querySelectorAll("div.select");
@@ -35,7 +36,7 @@ export function CustomSelect(props: any) {
     handleZIndex();
 
     function onChangeValue(target: any) {
-        setSelected(selected+1); 
+        setChoiceCount(choiceCount+1); 
     }
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export function CustomSelect(props: any) {
         if(props.inputChange){
             props.inputChange(onLoadParamPass[0]);
         }
-    }, [selected]);
+    }, [choiceCount]);
 
     return (
         <>
@@ -51,14 +52,15 @@ export function CustomSelect(props: any) {
                 {options.map((opt, index) => {
                     return (
                         <div key={index}>
-                        {index==0 &&
+                        {((selected != null && selected == opt.name) || (selected == null && index==0)) && 
                         <>
-                        {/* First is selected by default for now. TODO: take selected value as prop*/}
+                        {/* First is selected by default if no selected option is passed*/}
                             <input className="selectopt" name={props.opt_name} value={opt.name} type="radio" id={`opt${index}_${props.opt_name}`} defaultChecked/>
                             <label htmlFor={`opt${index}_${props.opt_name}`} className="option">{opt.name}</label>
                         </>
                         }
-                        {index!=0 &&
+
+                        {((selected != null && selected != opt.name) || (selected == null && index!=0)) &&
                         <>
                             <input className="selectopt" name={props.opt_name} value={opt.name} type="radio" id={`opt${index}_${props.opt_name}`} />
                             <label htmlFor={`opt${index}_${props.opt_name}`} className="option">{opt.name}</label>
