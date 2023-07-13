@@ -17,6 +17,7 @@
 
 #container{
     height: 100%;
+    max-height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
@@ -27,14 +28,7 @@
     background-color: #fff;
 }
 
-#timeline{
-    height: 100%;
-    overflow: hidden;
-    display: grid;
-    grid-template-rows: 1fr 10fr;
-    background-color: var(--color-back);
-    margin: 0;
-}
+
 
 /*--------- HEADER -----------*/
 #protocol-meta{
@@ -44,9 +38,29 @@
     padding: 0 5%;
     justify-content: space-between;
     border-bottom: 1px solid var(--color-back);
+    align-items: center;
 }
 
+#protocol-meta>#name{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 
+#protocol-meta>#name>input{
+    height: fit-content;
+    width: 100%;
+    margin-left: 10px;
+    padding: 5px 5px;
+    font-size: 1.1em;
+}
+
+#protocol-meta>button{
+    height: fit-content;
+    padding: 1% 1%;
+    background-color: var(--text-faded-accent);
+    color: #fff;
+}
 
 /*-------- CONTROL PANEL: BUTTON STYLES -------------*/
 .options{
@@ -149,9 +163,30 @@
 
 /*----------- TIMELINE -------------*/
 
+#timeline{
+    display: grid;
+    grid-template-rows: 1fr 10fr;
+    background-color: var(--color-back);
+    margin: 0;
+}
+
+#timeline>.header{
+    display: flex;
+    padding: 0 2vw;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#timeline>.header>#duration{
+    text-transform: uppercase;
+    font-size: 0.7em;
+    color: var(--text-faded-accent);
+}
+
 #steps{
-    padding: 0 2vw 5vh 2vw;
-    overflow-y:scroll;
+    padding: 0 2vw;
+    height: 80vh;
+    overflow: auto;
 }
 
 
@@ -159,3 +194,143 @@
 [data-rbd-draggable-id] { 
     left: auto !important; 
 }
+
+.editing{
+    box-sizing: border-box;
+    /* border-radius: 8px; */
+    border: 4px solid #0000007c;
+}
+
+
+/*-------- FINAL STEP TABLE (PRE-SAVE) ---------*/
+#pre-save-wrapper{
+    /* display properly is defined and toggled in JSX directly as state */
+    position: absolute;
+    z-index: 1000; 
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background-color: #0000001f;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+.pre-save-content{
+    background-color: #fff;
+    border-radius: 8px;
+    box-sizing: border-box;
+    width: 90vw;
+    height: 80vh;
+    padding: 1% 0;
+    display: grid;
+    grid-template-rows: 1fr 7fr 1fr;
+}
+
+.pre-save-content>.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3%;
+    border-bottom: 2px solid var(--color-back);
+}
+
+.pre-save-content>.body{
+    overflow-y: scroll;
+}
+
+.pre-save-content .body-footer{
+    padding: 0 3% 40vh 3%;
+}
+
+.body-footer textarea{
+    resize: none;
+    width: 70%;
+    background-color: var(--color-back);
+    border-radius: 8px;
+    border: 1px solid var(--text-faded);
+    padding: 8px;
+    font-size: 1em;
+    outline: none;
+}
+
+.pre-save-content>.pre-save-footer{
+    display: flex;
+    flex-direction: row;
+    padding: 0 30%;
+    justify-content: space-between;
+    border-top: 2px solid var(--color-back);
+    align-items: center;
+}
+
+.pre-save-footer button{
+    height: fit-content;
+    width: 30%;
+    padding: 10px 0;
+}
+
+.pre-save-footer button#save-prt{
+    background-color: var(--text-primary);
+    color: #fff;
+}
+
+.pre-save-content>.header>h2{
+    margin:0;
+}
+
+.step-table{
+    width: 100%;
+}
+
+.step-table>thead{
+    background-color: var(--text-faded-accent);
+}
+
+.step-table>thead>tr>th{
+    color: #fff;
+    font-weight: 500;
+}
+
+.step-table tr:nth-child(even) {
+    background-color: var(--color-back);
+  }
+
+.step-table tr{
+    line-height: 4vh;
+}
+
+.step-table tr td {
+    font-weight: 500;
+    text-transform: capitalize;
+    text-align: center;
+    height: 100%;
+    /* padding: 10px 0;
+    box-sizing: border-box; */
+}
+
+.step-table tr td p{
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.step-table .label{
+    position: absolute;
+    left: 0;
+    top:0;
+    width: 15px;
+    height: 100%;
+}
+
+.label.washing{
+    background-color: var(--washing);
+}
+
+.label.reagent{
+    background-color: var(--reagent);
+}
+
+.label.temperature{
+    background-color: var(--temperature);
+}
+

@@ -2,7 +2,7 @@ import { LiquidDto } from 'sharedlib/dto/liquid.dto';
 import './Block.css'
 import { getRequest } from 'common/util';
 import React, { useEffect, useState } from 'react';
-import SVG_Icon, { CustomSelect } from 'common/components';
+import {SVG_Icon, CustomSelect, ToggleInput } from 'common/components';
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
 import { StepType } from 'sharedlib/dto/stepType';
 
@@ -178,13 +178,8 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
         block.id == -1 ? addBlock(block) : editBlock(block);
     }
 
-    const handleAutoWash = (target: HTMLInputElement) => {
-        if(target.checked){
-            toggleAutoWash(true)
-        }
-        else{
-            toggleAutoWash(false)
-        }
+    const handleAutoWash = (val: boolean) => {
+        toggleAutoWash(val);
     }
 
     return (
@@ -217,22 +212,30 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
                 <div className="modal-content">
                     <div className="modal-header">
                         <h3>Workspace Settings</h3>
-                        <h3 onClick={()=>setSettings(false)} style={{cursor: 'pointer'}}>&#x2716;</h3>
+                        <h2 onClick={()=>setSettings(false)} style={{cursor: 'pointer'}}>&#x2716;</h2>
                     </div>
-                    <div className='modal-part'>
-                            <input type='checkbox' onChange={(e)=>handleAutoWash(e.target)} checked={currentAutoWash? true:false}/>
-                            <label>Automatic washing step insert</label>
+                    <div className='modal-toggle'>
+                        {/* <input type='checkbox' onChange={(e)=>handleAutoWash(e.target)} checked={currentAutoWash? true:false}/> */}
+                        <label>Automatic washing step insert</label>
+                        <ToggleInput val1={"OFF"} val2={"ON"} handleChange={handleAutoWash} checked={currentAutoWash? true:false}/>
                     </div>
-                    <div className='modal-part'>
-                        <input type='checkbox'/>
-                        <label>Add protocol description</label>
-                    </div>
-                    <div className="modal-part extra">
-                        <textarea placeholder='Enter description here ...'></textarea>
-                    </div>
-                    <div className='modal-part'>
-                        <input type='checkbox'/>
+
+                    <div className='modal-toggle'>
                         <label>Change default time units</label>
+                        <ToggleInput val1={"Seconds"} val2={"Minutes"}/>
+                    </div>
+
+                    {/* <div className='modal-inp'>
+                        <label>Add protocol description</label>
+                        <textarea placeholder='Enter description here ...'></textarea>
+                    </div>  LETS MOVE IN TO PRE-SAVING PAGE*/}
+
+                    <div className='modal-inp'>
+                        <label>Add protocol-specific reagent</label>
+                        <select>
+                            <option>123</option>
+                            <option>abc</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -252,12 +255,18 @@ export const StepBlock: React.FC<StepBlockProps> = ({ block, removeBlock, editTo
         block.params = {...block.params, autoWash: false} as ReagentStep;
         removeAuto(block);
     }
+
+    const handleEditToggle = (block: StepDTO, target: HTMLElement)=> {
+        editToggle(block);
+        let activeStepElem = target.closest("div.step") as HTMLElement;
+        activeStepElem.classList.add("editing");
+    }
     return (
         <div className={`step ${block.type}`}>
             <div className='step-header'>
                 <h3>{block.type}</h3>
                 <div>
-                    <button className='step-btn' onClick={() => editToggle(block)}>
+                    <button className='step-btn' onClick={(e) => handleEditToggle(block, (e.target as HTMLButtonElement))}>
                         <SVG_Icon size_x={15} size_y={15} path="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/>
                         Edit
                     </button>

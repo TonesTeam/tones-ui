@@ -302,43 +302,55 @@ button.step-btn svg{
     background-color: #fff;
     border-radius: 8px;
     box-sizing: border-box;
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    /* grid-template-rows: 1fr 1fr 1fr 1fr; */
     width: 50%;
     height: auto;
-    padding: 3%;
+    padding: 1% 3%;
+}
+
+.modal-content>div{
+    border-top: 1px solid var(--color-back);
+    padding: 10px 0;
 }
 
 .modal-header{
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
+    align-items: center;
+    border-top: none !important;
+    padding: none !important;
 }
 
-.modal-part{
-    display: flex;
+.modal-header>h2,
+.modal-header>h3{
+    margin: 0;
 }
 
-.modal-part{
-    border-top: 1px solid var(--color-back);
-    display: flex;
+.modal-toggle{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: left;
 }
 
-.modal-part .row{
-    width: 100%;
+.modal-toggle>label{
+    text-align: left;
 }
 
-.modal-part>input[type=checkbox]
+.modal-inp{
+    display: grid;
+    grid-template-rows: 1fr auto;
+    justify-content: flex-start;
+}
+
+/* .modal-toggle>input[type=checkbox]
 {
-    transform: scale(3);
-    margin-left: 15px;
-}
+    zoom: 3;
+} */
 
-.modal-part>label{
-    margin-left: 20px;
-}
 
-.modal-part.extra{
-    border-top: none;
-}
+
+
+

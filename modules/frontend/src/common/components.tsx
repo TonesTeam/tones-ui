@@ -75,7 +75,7 @@ export function CustomSelect(props: any) {
 }
 
 
-export default function SVG_Icon(props: any) {
+export function SVG_Icon(props: any) {
     return (
       <svg
         className='svg_icon'
@@ -87,3 +87,25 @@ export default function SVG_Icon(props: any) {
       </svg>
     )
   };
+
+
+  export function ToggleInput(props: any){
+    const [val, setVal] = useState(props.checked);
+
+    useEffect(()=>{
+        if(props.handleChange){
+            props.handleChange(val);
+        }
+    }, [val])
+
+    return(
+        <div className='toggle-input'>
+            <p className={`toggle-val ${!val? "active": ""}`}>{props.val1}</p>
+            <label className="switch">
+                <input type="checkbox" onChange={()=>setVal(!val)} checked={val? true:false}/>
+                <span className="slider round"></span>
+            </label>
+            <p className={`toggle-val ${val? "active": ""}`}>{props.val2}</p>
+        </div>
+    )
+  } 

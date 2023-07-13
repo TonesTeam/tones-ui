@@ -36,14 +36,7 @@ img.nav-btn{
     right:30px;
     height: 70px;
     width: 70px;
-    /* animation: open-to-close 2s  linear; */
-}
-
-img.nav-btn{
-    position: absolute;
-    right:30px;
-    height: 70px;
-    width: 70px;
+    cursor: pointer;
     /* animation: open-to-close 2s  linear; */
 }
 
@@ -56,36 +49,7 @@ img.nav-btn{
     transition: width var(--animation-time);
 }
 
-.nav-btn.closed{
-    animation: open-to-close var(--animation-time) linear;
-    /* animation: transfer-btn 0.3s linear; */
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
-}
 
-.nav-btn.open{
-    animation: close-to-open var(--animation-time) linear;
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
-}
-
-@keyframes open-to-close {
-    from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(180deg);
-      }
-}
-
-@keyframes close-to-open {
-    from {
-        transform: rotate(180deg);
-      }
-      to {
-        transform: rotate(0deg);
-      }
-}
 
 /* @keyframes transfer-btn {
     0% {
@@ -123,9 +87,13 @@ img.nav-btn{
 }
 
 .nav-item span {
-    height: 20px;
-    width: 30px;
+    /* height: 20px;
+    width: 30px; */
     transition: none;
+}
+
+.nav-item span::before{
+    font-size: 1.5em;
 }
 
 .nav-item-link {
@@ -158,7 +126,36 @@ img.nav-btn{
     text-decoration: none;
 }
 
-/*---------------------------------------*/
+.nav-btn.closed{
+    animation: open-to-close var(--animation-time) linear;
+    /* animation: transfer-btn 0.3s linear; */
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.nav-btn.open{
+    animation: close-to-open var(--animation-time) linear;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes close-to-open {
+    from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(180deg);
+      }
+}
+
+@keyframes open-to-close {
+    from {
+        transform: rotate(180deg);
+      }
+      to {
+        transform: rotate(0deg);
+      }
+}
 
 /*--------USER PROFILE PIC & NAME-----------*/
 
@@ -172,7 +169,7 @@ img.nav-btn{
 
 #user-prof>[class~="fas"] {
     /* margin-bottom: 1rem; */
-    font-size: 4em;
+    font-size: 3.5em;
 }
 
 #user-prof p{
@@ -294,8 +291,6 @@ img.nav-btn{
         opacity: 30%;
     }
 }
-
-/*------------------------------------------------*/
 
 .progress-bar {
     display: flex;

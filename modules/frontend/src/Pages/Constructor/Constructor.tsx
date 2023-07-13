@@ -7,9 +7,10 @@ import { StepBlock, WorkBlock } from './Block';
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
 import { StepType } from 'sharedlib/dto/stepType';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
-import SVG_Icon from "common/components";
+import {SVG_Icon} from "common/components";
 
 const defTemp = 25; //default tempretaure for the system
+const liquidInjectTime: number = 10;
 
 
 const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
@@ -26,8 +27,18 @@ export default function Constructor() {
     const [workBlock, setWorkBlock] = useState<StepDTO>();
     const [currentTemp, setCurrentTemp] = useState(defTemp);
     const [settingAutoWash, setSettingAutoWash] = useState(true);
+    const [preSave, showPreSave] = useState(false);
+    const [duration, setDuration] = useState<number>(0);
+
+    useEffect(()=>{
+        calcDuration(blocks);
+    }, [blocks])
 
     const showWorkBlock = (block: StepDTO) =>{
+
+        //remove "editing" class from block in timeline
+        let blockInTL = document.querySelector("div.editing");
+        blockInTL?.classList.remove("editing");
 
         //toggle active class of element on button panel by block type
         let button = document.getElementById("cb-"+block.type);
@@ -39,7 +50,11 @@ export default function Constructor() {
         })
 
         //add class to current
-        button?.classList.toggle("active")
+        button?.classList.toggle("active");
+
+        if(block.id != -1){
+
+        }
 
         setWorkBlock(block);
     } 
@@ -89,8 +104,11 @@ export default function Constructor() {
 
     const editBlock = (block:StepDTO) =>{
 
-
         console.log("In Edit: ", block)
+
+        //remove "editing" class from block in timeline
+        let blockInTL = document.querySelector("div.editing");
+        blockInTL?.classList.remove("editing");
 
         let index = blocks.findIndex(x=>x.id==block.id);
         let newBlocks = [...blocks]
@@ -108,7 +126,6 @@ export default function Constructor() {
         let refactoredBlocks = updateTempParam(newBlocks)
         setBlocks([...refactoredBlocks])
         setWorkBlock(undefined);
-
     }
 
     const onDragEnd = (result: DropResult) => {
@@ -187,17 +204,36 @@ export default function Constructor() {
         return result
     }
 
+    function calcDuration (blocks: StepDTO[]){
+        let duration = 0;
+        for (let i=0; i<blocks.length; i++){
+            if (blocks[i].type == StepType.Washing){
+                duration+=Number((blocks[i].params as WashStep).iters) * (Number((blocks[i].params as WashStep).incubation)+Number(liquidInjectTime))
+            }
+            else if (blocks[i].type == StepType.Reagent){
+                duration+=Number((blocks[i].params as ReagentStep).incubation) + liquidInjectTime;
+                if((blocks[i].params as ReagentStep).autoWash){
+                    duration+=(10+liquidInjectTime) * 3 //autoWash procedure TODO: READ FROM DEFAULT WASHING CONFIG!
+                }
+            }
+            else if (blocks[i].type == StepType.Temperature){
+                duration+=Math.abs((blocks[i].params as TemperatureStep).source-(blocks[i].params as TemperatureStep).target) * 2;
+            }
+
+            console.log("Duration at index: ", duration)
+        }
+        console.log("Duration after all calcs: ", duration)
+
+        setDuration(duration);
+    }
+
     return (
         <>
             <NavigationBar selectedItem='Create Protocol'/>
             <div id="main" className="global-constructor">
                 <div id="protocol-meta">
                     <h2>Protocol Constructor</h2>
-                    <div id="name">
-                        <p>Protocol Name:</p>
-                        <input type="text"/>
-                    </div>
-                    <button>Save Protocol</button>
+                    <button onClick={()=>showPreSave(true)}>Save Protocol</button>
                 </div>
                 <div id='container'>
                     <div id="workspace">
@@ -230,7 +266,11 @@ export default function Constructor() {
                         </div>
                     </div>
                     <div id="timeline">
-                        <h3>Protocol timeline</h3>
+                        <div className="header">
+                            <h3>Protocol timeline</h3>
+                            <h4 id="duration">Approximate duration: {duration} sec.</h4>
+                        </div>
+                        
                         
                         <DragDropContext onDragEnd={onDragEnd}>
                             <Droppable droppableId="item">
@@ -264,6 +304,87 @@ export default function Constructor() {
                                 )}
                             </Droppable>
                         </DragDropContext>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="pre-save-wrapper" style={{display: preSave ? "flex" : "none"}}>
+                <div className="pre-save-content">
+                    <div className="header">
+                        <div>Protocol name: ____________________</div>
+                        <div>Duration: _________</div>
+                        <h2 onClick={()=>showPreSave(false)} style={{cursor: 'pointer'}}>&#x2716;</h2>
+                    </div>
+
+                    <div className="body">
+                        <table className="step-table">
+                            <thead>
+                                <tr>
+                                    <th>Step #</th>
+                                    <th>Type</th>
+                                    <th>Reagent</th>
+                                    <th>Temperature</th>
+                                    <th>Incubation</th>
+                                    <th>Iterations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            { blocks.map((block, index) =>{
+                                return(
+                                    <tr key={index}>
+                                        <td style={{position:"relative"}}>
+                                            <span className={`label ${block.type}`}> </span>
+                                            <p>{index+1} id={block.id}</p>
+                                        </td>
+                                        <td><p>{block.type}</p></td>
+                                        <td>
+                                            {block.type != StepType.Temperature &&
+                                                <p>{(block.params as WashStep | ReagentStep).liquidID}</p>
+                                            }
+                                            {block.type == StepType.Temperature &&
+                                                <p>-</p>
+                                            }
+                                        </td>
+                                        <td>
+                                            {block.type != StepType.Temperature &&
+                                                <p>{(block.params as WashStep | ReagentStep).temperature}°C</p>
+                                            }
+                                            {block.type == StepType.Temperature &&
+                                                <p>{(block.params as TemperatureStep).target}°C</p>
+                                            }
+                                        </td>
+                                        <td>
+                                            {block.type != StepType.Temperature &&
+                                                <p>{(block.params as WashStep | ReagentStep).incubation}</p>
+                                            }
+                                            {block.type == StepType.Temperature &&
+                                                <p>-</p>
+                                            }
+                                        </td>
+                                        <td>
+                                            {block.type == StepType.Washing &&
+                                                <p>{(block.params as WashStep).iters}</p>
+                                            }
+                                            {block.type != StepType.Washing &&
+                                                <p>-</p>
+                                            }
+                                        </td>
+                                    </tr>
+                                )})
+                            }
+                            </tbody>
+                        </table>
+
+                        <div className="body-footer">
+                                <p>Enter protocol description:</p>
+                                <textarea placeholder="Protocol description ..."/>
+                        </div>
+                    </div>
+
+                    <div className="pre-save-footer">
+                        <button id="save-prt">Save</button>
+                        <button id="edit-prt" onClick={()=>showPreSave(false)}>Edit</button>
                     </div>
                 </div>
             </div>
