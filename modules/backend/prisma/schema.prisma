@@ -41,7 +41,7 @@ model Protocol {
     description        String?
     creator            User                 @relation(fields: [userId], references: [id])
     userId             Int
-    washingLiquid      Liquid               @relation(fields: [liquidId], references: [id]) // Default liquid used for washing steps (washing slots)
+    washingLiquid      PermanentLiquid      @relation(fields: [liquidId], references: [id]) // Default liquid used for washing steps (washing slots)
     steps              Step[]
     protocolDeployment ProtocolDeployment[]
     liquidId           Int
@@ -65,7 +65,7 @@ model DeploymentLiquidConfig {
     deployment           ProtocolDeployment @relation(fields: [protocolDeploymentId], references: [id])
     protocolDeploymentId Int
     liquidSlotNumber     Int
-    liquid               Liquid             @relation(fields: [liquidId], references: [id])
+    liquid               PermanentLiquid    @relation(fields: [liquidId], references: [id])
     liquidId             Int
     liquidAmount         Int
 }
@@ -133,25 +133,25 @@ model ExecutedStep {
 }
 
 model LiquidApplication {
-    id                    Int        @id @default(autoincrement())
-    liquidInfo            LiquidInfo @relation(fields: [liquidInfoId], references: [id])
-    step                  Step       @relation(fields: [stepId], references: [id])
+    id                    Int              @id @default(autoincrement())
+    liquidInfo            LiquidInfo       @relation(fields: [liquidInfoId], references: [id])
+    liquidInfoId          Int
+    step                  Step             @relation(fields: [stepId], references: [id])
+    stepId                Int              @unique
     liquidIncubationTime  Int // Stores seconds
     incubationTemperature Int
-    autoWash              Boolean    @default(true) // whether to do auto wash (specified in protocol wash settings) after application
-    liquidId              Int
-    stepId                Int        @unique
-    liquidInfoId          Int
-    Liquid                Liquid     @relation(fields: [liquidId], references: [id])
+    autoWash              Boolean          @default(true) // whether to do auto wash (specified in protocol wash settings) after application
+    permanentLiquid       PermanentLiquid? @relation(fields: [permanentLiquidId], references: [id])
+    permanentLiquidId     Int?
 }
 
 model Washing {
-    id             Int        @id @default(autoincrement())
+    id             Int             @id @default(autoincrement())
     iter           Int
     incubationTime Int //Seconds
-    washingLiquid  Liquid     @relation(fields: [liquidId], references: [id])
-    Step           Step?      @relation(fields: [stepId], references: [id]) // Optional because washing may be related to default protocol configuration
-    stepId         Int?       @unique
+    washingLiquid  PermanentLiquid @relation(fields: [liquidId], references: [id])
+    Step           Step?           @relation(fields: [stepId], references: [id]) // Optional because washing may be related to default protocol configuration
+    stepId         Int?            @unique
     liquidId       Int
     Protocol       Protocol[]
 }
@@ -169,11 +169,11 @@ model LiquidInfo {
     name              String
     type              LiquidType          @relation(fields: [liquidTypeId], references: [id])
     liquidTypeId      Int
-    liquid            Liquid?
+    liquid            PermanentLiquid? // Reference is optional because some liquids are custom-made for a protocol and are not permenent
     LiquidApplication LiquidApplication[]
 }
 
-model Liquid {
+model PermanentLiquid {
     id                     Int                      @id @default(autoincrement())
     liquidInfo             LiquidInfo               @relation(fields: [liquidInfoId], references: [id])
     shortname              String?
@@ -182,15 +182,12 @@ model Liquid {
     requiresCooling        Boolean                  @default(false)
     Protocol               Protocol[]
     DeploymentLiquidConfig DeploymentLiquidConfig[]
-    liquidTypeId           Int
     Washing                Washing[]
     liquidInfoId           Int                      @unique
-    LiquidType             LiquidType               @relation(fields: [liquidTypeId], references: [id])
 }
 
 model LiquidType {
     id         Int          @id @default(autoincrement())
     name       String       @unique
     LiquidInfo LiquidInfo[]
-    Liquid     Liquid[]
 }

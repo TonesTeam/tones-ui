@@ -41,16 +41,14 @@ async function main() {
      * Liquids
      */
     const findOrCreateLiquid = async (name: string, type: LiquidType) => {
-        let lid = (await prisma.liquid.findFirst({ where: { name } }))?.id ?? -1;
-        return await prisma.liquid.upsert({
+        let lid = (await prisma.permanentLiquid.findFirst({ where: { liquidInfo: {name}} }))?.id ?? -1;
+        return await prisma.permanentLiquid.upsert({
             where: { id: lid }, update: {},
             create: {
-                name,
-                type: {
-                    connect: {
-                        id: type.id
-                    }
-                },
+                liquidInfo: {create: {
+                  name,
+                  type: {connect:{id: type.id}}  
+                }},
                 deleted: false,
                 requiresCooling: false,
             }
@@ -109,9 +107,9 @@ async function main() {
                         stepType: StepType.LIQUID_APPL,
                         liquidApplication: {
                             create: {
-                                liquid: {
+                                liquidInfo: {
                                     connect: {
-                                        id: antigenRet1.id
+                                        id: antigenRet1.liquidInfoId
                                     }
                                 },
                                 incubationTemperature: 50,

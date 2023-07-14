@@ -27,7 +27,7 @@ CREATE TABLE "Protocol" (
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "washingId" INTEGER NOT NULL,
     CONSTRAINT "Protocol_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Protocol_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Protocol_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Protocol_washingId_fkey" FOREIGN KEY ("washingId") REFERENCES "Washing" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE "DeploymentLiquidConfig" (
     "liquidId" INTEGER NOT NULL,
     "liquidAmount" INTEGER NOT NULL,
     CONSTRAINT "DeploymentLiquidConfig_protocolDeploymentId_fkey" FOREIGN KEY ("protocolDeploymentId") REFERENCES "ProtocolDeployment" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "DeploymentLiquidConfig_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "DeploymentLiquidConfig_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -112,15 +112,15 @@ CREATE TABLE "ExecutedStep" (
 -- CreateTable
 CREATE TABLE "LiquidApplication" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "liquidInfoId" INTEGER NOT NULL,
+    "stepId" INTEGER NOT NULL,
     "liquidIncubationTime" INTEGER NOT NULL,
     "incubationTemperature" INTEGER NOT NULL,
     "autoWash" BOOLEAN NOT NULL DEFAULT true,
-    "liquidId" INTEGER NOT NULL,
-    "stepId" INTEGER NOT NULL,
-    "liquidInfoId" INTEGER NOT NULL,
+    "permanentLiquidId" INTEGER,
     CONSTRAINT "LiquidApplication_liquidInfoId_fkey" FOREIGN KEY ("liquidInfoId") REFERENCES "LiquidInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "LiquidApplication_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "LiquidApplication_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "LiquidApplication_permanentLiquidId_fkey" FOREIGN KEY ("permanentLiquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -130,7 +130,7 @@ CREATE TABLE "Washing" (
     "incubationTime" INTEGER NOT NULL,
     "stepId" INTEGER,
     "liquidId" INTEGER NOT NULL,
-    CONSTRAINT "Washing_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "Liquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Washing_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Washing_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -152,15 +152,13 @@ CREATE TABLE "LiquidInfo" (
 );
 
 -- CreateTable
-CREATE TABLE "Liquid" (
+CREATE TABLE "PermanentLiquid" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "shortname" TEXT,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "requiresCooling" BOOLEAN NOT NULL DEFAULT false,
-    "liquidTypeId" INTEGER NOT NULL,
     "liquidInfoId" INTEGER NOT NULL,
-    CONSTRAINT "Liquid_liquidInfoId_fkey" FOREIGN KEY ("liquidInfoId") REFERENCES "LiquidInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Liquid_liquidTypeId_fkey" FOREIGN KEY ("liquidTypeId") REFERENCES "LiquidType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "PermanentLiquid_liquidInfoId_fkey" FOREIGN KEY ("liquidInfoId") REFERENCES "LiquidInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -182,7 +180,7 @@ CREATE UNIQUE INDEX "Washing_stepId_key" ON "Washing"("stepId");
 CREATE UNIQUE INDEX "TemperatureChange_stepId_key" ON "TemperatureChange"("stepId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Liquid_liquidInfoId_key" ON "Liquid"("liquidInfoId");
+CREATE UNIQUE INDEX "PermanentLiquid_liquidInfoId_key" ON "PermanentLiquid"("liquidInfoId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "LiquidType_name_key" ON "LiquidType"("name");
