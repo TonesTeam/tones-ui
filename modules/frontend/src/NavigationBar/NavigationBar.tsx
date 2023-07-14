@@ -74,14 +74,14 @@ export default function NavigationBar(props: any) {
                     {isOpen &&
                         <h3 id="nav-logo">💙TONES💙</h3>
                     }
-                    <img className={`nav-btn ${isOpen ? 'open' : 'closed'}`} src="../static/navbar_icons/Open.png" onClick={() => setOpen(prevOpen => !prevOpen)}></img>
+                    <img className={`nav-btn ${isOpen ? 'open' : 'closed'}`} src="./static/navbar_icons/Open.png" onClick={() => setOpen(prevOpen => !prevOpen)}></img>
                 </div>
 
             <div id="navbar-menu" className={`${isOpen ? 'navbar-menu-open' : 'navbar-menu-closed'}`}>
                 <NavBarItem itemData={itemData} icon="list" text="Protocol List" route="/list" />
-                <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol" />
+                <NavBarItem itemData={itemData} icon="edit" text="Create Protocol" route="/create/protocol/-1" />
                 <NavBarItem itemData={itemData} icon="history" text="History" />
-                <NavBarItem itemData={itemData} icon="cogs" text="Settings" />
+                <NavBarItem itemData={itemData} icon="cogs" text="Settings" route="/settings" />
                 <NavBarItem itemData={itemData} icon="sign-out-alt" text="Log out" route="/" />
             </div>
 

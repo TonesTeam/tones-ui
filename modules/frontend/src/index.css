@@ -40,8 +40,26 @@ body {
     margin: 0;
     padding: 0;
 	height: 100%;
-    /* -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale; */
+}
+
+p, h2,h3{
+    margin: 0;
+}
+
+input{
+    outline: none;  /*remove default selected style*/
+    border: none;
+    border-radius: 8px;
+    background-color: #eae8e8;
+    border: 1px solid #d5d5d5;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    font-size:1.1rem;
+}
+
+input:focus{
+    outline: 2px solid var(--color-primary);
 }
 
 .centering-flex-box {

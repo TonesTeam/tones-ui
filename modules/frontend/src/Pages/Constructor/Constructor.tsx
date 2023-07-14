@@ -8,6 +8,7 @@ import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/s
 import { StepType } from 'sharedlib/dto/stepType';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
 import {SVG_Icon} from "common/components";
+import { useParams } from "react-router-dom";
 
 const defTemp = 25; //default tempretaure for the system
 const liquidInjectTime: number = 10;
@@ -23,11 +24,14 @@ const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => 
 })
 
 export default function Constructor() {
+    const params = useParams();
+    const protoID = params.id;
+    
     const [blocks, setBlocks] = useState<StepDTO[]>([]);
     const [workBlock, setWorkBlock] = useState<StepDTO>();
     const [currentTemp, setCurrentTemp] = useState(defTemp);
     const [settingAutoWash, setSettingAutoWash] = useState(true);
-    const [preSave, showPreSave] = useState(false);
+    const [preSaveModal, showPreSaveModal] = useState(false);
     const [duration, setDuration] = useState<number>(0);
 
     useEffect(()=>{
@@ -149,7 +153,6 @@ export default function Constructor() {
             let lastTemp = (temps[temps.length-1].params as TemperatureStep).target as number
             setCurrentTemp(lastTemp)
         }
-
     }
 
     function refactorTemperature(blocks: StepDTO[]){
@@ -219,11 +222,7 @@ export default function Constructor() {
             else if (blocks[i].type == StepType.Temperature){
                 duration+=Math.abs((blocks[i].params as TemperatureStep).source-(blocks[i].params as TemperatureStep).target) * 2;
             }
-
-            console.log("Duration at index: ", duration)
         }
-        console.log("Duration after all calcs: ", duration)
-
         setDuration(duration);
     }
 
@@ -233,7 +232,7 @@ export default function Constructor() {
             <div id="main" className="global-constructor">
                 <div id="protocol-meta">
                     <h2>Protocol Constructor</h2>
-                    <button onClick={()=>showPreSave(true)}>Save Protocol</button>
+                    <button onClick={()=>showPreSaveModal(true)}>Save Protocol</button>
                 </div>
                 <div id='container'>
                     <div id="workspace">
@@ -309,12 +308,12 @@ export default function Constructor() {
             </div>
 
 
-            <div id="pre-save-wrapper" style={{display: preSave ? "flex" : "none"}}>
+            <div id="pre-save-wrapper" style={{display: preSaveModal ? "flex" : "none"}}>
                 <div className="pre-save-content">
                     <div className="header">
                         <div>Protocol name: ____________________</div>
                         <div>Duration: _________</div>
-                        <h2 onClick={()=>showPreSave(false)} style={{cursor: 'pointer'}}>&#x2716;</h2>
+                        <h2 onClick={()=>showPreSaveModal(false)} style={{cursor: 'pointer'}}>&#x2716;</h2>
                     </div>
 
                     <div className="body">
@@ -384,7 +383,7 @@ export default function Constructor() {
 
                     <div className="pre-save-footer">
                         <button id="save-prt">Save</button>
-                        <button id="edit-prt" onClick={()=>showPreSave(false)}>Edit</button>
+                        <button id="edit-prt" onClick={()=>showPreSaveModal(false)}>Edit</button>
                     </div>
                 </div>
             </div>

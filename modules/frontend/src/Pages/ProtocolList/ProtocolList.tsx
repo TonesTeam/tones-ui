@@ -77,7 +77,7 @@ function Protocol(props: any) {
 
                     <div className="protocol-options">
                         <div className="protocol-options">
-                            <button className={`proto-btn ${disableLaunch ? 'unavail' : 'avail'}`}>
+                            <button className={`proto-btn ${disableLaunch ? 'unavail' : 'avail'}`} onClick={() => navigate(`/prepare/${props.id}/liquids`)}>
                                     <i className="fas fa-play"></i>Prepare to Launch
                             </button>
 
@@ -87,7 +87,7 @@ function Protocol(props: any) {
                         </div>
 
                         <div className="protocol-options">
-                            <button className="proto-btn">
+                            <button className="proto-btn" onClick={() => navigate(`/create/protocol/${props.id}`)}>
                                 {/* <a href={`/launch/${props.id}`} onClick={() => navigate(`/edit/protocol/${props.id}`)}> */}
                                     <i className="fas fa-puzzle-piece"></i>Edit
                                     {/* </a> */}
