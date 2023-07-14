@@ -82,7 +82,8 @@ export function SVG_Icon(props: any) {
         xmlns="http://www.w3.org/2000/svg"
         width={props.size_x }
         height={props.size_y}
-        viewBox='0 0 470 510'>
+        viewBox='0 0 600 600'
+        style={{textAlign: 'center'}}>
           <path d={props.path} />
       </svg>
     )

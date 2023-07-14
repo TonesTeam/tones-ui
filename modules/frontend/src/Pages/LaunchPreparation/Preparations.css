@@ -1,0 +1,96 @@
+/*---------- STATUS BAR (BY STEPS) -----------*/
+:root{
+    --step1-init: #2d4cc9;
+    --step2-init: #8d98a9;
+    --step2-comp: #2641b1;
+    --step3-init: #9ba6b6;
+    --step3-comp: #1c3392;
+    --border-top-bottom: 33px;
+    --border-left: 20px;
+}
+
+#stage-bar{
+    width: 30vw;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 65px;
+    /* margin: auto; */
+}
+
+#stage-bar p{
+    color: #fff;
+}
+
+.stage{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#s1{
+    background-color: var(--step1-init);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+#s2{
+    background-color: var(--step2-init);
+}
+
+.stage.active#s2{
+    background-color: var(--step2-comp);
+}
+
+#s3{
+    background-color: var(--step3-init);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.stage.active#s3{
+    background-color: var(--step3-comp);
+}
+
+.pseudo{
+    position:absolute;
+    width: 0; 
+    height: 0; 
+    left: 0;
+    transition: all 0.2s ease;
+}
+
+.pseudo#step1{
+    border-top: var(--border-top-bottom) solid var(--step2-init);
+    border-bottom: var(--border-top-bottom) solid var(--step2-init);
+    border-left: var(--border-left) solid var(--step1-init);
+    border-radius: 0;
+}
+
+.stage.active#s2>.pseudo{
+    border-top-color: var(--step2-comp);
+    border-bottom-color: var(--step2-comp);
+    border-left-color: var(--step1-init);
+}
+
+.stage.active#s2+#s3>.pseudo{
+    border-top-color: var(--step3-init);
+    border-bottom-color: var(--step3-init);
+    border-left-color: var(--step2-comp);
+}
+
+.pseudo#step2{
+    border-top: var(--border-top-bottom) solid var(--step3-init);
+    border-bottom: var(--border-top-bottom) solid var(--step3-init);
+    border-left: var(--border-left) solid var(--step2-init);
+}
+
+.stage.active#s3>.pseudo{
+    border-top-color: var(--step3-comp) !important;
+    border-bottom-color: var(--step3-comp) !important;
+    border-left-color: var(--step2-comp);
+}
+
+/* ------------------------------------------- */

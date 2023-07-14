@@ -77,7 +77,7 @@ function Protocol(props: any) {
 
                     <div className="protocol-options">
                         <div className="protocol-options">
-                            <button className={`proto-btn ${disableLaunch ? 'unavail' : 'avail'}`} onClick={() => navigate(`/prepare/${props.id}/liquids`)}>
+                            <button className={`proto-btn ${disableLaunch ? 'unavail' : 'avail'}`} onClick={() => navigate(`/prepare/${props.id}`)}>
                                     <i className="fas fa-play"></i>Prepare to Launch
                             </button>
 
@@ -137,7 +137,7 @@ export default function ProtocolList() {
             <NavigationBar selectedItem='Protocol List' />
             <div id="main">
                 <div className="page-header">
-                    <h3>Protocol List</h3>
+                    <h2>Protocol List</h2>
                     <input value={filterInput}
                         type="text" className="search-bar" placeholder="🔎 Search for protocols..." onChange={inputHandler}></input>
                 </div>
