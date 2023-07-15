@@ -2,7 +2,7 @@ import { CommandSerializer } from "@service/commands/CommandSerializer";
 import { provide } from "inversify-binding-decorators";
 import * as lodash from "lodash";
 import { getComparator, groupBy } from "sharedlib/collection.util";
-import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
+import { DeploymentLiquidConfiguration } from "sharedlib/dto/legacy/liquidconfiguration.dto";
 import config from "sharedlib/tones-config.json";
 import { LiquidApplicationCommand } from "../../service/commands/Commands";
 

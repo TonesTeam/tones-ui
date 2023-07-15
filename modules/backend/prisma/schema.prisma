@@ -74,7 +74,7 @@ model Error {
     id              Int               @id @default(autoincrement())
     date            DateTime
     code            Int // Error code
-    level           String // CRITICAL, NON-CRITICAL, WARNING
+    level           String // CRITICAL, NON-CRITICAL, WARNING (ENUM)
     message         String
     DeploymentError DeploymentError[]
     GlobalStatus    GlobalStatus[]
@@ -91,7 +91,7 @@ model DeploymentError {
 model User {
     id        Int        @id @default(autoincrement())
     username  String     @unique
-    role      String
+    role      String // ENUM UserRole
     protocols Protocol[]
     deleted   Boolean    @default(false)
 }
@@ -115,7 +115,7 @@ model Step {
     protocol          Protocol           @relation(fields: [protocolId], references: [id])
     protocolId        Int
     sequenceOrder     Int
-    stepType          String
+    stepType          String // ENUM StepType
     liquidApplication LiquidApplication?
     washing           Washing?
     temperatureChange TemperatureChange?

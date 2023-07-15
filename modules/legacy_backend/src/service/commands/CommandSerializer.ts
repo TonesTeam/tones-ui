@@ -1,4 +1,4 @@
-import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
+import { DeploymentLiquidConfiguration } from "sharedlib/dto/legacy/liquidconfiguration.dto";
 import { Command, CommandType, LiquidApplicationCommand, TemperatureChangeCommand, WaitingCommand } from "./Commands";
 import config from "sharedlib/tones-config.json";
 import { provide } from "inversify-binding-decorators";

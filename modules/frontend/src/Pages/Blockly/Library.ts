@@ -2,7 +2,7 @@ import Blockly, { Block } from 'blockly';
 import 'blockly/python';
 import { getRequest } from 'common/util';
 import { groupByMapped } from "sharedlib/collection.util";
-import { LiquidDto } from "sharedlib/dto/liquid.dto";
+import { LiquidDto } from "sharedlib/dto/legacy/liquid.dto";
 import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
 import './BlocklyFunction';
 

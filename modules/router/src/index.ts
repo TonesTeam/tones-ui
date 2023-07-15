@@ -5,6 +5,13 @@ const app = express()
 const port: number = Number(process.env.ROUTER_PORT)
 const FEProxy = httpProxy.createProxyServer();
 
+app.all("/api/v2/*", (req, res) => {
+	var url = new URL("http://" + req.headers.host!)
+	url.port = process.env.BE_PORT!
+	const opts = { target: url.toString() }
+	FEProxy.web(req, res, opts);
+})
+
 app.all("/api/*", (req, res) => {
 	var url = new URL("http://" + req.headers.host!)
 	url.port = process.env.LEGACY_BE_PORT!
