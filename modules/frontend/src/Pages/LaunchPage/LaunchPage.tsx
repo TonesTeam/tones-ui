@@ -1,7 +1,6 @@
 import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
 import "./LaunchPage.css";
-import "common/style.css";
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { discard, error, resume, ProtocolState, Status } from 'state/progress';
 import { useParams } from "react-router-dom";

@@ -1,48 +1,27 @@
-:root {
+/* :root {
     --root-font-size: 20px;
-    /* --color-1: #bacddb; */
-    /* --color-2: #123d5f; */
-    /* --color-3: #4242ff; */
-}
-
-:root {
     --color-1: #bacddb;
     --color-2: #123d5f;
     --color-3: #4242ff;
     --color-4: #465499;
     --color-5: #151738;
-}
+} */
 
-html {
+
+/* html {
     font-size: var(--root-font-size);
     -webkit-tap-highlight-color: rgba(0,0,0,0);
+    overflow: hidden;
 }
 
 body {
-    font-family: Arial, sans-serif;
     background-color: #f1f1f1;
     margin: 0;
     padding: 0;
-}
+} */
 
-.centering-flex-box {
+/* .centering-flex-box {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* h3, h4, h5{
-    font-family: "RubikBold";
 } */
-
-button {
-    box-shadow: -1px 1px 49px -10px rgba(18, 62, 95, 0.5);
-    border-radius: 30px;
-    border: none;
-    font-family: "RubikBold";
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    text-decoration: none;
-    cursor: pointer;
-}

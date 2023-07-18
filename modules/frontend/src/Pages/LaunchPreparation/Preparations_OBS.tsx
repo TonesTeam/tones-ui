@@ -11,7 +11,7 @@ import { ProtocolDto } from "sharedlib/dto/protocol.dto";
 import { useAppDispatch } from "state/hooks";
 import { addAndRun, finish, moveProgress, Status } from "state/progress";
 import { store } from "state/store";
-import "./Recommendations.css";
+import "./Preparations.css";
 
 
 
@@ -71,7 +71,7 @@ function incProtocol() {
 }
 setTimeout(incProtocol, duration * 10)
 
-export default function Recommendations() {
+export default function Preparation_OBS() {
     const headers = ['A', 'B', 'C', 'D', 'E', 'F'];
     const rows = 6;
     const columns = 6;
