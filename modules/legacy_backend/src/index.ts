@@ -30,7 +30,7 @@ const parser = serialport.pipe(new DelimiterParser({ delimiter: ';\n', includeDe
 container.bind(SerialPort).toConstantValue(serialport);
 container.bind<DelimiterParser>(DelimiterParser).toConstantValue(parser);
 
-let server = new InversifyExpressServer(container, null, { rootPath: "/api" });
+let server = new InversifyExpressServer(container, null, { rootPath: "/api/v1" });
 server.setConfig(app => {
 	app.use(bodyParser.text({ type: '*/*' }));
 })
@@ -41,7 +41,7 @@ server.setErrorConfig(app => {
 	})
 })
 let app = server.build();
-const port = process.env.BE_PORT ?? 8080
+const port = process.env.LEGACY_BE_PORT ?? 8080
 
 app.listen(port, () => {
 	console.log("Magic word is", config["magic-word"])

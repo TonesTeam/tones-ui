@@ -31,7 +31,7 @@ client.interceptors.response.use(originalResponse => {
 
 
 const domain = window.location.origin
-const prefix = "/api"
+const prefix = "/api/v1"
 
 export async function getRequest<T>(path: string): Promise<AxiosResponse<T, any>> {
     const fullpath = domain + prefix + path

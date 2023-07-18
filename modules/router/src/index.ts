@@ -7,7 +7,7 @@ const FEProxy = httpProxy.createProxyServer();
 
 app.all("/api/*", (req, res) => {
 	var url = new URL("http://" + req.headers.host!)
-	url.port = process.env.BE_PORT!
+	url.port = process.env.LEGACY_BE_PORT!
 	const opts = { target: url.toString() }
 	FEProxy.web(req, res, opts);
 })
