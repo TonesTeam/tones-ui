@@ -97,7 +97,7 @@ async function main() {
                 create: {
                     incubationTime: 5,
                     iter: 2,
-                    washingLiquid: { connect: { id: wash1.id } }
+                    permanentLiquid: { connect: { id: wash1.id } }
                 }
             },
             steps: {

@@ -35,20 +35,62 @@ export class DatabaseService {
         });
     }
 
+    async getProtocolById(id: number) {
+        return await this.prisma.protocol.findUnique({
+            where: { id },
+            include: {
+                steps: {
+                    include: {
+                        liquidApplication: {
+                            include: {
+                                liquidInfo: {
+                                    include: {
+                                        permanentLiquid: true
+                                    }
+                                }
+                            }
+                        },
+                        temperatureChange: true,
+                        washing: {
+                            include: {
+                                permanentLiquid: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
     async getUsers() {
         return await this.prisma.user.findMany();
     }
 
-    async getLiquids() {
+    async getPermanentLiquids() {
         return await this.prisma.permanentLiquid.findMany({
             include: {
-                liquidInfo: true
+                liquidInfo: {
+                    include: {
+                        type: true
+                    }
+                }
             }
         });
+    }
+    
+    async getCustomLiquids() {
+        return await this.prisma.liquidInfo.findMany({
+            where: {
+                permanentLiquid: null
+            }
+        })        
     }
 }
 
 let a = new DatabaseService();
 export type FullProtocols = Prisma.PromiseReturnType<typeof a.getProtocols>;
 export type FullProtocol = FullProtocols[0];
+export type SteppedProtocol = Prisma.PromiseReturnType<typeof a.getProtocolById>;
+export type ProtocolStep = SteppedProtocol['steps'][0]
+
 

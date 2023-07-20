@@ -42,11 +42,11 @@ CREATE TABLE "ProtocolDeployment" (
 CREATE TABLE "DeploymentLiquidConfig" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "protocolDeploymentId" INTEGER NOT NULL,
+    "liquidInfoId" INTEGER NOT NULL,
     "liquidSlotNumber" INTEGER NOT NULL,
-    "liquidId" INTEGER NOT NULL,
     "liquidAmount" INTEGER NOT NULL,
     CONSTRAINT "DeploymentLiquidConfig_protocolDeploymentId_fkey" FOREIGN KEY ("protocolDeploymentId") REFERENCES "ProtocolDeployment" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "DeploymentLiquidConfig_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "DeploymentLiquidConfig_liquidInfoId_fkey" FOREIGN KEY ("liquidInfoId") REFERENCES "LiquidInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -117,10 +117,8 @@ CREATE TABLE "LiquidApplication" (
     "liquidIncubationTime" INTEGER NOT NULL,
     "incubationTemperature" INTEGER NOT NULL,
     "autoWash" BOOLEAN NOT NULL DEFAULT true,
-    "permanentLiquidId" INTEGER,
     CONSTRAINT "LiquidApplication_liquidInfoId_fkey" FOREIGN KEY ("liquidInfoId") REFERENCES "LiquidInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "LiquidApplication_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "LiquidApplication_permanentLiquidId_fkey" FOREIGN KEY ("permanentLiquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "LiquidApplication_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -128,9 +126,9 @@ CREATE TABLE "Washing" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "iter" INTEGER NOT NULL,
     "incubationTime" INTEGER NOT NULL,
+    "permanentLiquidId" INTEGER NOT NULL,
     "stepId" INTEGER,
-    "liquidId" INTEGER NOT NULL,
-    CONSTRAINT "Washing_liquidId_fkey" FOREIGN KEY ("liquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Washing_permanentLiquidId_fkey" FOREIGN KEY ("permanentLiquidId") REFERENCES "PermanentLiquid" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Washing_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 

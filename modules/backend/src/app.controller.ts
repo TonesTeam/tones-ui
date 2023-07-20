@@ -1,6 +1,5 @@
 import { Controller, Get, Logger, Param, ParseIntPipe } from '@nestjs/common';
 import { AppService } from './app.service';
-import { DatabaseService } from './db.service';
 
 @Controller()
 export class AppController {
@@ -19,7 +18,14 @@ export class AppController {
 
     @Get("protocol/:id")
     getProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
-        
+        this.logger.log(`Retrieving protocol ${id}`)
+        return this.appService.getProtocolSteps(id);
+    }
+
+    @Get("liquids")
+    getPermanentLiquids() {
+        this.logger.log("Retrieving all liquids");
+        return this.appService.getPermanentLiquids();
     }
 
 }
