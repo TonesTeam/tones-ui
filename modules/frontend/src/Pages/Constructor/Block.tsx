@@ -1,10 +1,10 @@
-import { LiquidDto } from 'sharedlib/dto/liquid.dto';
+import { LiquidDto } from 'sharedlib/dto/legacy/liquid.dto';
 import './Block.css'
 import { getRequest } from 'common/util';
 import React, { useEffect, useState } from 'react';
 import {SVG_Icon, CustomSelect, ToggleInput } from 'common/components';
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
-import { StepType } from 'sharedlib/dto/stepType';
+import { StepType } from 'sharedlib/enum/DBEnums';
 
 const liquids = (await getRequest<LiquidDto[]>("/blockly/liquids")).data;
 
@@ -92,7 +92,7 @@ function ReagentInputs(props: { stepData: StepDTO; change: (arg0: ReagentStep) =
             <div className="block-body-row">
                 <div className="block-inp">
                     <label>Reagent:</label>
-                    <CustomSelect options={liquids} opt_name={'liquidID'} inputChange={handleChange} selected={reagParams.liquidID || null}></CustomSelect>
+                    <CustomSelect options={liquids} opt_name={'liquidID'} inputChange={handleChange} selected={reagParams.liquidId || null}></CustomSelect>
                     {/* <select id='reag-sel-liquid' defaultValue={liquid}>
                         {liquids.map((liq, index) => {
                             return (
@@ -185,9 +185,9 @@ export const WorkBlock: React.FC<WorkBlockProps> = ({ block, addBlock, editBlock
     return (
         <>
             <div className="inputs">
-                {block.type==StepType.Washing && <WashInputs stepData={block} change={updateParams}></WashInputs>}
-                {block.type==StepType.Reagent && <ReagentInputs stepData={block} change={updateParams}></ReagentInputs>}
-                {block.type==StepType.Temperature && <TemperatureInputs stepData={block} change={updateParams}></TemperatureInputs>}
+                {block.type==StepType.WASHING && <WashInputs stepData={block} change={updateParams}></WashInputs>}
+                {block.type==StepType.LIQUID_APPL && <ReagentInputs stepData={block} change={updateParams}></ReagentInputs>}
+                {block.type==StepType.TEMP_CHANGE && <TemperatureInputs stepData={block} change={updateParams}></TemperatureInputs>}
             </div>
             <div className='block-footer'>
                 <button id="constr-settings" onClick={()=>setSettings(true)}>
@@ -277,7 +277,7 @@ export const StepBlock: React.FC<StepBlockProps> = ({ block, removeBlock, editTo
                 </div>
             </div>
             <div className='step-params'>
-                {block.type==StepType.Washing &&
+                {block.type==StepType.WASHING &&
                 <>
                 <div className='param-row'>
                     <div className='param-cell'>
@@ -303,12 +303,12 @@ export const StepBlock: React.FC<StepBlockProps> = ({ block, removeBlock, editTo
                 </>
                 }
 
-                {block.type==StepType.Reagent &&
+                {block.type==StepType.LIQUID_APPL &&
                 <>
                 <div className='param-row'>
                     <div className='param-cell'>
                         <span>With:</span>
-                        <p>{(block.params as ReagentStep).liquidID}</p>
+                        <p>{(block.params as ReagentStep).liquidId}</p>
                     </div>
                     <div className='param-cell'>
                         <span>At:</span>
@@ -339,7 +339,7 @@ export const StepBlock: React.FC<StepBlockProps> = ({ block, removeBlock, editTo
                 </>
                 }
 
-                {block.type==StepType.Temperature &&
+                {block.type==StepType.TEMP_CHANGE &&
                 <>
                 <div className='param-row'>
                     <div className='param-cell'>

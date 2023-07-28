@@ -1,6 +1,5 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get, Logger, Param, ParseIntPipe } from '@nestjs/common';
 import { AppService } from './app.service';
-import { DatabaseService } from './db.service';
 
 @Controller()
 export class AppController {
@@ -9,22 +8,30 @@ export class AppController {
 
     constructor(
         private readonly appService: AppService,
-        private readonly dbService: DatabaseService,
     ) { }
 
-    @Get()
-    getHello(): string {
-        return this.appService.getHello();
+    @Get("protocols")
+    getProtocols() {
+        this.logger.log("Retrieving all protocols")
+        return this.appService.getProtocols();
     }
 
-    @Get("test")
-    async getUsers() {
-        return await this.dbService.getUsers()
+    @Get("protocol/:id")
+    getProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Retrieving protocol ${id}`)
+        return this.appService.getProtocolSteps(id);
     }
 
     @Get("liquids")
-    async getLiquids() {
-        return await this.dbService.getLiquids()
+    getPermanentLiquids() {
+        this.logger.log("Retrieving all liquids");
+        return this.appService.getPermanentLiquids();
+    }
+
+    @Get("/protocol/:id/custom-liquids")
+    getCustomProtocolLiquids(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Retrieving custom liquids for protocol ${id}`);
+        return this.appService.getCustomProtocolLiquids(id);
     }
 
 }

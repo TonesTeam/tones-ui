@@ -11,7 +11,7 @@ import { ControllerMessageInterface } from "@service/external/ControllerMessageI
 import { Message, MessageChannel } from "@service/external/Message";
 import { inject } from "inversify";
 import { BaseHttpController, controller, httpDelete, httpGet, queryParam, requestParam } from "inversify-express-utils";
-import { DeploymentLiquidConfiguration } from "sharedlib/dto/liquidconfiguration.dto";
+import { DeploymentLiquidConfiguration } from "sharedlib/dto/legacy/liquidconfiguration.dto";
 import { Logger } from "tslog";
 
 @controller("/protocol")

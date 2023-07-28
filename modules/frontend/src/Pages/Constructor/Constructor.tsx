@@ -5,7 +5,7 @@ import './Constructor.css'
 //import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
 import { StepBlock, WorkBlock } from './Block';
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto';
-import { StepType } from 'sharedlib/dto/stepType';
+import { StepType } from 'sharedlib/enum/DBEnums';
 import { DragDropContext, Draggable, DraggableStateSnapshot, DragUpdate, Droppable, DropResult } from 'react-beautiful-dnd'
 import {SVG_Icon} from "common/components";
 import { useParams } from "react-router-dom";
@@ -70,7 +70,7 @@ export default function Constructor() {
             return (prev.id > current.id) ? prev : current
         })).id +1) // reduce() returns object
         
-        if(blockToAdd.type == StepType.Reagent){
+        if(blockToAdd.type == StepType.LIQUID_APPL){
             (blockToAdd.params as ReagentStep).autoWash = settingAutoWash;
         }
 
@@ -79,7 +79,7 @@ export default function Constructor() {
         
         setWorkBlock(undefined) //remove working block from workspace
 
-        if(blockToAdd.type == StepType.Temperature){
+        if(blockToAdd.type == StepType.TEMP_CHANGE){
             let newTemp = (blockToAdd.params as TemperatureStep).target;
             setCurrentTemp(newTemp) //update current temperature for next steps
         }
@@ -93,9 +93,9 @@ export default function Constructor() {
 
     const removeBlock = (toRemove:StepDTO) => {
 
-        if(toRemove.type==StepType.Temperature){
+        if(toRemove.type==StepType.TEMP_CHANGE){
             let temps = blocks.filter((block) => {
-                return block.type == StepType.Temperature;
+                return block.type == StepType.TEMP_CHANGE;
             });
     
             if(temps.length!=0){
@@ -117,7 +117,7 @@ export default function Constructor() {
         let index = blocks.findIndex(x=>x.id==block.id);
         let newBlocks = [...blocks]
 
-        if(block.type == StepType.Temperature){
+        if(block.type == StepType.TEMP_CHANGE){
             let newTemp = (block.params as TemperatureStep).target as number
             setCurrentTemp(newTemp)//props.params.find(i=>i.name=='targetTemp')?.value)
         }
@@ -146,7 +146,7 @@ export default function Constructor() {
         setBlocks(updatedTemp)
 
         let temps = updatedTemp.filter((block) => {
-            return block.type == StepType.Temperature;
+            return block.type == StepType.TEMP_CHANGE;
         });
 
         if(temps.length!=0){
@@ -160,7 +160,7 @@ export default function Constructor() {
         let current = defTemp;
 
         for (let i=0; i<refactBlocks.length; i++){
-            if(refactBlocks[i].type==StepType.Temperature){
+            if(refactBlocks[i].type==StepType.TEMP_CHANGE){
                 let temp_params = refactBlocks[i].params as TemperatureStep
                 const fromTemp = temp_params.source;
                 const target = temp_params.target;
@@ -189,7 +189,7 @@ export default function Constructor() {
         let refactBlocks = [...blocks]
         let currentTemp = defTemp
         for (let i=0; i<refactBlocks.length; i++){
-            if(refactBlocks[i].type==StepType.Temperature){
+            if(refactBlocks[i].type==StepType.TEMP_CHANGE){
                 currentTemp = (refactBlocks[i].params as TemperatureStep).target as number
                 //filter redundant blocks later
                 if((refactBlocks[i].params as TemperatureStep).source == (refactBlocks[i].params as TemperatureStep).target){
@@ -210,16 +210,16 @@ export default function Constructor() {
     function calcDuration (blocks: StepDTO[]){
         let duration = 0;
         for (let i=0; i<blocks.length; i++){
-            if (blocks[i].type == StepType.Washing){
+            if (blocks[i].type == StepType.WASHING){
                 duration+=Number((blocks[i].params as WashStep).iters) * (Number((blocks[i].params as WashStep).incubation)+Number(liquidInjectTime))
             }
-            else if (blocks[i].type == StepType.Reagent){
+            else if (blocks[i].type == StepType.LIQUID_APPL){
                 duration+=Number((blocks[i].params as ReagentStep).incubation) + liquidInjectTime;
                 if((blocks[i].params as ReagentStep).autoWash){
                     duration+=(10+liquidInjectTime) * 3 //autoWash procedure TODO: READ FROM DEFAULT WASHING CONFIG!
                 }
             }
-            else if (blocks[i].type == StepType.Temperature){
+            else if (blocks[i].type == StepType.TEMP_CHANGE){
                 duration+=Math.abs((blocks[i].params as TemperatureStep).source-(blocks[i].params as TemperatureStep).target) * 2;
             }
         }
@@ -237,21 +237,21 @@ export default function Constructor() {
                 <div id='container'>
                     <div id="workspace">
                         <div className="options">
-                            <button className="construct-btn" id="cb-washing" onClick={() => showWorkBlock(({type:StepType.Washing, id:-1, params:{} as WashStep} as StepDTO))}>
+                            <button className="construct-btn" id="cb-washing" onClick={() => showWorkBlock(({type:StepType.WASHING, id:-1, params:{} as WashStep} as StepDTO))}>
                                 <div>
                                     <SVG_Icon size_x={25} size_y={25} path="M192 512C86 512 0 426 0 320C0 228.8 130.2 57.7 166.6 11.7C172.6 4.2 181.5 0 191.1 0h1.8c9.6 0 18.5 4.2 24.5 11.7C253.8 57.7 384 228.8 384 320c0 106-86 192-192 192zM96 336c0-8.8-7.2-16-16-16s-16 7.2-16 16c0 61.9 50.1 112 112 112c8.8 0 16-7.2 16-16s-7.2-16-16-16c-44.2 0-80-35.8-80-80z"/>
                                 </div>
                                 <p>WASHING</p>
                             </button>
 
-                            <button className="construct-btn" id="cb-reagent" onClick={() => showWorkBlock(({type:StepType.Reagent, id:-1, params:{} as ReagentStep} as StepDTO))}>
+                            <button className="construct-btn" id="cb-reagent" onClick={() => showWorkBlock(({type:StepType.LIQUID_APPL, id:-1, params:{} as ReagentStep} as StepDTO))}>
                                 <div>
                                 <SVG_Icon size_x={25} size_y={25}  path="M288 0H160 128C110.3 0 96 14.3 96 32s14.3 32 32 32V196.8c0 11.8-3.3 23.5-9.5 33.5L10.3 406.2C3.6 417.2 0 429.7 0 442.6C0 480.9 31.1 512 69.4 512H378.6c38.3 0 69.4-31.1 69.4-69.4c0-12.8-3.6-25.4-10.3-36.4L329.5 230.4c-6.2-10.1-9.5-21.7-9.5-33.5V64c17.7 0 32-14.3 32-32s-14.3-32-32-32H288zM192 196.8V64h64V196.8c0 23.7 6.6 46.9 19 67.1L309.5 320h-171L173 263.9c12.4-20.2 19-43.4 19-67.1z"/>
                                 </div>
                                 <p>REAGENT</p>
                             </button>
 
-                            <button className="construct-btn" id="cb-temperature" onClick={() => showWorkBlock(({type:StepType.Temperature, id:-1, params:{source:currentTemp, target: -1} as TemperatureStep} as StepDTO))}>
+                            <button className="construct-btn" id="cb-temperature" onClick={() => showWorkBlock(({type:StepType.TEMP_CHANGE, id:-1, params:{source:currentTemp, target: -1} as TemperatureStep} as StepDTO))}>
                                 <div>
                                     <SVG_Icon size_x={25} size_y={25}  path="M448 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM320 96a96 96 0 1 1 192 0A96 96 0 1 1 320 96zM144 64c-26.5 0-48 21.5-48 48V276.5c0 17.3-7.1 31.9-15.3 42.5C70.2 332.6 64 349.5 64 368c0 44.2 35.8 80 80 80s80-35.8 80-80c0-18.5-6.2-35.4-16.7-48.9c-8.2-10.6-15.3-25.2-15.3-42.5V112c0-26.5-21.5-48-48-48zM32 112C32 50.2 82.1 0 144 0s112 50.1 112 112V276.5c0 .1 .1 .3 .2 .6c.2 .6 .8 1.6 1.7 2.8c18.9 24.4 30.1 55 30.1 88.1c0 79.5-64.5 144-144 144S0 447.5 0 368c0-33.2 11.2-63.8 30.1-88.1c.9-1.2 1.5-2.2 1.7-2.8c.1-.3 .2-.5 .2-.6V112zM192 368c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-20.9 13.4-38.7 32-45.3V272c0-8.8 7.2-16 16-16s16 7.2 16 16v50.7c18.6 6.6 32 24.4 32 45.3z"/>
                                 </div>
@@ -338,34 +338,34 @@ export default function Constructor() {
                                         </td>
                                         <td><p>{block.type}</p></td>
                                         <td>
-                                            {block.type != StepType.Temperature &&
-                                                <p>{(block.params as WashStep | ReagentStep).liquidID}</p>
+                                            {block.type != StepType.TEMP_CHANGE &&
+                                                <p>{(block.params as WashStep | ReagentStep).liquidId}</p>
                                             }
-                                            {block.type == StepType.Temperature &&
+                                            {block.type == StepType.TEMP_CHANGE &&
                                                 <p>-</p>
                                             }
                                         </td>
                                         <td>
-                                            {block.type != StepType.Temperature &&
+                                            {block.type != StepType.TEMP_CHANGE &&
                                                 <p>{(block.params as WashStep | ReagentStep).temperature}°C</p>
                                             }
-                                            {block.type == StepType.Temperature &&
+                                            {block.type == StepType.TEMP_CHANGE &&
                                                 <p>{(block.params as TemperatureStep).target}°C</p>
                                             }
                                         </td>
                                         <td>
-                                            {block.type != StepType.Temperature &&
+                                            {block.type != StepType.TEMP_CHANGE &&
                                                 <p>{(block.params as WashStep | ReagentStep).incubation}</p>
                                             }
-                                            {block.type == StepType.Temperature &&
+                                            {block.type == StepType.TEMP_CHANGE &&
                                                 <p>-</p>
                                             }
                                         </td>
                                         <td>
-                                            {block.type == StepType.Washing &&
+                                            {block.type == StepType.WASHING &&
                                                 <p>{(block.params as WashStep).iters}</p>
                                             }
-                                            {block.type != StepType.Washing &&
+                                            {block.type != StepType.WASHING &&
                                                 <p>-</p>
                                             }
                                         </td>

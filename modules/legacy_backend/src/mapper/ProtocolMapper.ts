@@ -4,7 +4,7 @@ import { Protocol } from "@entity/Protocol";
 import { StepType } from "@entity/Step";
 import { provide } from "inversify-binding-decorators";
 import { groupBy, toMap } from "sharedlib/collection.util";
-import { ProtocolDto, UsedProtocolLiquid } from "sharedlib/dto/protocol.dto";
+import { ProtocolDto, UsedProtocolLiquid } from "sharedlib/dto/legacy/protocol.dto";
 import config from "sharedlib/tones-config.json";
 
 @provide(ProtocolMapper)
