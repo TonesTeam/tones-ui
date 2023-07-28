@@ -19,7 +19,7 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "declaration": true,
-    "composite": true,
+    "composite": true
   },
   "include": [
     "index.ts",

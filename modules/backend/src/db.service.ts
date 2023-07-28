@@ -77,13 +77,20 @@ export class DatabaseService {
             }
         });
     }
-    
-    async getCustomLiquids() {
+
+    async getCustomProtocolLiquids(id: number) {
         return await this.prisma.liquidInfo.findMany({
             where: {
-                permanentLiquid: null
+                permanentLiquid: null,
+                liquidApplication: {
+                    some: {
+                        step: {
+                            protocolId: id
+                        }
+                    }
+                }
             }
-        })        
+        })
     }
 }
 

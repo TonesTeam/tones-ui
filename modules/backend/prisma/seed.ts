@@ -116,6 +116,27 @@ async function main() {
                                 liquidIncubationTime: 200
                             }
                         }
+                    },
+                    {
+                        sequenceOrder: 2,
+                        stepType: StepType.LIQUID_APPL,
+                        liquidApplication: {
+                            create: {
+                                liquidInfo: {
+                                    create: {
+                                        name: "P1 Custom Antigen",
+                                        type: {
+                                            connect: {
+                                                id: antigenRetrievalType.id
+                                            }
+                                        },
+
+                                    }
+                                },
+                                incubationTemperature: 60,
+                                liquidIncubationTime: 210
+                            }
+                        }
                     }
                 ]
             },

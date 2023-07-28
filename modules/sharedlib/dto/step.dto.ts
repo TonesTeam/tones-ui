@@ -1,4 +1,4 @@
-import { StepType } from "sharedlib/enum/DBEnums";
+import { StepType } from "../enum/DBEnums";
 
 export interface StepDTO {
     type: StepType;
@@ -19,7 +19,7 @@ export interface WashStep extends StepParams {
 export interface ReagentStep extends StepParams {
     //id: number;
     incubation: number;
-    liquidID: number;
+    liquidId: number;
     autoWash: boolean;
     temperature: number; //at which step is applied, calculated
 }

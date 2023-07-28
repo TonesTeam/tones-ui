@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService, FullProtocol, FullProtocols, ProtocolStep } from './db.service';
+import { DatabaseService, FullProtocols, ProtocolStep } from './db.service';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { StepDTO, ReagentStep, StepParams, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto'
-import { LiquidDTO, PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto'
+import { PermanentLiquidDTO, LiquidDTO } from 'sharedlib/dto/liquid.dto'
 import { StepType } from 'sharedlib/enum/DBEnums';
 
 
@@ -28,7 +28,7 @@ export class AppService {
 
     async getProtocolSteps(id: number) {
         let p = await this.dbService.getProtocolById(id);
-        return p.steps.map(this.stepToDto);
+        return p.steps.map(s => this.stepToDto(s));
     }
 
     async getPermanentLiquids() {
@@ -42,8 +42,8 @@ export class AppService {
         } as PermanentLiquidDTO))
     }
 
-    async getCustomLiquids() {
-        let liquids = await this.dbService.getCustomLiquids()
+    async getCustomProtocolLiquids(id: number) {
+        let liquids = await this.dbService.getCustomProtocolLiquids(id)
         return liquids.map(l => ({
             categoryId: l.liquidTypeId,
             categoryName: l.name,
@@ -67,7 +67,7 @@ export class AppService {
             case StepType.LIQUID_APPL:
                 return {
                     incubation: step.liquidApplication.liquidIncubationTime,
-                    liquidID: step.liquidApplication.liquidInfo.id,
+                    liquidId: step.liquidApplication.liquidInfo.id,
                     autoWash: step.liquidApplication.autoWash,
                     temperature: step.liquidApplication.incubationTemperature,
                     custom: step.liquidApplication.liquidInfo.permanentLiquid === null

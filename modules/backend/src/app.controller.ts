@@ -28,4 +28,10 @@ export class AppController {
         return this.appService.getPermanentLiquids();
     }
 
+    @Get("/protocol/:id/custom-liquids")
+    getCustomProtocolLiquids(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Retrieving custom liquids for protocol ${id}`);
+        return this.appService.getCustomProtocolLiquids(id);
+    }
+
 }
