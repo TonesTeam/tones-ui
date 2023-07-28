@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Logger } from "tslog";
-import { Connection, createConnection, EntityTarget, ObjectType, Repository } from "typeorm";
+import { Connection, createConnection, EntityTarget, ObjectLiteral, ObjectType, Repository } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { connectionOptions } from "./ormconfig";
 @provide(DatabaseService)

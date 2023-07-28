@@ -1,6 +1,10 @@
-
-export interface LiquidDto {
+export interface LiquidDTO {
+    categoryId: number;
+    categoryName: string;
+    id: number;
     name: string;
-    type: string;
-    subType: string;
+}
+
+export interface PermanentLiquidDTO extends LiquidDTO {
+    usedCold: boolean;
 }

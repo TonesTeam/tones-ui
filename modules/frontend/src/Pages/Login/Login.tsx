@@ -1,4 +1,3 @@
-import MainKeyboard from 'common/MainKeyboard';
 import React, { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tsiLogo from "/static/HistOne_logo.png";
@@ -36,7 +35,6 @@ export default function Login() {
 
     const [credentials, setCredentials] = useReducer(credReducer, { username: "tones", password: "admin" });
     const [input, setInput] = useState(""); //name of currently active input
-    const [showKeyboard, setShowKeyboard] = useState(false);
     const [invalidCreds, setInvalidCreds] = useState(false);
     const navigate = useNavigate();
 
@@ -52,54 +50,45 @@ export default function Login() {
             setInvalidCreds(false);
         }
         setInput(e.target.name);
-        setShowKeyboard(true)
+        e.target.parentElement!.className+=" active"
     }
 
     return (
         <>
             <div id="background">
-                <div className="login-form font-rb" >
+                <div id="login-form" >
                     <form onSubmit={handleLogin}>
-                        <span id="error-msg" style={{opacity: invalidCreds? '1':'0'}}>Username or password is incorrect!</span>
-                        <label htmlFor="username">
+                        <span id="error-msg" style={{opacity: invalidCreds? '1':'0'}}>💬 Username or password is incorrect!</span>
+                        <h2>💙TONES💙</h2>
+                        <div className="input-field">
+                            <span>Username</span>
                             <input id="username" type="text" placeholder="Enter Username" name="username"
                                 value={credentials.username} onChange={handleInput}
-                                onFocus={handleFocus}></input>
-                            <span>Username</span>
-                        </label>
-                        <label htmlFor="password">
+                                onFocus={handleFocus}
+                                onBlur={(e)=>e.target.parentElement!.classList.remove("active")}/>
+                        </div>
+
+                        <div className="input-field">
+                            <span>Password</span>
                             <input id="password" type="password" placeholder="Enter Password" name="password"
                                 value={credentials.password} onChange={handleInput}
-                                onFocus={handleFocus}></input>
-                            <span>Password</span>
-                        </label>
-                        {/* <Link to={'/list'}>
-                        <button type="submit">Login</button>
-                    </Link> */}
-                        <div>
-                            <button type="submit">Login</button>
+                                onFocus={handleFocus}
+                                onBlur={(e)=>e.target.parentElement!.classList.remove("active")}/>
                         </div>
+
+                        <div className="form-footer">
+                            <button type="submit">Login</button>
+                            <div id="copyright">Copyrigth © Tones Inc. 2021-present</div>
+                        </div>
+
                     </form>
                 </div >
-                <div id="credits" className="font-rb">
+                <div id="credits">
                     <div className="logo" id="tsi"><img src={histoLogo} /></div>
-                    <div id="copyright">Copyrigth © Tones Inc. 2021-present</div>
                     <div className="logo" id="histoone"><img src={tsiLogo} /></div>
-                    {/* <div className="logo" id="blockly"><img src={blocklyLogo} /></div> */}
                 </div>
 
             </div>
-
-            <MainKeyboard inputValue={credentials[`${input}`]?.toString()}
-                show={showKeyboard}
-                showSetter={setShowKeyboard}
-                inputSetter={(inp) => {
-                    setCredentials({
-                        type: input,
-                        payload: inp
-                    })
-                }}
-            />
         </>
     );
 }

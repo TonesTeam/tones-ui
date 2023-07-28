@@ -2,7 +2,7 @@ import { Liquid } from "@entity/Liquid";
 import { DatabaseService } from "@service/DatabaseService";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { LiquidDto } from "sharedlib/dto/liquid.dto"
+import { LiquidDto } from "sharedlib/dto/legacy/liquid.dto"
 
 @provide(LiquidMapper)
 export class LiquidMapper {

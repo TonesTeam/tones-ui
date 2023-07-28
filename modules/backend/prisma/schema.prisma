@@ -17,46 +17,75 @@ datasource db {
     url      = "file:dev.db"
 }
 
+model GlobalStatus {
+    id               Int          @id @default(autoincrement())
+    datetime         DateTime
+    slotStatuses     SlotStatus[]
+    canStartProtocol Boolean
+    error            Error        @relation(fields: [errorId], references: [id])
+    errorId          Int
+}
+
+model SlotStatus {
+    id             Int           @id @default(autoincrement())
+    slotNum        Int
+    status         Boolean
+    GlobalStatus   GlobalStatus? @relation(fields: [globalStatusId], references: [id])
+    globalStatusId Int?
+}
+
 model Protocol {
     id                 Int                  @id @default(autoincrement())
     name               String
     creationDate       DateTime
-    comment            String?
+    description        String?
     creator            User                 @relation(fields: [userId], references: [id])
     userId             Int
-    washingLiquid      Liquid               @relation(fields: [liquidId], references: [id])
+    washingLiquid      PermanentLiquid      @relation(fields: [liquidId], references: [id]) // Default liquid used for washing steps (washing slots)
     steps              Step[]
     protocolDeployment ProtocolDeployment[]
     liquidId           Int
-    executedStep       ExecutedStep[]
     deleted            Boolean              @default(false)
+    defaultWashing     Washing              @relation(fields: [washingId], references: [id]) // Default washing (after each LA) config. Could be 3 times X 10 minutes
+    washingId          Int
 }
 
 model ProtocolDeployment {
     id                     Int                      @id @default(autoincrement())
     protocol               Protocol                 @relation(fields: [protocolId], references: [id])
     protocolId             Int
-    liquidAmount           Int
     deploymentError        DeploymentError[]
     usedSlot               UsedSlot[]
     DeploymentLiquidConfig DeploymentLiquidConfig[]
+    executedSteps          ExecutedStep[]
 }
 
 model DeploymentLiquidConfig {
     id                   Int                @id @default(autoincrement())
     deployment           ProtocolDeployment @relation(fields: [protocolDeploymentId], references: [id])
     protocolDeploymentId Int
+    liquidInfo           LiquidInfo         @relation(fields: [liquidInfoId], references: [id])
+    liquidInfoId         Int
     liquidSlotNumber     Int
-    liquid               Liquid             @relation(fields: [liquidId], references: [id])
-    liquidId             Int
     liquidAmount         Int
+}
+
+model Error {
+    id              Int               @id @default(autoincrement())
+    date            DateTime
+    code            Int // Error code
+    level           String // CRITICAL, NON-CRITICAL, WARNING
+    message         String
+    DeploymentError DeploymentError[]
+    GlobalStatus    GlobalStatus[]
 }
 
 model DeploymentError {
     id                   Int                @id @default(autoincrement())
     deployment           ProtocolDeployment @relation(fields: [protocolDeploymentId], references: [id])
+    error                Error              @relation(fields: [errorId], references: [id])
     protocolDeploymentId Int
-    error                String
+    errorId              Int
 }
 
 model User {
@@ -94,61 +123,68 @@ model Step {
 }
 
 model ExecutedStep {
-    id         Int      @id @default(autoincrement())
-    protocol   Protocol @relation(fields: [protocolId], references: [id])
-    protocolId Int
-    step       Step     @relation(fields: [stepId], references: [id])
-    stepId     Int
-    targetSlot Slot     @relation(fields: [slotId], references: [id])
-    slotId     Int
+    id                   Int                @id @default(autoincrement())
+    step                 Step               @relation(fields: [stepId], references: [id])
+    stepId               Int
+    targetSlot           Slot               @relation(fields: [slotId], references: [id])
+    slotId               Int
+    deployment           ProtocolDeployment @relation(fields: [protocolDeploymentId], references: [id])
+    protocolDeploymentId Int
 }
 
 model LiquidApplication {
-    id                    Int     @id @default(autoincrement())
-    liquid                Liquid  @relation(fields: [liquidId], references: [id])
-    step                  Step    @relation(fields: [stepId], references: [id])
-    liquidIncubationTime  Int
+    id                    Int        @id @default(autoincrement())
+    liquidInfo            LiquidInfo @relation(fields: [liquidInfoId], references: [id])
+    liquidInfoId          Int
+    step                  Step       @relation(fields: [stepId], references: [id])
+    stepId                Int        @unique
+    liquidIncubationTime  Int // Stores seconds
     incubationTemperature Int
-    doWash                Boolean @default(true)
-    liquidId              Int
-    stepId                Int     @unique
+    autoWash              Boolean    @default(true) // whether to do auto wash (specified in protocol wash settings) after application
 }
 
 model Washing {
-    id            Int    @id @default(autoincrement())
-    times         Int
-    washingLiquid Liquid @relation(fields: [liquidId], references: [id])
-    Step          Step   @relation(fields: [stepId], references: [id])
-    stepId        Int    @unique
-    liquidId      Int
+    id                Int             @id @default(autoincrement())
+    iter              Int
+    incubationTime    Int //Seconds
+    permanentLiquid   PermanentLiquid @relation(fields: [permanentLiquidId], references: [id])
+    permanentLiquidId Int
+    Step              Step?           @relation(fields: [stepId], references: [id]) // Optional because washing may be related to default protocol configuration
+    stepId            Int?            @unique
+    Protocol          Protocol[]
 }
 
 model TemperatureChange {
-    id                Int     @id @default(autoincrement())
-    targetTemperature Int
-    blocking          Boolean
-    returnToNormal    Boolean
-    step              Step    @relation(fields: [stepId], references: [id])
-    stepId            Int     @unique
+    id                Int  @id @default(autoincrement())
+    sourceTemperature Int // From temperature
+    targetTemperature Int // To temperature
+    step              Step @relation(fields: [stepId], references: [id])
+    stepId            Int  @unique
 }
 
-model Liquid {
+model LiquidInfo {
     id                     Int                      @id @default(autoincrement())
     name                   String
-    shortname              String?
     type                   LiquidType               @relation(fields: [liquidTypeId], references: [id])
-    liquidApplication      LiquidApplication[]
-    deleted                Boolean                  @default(false)
-    requiresCooling        Boolean                  @default(false)
-    maxTemp                Int
-    Protocol               Protocol[]
-    DeploymentLiquidConfig DeploymentLiquidConfig[]
     liquidTypeId           Int
-    Washing                Washing[]
+    permanentLiquid        PermanentLiquid? // Reference is optional because some liquids are custom-made for a protocol and are not permenent
+    liquidApplication      LiquidApplication[]
+    deploymentLiquidConfig DeploymentLiquidConfig[]
+}
+
+model PermanentLiquid {
+    id              Int        @id @default(autoincrement())
+    shortname       String?
+    deleted         Boolean    @default(false)
+    requiresCooling Boolean    @default(false)
+    liquidInfo      LiquidInfo @relation(fields: [liquidInfoId], references: [id])
+    liquidInfoId    Int        @unique
+    protocols       Protocol[]
+    washing         Washing[]
 }
 
 model LiquidType {
-    id      Int      @id @default(autoincrement())
-    name    String   @unique
-    liquids Liquid[]
+    id         Int          @id @default(autoincrement())
+    name       String       @unique
+    LiquidInfo LiquidInfo[]
 }

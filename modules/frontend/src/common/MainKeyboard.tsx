@@ -18,12 +18,12 @@ const layoutMap = new Map<string, string>([
 
 let keyboard: SimpleKeyboard | undefined = undefined;
 
-export default function MainKeyboard(props: { inputValue?: string, show: boolean, showSetter: (s: boolean) => void, inputSetter: (inp: string) => void }) {
+export default function MainKeyboard(props: { inputValue?: string, layout: string, show: boolean, showSetter: (s: boolean) => void, inputSetter: (inp: string) => void }) {
     if (props.inputValue != undefined) {
         keyboard?.setInput(props.inputValue);
     }
     const showKeyboard = props.show;
-    const [keyboardLayout, setKeyboardLayout] = useState("default")
+    const [keyboardLayout, setKeyboardLayout] = useState(props.layout)
     const [playRegularPress] = useSound(keypress);
     const [playBackPress] = useSound(backpress);
 
@@ -65,6 +65,12 @@ export default function MainKeyboard(props: { inputValue?: string, show: boolean
                         "{lock} A S D F G H J K L {enter}",
                         ". Z X C V B N M , /",
                         "{space}"
+                    ],
+                    numpad: [
+                        "7 8 9 0",
+                        "4 5 6 .",
+                        "1 2 3 {bksp}",
+                        "{enter}"
                     ]
                 }}
                 onChange={onChange}
