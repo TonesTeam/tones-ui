@@ -35,7 +35,7 @@ export class AppService {
         let liquids = await this.dbService.getPermanentLiquids();
         return liquids.map(pl => ({
             categoryId: pl.liquidInfo.liquidTypeId,
-            categoryName: pl.liquidInfo.name,
+            categoryName: pl.liquidInfo.type.name,
             id: pl.id,
             name: pl.liquidInfo.name,
             usedCold: pl.requiresCooling,
