@@ -1,7 +1,11 @@
 
+export interface LiquidTypeDTO {
+    id: number;
+    name: string;
+}
+
 export interface LiquidDTO {
-    categoryId: number;
-    categoryName: string;
+    type: LiquidTypeDTO;
     id: number;
     name: string;
 }

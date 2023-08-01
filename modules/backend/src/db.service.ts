@@ -78,6 +78,10 @@ export class DatabaseService {
         });
     }
 
+    async getLiquidTypes() {
+        return this.prisma.liquidType.findMany();
+    }
+
     async getCustomProtocolLiquids(id: number) {
         return await this.prisma.liquidInfo.findMany({
             where: {

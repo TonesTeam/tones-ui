@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService, FullProtocols, ProtocolStep } from './db.service';
 import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
 import { StepDTO, ReagentStep, StepParams, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto'
-import { PermanentLiquidDTO, LiquidDTO } from 'sharedlib/dto/liquid.dto'
+import { PermanentLiquidDTO, LiquidDTO, LiquidTypeDTO } from 'sharedlib/dto/liquid.dto'
 import { StepType } from 'sharedlib/enum/DBEnums';
 
 
@@ -31,11 +31,21 @@ export class AppService {
         return Promise.all(p.steps.map(async s => await this.stepToDto(s)));
     }
 
+    async getLiquidTypes() {
+        let types = await this.dbService.getLiquidTypes();
+        return types.map(t => ({
+            id: t.id,
+            name: t.name
+        } as LiquidTypeDTO))
+    }
+
     async getPermanentLiquids() {
         let liquids = await this.dbService.getPermanentLiquids();
         return liquids.map(pl => ({
-            categoryId: pl.liquidInfo.liquidTypeId,
-            categoryName: pl.liquidInfo.type.name,
+            type: {
+                id: pl.liquidInfo.liquidTypeId,
+                name: pl.liquidInfo.type.name,
+            },
             id: pl.id,
             name: pl.liquidInfo.name,
             usedCold: pl.requiresCooling,
@@ -85,8 +95,10 @@ export class AppService {
     private async toLiquidDto(liquidInfoId: number): Promise<LiquidDTO> {
         let l = await this.dbService.getLiquidInfo(liquidInfoId);
         return {
-            categoryId: l.liquidTypeId,
-            categoryName: l.type.name,
+            type: {
+                id: l.liquidTypeId,
+                name: l.type.name,
+            },
             id: l.id,
             name: l.name,
         }
