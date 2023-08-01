@@ -86,6 +86,7 @@ export class AppService {
                     incubation: step.washing.incubationTime,
                     iters: step.washing.iter,
                     liquid: await this.toLiquidDto(step.washing.permanentLiquidId)
+
                 } as WashStep
             default:
                 throw new Error(`Unknown step type ${step.stepType}`)

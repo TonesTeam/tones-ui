@@ -2,9 +2,9 @@ import { StepType } from "sharedlib/enum/DBEnums";
 import { LiquidDTO } from "./liquid.dto";
 
 export interface StepDTO {
-    type: StepType;
-    id: number;
-    params: StepParams
+  type: StepType;
+  id: number;
+  params: StepParams;
 }
 
 export interface StepParams { }
@@ -23,15 +23,11 @@ export interface ReagentStep extends StepParams {
     liquid: LiquidDTO;
     autoWash: boolean;
     temperature: number; //at which step is applied, calculated
-    custom: boolean;
-}
+    custom: boolean; 
+} 
 
 export interface TemperatureStep extends StepParams {
-    //id: number;
-    source: number;
-    target: number;
+  //id: number;
+  source: number;
+  target: number;
 }
-
-
-
-

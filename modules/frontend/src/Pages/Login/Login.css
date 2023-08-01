@@ -109,10 +109,10 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: rgb(var(--color-secondary));
+    background: var(--color-secondary2);
     background: linear-gradient(90deg, rgba(38,182,92,0) 0%, 
-                                        rgba(var(--color-secondary),1) 30%, 
-                                        rgba(var(--color-secondary),1) 70%, 
+                                        var(--color-secondary2) 30%, 
+                                        var(--color-secondary2) 70%, 
                                         rgba(38,182,92,0) 100%);
 }
 
