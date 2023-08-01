@@ -89,9 +89,22 @@ export class DatabaseService {
                         }
                     }
                 }
+            },
+            include: {
+                type: true
             }
         })
     }
+
+    async getLiquidInfo(id: number) {
+        return await this.prisma.liquidInfo.findFirst({
+            where: { id },
+            include: {
+                type: true
+            }
+        })
+    }
+
 }
 
 let a = new DatabaseService();

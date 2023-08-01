@@ -28,7 +28,7 @@ export class AppService {
 
     async getProtocolSteps(id: number) {
         let p = await this.dbService.getProtocolById(id);
-        return p.steps.map(s => this.stepToDto(s));
+        return Promise.all(p.steps.map(async s => await this.stepToDto(s)));
     }
 
     async getPermanentLiquids() {
@@ -44,30 +44,24 @@ export class AppService {
 
     async getCustomProtocolLiquids(id: number) {
         let liquids = await this.dbService.getCustomProtocolLiquids(id)
-        return liquids.map(l => ({
-            categoryId: l.liquidTypeId,
-            categoryName: l.name,
-            id: l.id,
-            name: l.name,
-        } as LiquidDTO))
+        return Promise.all(liquids.map(async l => await this.toLiquidDto(l.id)));
     }
 
 
-
-    private stepToDto(step: ProtocolStep): StepDTO {
+    private async stepToDto(step: ProtocolStep): Promise<StepDTO> {
         return {
             id: step.id,
             type: step.stepType as StepType,
-            params: this.getParams(step)
+            params: await this.getParams(step)
         }
     }
 
-    private getParams(step: ProtocolStep): StepParams {
+    private async getParams(step: ProtocolStep): Promise<StepParams> {
         switch (step.stepType as StepType) {
             case StepType.LIQUID_APPL:
                 return {
                     incubation: step.liquidApplication.liquidIncubationTime,
-                    liquidId: step.liquidApplication.liquidInfo.id,
+                    liquid: await this.toLiquidDto(step.liquidApplication.liquidInfo.id),
                     autoWash: step.liquidApplication.autoWash,
                     temperature: step.liquidApplication.incubationTemperature,
                     custom: step.liquidApplication.liquidInfo.permanentLiquid === null
@@ -81,10 +75,20 @@ export class AppService {
                 return {
                     incubation: step.washing.incubationTime,
                     iters: step.washing.iter,
-                    liquidID: step.washing.permanentLiquidId
+                    liquid: await this.toLiquidDto(step.washing.permanentLiquidId)
                 } as WashStep
             default:
                 throw new Error(`Unknown step type ${step.stepType}`)
+        }
+    }
+
+    private async toLiquidDto(liquidInfoId: number): Promise<LiquidDTO> {
+        let l = await this.dbService.getLiquidInfo(liquidInfoId);
+        return {
+            categoryId: l.liquidTypeId,
+            categoryName: l.type.name,
+            id: l.id,
+            name: l.name,
         }
     }
 

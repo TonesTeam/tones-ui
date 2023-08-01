@@ -1,3 +1,4 @@
+
 export interface LiquidDTO {
     categoryId: number;
     categoryName: string;
