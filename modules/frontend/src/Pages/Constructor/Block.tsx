@@ -1,37 +1,66 @@
 import "./Block.css";
 import { getRequest } from "common/util";
 import React, { useEffect, useState } from "react";
-import { SVG_Icon, CustomSelect, ToggleInput, SelectListProp } from "common/components";
+import { SVG_Icon, ToggleInput } from "common/components";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
-import { LiquidDTO } from "sharedlib/dto/liquid.dto";
+import { LiquidDTO, LiquidTypeDTO } from "sharedlib/dto/liquid.dto";
 import { stepTypeClass } from "./Constructor";
-import Select from 'react-select';
-import { getCategoriesList, getCategoryIDByLiquid, getFilteredLiquidList } from "./constructor_utils";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 interface BlockInputsProps {
   stepData: StepDTO;
   change: (arg0: WashStep | ReagentStep | TemperatureStep) => void;
-  liquids?: LiquidDTO[];
+  addNewLiquid?: (liquid: LiquidDTO) => void;
+  existingCustomLiquids?: LiquidDTO[];
 }
 
+//TODO: Proper input validation
+
 function WashInputs(props: BlockInputsProps) {
-  const initialParams = props.stepData.params as WashStep;
-  const [washParams, setWashParams] = useState(initialParams);
-  const liquidsList = getFilteredLiquidList(props.liquids!, 2)
-  const [selectedLiquid, setSelectedLiquid] = useState()
+  const [washParams, setWashParams] = useState(props.stepData.params as WashStep);
+  const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
+  const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
+  const [allowSave, setAllowSave] = useState(false);
+
+  useEffect(() => {
+    getLiquids();
+  }, []);
+
+  useEffect(() => {
+    let liquid = washParams.liquid != undefined ? washParams.liquid : liquidsList[0];
+    setSelectedLiquid(liquid);
+    handleInputChange("liquid", liquid);
+  }, [liquidsList]);
 
   useEffect(() => {
     props.change(washParams);
   }, [washParams]);
 
-  const handleChange = (target: HTMLInputElement | HTMLSelectElement) => {
-    if (target) {
-      setWashParams((prevState) => ({
-        ...prevState,
-        [target.name]: target.value,
-      }));
+  async function getLiquids() {
+    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
+    setLiquidList(liquidList.filter((liq) => liq.type.id == 2));
+  }
+
+  const handleInputChange = (key: string, value: any) => {
+    switch (key) {
+      case "iters":
+        if (isNaN(Number(value)) || Number(value) < 0) {
+          setAllowSave(false);
+        }
+        break;
+      case "incubation":
+        if (isNaN(Number(value)) || Number(value) < 0) {
+          setAllowSave(false);
+        }
+        break;
     }
+
+    setWashParams((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
   };
 
   return (
@@ -40,16 +69,16 @@ function WashInputs(props: BlockInputsProps) {
         <div className="block-body-row">
           <div className="block-inp">
             <label>Reagent:</label>
-            {/* <CustomSelect
+            <Select
+              getOptionLabel={(liq: LiquidDTO) => liq.name}
+              getOptionValue={(liq: LiquidDTO) => String(liq.id)}
               options={liquidsList}
-              opt_name={"liquidId"}
-              inputChange={handleChange}
-              selected={washParams.liquidId || null}
-            ></CustomSelect> */}
-            <Select 
-            getOptionLabel={(liq: LiquidDTO) => liq.name}
-            getOptionValue={(liq: LiquidDTO) => liq.name}
-            options={liquidsList} value={props.liquids?.find(liq=> liq.id==washParams.liquid.id) || null} />
+              value={selectedLiquid}
+              onChange={(liq) => {
+                handleInputChange("liquid", liq as LiquidDTO);
+                setSelectedLiquid(liq as LiquidDTO);
+              }}
+            />
           </div>
         </div>
 
@@ -58,21 +87,21 @@ function WashInputs(props: BlockInputsProps) {
             <label htmlFor="wash-inp-iters">Iterations:</label>
             <input
               id="wash-inp-iters"
-              type="number"
               name="iters"
               value={washParams.iters || ""}
-              onChange={(e) => handleChange(e.target as HTMLInputElement)}
+              onChange={(e) => handleInputChange("iters", (e.target as HTMLInputElement).value)}
             />
           </div>
 
           <div className="block-inp">
-            <label htmlFor="wash-inp-time">Incubation time{initialParams.incubation}: </label>
+            <label htmlFor="wash-inp-time">Incubation time: </label>
             <input
               id="wash-inp-time"
-              type="number"
               name="incubation"
               value={washParams.incubation || ""}
-              onChange={(e) => handleChange(e.target as HTMLInputElement)}
+              onChange={(e) =>
+                handleInputChange("incubation", (e.target as HTMLInputElement).value)
+              }
             />
           </div>
         </div>
@@ -82,84 +111,169 @@ function WashInputs(props: BlockInputsProps) {
 }
 
 function ReagentInputs(props: BlockInputsProps) {
-  const initialParams = props.stepData.params as ReagentStep;
-  const [reagParams, setReagParams] = useState(initialParams);
-  const [liquidList, setLiquidList] = useState<LiquidDTO[]>([]);
-  const [selectedCategoryID, setSelectedCategoryID] = useState<number>(
-    getCategoryIDByLiquid(props.liquids!, initialParams.liquid.id)
-  )
+  console.log("Initial step params are: ", props.stepData);
 
-  const categories = getCategoriesList(props.liquids!)
+  const [reagParams, setReagParams] = useState(props.stepData.params as ReagentStep);
+  const [categories, setCategories] = useState<LiquidTypeDTO[]>();
+  const [liquids, setLiquids] = useState<LiquidDTO[]>();
+  const [selectedCategory, setSelectedCategory] = useState<LiquidTypeDTO>();
+  const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
+
+  async function getLiquidData() {
+    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
+    const categoryList = (await getRequest<LiquidTypeDTO[]>("/types")).data;
+
+    const finalLiquids = [...liquidList, ...props.existingCustomLiquids!];
+    setLiquids(finalLiquids);
+    setCategories(categoryList);
+
+    let category = reagParams.liquid == undefined ? categoryList[0] : reagParams.liquid.type;
+    setSelectedCategory(category);
+
+    let liquid =
+      reagParams.liquid == undefined
+        ? finalLiquids.filter((liq) => liq.type.id == category.id)[0]
+        : reagParams.liquid;
+    setSelectedLiquid(liquid);
+    handleInputChange("liquid", liquid);
+  }
 
   useEffect(() => {
-    const filteredLiquids = getFilteredLiquidList(props.liquids!, selectedCategoryID);
-    setLiquidList(filteredLiquids);
-  }, [selectedCategoryID]);
+    getLiquidData();
+  }, []);
 
   useEffect(() => {
     props.change(reagParams);
   }, [reagParams]);
 
-  const handleChange = (target: HTMLInputElement | HTMLSelectElement) => {
-    if (target) {
-      setReagParams((prevState) => ({
-        ...prevState,
-        [target.name]: target.value,
-      }));
+  const handleInputChange = (key: string, value: any) => {
+    switch (key) {
+      case "incubation":
+        if (isNaN(Number(value)) || Number(value) < 0) {
+          value = 1;
+        }
+        break;
     }
+    setReagParams((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
   };
 
-  const handleCategoryChange = (target: HTMLInputElement | HTMLSelectElement) => {
-    if (target) setSelectedCategoryID(Number(target.value));
+  const handleCategoryChange = (cat: LiquidTypeDTO) => {
+    let filteredLiquids = liquids!.filter((liq) => liq.type.id == cat.id);
+    setSelectedLiquid(filteredLiquids[0] ? filteredLiquids[0] : ({} as LiquidDTO));
+  };
+
+  const addCustomLiquid = (newLiquidName: string) => {
+    const newLiquid: LiquidDTO = {
+      id: liquids!.length + 1,
+      name: newLiquidName,
+      type: selectedCategory!,
+    };
+    props.addNewLiquid!(newLiquid);
+    setLiquids((liqs) => [...liqs!, newLiquid]);
+    setSelectedLiquid(newLiquid);
+    handleInputChange("liquid", newLiquid); //onChange event is not triggered in CreatableSelect with onCreateOption
   };
 
   return (
     <>
-      <div className="block-body">
-        <div className="block-body-row">
-          <div className="block-inp">
-            <label>Category:</label>
-            <CustomSelect
-              options={categories}
-              opt_name={"reag-sel-cat"}
-              inputChange={handleCategoryChange}
-              selected={selectedCategoryID}
-            ></CustomSelect>
+      {categories && liquids && selectedCategory && selectedLiquid && (
+        <div className="block-body">
+          <div className="block-body-row">
+            <div className="block-inp">
+              <label>Category:</label>
+              <Select
+                getOptionLabel={(cat: LiquidTypeDTO) => cat.name}
+                getOptionValue={(cat: LiquidTypeDTO) => String(cat.id)}
+                options={categories}
+                value={selectedCategory}
+                onChange={(cat) => {
+                  setSelectedCategory(cat as LiquidTypeDTO);
+                  handleCategoryChange(cat as LiquidTypeDTO);
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="block-body-row">
-          <div className="block-inp">
-            <label>Reagent:</label>
-            <CustomSelect
-              options={liquidList}
-              opt_name={"liquidId"}
-              inputChange={handleChange}
-              selected={reagParams.liquid.id || null}
-            />
+          <div className="block-body-row">
+            <div className="block-inp">
+              <label>Reagent:</label>
+              {selectedCategory.id == 8 || selectedCategory.id == 9 ? (
+                <CreatableSelect
+                  isClearable
+                  options={
+                    liquids
+                      .filter((liq) => liq.type.id == selectedCategory.id)
+                      .map((liq) => {
+                        return { value: liq.id, label: liq.name };
+                      }) || []
+                  }
+                  value={{ value: selectedLiquid!.id, label: selectedLiquid!.name } || null}
+                  onChange={(liq) => {
+                    setSelectedLiquid(liquids.find((l) => l.id == liq?.value) as LiquidDTO);
+                    handleInputChange(
+                      "liquid",
+                      liquids.find((l) => l.id == liq?.value) as LiquidDTO
+                    );
+                  }}
+                  onCreateOption={(e) => addCustomLiquid(e)}
+                />
+              ) : (
+                <Select
+                  getOptionLabel={(liq: LiquidDTO) => liq.name}
+                  getOptionValue={(liq: LiquidDTO) => String(liq.id)}
+                  onChange={(liq) => {
+                    setSelectedLiquid(liq as LiquidDTO);
+                    handleInputChange("liquid", liq as LiquidDTO);
+                  }}
+                  options={liquids.filter((liq) => liq.type.id == selectedCategory.id)}
+                  value={selectedLiquid}
+                />
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="block-body-row">
-          <div className="block-inp">
-            <label htmlFor="reag-inp-min">Incubation time:</label>
-            <input
-              id="reag-inp-min"
-              type="number"
-              name="incubation"
-              value={reagParams.incubation || ""}
-              onChange={(e) => handleChange(e.target as HTMLInputElement)}
-            />
+          <div className="block-body-row col">
+            <div className="block-body-row">
+              <div className="block-inp">
+                <label htmlFor="reag-inp-min">Incubation time:</label>
+                <input
+                  id="reag-inp-min"
+                  type="number"
+                  name="incubation"
+                  value={reagParams.incubation || ""}
+                  onChange={(e) =>
+                    handleInputChange("incubation", (e.target as HTMLInputElement).value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="block-body-row">
+              <div className="block-inp">
+                <label>Include AutoWash</label>
+                <ToggleInput
+                  val1={"OFF"}
+                  val2={"ON"}
+                  handleChange={(e: boolean) => {
+                    handleInputChange("autoWash", e);
+                  }}
+                  checked={reagParams.autoWash == undefined ? false : reagParams.autoWash}
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
 
 function TemperatureInputs(props: BlockInputsProps) {
-  const initialParams = props.stepData.params as TemperatureStep;
-  const [temperParams, setTemperParams] = useState<TemperatureStep>(initialParams);
+  const [temperParams, setTemperParams] = useState<TemperatureStep>(
+    props.stepData.params as TemperatureStep
+  );
 
   const handleChange = (target: HTMLInputElement | HTMLSelectElement) => {
     setTemperParams((prevState) => ({
@@ -209,23 +323,15 @@ export interface WorkBlockProps {
   editBlock: (block: StepDTO) => void;
   toggleAutoWash: (val: boolean) => void;
   currentAutoWash: boolean;
+  addCustomLiquid: (liquids: LiquidDTO) => void;
+  customLiquids: LiquidDTO[];
 }
 
 export const WorkBlock: React.FC<WorkBlockProps> = (props: WorkBlockProps) => {
   const [params, setParams] = useState<{ [key: string]: any }>({});
   const [settings, setSettings] = useState(false);
-  const [liquids, setLiquids] = useState<LiquidDTO[]>([]);
 
-  const block = props.block
-
-  useEffect(() => {
-    getLiquids();
-  }, []);
-
-  async function getLiquids() {
-    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
-    setLiquids(liquidList);
-  }
+  let block = props.block;
 
   const updateParams = (step_params: any) => {
     setParams((params) => ({
@@ -234,26 +340,29 @@ export const WorkBlock: React.FC<WorkBlockProps> = (props: WorkBlockProps) => {
     }));
   };
 
+  const addCustomLiquid = (newLiquid: LiquidDTO) => {
+    props.addCustomLiquid(newLiquid);
+  };
+
   const addBlockToParent = () => {
     block.params = params as typeof block.params;
     block.id == -1 ? props.addBlock(block) : props.editBlock(block);
   };
 
-  const handleAutoWash = (val: boolean) => {
-    props.toggleAutoWash(val);
-  };
-
   return (
     <>
       <div className="inputs">
-        {block.type == StepType.WASHING && (
-          <WashInputs stepData={block} change={updateParams} liquids={liquids}></WashInputs>
-        )}
+        {block.type == StepType.WASHING && <WashInputs stepData={block} change={updateParams} />}
         {block.type == StepType.LIQUID_APPL && (
-          <ReagentInputs stepData={block} change={updateParams} liquids={liquids}></ReagentInputs>
+          <ReagentInputs
+            stepData={block}
+            change={updateParams}
+            addNewLiquid={addCustomLiquid}
+            existingCustomLiquids={props.customLiquids}
+          />
         )}
         {block.type == StepType.TEMP_CHANGE && (
-          <TemperatureInputs stepData={block} change={updateParams}></TemperatureInputs>
+          <TemperatureInputs stepData={block} change={updateParams} />
         )}
       </div>
       <div className="block-footer">
@@ -285,7 +394,7 @@ export const WorkBlock: React.FC<WorkBlockProps> = (props: WorkBlockProps) => {
           className={`save-btn ${stepTypeClass.get(block.type)}`}
           onClick={() => addBlockToParent()}
         >
-          Add Step
+          {block.id == -1 ? "Add Step" : "Save Step"}
         </button>
       </div>
 
@@ -296,16 +405,6 @@ export const WorkBlock: React.FC<WorkBlockProps> = (props: WorkBlockProps) => {
             <h2 onClick={() => setSettings(false)} style={{ cursor: "pointer" }}>
               &#x2716;
             </h2>
-          </div>
-          <div className="modal-toggle">
-            {/* <input type='checkbox' onChange={(e)=>handleAutoWash(e.target)} checked={currentAutoWash? true:false}/> */}
-            <label>Automatic washing step insert</label>
-            <ToggleInput
-              val1={"OFF"}
-              val2={"ON"}
-              handleChange={handleAutoWash}
-              checked={props.currentAutoWash ? true : false}
-            />
           </div>
 
           <div className="modal-toggle">

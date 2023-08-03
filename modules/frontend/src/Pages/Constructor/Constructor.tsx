@@ -1,39 +1,27 @@
 import NavigationBar from "NavigationBar/NavigationBar";
 import "NavigationBar/NavigationBar.css";
-import { useEffect, useState } from "react";
 import "./Constructor.css";
-//import { WorkBlock, BlockProps, BlockType, StepBlock } from './Block';
+import { useEffect, useState } from "react";
 import { WorkBlock } from "./Block";
-import {
-  ReagentStep,
-  StepDTO,
-  TemperatureStep,
-  WashStep,
-} from "sharedlib/dto/step.dto";
+import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { SVG_Icon } from "common/components";
 import { useParams } from "react-router-dom";
 import { TimelineBlock } from "./TimelineBlock";
+import { calcDuration, updateTemperature } from "./constructor_utils";
+import { LiquidDTO } from "sharedlib/dto/liquid.dto";
 
-const defTemp = 25; //default tempretaure for the system
-const liquidInjectTime: number = 10;
+export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
+export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip
+
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
   [StepType.LIQUID_APPL, "reagent"],
   [StepType.TEMP_CHANGE, "temperature"],
 ]);
 
-const getStyle = (
-  isDragging: boolean,
-  active: boolean,
-  draggableStyle: any
-) => ({
+const getStyle = (isDragging: boolean, active: boolean, draggableStyle: any) => ({
   margin: `0 0 10px 0`,
   boxShadow: active ? `10px 10px 30px -23px rgba(0,0,0,0.85)` : `none`,
   // borderRadius: `9px`,
@@ -48,36 +36,30 @@ export default function Constructor() {
 
   const [blocks, setBlocks] = useState<StepDTO[]>([]);
   const [workBlock, setWorkBlock] = useState<StepDTO>();
-  const [currentTemp, setCurrentTemp] = useState(defTemp);
+  const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE);
   const [settingAutoWash, setSettingAutoWash] = useState(true);
   const [preSaveModal, showPreSaveModal] = useState(false);
   const [duration, setDuration] = useState<number>(0);
+  const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
 
   useEffect(() => {
-    calcDuration(blocks);
+    setDuration(calcDuration(blocks));
   }, [blocks]);
 
   const showWorkBlock = (block: StepDTO) => {
-    //remove "editing" class from block in timeline
+    //1. remove "editing" class from block in timeline
     let blockInTL = document.querySelector("div.editing");
     blockInTL?.classList.remove("editing");
 
-    //toggle active class of element on button panel by block type
-    let button = document.getElementById("cb-" + stepTypeClass.get(block.type));
-
-    //remove active class from other buttons
-    let buttons: NodeListOf<HTMLElement> = document.querySelectorAll(
-      "button.construct-btn"
-    );
+    //2. remove "active" class from all block-type buttons
+    let buttons: NodeListOf<HTMLElement> = document.querySelectorAll("button.construct-btn");
     buttons.forEach((b) => {
       b.classList.remove("active");
     });
 
-    //add class to current
+    //3. toggle "active" class of element on button panel by block type
+    let button = document.getElementById("cb-" + stepTypeClass.get(block.type));
     button?.classList.toggle("active");
-
-    if (block.id != -1) {
-    }
 
     setWorkBlock(block);
   };
@@ -91,11 +73,7 @@ export default function Constructor() {
             return prev.id > current.id ? prev : current;
           }).id + 1; // reduce() returns object
 
-    if (blockToAdd.type == StepType.LIQUID_APPL) {
-      (blockToAdd.params as ReagentStep).autoWash = settingAutoWash;
-    }
-
-    const finalBlocks = updateTempParam([
+    const finalBlocks = updateTemperature([
       ...blocks,
       {
         type: blockToAdd.type,
@@ -113,9 +91,7 @@ export default function Constructor() {
     }
 
     //Remove active class from buttons
-    let buttons: NodeListOf<HTMLElement> = document.querySelectorAll(
-      "button.construct-btn"
-    );
+    let buttons: NodeListOf<HTMLElement> = document.querySelectorAll("button.construct-btn");
     buttons.forEach((b) => {
       b.classList.remove("active");
     });
@@ -128,11 +104,12 @@ export default function Constructor() {
       });
 
       if (temps.length != 0) {
-        setCurrentTemp(defTemp);
+        setCurrentTemp(DEFAULT_TEMEPRATURE); //if no temperatures blocks left after deletion -> settings current as default
       }
     }
 
-    setBlocks((current) => current.filter((block) => block.id !== toRemove.id));
+    const newBlocs = blocks.filter((block) => block.id !== toRemove.id);
+    setBlocks(updateTemperature(newBlocs));
   };
 
   const editBlock = (block: StepDTO) => {
@@ -155,9 +132,15 @@ export default function Constructor() {
     editedBlock.type = block.type;
 
     newBlocks[index] = editedBlock;
-    let refactoredBlocks = updateTempParam(newBlocks);
+    let refactoredBlocks = updateTemperature(newBlocks);
     setBlocks([...refactoredBlocks]);
     setWorkBlock(undefined);
+
+    //Remove active class from buttons
+    let buttons: NodeListOf<HTMLElement> = document.querySelectorAll("button.construct-btn");
+    buttons.forEach((b) => {
+      b.classList.remove("active");
+    });
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -169,113 +152,28 @@ export default function Constructor() {
     const [newSteps] = steps.splice(source.index, 1);
     steps.splice(destination.index, 0, newSteps);
 
-    const refactored = refactorTemperature(steps);
-    const updatedTemp = updateTempParam(refactored);
+    const updatedTemp = updateTemperature(steps);
     setBlocks(updatedTemp);
 
+    //Set current temperature for next blocks are "target" of the last temperature block
     let temps = updatedTemp.filter((block) => {
       return block.type == StepType.TEMP_CHANGE;
     });
 
     if (temps.length != 0) {
-      let lastTemp = (temps[temps.length - 1].params as TemperatureStep)
-        .target as number;
+      let lastTemp = (temps[temps.length - 1].params as TemperatureStep).target as number;
       setCurrentTemp(lastTemp);
     }
   };
 
-  function refactorTemperature(blocks: StepDTO[]) {
-    let refactBlocks = [...blocks];
-    let current = defTemp;
-
-    for (let i = 0; i < refactBlocks.length; i++) {
-      if (refactBlocks[i].type == StepType.TEMP_CHANGE) {
-        let temp_params = refactBlocks[i].params as TemperatureStep;
-        const fromTemp = temp_params.source;
-        const target = temp_params.target;
-        let editedBlock = { ...refactBlocks[i] } as StepDTO;
-        (editedBlock.params as TemperatureStep).source = current;
-        (editedBlock.params as TemperatureStep).target = target;
-
-        //filter redundant blocks later
-        if (
-          (editedBlock.params as TemperatureStep).source ==
-          (editedBlock.params as TemperatureStep).target
-        ) {
-          editedBlock.id = -1;
-        }
-        refactBlocks[i] = editedBlock;
-
-        current = target as number;
-      }
-    }
-
-    const result = refactBlocks.filter((block) => {
-      return block.id != -1;
-    });
-
-    return result;
-  }
-
-  function updateTempParam(blocks: StepDTO[]) {
-    let refactBlocks = [...blocks];
-    let currentTemp = defTemp;
-    for (let i = 0; i < refactBlocks.length; i++) {
-      if (refactBlocks[i].type == StepType.TEMP_CHANGE) {
-        currentTemp = (refactBlocks[i].params as TemperatureStep)
-          .target as number;
-        //filter redundant blocks later
-        if (
-          (refactBlocks[i].params as TemperatureStep).source ==
-          (refactBlocks[i].params as TemperatureStep).target
-        ) {
-          refactBlocks[i].id = -1;
-        }
-      } else {
-        (refactBlocks[i].params as WashStep | ReagentStep).temperature =
-          currentTemp;
-      }
-    }
-    const result = refactBlocks.filter((block) => {
-      return block.id != -1;
-    });
-
-    return result;
-  }
-
-  function calcDuration(blocks: StepDTO[]) {
-    let duration = 0;
-    for (let i = 0; i < blocks.length; i++) {
-      if (blocks[i].type == StepType.WASHING) {
-        duration +=
-          Number((blocks[i].params as WashStep).iters) *
-          (Number((blocks[i].params as WashStep).incubation) +
-            Number(liquidInjectTime));
-      } else if (blocks[i].type == StepType.LIQUID_APPL) {
-        duration +=
-          Number((blocks[i].params as ReagentStep).incubation) +
-          liquidInjectTime;
-        if ((blocks[i].params as ReagentStep).autoWash) {
-          duration += (10 + liquidInjectTime) * 3; //autoWash procedure TODO: READ FROM DEFAULT WASHING CONFIG!
-        }
-      } else if (blocks[i].type == StepType.TEMP_CHANGE) {
-        duration +=
-          Math.abs(
-            (blocks[i].params as TemperatureStep).source -
-              (blocks[i].params as TemperatureStep).target
-          ) * 2;
-      }
-    }
-    setDuration(duration);
-  }
-
   function testSave(blocks: StepDTO[]) {
-    console.log("test save");
+    const description = (
+      document.querySelector("textarea#proto-description")! as HTMLTextAreaElement
+    ).value;
+    // customLiquids
   }
 
   const handleDragStart = () => {
-    console.log("onDragStart");
-
     if (navigator.vibrate) {
       navigator.vibrate(1000);
     }
@@ -365,6 +263,10 @@ export default function Constructor() {
                   editBlock={editBlock}
                   toggleAutoWash={setSettingAutoWash}
                   currentAutoWash={settingAutoWash}
+                  addCustomLiquid={(newLiquid: LiquidDTO) =>
+                    setCustomLiquids([...customLiquids, newLiquid])
+                  }
+                  customLiquids={customLiquids}
                 ></WorkBlock>
               )}
             </div>
@@ -375,17 +277,10 @@ export default function Constructor() {
               <h4 id="duration">Approximate duration: {duration} sec.</h4>
             </div>
 
-            <DragDropContext
-              onDragEnd={onDragEnd}
-              onDragStart={handleDragStart}
-            >
+            <DragDropContext onDragEnd={onDragEnd} onDragStart={handleDragStart}>
               <Droppable droppableId="item">
                 {(provided) => (
-                  <div
-                    id="steps"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
+                  <div id="steps" {...provided.droppableProps} ref={provided.innerRef}>
                     {blocks.map((block, index) => {
                       let active = block.id == workBlock?.id ? true : false;
                       return (
@@ -428,18 +323,12 @@ export default function Constructor() {
         </div>
       </div>
 
-      <div
-        id="pre-save-wrapper"
-        style={{ display: preSaveModal ? "flex" : "none" }}
-      >
+      <div id="pre-save-wrapper" style={{ display: preSaveModal ? "flex" : "none" }}>
         <div className="pre-save-content">
           <div className="header">
             <div>Protocol name: ____________________</div>
             <div>Duration: _________</div>
-            <h2
-              onClick={() => showPreSaveModal(false)}
-              style={{ cursor: "pointer" }}
-            >
+            <h2 onClick={() => showPreSaveModal(false)} style={{ cursor: "pointer" }}>
               &#x2716;
             </h2>
           </div>
@@ -471,19 +360,14 @@ export default function Constructor() {
                       </td>
                       <td>
                         {block.type != StepType.TEMP_CHANGE && (
-                          <p>
-                            {(block.params as WashStep | ReagentStep).liquid.id}
-                          </p>
+                          <p>{(block.params as WashStep | ReagentStep).liquid.name}</p>
                         )}
                         {block.type == StepType.TEMP_CHANGE && <p>-</p>}
                       </td>
                       <td>
                         {block.type != StepType.TEMP_CHANGE && (
                           <p>
-                            {
-                              (block.params as WashStep | ReagentStep)
-                                .temperature
-                            }
+                            {(block.params as WashStep | ReagentStep).temperature}
                             °C
                           </p>
                         )}
@@ -493,12 +377,7 @@ export default function Constructor() {
                       </td>
                       <td>
                         {block.type != StepType.TEMP_CHANGE && (
-                          <p>
-                            {
-                              (block.params as WashStep | ReagentStep)
-                                .incubation
-                            }
-                          </p>
+                          <p>{(block.params as WashStep | ReagentStep).incubation}</p>
                         )}
                         {block.type == StepType.TEMP_CHANGE && <p>-</p>}
                       </td>
@@ -516,7 +395,7 @@ export default function Constructor() {
 
             <div className="body-footer">
               <p>Enter protocol description:</p>
-              <textarea placeholder="Protocol description ..." />
+              <textarea id="proto-description" placeholder="Protocol description ..." />
             </div>
           </div>
 

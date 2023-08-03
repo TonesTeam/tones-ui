@@ -18,8 +18,6 @@ export function CustomSelect(props: any) {
   let selected = props.selected as String | null;
   const [choiceCount, setChoiceCount] = useState(1); //mock
 
-  console.log("In CustomSelect. The passed Selected prop is: "+ String(selected) + ", for " + props.opt_name )
-
   function handleZIndex() {
     let selects = document.querySelectorAll("div.select");
 
@@ -62,7 +60,8 @@ export function CustomSelect(props: any) {
         {options.map((opt, index) => {
           return (
             <div key={index}>
-              {((selected != null && selected == opt.value) || (selected == null && index == 0)) && (
+              {((selected != null && selected == opt.value) ||
+                (selected == null && index == 0)) && (
                 <>
                   {/* First is selected by default if no selected option is passed*/}
                   <input
@@ -74,12 +73,13 @@ export function CustomSelect(props: any) {
                     defaultChecked
                   />
                   <label htmlFor={`opt${index}_${props.opt_name}`} className="option">
-                    {opt.name}
+                    {opt.label}
                   </label>
                 </>
               )}
 
-              {((selected != null && selected != opt.value) || (selected == null && index != 0)) && (
+              {((selected != null && selected != opt.value) ||
+                (selected == null && index != 0)) && (
                 <>
                   <input
                     className="selectopt"
@@ -89,7 +89,7 @@ export function CustomSelect(props: any) {
                     id={`opt${index}_${props.opt_name}`}
                   />
                   <label htmlFor={`opt${index}_${props.opt_name}`} className="option">
-                    {opt.name}
+                    {opt.label}
                   </label>
                 </>
               )}

@@ -42,10 +42,7 @@ function Protocol(props: any) {
   }
 
   return (
-    <div
-      className={`protocol ${open ? "open" : ""}`}
-      onClick={() => setActive(!open)}
-    >
+    <div className={`protocol ${open ? "open" : ""}`} onClick={() => setActive(!open)}>
       <div className={classNames("protocol-general", { active: open })}>
         <div className="info-cell-container">
           <div className="info-cell">
@@ -76,9 +73,9 @@ function Protocol(props: any) {
         <div className="protocol-body-content">
           <div>
             <p>
-              Description: Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Placeat, repellendus sit! Cum numquam eveniet vel a hic
-              pariatur quod. Cumque quibusdam magnam odio commodi{" "}
+              Description: Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat,
+              repellendus sit! Cum numquam eveniet vel a hic pariatur quod. Cumque quibusdam magnam
+              odio commodi{" "}
             </p>
           </div>
 
@@ -109,9 +106,7 @@ function Protocol(props: any) {
               <button
                 className="proto-btn"
                 onClick={() =>
-                  makeRequest("DELETE", `/protocol/${props.id}`).then(() =>
-                    props.listInitializer()
-                  )
+                  makeRequest("DELETE", `/protocol/${props.id}`).then(() => props.listInitializer())
                 }
               >
                 <i className="fas fa-trash-alt"></i>Delete
@@ -134,16 +129,10 @@ function Protocol(props: any) {
 export default function ProtocolList() {
   const [protocols, setProtocols] = useState<ProtocolDto[]>([]);
 
-  useEffect(() => {
-    console.log("Protocols: ", protocols);
-  }, [protocols]);
-
   const listInitilizer = () => {
-    console.log("😈 Protocol List");
     getRequest<ProtocolDto[]>("/protocols").then((r) => setProtocols(r.data));
   };
   useEffect(listInitilizer, []);
-  //localStorage.clear(); //clear redux state manually when needed
 
   const [filterInput, setfilterInput] = useState("");
   let inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,13 +142,9 @@ export default function ProtocolList() {
 
   function filterAndSort() {
     let filteredList = protocols.filter((e) =>
-      filterInput === ""
-        ? e
-        : e.name.toLowerCase().includes(filterInput.toLowerCase())
+      filterInput === "" ? e : e.name.toLowerCase().includes(filterInput.toLowerCase())
     );
-    let sortedList = filteredList
-      .sort(getComparator((e) => e.creationDate.getTime()))
-      .reverse();
+    let sortedList = filteredList.sort(getComparator((e) => e.creationDate.getTime())).reverse();
     return sortedList;
   }
 
