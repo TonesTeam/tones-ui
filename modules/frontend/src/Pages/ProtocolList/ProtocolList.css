@@ -33,6 +33,10 @@
     overflow: hidden;
 }
 
+.protocol.open {
+    border: 2px solid var(--color-secondary);
+}
+
 .protocol-general {
     display: grid;
     padding: 2vh 5vw;
@@ -80,7 +84,7 @@
 .launch-status{
     border-radius: 8px;
     color: var(--color-primary);
-    background-color: #c5cef4;
+    background-color: var(--color-secondary);
     display: block;
     text-align: center;
     font-size: 0.7rem;
@@ -114,8 +118,8 @@
 }
 
 .proto-btn {
-    height: 40px;
-    padding: 1%;
+    padding: 4%;
+    font-size: 0.8em;
     display: flex;
     justify-content: center;
     align-items: center;

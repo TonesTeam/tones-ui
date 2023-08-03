@@ -1,14 +1,15 @@
 :root {
     --navbar-width: clamp(250px, 280px, 300px);
-    --navbar-width-collapsed: 130px;
+    --navbar-width-collapsed: 120px;
     --navbar-lr-padding: 20px;
-    --animation-time: 0.3s
+    --animation-time: 0.4s
 }
 
 #main{
     margin: 0 0 0 var(--navbar-width-collapsed);
     height: 100vh;
     transition: opacity .3s;
+    border-left: 10px solid var(--color-back);
 }
 
 .sidenav-open+#main{
@@ -17,70 +18,114 @@
 
 #navbar {
     position: fixed;
-    height: 100%;
+    height: 100vh;
     background-color: #fff;
     box-sizing: border-box;
     overflow: hidden;
     z-index: 11;
     display: grid;
     grid-template-rows: 2fr 4fr 4fr 2fr;
-    padding: 3vh 0;
-    border-right: 10px solid var(--color-back);
+    padding: 0 0 3vh 0;
+    /* border-right: 10px solid var(--color-back); */
     z-index: 1000;
-}
+    width: var(--navbar-width-collapsed);
 
-#nav-header{
-    width: 100%;
-    display: flex;
-    position:relative;
-    align-items: center;
-}
-
-img.nav-btn{
-    position: absolute;
-    right:30px;
-    height: 60px;
-    width: 60px;
-    cursor: pointer;
-    /* animation: open-to-close 2s  linear; */
-}
-
-
-/*----------TRANSITION--------------*/
-#navbar{
     -webkit-transition: width var(--animation-time);
     -moz-transition: width var(--animation-time) ;
     -o-transition: width var(--animation-time);
     transition: width var(--animation-time);
 }
 
-
-
-/* @keyframes transfer-btn {
-    0% {
-        right: 30px;
-    }
-    50%{
-        right: 40px;
-    }
-    100% {
-        right: 20px;
-    }
-} */
-
-
-
-/*------------------------------------*/
-
-.sidenav-open #nav-logo{
-    padding-left: 30px;
+#navbar.sidenav-open {
+    width: var(--navbar-width);
 }
+
+#nav-header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#nav-logo{
+    float: left;
+}
+
+
+/*----------SIDE NAV, OPEN/CLOSE BTN----------*/
+input#menu {
+    display: none;
+}
+
+.icon {
+    background: #FFF;
+    cursor: pointer;
+    display: block;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    position: relative;
+    z-index: 200;
+    transition: all 0.2s ease;
+}
+
+.sidenav-open .icon{
+    left:10px;
+}
+
+.icon .menu,
+.icon .menu::before,
+.icon .menu::after {
+    background: var(--color-primary);
+    content: '';
+    display: block;
+    height: 4px;
+    position: absolute;
+    transition: background ease .2s, top ease .2s .2s, transform ease .2s;
+    width: 35px;
+    border-radius: 8px;
+}
+
+.icon .menu {
+    left: 14px;
+    top: 29px;
+}
+
+.icon .menu::before {
+    top: -10px;
+}
+
+.icon .menu::after {
+    top: 10px;
+}
+
+#menu:checked + .icon .menu {
+    background: transparent;
+}
+
+#menu:checked + .icon .menu::before {
+    transform: rotate(45deg);
+}
+
+#menu:checked + .icon .menu::after {
+    transform: rotate(-45deg);
+}
+
+#menu:checked + .icon .menu::before,
+#menu:checked + .icon .menu::after {
+    top: 0;
+    transition: top ease .2s, transform ease .2s .2s;
+}
+
+/*----------- NAVBAR ITEMS ------------*/
 
 #navbar-menu .nav-item {
     display: flex;
     flex-direction: row;
 }
-
 
 .nav-item-txt-box {
     margin-left: 1em;
@@ -91,17 +136,8 @@ img.nav-btn{
     display: none;
 }
 
-.nav-item span {
-    /* height: 20px;
-    width: 30px; */
-    transition: none;
-}
-
-.nav-item span::before{
-    font-size: 1.5em;
-}
-
-.nav-item-link {
+a.nav-item-link {
+    text-decoration: none;
     display: flex;
     height: 9vh;
     flex-direction: row;
@@ -126,41 +162,18 @@ img.nav-btn{
     padding-right: 30px;
 }
 
-/*----------SIDE NAV, OPEN/CLOSE BTN----------*/
-#navbar-menu a {
-    text-decoration: none;
+/*---------- SELECTED NAVBAR ITEM STYLE ---------*/
+
+#selected-navbar-item {
+    background-color: var(--color-back);
 }
 
-.nav-btn.closed{
-    animation: open-to-close var(--animation-time) linear;
-    /* animation: transfer-btn 0.3s linear; */
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
+#selected-navbar-item .nav-item-txt-box,
+#selected-navbar-item .svg_icon>path{
+    color: var(--color-primary);
+    fill: var(--color-primary);
 }
 
-.nav-btn.open{
-    animation: close-to-open var(--animation-time) linear;
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
-}
-
-@keyframes close-to-open {
-    from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(180deg);
-      }
-}
-
-@keyframes open-to-close {
-    from {
-        transform: rotate(180deg);
-      }
-      to {
-        transform: rotate(0deg);
-      }
-}
 
 /*--------USER PROFILE PIC & NAME-----------*/
 
@@ -180,26 +193,6 @@ img.nav-btn{
 #user-prof p{
     font-size: 0.8rem;
 }
-/*---------------------------------------------*/
-
-#selected-navbar-item {
-    background-color: var(--color-back);
-}
-
-#selected-navbar-item .nav-item-txt-box,
-#selected-navbar-item .fas{
-    color: var(--color-primary);
-}
-
-
-.sidenav-open {
-    width: var(--navbar-width);
-}
-
-.sidenav-closed {
-    width: var(--navbar-width-collapsed);
-    padding-top: 0px;
-}
 
 /*---------------- PROTOCOL PROGRESS--------------*/
 #progress-track {
@@ -207,94 +200,6 @@ img.nav-btn{
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.protocol-progress-body {
-    display: flex;
-    flex-direction: row;
-}
-
-.bliking-led {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    background-color: #3e6a94;
-    animation: blink 1s linear infinite;
-}
-
-#progress-icon {
-    width: auto;
-    font-size: calc(var(--navbar-width)/8);
-    animation: blink 1s linear infinite;
-    padding: 0;
-}
-
-.bliking-led.ERROR {
-    background-color: #c25b67;
-}
-
-#progress-icon.ERROR {
-    color: #c25b67;
-}
-
-.bliking-led.ONGOING {
-    background-color: #3e6a94;
-}
-
-#progress-icon.ONGOING {
-    color: #3e6a94;
-}
-
-.bliking-led.FINISHED {
-    background-color: #52914b;
-    animation: none;
-}
-
-#progress-icon.FINISHED {
-    color: #52914b;
-    animation: none;
-}
-
-.progress-link {
-    display: flex;
-    height: 8vh;
-    flex-direction: row;
-    align-items: center;
-    box-sizing: border-box;
-    padding-left: 30px;
-    transition: width var(--navbar-transition-time) ease-in-out;
-    overflow: hidden;
-
-}
-
-.progress-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-.progress {
-    display: flex;
-    flex-direction: column;
-    margin-left: 1em;
-}
-
-.progress p {
-    margin: 0;
-}
-
-.bliking-icon i {
-    width: 40px;
-    height: auto;
-    color: #fff;
-}
-
-
-@keyframes blink {
-    50% {
-        opacity: 30%;
-    }
 }
 
 .progress-bar {

@@ -96,7 +96,7 @@ input[type=number] {
     height: 50vh !important;
 }
 
-.block-inp label{
+.block-inp>label{
     text-align: left;
     font-size: 0.8em;
     text-transform: uppercase;

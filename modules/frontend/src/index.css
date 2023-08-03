@@ -1,13 +1,8 @@
 :root {
     --main-width: 25vw;
     --root-font-size: 20px;
-    --color-1: #bacddb;
-    --color-2: #123d5f;
-    --color-3: #4242ff;
-    --color-4: #465499;
-    --color-5: #151738;
     --color-primary: #2d4cc9;
-    --color-secondary: 38, 182, 92;
+    --color-secondary: #c5cef4;
     --color-secondary2: #26b65c;
     --color-warning: #d14633;
     --text-primary: #3b3d44;
@@ -92,7 +87,6 @@ button{
 }
 
 /* -------- CUSTOM COMPONENTS --------*/
-
 /*Select*/
  
 .select {
@@ -142,7 +136,7 @@ button{
 	pointer-events:none;
 	order:2;
 	z-index:1;
-	transition: background .4s ease-in-out;
+	transition: background .2s ease-in-out;
 	box-sizing:border-box;
 	overflow:hidden;
 	white-space:nowrap;
@@ -155,7 +149,19 @@ button{
 .select:focus .option {
 	position:relative;
 	pointer-events:all;
+    /* box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.1);
+    clip-path: inset(0px -15px 0px -15px); */
 }
+
+/* .select:focus .option:last-of-type {
+    box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.1);
+    clip-path: inset(0px -15px -15px -15px);
+}
+
+.select:focus>div:first-of-type>.option {
+    box-shadow: none;
+} */
+
   
 input.selectopt {
 	opacity:0;
@@ -175,13 +181,22 @@ input.selectopt:checked + label {
 .select div:last-of-type label{
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
-	border-bottom: 1px solid var(--color-back);
+	border-bottom: 2px solid var(--color-primary);
 }
 
 .select div:first-of-type label{
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
 	border-top: 1px solid var(--color-back);
+}
+
+.select:focus .option{
+	border-left: 2px solid var(--color-primary);
+	border-right: 2px solid var(--color-primary);
+}
+
+.select:focus div:first-of-type label{
+	border-top: 2px solid var(--color-primary);
 }
 
 /*Toggle*/
