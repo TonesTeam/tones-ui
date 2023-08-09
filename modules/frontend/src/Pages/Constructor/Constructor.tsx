@@ -11,6 +11,8 @@ import { useParams } from "react-router-dom";
 import { TimelineBlock } from "./TimelineBlock";
 import { calcDuration, updateTemperature } from "./constructor_utils";
 import { LiquidDTO } from "sharedlib/dto/liquid.dto";
+import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
+import { getRequest } from "common/util";
 
 export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
 export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip
@@ -41,6 +43,16 @@ export default function Constructor() {
   const [preSaveModal, showPreSaveModal] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
+  const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
+
+  useEffect(() => {
+    getLiquids();
+  }, []);
+
+  async function getLiquids() {
+    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
+    setLiquidList(liquidList.filter((liq) => liq.type.id == 2));
+  }
 
   useEffect(() => {
     setDuration(calcDuration(blocks));
@@ -170,7 +182,32 @@ export default function Constructor() {
     const description = (
       document.querySelector("textarea#proto-description")! as HTMLTextAreaElement
     ).value;
-    // customLiquids
+
+    const name = (document.querySelector("input#proto_name")! as HTMLInputElement).value;
+
+    //proto_name
+
+    let defWashLiquid = liquidsList.find((liq) => liq.type.id == 2);
+
+    let new_protocol = {
+      id: 0,
+      name: name,
+      customLiquids: customLiquids,
+      description: description,
+      steps: blocks,
+      creationDate: new Date(),
+      defaultWash: {
+        iters: 3,
+        incubation: 10,
+        temperature: null,
+        liquid: defWashLiquid!,
+      } as WashStep,
+      author: null,
+    } as ProtocolWithStepsDTO;
+
+    console.log(new_protocol);
+
+    //save(new_protocol) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
 
   const handleDragStart = () => {
@@ -326,7 +363,9 @@ export default function Constructor() {
       <div id="pre-save-wrapper" style={{ display: preSaveModal ? "flex" : "none" }}>
         <div className="pre-save-content">
           <div className="header">
-            <div>Protocol name: ____________________</div>
+            <div>
+              Protocol name: <input type="text" id="proto_name" placeholder="My First Protocol" />
+            </div>
             <div>Duration: _________</div>
             <h2 onClick={() => showPreSaveModal(false)} style={{ cursor: "pointer" }}>
               &#x2716;

@@ -7,24 +7,24 @@ export interface StepDTO {
   params: StepParams;
 }
 
-export interface StepParams { }
+export interface StepParams {}
 
 export interface WashStep extends StepParams {
-    //id: number;
-    iters: number;
-    incubation: number;
-    liquid: LiquidDTO;
-    temperature: number; //at which step is applied, calculated
+  //id: number;
+  iters: number;
+  incubation: number;
+  liquid: LiquidDTO;
+  temperature: number | null; //at which step is applied, calculated
 }
 
 export interface ReagentStep extends StepParams {
-    //id: number;
-    incubation: number;
-    liquid: LiquidDTO;
-    autoWash: boolean;
-    temperature: number; //at which step is applied, calculated
-    custom: boolean; 
-} 
+  //id: number;
+  incubation: number;
+  liquid: LiquidDTO;
+  autoWash: boolean;
+  temperature: number; //at which step is applied, calculated
+  custom: boolean;
+}
 
 export interface TemperatureStep extends StepParams {
   //id: number;
