@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService, FullProtocols, ProtocolStep } from './db.service';
-import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
+import { ProtocolDto, ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto'
 import { StepDTO, ReagentStep, StepParams, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto'
 import { PermanentLiquidDTO, LiquidDTO, LiquidTypeDTO } from 'sharedlib/dto/liquid.dto'
 import { StepType } from 'sharedlib/enum/DBEnums';
@@ -55,6 +55,10 @@ export class AppService {
     async getCustomProtocolLiquids(id: number) {
         let liquids = await this.dbService.getCustomProtocolLiquids(id)
         return Promise.all(liquids.map(async l => await this.toLiquidDto(l.id)));
+    }
+
+    async saveProtocol(protocol: ProtocolWithStepsDTO) {
+        throw new Error('Method not implemented.');
     }
 
 
