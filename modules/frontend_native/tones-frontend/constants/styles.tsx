@@ -10,6 +10,8 @@ export const AppStyles = {
     text_faded: "#838488",
     background: "#ebeced",
     accent_back: "#EBECED",
+    elem_back: "#ffffffff",
+    primary_faded: "#DFF2FF",
   },
 
   sizes: {
@@ -24,9 +26,9 @@ export const AppStyles = {
     box_padding: 20,
     main_flex: 10,
     nav_flex: 1,
-    nav_width_closed: "10%" as DimensionValue,
+    nav_width_closed: "9%" as DimensionValue,
     nav_width_opened: "20%" as DimensionValue,
-    main_width: "90%" as DimensionValue,
+    main_width: "91%" as DimensionValue,
   },
 };
 
@@ -39,6 +41,7 @@ export const globalElementStyle = StyleSheet.create({
     top: 0,
     width: AppStyles.layout.main_width,
     height: "100%",
+    paddingTop: 15,
   },
 });
 

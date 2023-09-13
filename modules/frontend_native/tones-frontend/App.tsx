@@ -12,7 +12,7 @@ import { store, persistor } from "./state/store";
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
-    "Roboto-thin": require("./assets/fonts/Roboto-Thin.ttf"),
+    "Roboto-thin": require("./assets/fonts/Roboto-Light.ttf"),
     "Roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-bold": require("./assets/fonts/Roboto-Bold.ttf"),
   });
