@@ -5,6 +5,7 @@ import InputField from "../components/InputField";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Logo from "../assets/pics/tones_logo.svg";
 import Txt from "../components/Txt";
+import { StepType } from "sharedlib/enum/DBEnums";
 
 export default function Login({ route, navigation }: NativeStackScreenProps<any>) {
   return (
@@ -14,6 +15,7 @@ export default function Login({ route, navigation }: NativeStackScreenProps<any>
           <Logo width={300} height={50} style={{ alignSelf: "center", marginBottom: 10 }}></Logo>
 
           <InputField label="Username" placeholder="Username" />
+          <Text>{StepType.LIQUID_APPL}</Text>
           <InputField label="Password" placeholder="Password" />
 
           <View style={s.line}></View>

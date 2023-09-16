@@ -12,6 +12,12 @@ export const AppStyles = {
     accent_back: "#EBECED",
     elem_back: "#ffffffff",
     primary_faded: "#DFF2FF",
+    block_washing: "#2d4cc9",
+    block_washing_faded: "#dff2ff",
+    block_temperature: "#f49e1e",
+    block_temperature_faded: "#fde9c8",
+    block_reagent: "#26b65c",
+    block_reagent_faded: "#ddffed",
   },
 
   sizes: {

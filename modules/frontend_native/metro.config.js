@@ -2,8 +2,10 @@ const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
 
 const extraNodeModules = {
-  common: path.resolve(__dirname + "/../common"),
+  sharedlib: path.resolve(__dirname + "/../sharedlib"),
 };
+
+const watchFolders = [path.resolve(__dirname + "/../sharedlib")];
 //const watchFolders = [path.resolve(__dirname + "/../common")];
 
 module.exports = (() => {
@@ -20,10 +22,11 @@ module.exports = (() => {
   config.resolver = {
     ...resolver,
     assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
-    sourceExts: [...resolver.sourceExts, "svg"],
+    sourceExts: [...resolver.sourceExts, "svg", "js", "json", "ts", "tsx"],
     extraNodeModules,
   };
-  //config.watchFolders = watchFolders;
+
+  config.watchFolders = watchFolders;
 
   return config;
 })();
