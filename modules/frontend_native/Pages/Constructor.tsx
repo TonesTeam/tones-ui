@@ -13,20 +13,84 @@ import Txt from "../components/Txt";
 import Washing_icon from "../assets/icons/washing_icon.svg";
 import Reagent_icon from "../assets/icons/reagent_icon.svg";
 import Temperature_icon from "../assets/icons/temperature_icon.svg";
-import { useState } from "react";
+import React, { useState } from "react";
 import { LiquidDTO } from "sharedlib/dto/liquid.dto";
 import { StepDTO } from "sharedlib/dto/step.dto";
-//import { StepType } from "../common/DBEnums";
-// import { StepType } from "sharedlib/enum/DBEnums"; //<- UNCOMMENT TO GET ERROR
+import { StepType } from "sharedlib/enum/DBEnums";
+import { SvgProps } from "react-native-svg";
+import WorkBlock from "./Block";
 
 export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
 export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip
 
-// export const stepTypeClass = new Map<StepType, string>([
-//   [StepType.WASHING, "washing"],
-//   [StepType.LIQUID_APPL, "reagent"],
-//   [StepType.TEMP_CHANGE, "temperature"],
-// ]);
+export const stepTypeClass = new Map<StepType, string>([
+  [StepType.WASHING, "washing"],
+  [StepType.LIQUID_APPL, "reagent"],
+  [StepType.TEMP_CHANGE, "temperature"],
+]);
+
+function StepTab(props: { type: StepType; active: boolean }) {
+  let params = {
+    main_color:
+      AppStyles.color.block[
+        `main_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+      ],
+    back_color:
+      AppStyles.color.block[
+        `faded_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+      ],
+    icon: {} as React.FC<SvgProps>,
+  };
+  switch (props.type) {
+    case StepType.WASHING:
+      {
+        params.icon = Washing_icon;
+      }
+      break;
+    case StepType.LIQUID_APPL:
+      {
+        params.icon = Reagent_icon;
+      }
+      break;
+    case StepType.TEMP_CHANGE:
+      {
+        params.icon = Temperature_icon;
+      }
+      break;
+  }
+  return (
+    <TouchableOpacity
+      style={[
+        s.tab,
+        { backgroundColor: props.active ? params.back_color : AppStyles.color.elem_back },
+      ]}
+    >
+      <View
+        style={[
+          s.tab_icon,
+          { backgroundColor: props.active ? params.main_color : AppStyles.color.background },
+        ]}
+      >
+        <params.icon
+          height={25}
+          width={25}
+          fill={props.active ? AppStyles.color.elem_back : AppStyles.color.text_faded}
+        />
+      </View>
+      <Txt
+        style={[
+          s.tab_label,
+          {
+            color: props.active ? AppStyles.color.text_primary : AppStyles.color.text_faded,
+            fontWeight: props.active ? "bold" : "normal",
+          },
+        ]}
+      >
+        {stepTypeClass.get(props.type)}
+      </Txt>
+    </TouchableOpacity>
+  );
+}
 
 export default function Constructor(props: any) {
   const [blocks, setBlocks] = useState<StepDTO[]>([]);
@@ -41,43 +105,20 @@ export default function Constructor(props: any) {
   return (
     <MainContainer>
       <NavBar />
-      <View style={[globalElementStyle.page_container, { backgroundColor: "#5da4faff" }]}>
-        <View style={s.header_section}></View>
+      <View style={[globalElementStyle.page_container]}>
+        <View style={s.header_section}>
+          <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold" }}>Protocol Constructor</Txt>
+        </View>
         <View style={s.body_section}>
           <View style={s.workspace_container}>
             <View style={s.tabs}>
-              <TouchableOpacity style={s.tab}>
-                <View
-                  style={[
-                    s.tab_icon,
-                    // {
-                    //   backgroundColor:
-                    //     workBlock?.type == StepType.WASHING
-                    //       ? AppStyles.color.block_washing
-                    //       : AppStyles.color.accent_back,
-                    // },
-                  ]}
-                >
-                  <Washing_icon height={25} width={25} fill={AppStyles.color.text_faded} />
-                </View>
-                <Txt style={s.tab_label}>Washing</Txt>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={s.tab}>
-                <View style={s.tab_icon}>
-                  <Reagent_icon height={25} width={25} fill={AppStyles.color.text_faded} />
-                </View>
-                <Txt style={s.tab_label}>Reagent</Txt>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={s.tab}>
-                <View style={s.tab_icon}>
-                  <Temperature_icon height={25} width={25} fill={AppStyles.color.text_faded} />
-                </View>
-                <Txt style={s.tab_label}>Temperature</Txt>
-              </TouchableOpacity>
+              <StepTab type={StepType.WASHING} active={true} />
+              <StepTab type={StepType.LIQUID_APPL} active={false} />
+              <StepTab type={StepType.TEMP_CHANGE} active={false} />
             </View>
-            <View style={s.workspace}></View>
+            <View style={s.workspace}>
+              <WorkBlock />
+            </View>
           </View>
           <View style={s.timeline}>
             <Txt>Timeline</Txt>
@@ -91,6 +132,11 @@ export default function Constructor(props: any) {
 const s = StyleSheet.create({
   header_section: {
     flex: 1,
+    width: "100%",
+    paddingHorizontal: "2%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: AppStyles.color.elem_back,
   },
   body_section: {
@@ -99,7 +145,6 @@ const s = StyleSheet.create({
   },
 
   workspace_container: {
-    backgroundColor: "#5bffb5",
     flex: 1,
   },
 
@@ -117,6 +162,8 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 0.5,
+    borderColor: AppStyles.color.background,
   },
 
   tab_icon: {
@@ -126,7 +173,6 @@ const s = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: AppStyles.color.background,
   },
 
   tab_label: {
@@ -139,5 +185,6 @@ const s = StyleSheet.create({
 
   workspace: {
     flex: 7,
+    backgroundColor: AppStyles.color.elem_back,
   },
 });

@@ -12,12 +12,14 @@ export const AppStyles = {
     accent_back: "#EBECED",
     elem_back: "#ffffffff",
     primary_faded: "#DFF2FF",
-    block_washing: "#2d4cc9",
-    block_washing_faded: "#dff2ff",
-    block_temperature: "#f49e1e",
-    block_temperature_faded: "#fde9c8",
-    block_reagent: "#26b65c",
-    block_reagent_faded: "#ddffed",
+    block: {
+      main_washing: "#2d4cc9",
+      faded_washing: "#dff2ff",
+      main_temperature: "#f49e1e",
+      faded_temperature: "#fde9c8",
+      main_reagent: "#26b65c",
+      faded_reagent: "#ddffed",
+    },
   },
 
   sizes: {
@@ -27,7 +29,7 @@ export const AppStyles = {
   },
 
   layout: {
-    border_radius: 10,
+    border_radius: 8,
     elem_padding: 10,
     box_padding: 20,
     main_flex: 10,
@@ -47,7 +49,7 @@ export const globalElementStyle = StyleSheet.create({
     top: 0,
     width: AppStyles.layout.main_width,
     height: "100%",
-    paddingTop: 15,
+    //paddingTop: 15,
   },
 });
 
