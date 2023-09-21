@@ -1,18 +1,38 @@
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import { StyleSheet, Text, View, TextInput, ViewStyle, InputModeOptions } from "react-native";
 import { AppStyles } from "../constants/styles";
 import { useState } from "react";
 
-export default function InputField(props: { placeholder: string; label: string }) {
+export default function InputField(props: {
+  placeholder?: string;
+  label?: string;
+  containerStyle?: ViewStyle;
+  type?: InputModeOptions;
+  disabled?: boolean;
+  onInputChange?: (inp: string) => void;
+}) {
   const [isFocused, setIsFocused] = useState(false);
+  const editable = !props.disabled || true;
 
   return (
-    <View style={s.container}>
-      <Text style={s.span}>{props.label}</Text>
+    <View style={[s.container, props.containerStyle]}>
+      {props.label && <Text style={s.span}>{props.label}</Text>}
       <TextInput
-        placeholder={props.placeholder}
-        style={[s.input, isFocused && { borderWidth: 1, borderColor: AppStyles.color.primary }]}
+        placeholder={props.placeholder || ""}
+        style={[
+          s.input,
+          { borderWidth: 1 },
+          isFocused
+            ? { borderColor: AppStyles.color.primary }
+            : { borderColor: AppStyles.color.accent_back },
+        ]}
         onBlur={() => setIsFocused(false)}
         onFocus={() => setIsFocused(true)}
+        inputMode={props.type || "text"}
+        editable={editable}
+        //onChangeText={(text) => props.onInputChange(text)}
+        onSubmitEditing={({ nativeEvent }) =>
+          props.onInputChange && props.onInputChange(nativeEvent.text)
+        }
       />
     </View>
   );
@@ -33,6 +53,6 @@ const s = StyleSheet.create({
     borderRadius: AppStyles.layout.border_radius,
     padding: AppStyles.layout.elem_padding,
     color: AppStyles.color.text_primary,
-    borderColor: "#fff",
+    fontSize: 18,
   },
 });

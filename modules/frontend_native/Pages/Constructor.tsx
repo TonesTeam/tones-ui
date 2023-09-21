@@ -13,9 +13,15 @@ import Txt from "../components/Txt";
 import Washing_icon from "../assets/icons/washing_icon.svg";
 import Reagent_icon from "../assets/icons/reagent_icon.svg";
 import Temperature_icon from "../assets/icons/temperature_icon.svg";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LiquidDTO } from "sharedlib/dto/liquid.dto";
-import { StepDTO } from "sharedlib/dto/step.dto";
+import {
+  ReagentStep,
+  StepDTO,
+  StepParams,
+  TemperatureStep,
+  WashStep,
+} from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
 import { SvgProps } from "react-native-svg";
 import WorkBlock from "./Block";
@@ -29,7 +35,7 @@ export const stepTypeClass = new Map<StepType, string>([
   [StepType.TEMP_CHANGE, "temperature"],
 ]);
 
-function StepTab(props: { type: StepType; active: boolean }) {
+function StepTab(props: { type: StepType; active: boolean; onPress: () => void }) {
   let params = {
     main_color:
       AppStyles.color.block[
@@ -64,6 +70,7 @@ function StepTab(props: { type: StepType; active: boolean }) {
         s.tab,
         { backgroundColor: props.active ? params.back_color : AppStyles.color.elem_back },
       ]}
+      onPressIn={props.onPress}
     >
       <View
         style={[
@@ -93,14 +100,23 @@ function StepTab(props: { type: StepType; active: boolean }) {
 }
 
 export default function Constructor(props: any) {
-  const [blocks, setBlocks] = useState<StepDTO[]>([]);
-  const [workBlock, setWorkBlock] = useState<StepDTO>();
-  const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE);
+  const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
+  const [workBlock, setWorkBlock] = useState<StepDTO>(); //Current edited block
+  const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE); //Last temperature used in steps
   const [settingAutoWash, setSettingAutoWash] = useState(true);
   const [preSaveModal, showPreSaveModal] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
+
+  useEffect(() => {
+    console.log("(Constructor) Work block initialized with ID: ", workBlock?.id);
+  }, [workBlock]);
+
+  function revealWorkBlock(step_data: StepDTO) {
+    //let step_params = step_data?.params || ({} as WashStep | ReagentStep | TemperatureStep);
+    setWorkBlock(step_data);
+  }
 
   return (
     <MainContainer>
@@ -112,13 +128,41 @@ export default function Constructor(props: any) {
         <View style={s.body_section}>
           <View style={s.workspace_container}>
             <View style={s.tabs}>
-              <StepTab type={StepType.WASHING} active={true} />
-              <StepTab type={StepType.LIQUID_APPL} active={false} />
-              <StepTab type={StepType.TEMP_CHANGE} active={false} />
+              <StepTab
+                type={StepType.WASHING}
+                active={workBlock?.type == StepType.WASHING}
+                onPress={() =>
+                  revealWorkBlock({
+                    type: StepType.WASHING,
+                    id: -1,
+                    params: {} as WashStep,
+                  } as StepDTO)
+                }
+              />
+              <StepTab
+                type={StepType.LIQUID_APPL}
+                active={workBlock?.type == StepType.LIQUID_APPL}
+                onPress={() =>
+                  revealWorkBlock({
+                    type: StepType.LIQUID_APPL,
+                    id: -1,
+                    params: {} as ReagentStep,
+                  } as StepDTO)
+                }
+              />
+              <StepTab
+                type={StepType.TEMP_CHANGE}
+                active={workBlock?.type == StepType.TEMP_CHANGE}
+                onPress={() =>
+                  setWorkBlock({
+                    type: StepType.TEMP_CHANGE,
+                    id: -1,
+                    params: {} as TemperatureStep,
+                  } as StepDTO)
+                }
+              />
             </View>
-            <View style={s.workspace}>
-              <WorkBlock />
-            </View>
+            <View style={s.workspace}>{workBlock?.id && <WorkBlock block={workBlock} />}</View>
           </View>
           <View style={s.timeline}>
             <Txt>Timeline</Txt>

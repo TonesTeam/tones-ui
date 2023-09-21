@@ -9,7 +9,7 @@ export const AppStyles = {
     text_primary: "#3b3d44",
     text_faded: "#838488",
     background: "#ebeced",
-    accent_back: "#EBECED",
+    accent_back: "#e4e4e4",
     elem_back: "#ffffffff",
     primary_faded: "#DFF2FF",
     block: {
