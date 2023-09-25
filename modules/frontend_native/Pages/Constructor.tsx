@@ -109,6 +109,13 @@ export default function Constructor(props: any) {
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
+  function updateCustomLiquids(newLiquids: LiquidDTO[]) {
+    setCustomLiquids((existing) => ({
+      ...existing,
+      ...newLiquids,
+    }));
+  }
+
   useEffect(() => {
     console.log("(Constructor) Work block initialized with ID: ", workBlock?.id);
   }, [workBlock]);
@@ -165,7 +172,15 @@ export default function Constructor(props: any) {
                 }
               />
             </View>
-            <View style={s.workspace}>{workBlock?.id && <WorkBlock block={workBlock} />}</View>
+            <View style={s.workspace}>
+              {workBlock?.id && (
+                <WorkBlock
+                  addCustomLiquid={updateCustomLiquids}
+                  customLiquids={customLiquids}
+                  block={workBlock}
+                />
+              )}
+            </View>
           </View>
           <View style={s.timeline}>
             <Txt>Timeline</Txt>

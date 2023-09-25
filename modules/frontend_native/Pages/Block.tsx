@@ -1,15 +1,11 @@
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  Image,
   TouchableOpacity,
   Dimensions,
   InputModeOptions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
 } from "react-native";
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
@@ -19,13 +15,9 @@ import Txt from "../components/Txt";
 import { getRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
 import InputField from "../components/InputField";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Info_icon from "../assets/icons/info.svg";
 import { StepType } from "sharedlib/enum/DBEnums";
 import Setting_icon from "../assets/icons/setting.svg";
-import { lastDayOfISOWeek } from "date-fns";
-
-const keyboardVerticalOffset = Platform.OS === "ios" ? 40 : 240;
 
 export interface WorkBlockProps {
   block: StepDTO;
@@ -33,14 +25,14 @@ export interface WorkBlockProps {
   //editBlock: (block: StepDTO) => void;
   //toggleAutoWash: (val: boolean) => void;
   //currentAutoWash: boolean;
-  //addCustomLiquid: (liquids: LiquidDTO) => void;
-  //customLiquids: LiquidDTO[];
+  addCustomLiquid: (liquids: LiquidDTO[]) => void;
+  customLiquids: LiquidDTO[];
 }
 
 interface BlockInputsProps {
   stepData: StepDTO;
   change: (arg0: WashStep | ReagentStep | TemperatureStep) => void;
-  //addNewLiquid?: (liquid: LiquidDTO) => void;
+  addNewLiquid?: (liquid: LiquidDTO) => void;
   existingCustomLiquids?: LiquidDTO[];
 }
 
@@ -138,9 +130,16 @@ function ReagentInputs(props: BlockInputsProps) {
       setSelectedCategory(cat);
 
       getRequest<LiquidDTO[]>("/liquids").then((r) => {
-        setLiquidList(r.data);
+        let existing = props.existingCustomLiquids
+          ? Array.isArray(props.existingCustomLiquids)
+            ? props.existingCustomLiquids
+            : [props.existingCustomLiquids]
+          : [];
+        let allLiquids = [...r.data, ...existing];
 
-        let filteredLiq = r.data.filter((liq) => liq.type.id == cat.id);
+        setLiquidList(allLiquids);
+
+        let filteredLiq = allLiquids.filter((liq) => liq.type.id == cat.id);
         let liquid = reagParams.liquid != undefined ? reagParams.liquid : filteredLiq[0];
         setSelectedLiquid(liquid);
 
@@ -163,12 +162,12 @@ function ReagentInputs(props: BlockInputsProps) {
 
   const addCustomLiquid = (newLiquid: LiquidDTO) => {
     const newCustomLiquid: LiquidDTO = {
-      id: liquidsList.length,
+      id: liquidsList.length + 1, //ID's start with 1
       name: newLiquid.name,
       type: selectedCategory!,
     };
 
-    //props.addCustom(newCustomLiquid)
+    props.addNewLiquid!(newCustomLiquid);
     setLiquidList((liqs) => [...liqs!, newCustomLiquid]);
     setSelectedLiquid(newCustomLiquid);
   };
@@ -177,7 +176,6 @@ function ReagentInputs(props: BlockInputsProps) {
     setSelectedCategory(cat);
     let filteredLiquids = liquidsList.filter((liq) => liq.type.id == cat.id);
     let liquid = filteredLiquids.length == 0 ? undefined : filteredLiquids[0];
-    console.log("🦄 Changing selected liquid to: ", liquid);
     setSelectedLiquid(liquid);
   }
 
@@ -266,20 +264,30 @@ function TemperatureInputs(props: BlockInputsProps) {
 
 export default function WorkBlock(props: WorkBlockProps) {
   const [params, setParams] = useState<{ [key: string]: any }>({});
+  const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(props.customLiquids);
 
   function updateParams(step_params: any) {
     setParams((params) => ({
       ...params,
       ...step_params,
     }));
-    console.log("(WorkBlock) 'Update params' with ", step_params);
   }
 
-  // useEffect(() => {
-  //   console.log("Work block params changed:", params);
-  // }, [params]);
+  function updateCustomLiquids(newLiquid: LiquidDTO) {
+    setCustomLiquids((exisiting) => ({
+      ...exisiting,
+      ...newLiquid,
+    }));
+  }
 
-  //console.log("(Workblock) Work Block initialized with params: ", props);
+  useEffect(() => {
+    console.log("🟩 Custom liquids changed. Current list: ", customLiquids);
+  }, [customLiquids]);
+
+  function saveOrUpdate() {
+    //save or update to constructor
+    //setCustomLiquids for Construcor
+  }
 
   return (
     <>
@@ -289,7 +297,12 @@ export default function WorkBlock(props: WorkBlockProps) {
             <WashInputs stepData={props.block} change={updateParams} />
           )}
           {props.block.type == StepType.LIQUID_APPL && (
-            <ReagentInputs stepData={props.block} change={updateParams} />
+            <ReagentInputs
+              stepData={props.block}
+              change={updateParams}
+              addNewLiquid={updateCustomLiquids}
+              existingCustomLiquids={customLiquids}
+            />
           )}
           {props.block.type == StepType.TEMP_CHANGE && (
             <TemperatureInputs stepData={props.block} change={updateParams} />
