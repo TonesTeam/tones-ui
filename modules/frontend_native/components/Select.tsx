@@ -26,6 +26,8 @@ export function CustomSelect(props: CustomSelectProps) {
   const [searchList, setSearchList] = useState<LiquidDTO[] | LiquidTypeDTO[]>([]);
   const [selected, setSelected] = useState<LiquidDTO | LiquidTypeDTO | undefined>();
 
+  const [filterInput, setFilterInput] = useState("");
+
   function initialization() {
     if (props.list.length == 0) {
       let emptyItem = {
@@ -56,34 +58,33 @@ export function CustomSelect(props: CustomSelectProps) {
     let filteredList = searchList.filter((item) =>
       item.name.toLowerCase().includes(text.toLowerCase())
     );
+
+    //🔽 FOR LIQUID DTO ONLY!
     if (filteredList.length == 0) {
       if (canAdd && text != "") {
-        setSearchList([
+        filteredList = [
           {
             id: OptionID.CUSTOM,
             name: text.charAt(0).toUpperCase() + text.substring(1).toLowerCase(),
             type: { id: 0, name: "Pseudo" } as LiquidTypeDTO,
           } as LiquidDTO,
-        ]);
+        ];
       } else {
-        setSearchList([
+        filteredList = [
           {
             id: OptionID.EMPTY_SEARCT_RESULT,
             name: "0 search results",
             type: { id: 0, name: "Pseudo" } as LiquidTypeDTO,
           } as LiquidDTO,
-        ]);
+        ];
       }
       //Setting list with pseudo-item
-    } else {
-      setSearchList(filteredList);
     }
+    return filteredList;
   }
 
   function handleSelect(item: LiquidDTO | LiquidTypeDTO) {
     if (item.id == -1 && canAdd) {
-      //console.log("!!! Handle select. Adding new liquid: ", item);
-
       let newReagent = {
         id: searchList.length == 0 ? 0 : searchList[searchList.length - 1].id + 1,
         name: item.name,
@@ -110,20 +111,17 @@ export function CustomSelect(props: CustomSelectProps) {
             <SelectDropdown
               //
               //Data
-              data={searchList}
-              //defaultValueByIndex={searchList.length != 0 ? selectedIndex : undefined}
+              data={suggestAdd(filterInput)} //{searchList}
               defaultValue={props.selected}
               search={true}
               searchPlaceHolder={"Search by name ..."}
               disabledIndexs={
-                //
-                // (!canAdd && searchList[0].id == OptionID.CUSTOM) ||
-                searchList[0].id == OptionID.EMPTY_SEARCT_RESULT ? [0] : []
+                suggestAdd(filterInput)[0].id == OptionID.EMPTY_SEARCT_RESULT ? [0] : []
               }
               buttonTextAfterSelection={(selectedItem, index) => {
                 return selectedItem.name;
               }}
-              defaultButtonText="Select an option ..."
+              defaultButtonText={`Select ${canAdd && "or add "}an option ...`}
               //
               //Styles
               dropdownStyle={{
@@ -157,7 +155,8 @@ export function CustomSelect(props: CustomSelectProps) {
                 fontFamily: "Roboto-regular",
               }}
               rowTextForSelection={(item) => {
-                let text = searchList[0].id == -1 ? `Add item ${item.name}` : item.name;
+                let text =
+                  suggestAdd(filterInput)[0].id == -1 ? `Add item ${item.name}` : item.name;
                 return text;
               }}
               renderDropdownIcon={() => {
@@ -166,14 +165,20 @@ export function CustomSelect(props: CustomSelectProps) {
               //
               //Events
               onSelect={(selectedItem, index) => {
+                console.log("💀💀💀 ONSELECT: Just selected option: ", selectedItem);
                 handleSelect(selectedItem);
               }}
               onBlur={() => {
-                //if (!canAdd && searchList[0].id == -1) {
-                setSearchList(props.list);
-                //}
+                // console.log("💀 ONBLUR: Currenty selected option: ", selected);
+                // if ((!canAdd && searchList[0].id == -1) || (canAdd && searchList[0].id != -1)) {
+                //   console.log("💀 ONBLUR: entered if. Current search list is: ", searchList);
+                //   setSearchList(props.list);
+                // } else {
+                //   setSearchList(props.list);
+                // }
+                setFilterInput("");
               }}
-              onChangeSearchInputText={(text) => suggestAdd(text)}
+              onChangeSearchInputText={(text) => setFilterInput(text)} //{(text) => suggestAdd(text)}
             />
           </>
         )}

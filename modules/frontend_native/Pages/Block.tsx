@@ -168,23 +168,22 @@ function ReagentInputs(props: BlockInputsProps) {
       type: selectedCategory!,
     };
 
-    //TODO: props.addCustom(newCustomLiquid)
+    //props.addCustom(newCustomLiquid)
     setLiquidList((liqs) => [...liqs!, newCustomLiquid]);
     setSelectedLiquid(newCustomLiquid);
-
-    //handleParamChange("liquid", newCustomLiquid);
   };
 
   function handleCategoryChange(cat: LiquidTypeDTO) {
     setSelectedCategory(cat);
     let filteredLiquids = liquidsList.filter((liq) => liq.type.id == cat.id);
     let liquid = filteredLiquids.length == 0 ? undefined : filteredLiquids[0];
+    console.log("🦄 Changing selected liquid to: ", liquid);
     setSelectedLiquid(liquid);
   }
 
   return (
     <>
-      {liquidsList && selectedLiquid && categories && selectedCategory && (
+      {liquidsList && categories && selectedCategory && (
         <>
           <View style={bs.row}>
             <CustomSelect
@@ -199,10 +198,12 @@ function ReagentInputs(props: BlockInputsProps) {
             <CustomSelect
               list={liquidsList.filter((liq) => liq.type.id == selectedCategory.id)}
               selected={selectedLiquid}
-              key={selectedLiquid.name}
-              canAdd={true}
+              key={selectedLiquid != undefined ? selectedLiquid.name : ""}
+              canAdd={selectedCategory.id == 8 || selectedCategory.id == 9 ? true : false}
               label="REAGENT:"
-              onChangeSelect={(liq) => handleParamChange("liquid", liq)}
+              onChangeSelect={(liq) => {
+                handleParamChange("liquid", liq);
+              }}
               onCreateOption={(liq: LiquidDTO) => addCustomLiquid(liq)}
             />
           </View>
