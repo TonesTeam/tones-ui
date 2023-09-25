@@ -23,6 +23,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Info_icon from "../assets/icons/info.svg";
 import { StepType } from "sharedlib/enum/DBEnums";
 import Setting_icon from "../assets/icons/setting.svg";
+import { lastDayOfISOWeek } from "date-fns";
 
 const keyboardVerticalOffset = Platform.OS === "ios" ? 40 : 240;
 
@@ -64,20 +65,16 @@ function WashInputs(props: BlockInputsProps) {
   const [allowSave, setAllowSave] = useState(false);
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
-  useEffect(() => {
-    getLiquids();
-  }, []);
-
-  useEffect(() => {
-    let liquid = washParams.liquid != undefined ? washParams.liquid : liquidsList[0];
-    setSelectedLiquid(liquid);
-    handleParamChange("liquid", liquid);
-  }, [liquidsList]);
-
-  async function getLiquids() {
-    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
-    setLiquidList(liquidList.filter((liq) => liq.type.id == 2));
-  }
+  const listInitilizer = () => {
+    getRequest<LiquidDTO[]>("/liquids").then((r) => {
+      let filtered = r.data.filter((liq) => liq.type.id == 2);
+      setLiquidList(filtered);
+      let liquid = washParams.liquid != undefined ? washParams.liquid : filtered[0];
+      setSelectedLiquid(liquid);
+      handleParamChange("liquid", liquid);
+    });
+  };
+  useEffect(listInitilizer, []);
 
   function handleParamChange(key: string, value: any) {
     setWashParams((prevState) => ({
@@ -87,7 +84,6 @@ function WashInputs(props: BlockInputsProps) {
   }
 
   useEffect(() => {
-    console.log("Wash params changed");
     props.change(washParams);
   }, [washParams]);
 
@@ -104,19 +100,19 @@ function WashInputs(props: BlockInputsProps) {
               onChangeSelect={(liq) => handleParamChange("liquid", liq)}
             />
           </View>
-          <View style={[bs.row, { paddingTop: 20 }]}>
+          <View style={[bs.row]}>
             <InputField
               placeholder="|"
               containerStyle={{ marginRight: 100 }}
               label="ITERATIONS:"
               type={"numeric" as InputModeOptions}
-              onInputChange={(iters) => handleParamChange("iters", iters)}
+              onInputChange={(iters) => handleParamChange("iters", Number(iters))}
             />
             <InputField
               placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
-              onInputChange={(incub) => handleParamChange("incubation", incub)}
+              onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
             />
           </View>
         </>
@@ -127,53 +123,32 @@ function WashInputs(props: BlockInputsProps) {
 
 function ReagentInputs(props: BlockInputsProps) {
   const [reagParams, setReagParams] = useState(props.stepData.params as ReagentStep);
+  const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
+  const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<LiquidTypeDTO>();
 
-  const [liquids, setLiquids] = useState<LiquidDTO[]>([]);
-  const [filteredLiquids, setFilteredLiquids] = useState<LiquidDTO[]>();
-  const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO | undefined>(undefined);
+  const listInitilizer = () => {
+    getRequest<LiquidTypeDTO[]>("/types").then((r) => {
+      let filteredCat = r.data.filter((type) => type.id != 2); //id=2 -> Washing
+      setCategories(filteredCat);
 
-  const [firstRender, setFirstRender] = useState(true);
+      let cat = reagParams.liquid != undefined ? reagParams.liquid.type : filteredCat[0];
+      setSelectedCategory(cat);
 
-  async function getLiquidData() {
-    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
-    const categoryList = (await getRequest<LiquidTypeDTO[]>("/types")).data;
+      getRequest<LiquidDTO[]>("/liquids").then((r) => {
+        setLiquidList(r.data);
 
-    const finalLiquids = [...liquidList, ...(props.existingCustomLiquids || [])];
-    setLiquids(finalLiquids);
-    setCategories(categoryList);
+        let filteredLiq = r.data.filter((liq) => liq.type.id == cat.id);
+        let liquid = reagParams.liquid != undefined ? reagParams.liquid : filteredLiq[0];
+        setSelectedLiquid(liquid);
 
-    let category = reagParams.liquid == undefined ? categoryList[0] : reagParams.liquid.type;
-    setSelectedCategory(category);
-    setFilteredLiquids(finalLiquids.filter((liq) => liq.type.id == category.id));
-
-    let liquid =
-      reagParams.liquid == undefined
-        ? finalLiquids.findIndex((liq) => liq.type.id == category.id) != -1
-          ? finalLiquids.filter((liq) => liq.type.id == category.id)[0]
-          : undefined
-        : reagParams.liquid;
-    setSelectedLiquid(liquid);
-  }
-
-  useEffect(() => {
-    getLiquidData();
-  }, []);
-
-  useEffect(() => {
-    props.change(reagParams);
-  }, [reagParams]);
-
-  // useEffect(() => {
-  //   if (filteredLiquids.length == 0)
-  //     setFilteredLiquids(
-  //       liquids.filter(
-  //         (liq) => liq.type.id == (selectedCategory ? selectedCategory.id : categories[0].id)
-  //       )
-  //     );
-  // }, [selectedCategory]);
+        handleParamChange("liquid", liquid);
+      });
+    });
+  };
+  useEffect(listInitilizer, []);
 
   function handleParamChange(key: string, value: any) {
     setReagParams((prevState) => ({
@@ -182,87 +157,71 @@ function ReagentInputs(props: BlockInputsProps) {
     }));
   }
 
-  // useEffect(() => {
-  //   if (selectedCategory && filteredLiquids.length != 0) {
-  //     let liquid =
-  //       reagParams.liquid == undefined
-  //         ? filteredLiquids.filter((liq) => liq.type.id == selectedCategory.id)[0]
-  //         : reagParams.liquid;
-  //     setSelectedLiquid(liquid);
-  //   }
-  // }, [filteredLiquids]);
-
-  function handleCategoryChange(cat: LiquidTypeDTO) {
-    if (cat != undefined && !firstRender) {
-      let filtered = liquids.filter((liq) => liq.type.id == cat.id);
-      setFilteredLiquids(filtered);
-      setSelectedLiquid(filtered.length == 0 ? undefined : filtered[0]);
-      setSelectedCategory(cat);
-    } else {
-      setFirstRender(false);
-    }
-  }
+  useEffect(() => {
+    props.change(reagParams);
+  }, [reagParams]);
 
   const addCustomLiquid = (newLiquid: LiquidDTO) => {
     const newCustomLiquid: LiquidDTO = {
-      id: newLiquid.id,
+      id: liquidsList.length,
       name: newLiquid.name,
       type: selectedCategory!,
     };
-    //props.addNewLiquid!(newLiquid);
-    setLiquids((liqs) => [...liqs!, newCustomLiquid]);
-    setFilteredLiquids((liqs) => [...liqs!, newCustomLiquid]);
+
+    //TODO: props.addCustom(newCustomLiquid)
+    setLiquidList((liqs) => [...liqs!, newCustomLiquid]);
     setSelectedLiquid(newCustomLiquid);
+
     //handleParamChange("liquid", newCustomLiquid);
   };
 
+  function handleCategoryChange(cat: LiquidTypeDTO) {
+    setSelectedCategory(cat);
+    let filteredLiquids = liquidsList.filter((liq) => liq.type.id == cat.id);
+    let liquid = filteredLiquids.length == 0 ? undefined : filteredLiquids[0];
+    setSelectedLiquid(liquid);
+  }
+
   return (
     <>
-      {categories.length != 0 && selectedCategory && filteredLiquids && (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={150}>
-          <ScrollView style={{ flex: 1 }}>
-            <View style={bs.row}>
-              <CustomSelect
-                list={categories}
-                selected={selectedCategory}
-                canAdd={false}
-                label="REAGENT CATEGORY:"
-                onChangeSelect={(cat) => {
-                  handleCategoryChange(cat as LiquidTypeDTO);
-                }}
-              />
-            </View>
-            <View style={[bs.row, { paddingTop: 20 }]}>
-              <CustomSelect
-                key={Math.random()}
-                list={filteredLiquids}
-                selected={selectedLiquid}
-                canAdd={true}
-                label="REAGENT:"
-                onChangeSelect={(liq) => {
-                  //handleParamChange("liquid", liq);
-                  //setSelectedLiquid(liq as LiquidDTO);
-                }}
-                onCreateOption={(liq) => addCustomLiquid(liq)}
-              />
-            </View>
-            <View style={[bs.row, { paddingTop: 20 }]}>
-              <InputField
-                placeholder="|"
-                containerStyle={{ marginRight: 100 }}
-                label="ITERATIONS:"
-                type={"numeric" as InputModeOptions}
-                onInputChange={(iters) => handleParamChange("iters", iters)}
-              />
-              <InputField
-                placeholder="|"
-                label="INCUBATION TIME (sec):"
-                type={"numeric" as InputModeOptions}
-                onInputChange={(incub) => handleParamChange("incubation", incub)}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+      {liquidsList && selectedLiquid && categories && selectedCategory && (
+        <>
+          <View style={bs.row}>
+            <CustomSelect
+              list={categories}
+              selected={selectedCategory}
+              canAdd={false}
+              label="REAGENT CATEGORY:"
+              onChangeSelect={(cat) => handleCategoryChange(cat)}
+            />
+          </View>
+          <View style={bs.row}>
+            <CustomSelect
+              list={liquidsList.filter((liq) => liq.type.id == selectedCategory.id)}
+              selected={selectedLiquid}
+              key={selectedLiquid.name}
+              canAdd={true}
+              label="REAGENT:"
+              onChangeSelect={(liq) => handleParamChange("liquid", liq)}
+              onCreateOption={(liq: LiquidDTO) => addCustomLiquid(liq)}
+            />
+          </View>
+          <View style={[bs.row]}>
+            <InputField
+              placeholder="|"
+              containerStyle={{ marginRight: 100 }}
+              label="ITERATIONS:"
+              type={"numeric" as InputModeOptions}
+              onInputChange={(iters) => handleParamChange("iters", Number(iters))}
+            />
+            <InputField
+              placeholder="|"
+              label="INCUBATION TIME:"
+              type={"numeric" as InputModeOptions}
+              onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
+            />
+          </View>
+        </>
       )}
     </>
   );
@@ -278,21 +237,26 @@ function TemperatureInputs(props: BlockInputsProps) {
     }));
   }
 
+  useEffect(() => {
+    props.change(temperParams);
+  }, [temperParams]);
+
   return (
     <KeyboardAvoidingView style={bs.inputs} behavior="padding">
       <View style={[bs.row]}>
         <InputField
           placeholder="|"
+          value={String(temperParams.source)}
           containerStyle={{ marginRight: 100 }}
           label="FROM:"
           type={"numeric" as InputModeOptions}
-          onInputChange={(iters) => handleParamChange("iters", iters)}
+          disabled={true}
         />
         <InputField
           placeholder="|"
           label="TARGET:"
           type={"numeric" as InputModeOptions}
-          onInputChange={(incub) => handleParamChange("incubation", incub)}
+          onInputChange={(target) => handleParamChange("target", Number(target))}
         />
       </View>
     </KeyboardAvoidingView>
@@ -303,11 +267,11 @@ export default function WorkBlock(props: WorkBlockProps) {
   const [params, setParams] = useState<{ [key: string]: any }>({});
 
   function updateParams(step_params: any) {
-    // setParams((params) => ({
-    //   ...params,
-    //   ...step_params,
-    // }));
-    //console.log("(WorkBlock) 'Update params' function");
+    setParams((params) => ({
+      ...params,
+      ...step_params,
+    }));
+    console.log("(WorkBlock) 'Update params' with ", step_params);
   }
 
   // useEffect(() => {
@@ -346,11 +310,25 @@ export default function WorkBlock(props: WorkBlockProps) {
               s.btn,
               {
                 width: "85%",
-                backgroundColor: AppStyles.color.primary,
+                backgroundColor:
+                  props.block.type == StepType.WASHING
+                    ? AppStyles.color.block.main_washing
+                    : props.block.type == StepType.LIQUID_APPL
+                    ? AppStyles.color.block.main_reagent
+                    : AppStyles.color.block.main_temperature,
               },
             ]}
           >
-            <Txt style={{ color: AppStyles.color.elem_back, alignSelf: "center" }}>Add Step</Txt>
+            <Txt
+              style={{
+                color: AppStyles.color.elem_back,
+                alignSelf: "center",
+                fontFamily: "Roboto-bold",
+                textTransform: "uppercase",
+              }}
+            >
+              {props.block.id == -1 ? "Add" : "Update"} Step
+            </Txt>
           </TouchableOpacity>
         </View>
       </View>
@@ -370,7 +348,6 @@ const s = StyleSheet.create({
     marginTop: Dimensions.get("screen").height / 40,
     height: "auto",
     flexDirection: "column",
-    //justifyContent: "center",
     alignItems: "center",
     justifyContent: "space-between",
   },

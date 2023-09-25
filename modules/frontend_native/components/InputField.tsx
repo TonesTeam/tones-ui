@@ -8,15 +8,17 @@ export default function InputField(props: {
   containerStyle?: ViewStyle;
   type?: InputModeOptions;
   disabled?: boolean;
+  value?: any;
   onInputChange?: (inp: string) => void;
 }) {
   const [isFocused, setIsFocused] = useState(false);
-  const editable = !props.disabled || true;
+  const editable = props.disabled ? !props.disabled : true;
 
   return (
     <View style={[s.container, props.containerStyle]}>
       {props.label && <Text style={s.span}>{props.label}</Text>}
       <TextInput
+        value={props.value || undefined}
         placeholder={props.placeholder || ""}
         style={[
           s.input,
@@ -30,9 +32,10 @@ export default function InputField(props: {
         inputMode={props.type || "text"}
         editable={editable}
         //onChangeText={(text) => props.onInputChange(text)}
-        onSubmitEditing={({ nativeEvent }) =>
-          props.onInputChange && props.onInputChange(nativeEvent.text)
-        }
+        onSubmitEditing={({ nativeEvent }) => {
+          console.log("OnSubmitEditing with text: ", nativeEvent.text);
+          props.onInputChange && props.onInputChange(nativeEvent.text);
+        }}
       />
     </View>
   );

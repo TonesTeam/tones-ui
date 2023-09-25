@@ -157,7 +157,10 @@ export default function Constructor(props: any) {
                   setWorkBlock({
                     type: StepType.TEMP_CHANGE,
                     id: -1,
-                    params: {} as TemperatureStep,
+                    params: {
+                      source: currentTemp,
+                      target: -1,
+                    } as TemperatureStep,
                   } as StepDTO)
                 }
               />
