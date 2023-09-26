@@ -2,10 +2,10 @@ const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
 
 const extraNodeModules = {
-  sharedlib: path.resolve(__dirname + "/../sharedlib"),
+  sharedlib: path.resolve(__dirname + "../../sharedlib"),
 };
 
-const watchFolders = [path.resolve(__dirname + "/../sharedlib")];
+const watchFolders = [path.resolve(__dirname + "../../sharedlib")];
 //const watchFolders = [path.resolve(__dirname + "/../common")];
 
 module.exports = (() => {

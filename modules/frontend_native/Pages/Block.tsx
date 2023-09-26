@@ -6,6 +6,7 @@ import {
   InputModeOptions,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
@@ -18,10 +19,11 @@ import InputField from "../components/InputField";
 import Info_icon from "../assets/icons/info.svg";
 import { StepType } from "sharedlib/enum/DBEnums";
 import Setting_icon from "../assets/icons/setting.svg";
+import { Switch } from "react-native-switch";
 
 export interface WorkBlockProps {
   block: StepDTO;
-  //addBlock: (block: StepDTO) => void;
+  addBlock: (block: StepDTO) => void;
   //editBlock: (block: StepDTO) => void;
   //toggleAutoWash: (val: boolean) => void;
   //currentAutoWash: boolean;
@@ -121,6 +123,8 @@ function ReagentInputs(props: BlockInputsProps) {
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<LiquidTypeDTO>();
 
+  const [wash, setWash] = useState(reagParams.autoWash);
+
   const listInitilizer = () => {
     getRequest<LiquidTypeDTO[]>("/types").then((r) => {
       let filteredCat = r.data.filter((type) => type.id != 2); //id=2 -> Washing
@@ -182,7 +186,15 @@ function ReagentInputs(props: BlockInputsProps) {
   return (
     <>
       {liquidsList && categories && selectedCategory && (
-        <>
+        <ScrollView
+          style={{
+            flex: 1,
+            width: "103%",
+          }}
+          contentContainerStyle={{ paddingHorizontal: 10 }}
+          showsVerticalScrollIndicator={true}
+          persistentScrollbar={true}
+        >
           <View style={bs.row}>
             <CustomSelect
               list={categories}
@@ -208,19 +220,64 @@ function ReagentInputs(props: BlockInputsProps) {
           <View style={[bs.row]}>
             <InputField
               placeholder="|"
-              containerStyle={{ marginRight: 100 }}
-              label="ITERATIONS:"
-              type={"numeric" as InputModeOptions}
-              onInputChange={(iters) => handleParamChange("iters", Number(iters))}
-            />
-            <InputField
-              placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
               onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
             />
+
+            <View style={{ flexDirection: "column", paddingLeft: 30 }}>
+              <Txt
+                style={{
+                  color: AppStyles.color.text_faded,
+                  paddingBottom: AppStyles.layout.elem_padding,
+                }}
+              >
+                AUTOMATIC WASHING (after step):
+              </Txt>
+              {/* <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              //thumbColor={"#f5dd4b"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                console.log("SWITCH");
+                setWash(!wash);
+              }}
+              style={{
+                alignSelf: "flex-start",
+                transform: [{ scaleX: 1. }, { scaleY: 2 }],
+              }}
+              value={wash}
+            /> */}
+              <Switch
+                value={wash}
+                onValueChange={(val) => {
+                  //console.log("Switch value: ", val);
+                  handleParamChange("autoWash", !wash);
+                  setWash(!wash);
+                }}
+                activeText={"ON"}
+                inActiveText={"OFF"}
+                circleSize={40}
+                barHeight={40}
+                circleBorderWidth={1}
+                backgroundActive={AppStyles.color.primary}
+                backgroundInactive={AppStyles.color.background}
+                circleActiveColor={AppStyles.color.elem_back}
+                circleInActiveColor={AppStyles.color.elem_back}
+                // renderInsideCircle={() => <CustomComponent />} // custom component to render inside the Switch circle (Text, Image, etc.)
+                changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                outerCircleStyle={{}} // style for outer animated circle
+                renderActiveText={true}
+                renderInActiveText={true}
+                switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
+                switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+              />
+            </View>
           </View>
-        </>
+        </ScrollView>
       )}
     </>
   );
@@ -266,7 +323,10 @@ export default function WorkBlock(props: WorkBlockProps) {
   const [params, setParams] = useState<{ [key: string]: any }>({});
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(props.customLiquids);
 
+  let block = props.block;
+
   function updateParams(step_params: any) {
+    //console.log("🟩 (WorkBlock) param change: ", step_params);
     setParams((params) => ({
       ...params,
       ...step_params,
@@ -280,13 +340,9 @@ export default function WorkBlock(props: WorkBlockProps) {
     }));
   }
 
-  useEffect(() => {
-    console.log("🟩 Custom liquids changed. Current list: ", customLiquids);
-  }, [customLiquids]);
-
-  function saveOrUpdate() {
-    //save or update to constructor
-    //setCustomLiquids for Construcor
+  function addBlockToParent() {
+    block.params = params as typeof block.params;
+    block.id == -1 && props.addBlock(block); //: props.editBlock(block);
   }
 
   return (
@@ -332,6 +388,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                     : AppStyles.color.block.main_temperature,
               },
             ]}
+            onPressIn={() => addBlockToParent()}
           >
             <Txt
               style={{

@@ -15,10 +15,13 @@ export const AppStyles = {
     block: {
       main_washing: "#2d4cc9",
       faded_washing: "#dff2ff",
+      transp_washing: "#2d4cc9cc",
       main_temperature: "#f49e1e",
       faded_temperature: "#fde9c8",
+      transp_temperature: "#f49e1ecc",
       main_reagent: "#26b65c",
       faded_reagent: "#ddffed",
+      transp_reagent: "#26b65ccc",
     },
   },
 

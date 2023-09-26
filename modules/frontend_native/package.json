@@ -2,6 +2,11 @@
   "name": "tones-frontend",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -9,6 +14,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo/webpack-config": "^19.0.0",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-navigation/drawer": "^6.6.3",
@@ -29,6 +35,7 @@
     "react-dom": "^18.2.0",
     "react-native": "0.72.4",
     "react-native-circular-progress-indicator": "^4.4.2",
+    "react-native-draggable-flatlist": "^4.0.1",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.3.0",
@@ -37,16 +44,18 @@
     "react-native-select-dropdown": "^3.4.0",
     "react-native-svg": "13.9.0",
     "react-native-svg-transformer": "^1.1.0",
+    "react-native-switch": "^1.5.1",
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "^0.19.8",
     "react-redux": "^8.1.2",
     "react-router-native": "^6.15.0",
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.4.2"
+    "redux-thunk": "^2.4.2",
+    "expo-haptics": "~12.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.23.0",
     "@types/react": "~18.2.14",
     "@types/react-native": "^0.72.2",
     "typescript": "^5.1.3"

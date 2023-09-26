@@ -111,7 +111,7 @@ export function CustomSelect(props: CustomSelectProps) {
             <SelectDropdown
               //
               //Data
-              data={suggestAdd(filterInput)} //{searchList}
+              data={suggestAdd(filterInput)}
               defaultValue={props.selected}
               search={true}
               searchPlaceHolder={"Search by name ..."}
@@ -165,20 +165,12 @@ export function CustomSelect(props: CustomSelectProps) {
               //
               //Events
               onSelect={(selectedItem, index) => {
-                console.log("💀💀💀 ONSELECT: Just selected option: ", selectedItem);
                 handleSelect(selectedItem);
               }}
               onBlur={() => {
-                // console.log("💀 ONBLUR: Currenty selected option: ", selected);
-                // if ((!canAdd && searchList[0].id == -1) || (canAdd && searchList[0].id != -1)) {
-                //   console.log("💀 ONBLUR: entered if. Current search list is: ", searchList);
-                //   setSearchList(props.list);
-                // } else {
-                //   setSearchList(props.list);
-                // }
                 setFilterInput("");
               }}
-              onChangeSearchInputText={(text) => setFilterInput(text)} //{(text) => suggestAdd(text)}
+              onChangeSearchInputText={(text) => setFilterInput(text)}
             />
           </>
         )}

@@ -6,6 +6,9 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Vibration,
+  PermissionsAndroid,
+  Button,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -15,6 +18,7 @@ import Reagent_icon from "../assets/icons/reagent_icon.svg";
 import Temperature_icon from "../assets/icons/temperature_icon.svg";
 import React, { useEffect, useState } from "react";
 import { LiquidDTO } from "sharedlib/dto/liquid.dto";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import {
   ReagentStep,
   StepDTO,
@@ -25,6 +29,8 @@ import {
 import { StepType } from "sharedlib/enum/DBEnums";
 import { SvgProps } from "react-native-svg";
 import WorkBlock from "./Block";
+import { renderTimelineBlock } from "./TimeLineBlock";
+import * as Haptics from "expo-haptics";
 
 export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
 export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip
@@ -116,12 +122,30 @@ export default function Constructor(props: any) {
     }));
   }
 
+  function addBlock(newBlock: StepDTO) {
+    //const newID = editedBlock.id == 0 ? 0 : blocks.length;
+    const finalBlocks = [
+      ...blocks,
+      {
+        type: newBlock.type,
+        id: newBlock.id == -1 ? blocks.length : newBlock.id,
+        params: { ...newBlock.params, temperature: currentTemp },
+      } as StepDTO,
+    ];
+    setBlocks(finalBlocks);
+    setWorkBlock(undefined);
+
+    if (newBlock.type == StepType.TEMP_CHANGE) {
+      setCurrentTemp((newBlock.params as TemperatureStep).target);
+    }
+  }
+
   useEffect(() => {
-    console.log("(Constructor) Work block initialized with ID: ", workBlock?.id);
-  }, [workBlock]);
+    console.log("(Constructor) Blocks changed. ");
+    console.log(blocks);
+  }, [blocks]);
 
   function revealWorkBlock(step_data: StepDTO) {
-    //let step_params = step_data?.params || ({} as WashStep | ReagentStep | TemperatureStep);
     setWorkBlock(step_data);
   }
 
@@ -175,6 +199,7 @@ export default function Constructor(props: any) {
             <View style={s.workspace}>
               {workBlock?.id && (
                 <WorkBlock
+                  addBlock={addBlock}
                   addCustomLiquid={updateCustomLiquids}
                   customLiquids={customLiquids}
                   block={workBlock}
@@ -183,7 +208,15 @@ export default function Constructor(props: any) {
             </View>
           </View>
           <View style={s.timeline}>
-            <Txt>Timeline</Txt>
+            <Txt style={s.timelineHeader}>Protocol timeline</Txt>
+            <DraggableFlatList
+              style={{ marginHorizontal: 20 }}
+              data={blocks}
+              onDragEnd={({ data }) => setBlocks(data)}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderTimelineBlock}
+              onDragBegin={() => Vibration.vibrate([100])}
+            />
           </View>
         </View>
       </View>
@@ -211,8 +244,18 @@ const s = StyleSheet.create({
   },
 
   timeline: {
-    backgroundColor: "#df3eff",
+    backgroundColor: AppStyles.color.background,
     flex: 1,
+    flexDirection: "column",
+  },
+
+  timelineHeader: {
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    fontSize: 18,
+    fontFamily: "Roboto-bold",
+    color: AppStyles.color.text_primary,
   },
 
   tabs: {
