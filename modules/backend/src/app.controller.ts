@@ -17,10 +17,16 @@ export class AppController {
         return this.appService.getProtocols();
     }
 
-    @Get("protocol/:id")
+    @Get("protocol/steps/:id")
     getProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Retrieving protocol ${id}`)
         return this.appService.getProtocolSteps(id);
+    }
+
+    @Get("protocol/:id")
+    getProtocolWithSteps(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Retrieving protocol ${id}`)
+        return this.appService.getProtocolWithSteps(id);
     }
 
     @Get("liquids")
@@ -43,7 +49,7 @@ export class AppController {
 
     @Post("/protocol/save")
     async saveProtocol(@Body() protocol: ProtocolWithStepsDTO) {
-        this.logger.log(`Saving protocol: ${protocol}`)
+        this.logger.log(`Saving protocol: ${JSON.stringify(protocol)}`)
         await this.appService.saveProtocol(protocol);
     }
 

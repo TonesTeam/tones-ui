@@ -1,20 +1,11 @@
-import { INestApplication, Injectable, OnModuleInit } from "@nestjs/common";
-import { Prisma, PrismaClient, Protocol } from '@prisma/client'
+import { Injectable } from "@nestjs/common";
+import { Prisma, Protocol } from '@prisma/client'
+import { LiquidDTO } from "sharedlib/dto/liquid.dto";
 import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
-import { WashStep } from "sharedlib/dto/step.dto";
+import { ReagentStep, StepDTO, WashStep } from "sharedlib/dto/step.dto";
+import { StepType } from "sharedlib/enum/DBEnums";
+import { PrismaService } from "./prisma.service";
 
-
-class PrismaService extends PrismaClient implements OnModuleInit {
-    async onModuleInit() {
-        await this.$connect();
-    }
-
-    async enableShutdownHooks(app: INestApplication) {
-        this.$on('beforeExit', async () => {
-            await app.close();
-        });
-    }
-}
 
 @Injectable()
 export class DatabaseService {
@@ -41,6 +32,8 @@ export class DatabaseService {
         return await this.prisma.protocol.findUnique({
             where: { id },
             include: {
+                creator: true,
+                defaultWashing: true,
                 steps: {
                     include: {
                         liquidApplication: {
@@ -69,7 +62,7 @@ export class DatabaseService {
     }
 
     async getUser(username: string) {
-        return await this.prisma.user.findFirst({where: {deleted:false, username}});
+        return await this.prisma.user.findFirst({ where: { deleted: false, username } });
     }
 
     async getPermanentLiquids() {
@@ -112,55 +105,6 @@ export class DatabaseService {
             include: {
                 type: true
             }
-        })
-    }
-
-    async saveProtocol(protocol: ProtocolWithStepsDTO) {
-        protocol.defaultWash
-        const pr: Protocol = {
-            id: 0,
-            name: "",
-            creationDate: undefined,
-            description: "",
-            // userId: (await this.getUser(protocol.author)).id,
-            liquidId: protocol.defaultWash.liquid.id,
-            deleted: false,
-            // washingId: (await this.saveWashing(protocol.defaultWash)).id
-        };
-        const steps = protocol.steps.map(s => ({}))
-        this.prisma.protocol.upsert({
-            where: {id: protocol.id},
-            create: {
-                name: protocol.name,
-                creationDate: protocol.creationDate,
-                description: protocol.description,
-                deleted: false,
-                defaultWashing: {
-                    create: {
-                        incubationTime: protocol.defaultWash.incubation,
-                        iter: protocol.defaultWash.iters,
-                        permanentLiquidId: protocol.defaultWash.liquid.id,
-                    }
-                },
-                creator: {
-                    connect: {
-                        username: protocol.author
-                    }
-                },
-                washingLiquid: {
-                    connect: {
-                        id: protocol.defaultWash.liquid.id
-                    }
-                },
-                steps: {
-                    create: protocol.steps.map(s => ({
-                        sequenceOrder: 0,
-                        stepType: s.type,
-                    }))
-                }
-
-            },
-            update: pr
         })
     }
 
