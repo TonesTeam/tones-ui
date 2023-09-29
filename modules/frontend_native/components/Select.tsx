@@ -29,8 +29,6 @@ export function CustomSelect(props: CustomSelectProps) {
   const [filterInput, setFilterInput] = useState("");
 
   const initialization = () => {
-    console.log("💙 Initialization");
-    console.log("Props: ", props);
     if (props.list.length == 0) {
       let emptyItem = {
         id: OptionID.EMPTY_SEARCT_RESULT,
@@ -62,6 +60,7 @@ export function CustomSelect(props: CustomSelectProps) {
     );
 
     //🔽 FOR LIQUID DTO ONLY!
+    // TODO: add type check
     if (filteredList.length == 0) {
       if (canAdd && text != "") {
         filteredList = [
@@ -80,13 +79,12 @@ export function CustomSelect(props: CustomSelectProps) {
           } as LiquidDTO,
         ];
       }
-      //Setting list with pseudo-item
+      // ^ Setting list with pseudo-item
     }
     return filteredList;
   }
 
   function handleSelect(item: LiquidDTO | LiquidTypeDTO) {
-    console.log("HANDLE SELECT!");
     if (item.id == -1 && canAdd) {
       let newReagent = {
         id: searchList.length == 0 ? 0 : searchList[searchList.length - 1].id + 1,

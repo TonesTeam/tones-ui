@@ -1,8 +1,16 @@
-import { StyleSheet, Text, View, TextInput, ViewStyle, InputModeOptions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ViewStyle,
+  InputModeOptions,
+  TextProps,
+} from "react-native";
 import { AppStyles } from "../constants/styles";
 import { useState } from "react";
 
-export default function InputField(props: {
+type InputFieldProps = TextProps & {
   placeholder?: string;
   label?: string;
   containerStyle?: ViewStyle;
@@ -10,7 +18,9 @@ export default function InputField(props: {
   disabled?: boolean;
   value?: any;
   onInputChange?: (inp: string) => void;
-}) {
+};
+
+export default function InputField({ ...props }: InputFieldProps) {
   const [isFocused, setIsFocused] = useState(false);
   const editable = props.disabled ? !props.disabled : true;
   const [value, setValue] = useState(String(props.value != undefined ? props.value : ""));

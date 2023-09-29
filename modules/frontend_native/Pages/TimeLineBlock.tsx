@@ -49,7 +49,9 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     <View style={st.container}>
       {/* <Arrow_icon height={10} width={10} stroke={AppStyles.color.elem_back} /> */}
       <Txt style={[st.supplementary, { textTransform: "uppercase" }]}>{props.label}: </Txt>
-      <Txt style={st.text}>{props.value}</Txt>
+      <Txt style={st.text} numberOfLines={1}>
+        {props.value}
+      </Txt>
       <Txt style={st.supplementary}> {props.measurement}</Txt>
     </View>
   );
@@ -132,12 +134,12 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                 fontFamily: "Roboto-bold",
               }}
             >
-              {blockName} ({block.id})
+              {blockName}
             </Txt>
           </View>
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
-              style={[s.btn, { borderColor: AppStyles.color.warning, borderWidth: 1 }]}
+              style={[s.btn, { borderColor: AppStyles.color.text_primary, borderWidth: 1 }]}
               onPress={() => setDeleteModal(true)}
             >
               <Delete_icon
@@ -215,7 +217,15 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
               </>
             )}
             <View
-              style={[s.col, { alignItems: "flex-end", paddingRight: 0, justifyContent: "center" }]}
+              style={[
+                s.col,
+                {
+                  alignItems: "flex-end",
+                  paddingRight: 0,
+                  justifyContent: "center",
+                  marginRight: 0,
+                },
+              ]}
             >
               <TouchableOpacity
                 style={[s.btn, { borderColor: AppStyles.color.elem_back, borderWidth: 1 }]}
@@ -331,6 +341,7 @@ const s = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     paddingHorizontal: 10,
+    marginRight: 15,
   },
 
   modal_container: {

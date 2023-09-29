@@ -11,6 +11,7 @@ import {
   Button,
   Modal,
   Alert,
+  ScrollView,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -32,7 +33,9 @@ import { StepType } from "sharedlib/enum/DBEnums";
 import { SvgProps } from "react-native-svg";
 import WorkBlock from "./Block";
 import { renderTimelineBlock } from "./TimeLineBlock";
-import * as Haptics from "expo-haptics";
+import { updateTemperature } from "../common/constructorUtils";
+import InputField from "../components/InputField";
+import Close_icon from "../assets/icons/close.svg";
 
 export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
 export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip
@@ -111,25 +114,28 @@ export default function Constructor(props: any) {
   const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
   const [workBlock, setWorkBlock] = useState<StepDTO>(); //Current edited block
   const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE); //Last temperature used in steps
-  const [settingAutoWash, setSettingAutoWash] = useState(true);
-  const [preSaveModal, showPreSaveModal] = useState(false);
+  const [preSaveModal, setPreSaveModal] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
   function updateCustomLiquids(newLiquids: LiquidDTO[]) {
-    setCustomLiquids((existing) => ({
-      ...existing,
-      ...newLiquids,
-    }));
+    setCustomLiquids(newLiquids);
   }
 
   function addBlock(newBlock: StepDTO) {
+    const newID =
+      blocks.length == 0
+        ? 0
+        : blocks.length == 1
+        ? 1
+        : blocks.reduce((prev, current) => (prev && prev.id > current.id ? prev : current)).id + 1;
+
     const finalBlocks = [
       ...blocks,
       {
         type: newBlock.type,
-        id: newBlock.id == -1 ? blocks.length : newBlock.id,
+        id: newBlock.id == -1 ? newID : newBlock.id,
         params: { ...newBlock.params, temperature: currentTemp },
       } as StepDTO,
     ];
@@ -141,21 +147,38 @@ export default function Constructor(props: any) {
     }
   }
 
-  // useEffect(() => {
-  //   console.log("(Constructor) Blocks changed. ");
-  //   console.log(blocks);
-  // }, [blocks]);
+  function editBlock(editedBlock: StepDTO) {
+    let index = blocks.findIndex((x) => x.id == editedBlock.id);
+    let newBlocks = [...blocks];
+
+    if (editedBlock.type == StepType.TEMP_CHANGE) {
+      let newTemp = (editedBlock.params as TemperatureStep).target as number;
+      setCurrentTemp(newTemp);
+    }
+
+    let newEdited = { ...newBlocks[index] };
+    newEdited.params = editedBlock.params;
+    newEdited.type = editedBlock.type;
+
+    newBlocks[index] = newEdited;
+    handleBlocksChange(newBlocks);
+    setWorkBlock(undefined);
+  }
 
   function revealWorkBlock(step_data: StepDTO) {
-    console.log("😍 REVEALING BLOCK IN CONSTRUCTOR | with step data: ", step_data);
     setWorkBlock(step_data);
   }
 
   function deleteBlock(blockToRemove: StepDTO) {
     console.log("😱 DELETING BLOCK IN CONSTRUCTOR");
-    const newBlocs = blocks.filter((block) => block.id !== blockToRemove.id);
-    //TODO: Update temperature
-    setBlocks(newBlocs);
+    const newBlocks = blocks.filter((block) => block.id !== blockToRemove.id);
+    handleBlocksChange(newBlocks);
+  }
+
+  function handleBlocksChange(blocks: StepDTO[]) {
+    let [newBlocks, newCurrentTemperature] = updateTemperature(blocks);
+    setBlocks(newBlocks);
+    setCurrentTemp(newCurrentTemperature);
   }
 
   return (
@@ -164,6 +187,11 @@ export default function Constructor(props: any) {
       <View style={[globalElementStyle.page_container]}>
         <View style={s.header_section}>
           <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold" }}>Protocol Constructor</Txt>
+          <TouchableOpacity style={s.save_proto_btn} onPress={() => setPreSaveModal(true)}>
+            <Txt style={{ fontFamily: "Roboto-bold", color: AppStyles.color.elem_back }}>
+              Save Protocol
+            </Txt>
+          </TouchableOpacity>
         </View>
         <View style={s.body_section}>
           <View style={s.workspace_container}>
@@ -208,7 +236,8 @@ export default function Constructor(props: any) {
               {workBlock != undefined && (
                 <WorkBlock
                   addBlock={addBlock}
-                  addCustomLiquid={updateCustomLiquids}
+                  editBlock={editBlock}
+                  updateCustomLiquids={updateCustomLiquids}
                   customLiquids={customLiquids}
                   block={workBlock}
                 />
@@ -220,7 +249,7 @@ export default function Constructor(props: any) {
             <DraggableFlatList
               style={{ marginHorizontal: 20 }}
               data={blocks}
-              onDragEnd={({ data }) => setBlocks(data)}
+              onDragEnd={({ data }) => handleBlocksChange(data)}
               keyExtractor={(item) => item.id.toString()}
               renderItem={(params) =>
                 renderTimelineBlock({
@@ -234,6 +263,111 @@ export default function Constructor(props: any) {
           </View>
         </View>
       </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={preSaveModal}
+        onRequestClose={() => {
+          setPreSaveModal(!preSaveModal);
+        }}
+      >
+        <View style={s.modal_container}>
+          <View style={s.modal_body}>
+            <View style={s.modal_header}>
+              <View style={{ flexDirection: "row", alignItems: "center", width: "70%" }}>
+                <Txt style={{ fontFamily: "Roboto-bold" }}>Protocol Name: </Txt>
+                <InputField style={{ width: "30%" }} placeholder="Protocol Name" />
+              </View>
+              <TouchableOpacity onPress={() => setPreSaveModal(false)}>
+                <Close_icon width={40} height={40} />
+              </TouchableOpacity>
+            </View>
+            <View style={s.modal_list}>
+              <View style={[s.list_row, { backgroundColor: AppStyles.color.text_primary }]}>
+                <View style={[s.list_cell, { flex: 1 }]}>
+                  <Txt style={s.list_header_txt}>Step №</Txt>
+                </View>
+                <View style={[s.list_cell, { flex: 2 }]}>
+                  <Txt style={s.list_header_txt}>Type</Txt>
+                </View>
+                <View style={[s.list_cell, { flex: 2 }]}>
+                  <Txt style={s.list_header_txt}>Reagent</Txt>
+                </View>
+                <View style={[s.list_cell, { flex: 1 }]}>
+                  <Txt style={s.list_header_txt}>Temperature</Txt>
+                </View>
+                <View style={[s.list_cell, { flex: 1 }]}>
+                  <Txt style={s.list_header_txt}>Inc. time</Txt>
+                </View>
+              </View>
+              <ScrollView style={{ flex: 1 }}>
+                {blocks.map((block, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[
+                        s.list_row,
+                        {
+                          backgroundColor:
+                            index % 2 != 0 ? AppStyles.color.background : AppStyles.color.elem_back,
+                        },
+                      ]}
+                    >
+                      <View style={[s.list_cell, { flex: 1 }]}>
+                        <Txt style={s.list_cell_txt}>{index + 1}</Txt>
+                      </View>
+                      <View style={[s.list_cell, { flex: 2 }]}>
+                        <Txt style={s.list_cell_txt}>{block.type}</Txt>
+                      </View>
+                      <View style={[s.list_cell, { flex: 2 }]}>
+                        <Txt style={s.list_cell_txt}>
+                          {block.type != StepType.TEMP_CHANGE
+                            ? (block.params as ReagentStep | WashStep).liquid.name
+                            : "-"}
+                        </Txt>
+                      </View>
+                      <View style={[s.list_cell, { flex: 1 }]}>
+                        <Txt style={s.list_cell_txt}>
+                          {block.type != StepType.TEMP_CHANGE
+                            ? (block.params as Partial<WashStep>).temperature
+                            : (block.params as TemperatureStep).target}
+                          °C
+                        </Txt>
+                      </View>
+                      <View style={[s.list_cell, { flex: 1 }]}>
+                        <Txt style={s.list_cell_txt}>
+                          {block.type != StepType.TEMP_CHANGE
+                            ? (block.params as ReagentStep | WashStep).incubation
+                            : "-"}
+                        </Txt>
+                      </View>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </View>
+            <View style={s.modal_footer}>
+              <TouchableOpacity
+                style={[s.modal_btn, { backgroundColor: AppStyles.color.secondary }]}
+                onPress={() => {
+                  setPreSaveModal(false);
+                }}
+              >
+                <Txt style={s.modal_btn_text}>SAVE</Txt>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[s.modal_btn, { backgroundColor: AppStyles.color.primary }]}
+                onPress={() => {
+                  setPreSaveModal(false);
+                }}
+              >
+                <Txt style={s.modal_btn_text}>RETURN</Txt>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </MainContainer>
   );
 }
@@ -248,6 +382,14 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: AppStyles.color.elem_back,
   },
+
+  save_proto_btn: {
+    backgroundColor: "#000",
+    borderRadius: 8,
+    paddingHorizontal: "5%",
+    paddingVertical: "1%",
+  },
+
   body_section: {
     flex: 11,
     flexDirection: "row",
@@ -305,5 +447,102 @@ const s = StyleSheet.create({
   workspace: {
     flex: 7,
     backgroundColor: AppStyles.color.elem_back,
+  },
+
+  modal_container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#001f6d42",
+  },
+
+  modal_body: {
+    width: "80%",
+    height: "80%",
+    flexDirection: "column",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 15,
+    backgroundColor: AppStyles.color.elem_back,
+  },
+
+  modal_header: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: "2%",
+    alignItems: "center",
+    paddingVertical: "1%",
+  },
+
+  modal_list: {
+    flex: 7,
+  },
+
+  modal_footer: {
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: "10%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  modal_btn: {
+    width: 150,
+    height: 50,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    marginHorizontal: 20,
+  },
+
+  modal_btn_text: {
+    color: AppStyles.color.elem_back,
+    fontFamily: "Roboto-bold",
+  },
+
+  list_row: {
+    flexDirection: "row",
+    width: "100%",
+    height: 50,
+  },
+
+  list_header: {
+    backgroundColor: AppStyles.color.text_primary,
+    borderWidth: 1,
+    borderColor: AppStyles.color.elem_back,
+  },
+
+  list_cell: {
+    borderWidth: 1,
+    borderColor: AppStyles.color.elem_back,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  list_cell_txt: {
+    color: AppStyles.color.text_primary,
+  },
+
+  list_odd_cell: {
+    backgroundColor: AppStyles.color.background,
+  },
+  list_even_cell: {
+    backgroundColor: AppStyles.color.elem_back,
+  },
+
+  list_header_txt: {
+    color: AppStyles.color.elem_back,
+    fontFamily: "Roboto-bold",
   },
 });

@@ -24,10 +24,10 @@ import { Switch } from "react-native-switch";
 export interface WorkBlockProps {
   block: StepDTO;
   addBlock: (block: StepDTO) => void;
-  //editBlock: (block: StepDTO) => void;
+  editBlock: (block: StepDTO) => void;
   //toggleAutoWash: (val: boolean) => void;
   //currentAutoWash: boolean;
-  addCustomLiquid: (liquids: LiquidDTO[]) => void;
+  updateCustomLiquids: (liquids: LiquidDTO[]) => void;
   customLiquids: LiquidDTO[];
 }
 
@@ -64,7 +64,7 @@ function WashInputs(props: BlockInputsProps) {
       setLiquidList(filtered);
       let liquid = washParams.liquid != undefined ? washParams.liquid : filtered[0];
       setSelectedLiquid(liquid);
-      //handleParamChange("liquid", liquid);
+      handleParamChange("liquid", liquid);
     });
   };
   useEffect(listInitilizer, []);
@@ -91,7 +91,6 @@ function WashInputs(props: BlockInputsProps) {
               canAdd={false}
               label="REAGENT:"
               onChangeSelect={(liq) => {
-                console.log("HandleChange pseudo");
                 handleParamChange("liquid", liq);
               }}
             />
@@ -130,10 +129,12 @@ function ReagentInputs(props: BlockInputsProps) {
     const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
     const categoryList = (await getRequest<LiquidTypeDTO[]>("/types")).data;
 
-    const finalLiquids = [
-      ...liquidList.filter((liq) => liq.type.id != 2),
-      ...props.existingCustomLiquids!,
-    ];
+    let customs = props.existingCustomLiquids
+      ? Array.isArray(props.existingCustomLiquids)
+        ? props.existingCustomLiquids
+        : [props.existingCustomLiquids]
+      : [];
+    const finalLiquids = [...liquidList.filter((liq) => liq.type.id != 2), ...customs];
     setLiquidList(finalLiquids);
     setCategories(categoryList.filter((cat) => cat.id != 2));
 
@@ -183,7 +184,7 @@ function ReagentInputs(props: BlockInputsProps) {
 
   return (
     <>
-      {liquidsList && categories && selectedCategory && selectedLiquid && (
+      {liquidsList && categories && selectedCategory && (
         <ScrollView
           style={{
             flex: 1,
@@ -266,12 +267,9 @@ function ReagentInputs(props: BlockInputsProps) {
   );
 }
 
-//React.memo(ReagentInputs);
-
 function TemperatureInputs(props: BlockInputsProps) {
   const [temperParams, setTemperParams] = useState(props.stepData.params as TemperatureStep);
 
-  console.log("👀 Temperature inputs received params: ", props.stepData.params as TemperatureStep);
   function handleParamChange(key: string, value: any) {
     setTemperParams((prevState) => ({
       ...prevState,
@@ -312,8 +310,6 @@ export default function WorkBlock(props: WorkBlockProps) {
 
   let block = props.block;
 
-  console.log("❗ REVEALING BLOCK IN BLOCK");
-
   function updateParams(step_params: any) {
     setParams((params) => ({
       ...params,
@@ -328,9 +324,11 @@ export default function WorkBlock(props: WorkBlockProps) {
     }));
   }
 
-  function addBlockToParent() {
+  function saveBlockToParent() {
+    customLiquids.length != props.customLiquids.length && props.updateCustomLiquids(customLiquids);
+
     block.params = params as typeof block.params;
-    block.id == -1 && props.addBlock(block); //: props.editBlock(block);
+    block.id == -1 ? props.addBlock(block) : props.editBlock(block);
   }
 
   const memorizedParamUpdate = useCallback(updateParams, [params]);
@@ -378,7 +376,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                     : AppStyles.color.block.main_temperature,
               },
             ]}
-            onPressIn={() => addBlockToParent()}
+            onPressIn={() => saveBlockToParent()}
           >
             <Txt
               style={{
