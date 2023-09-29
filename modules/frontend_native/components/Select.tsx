@@ -28,7 +28,9 @@ export function CustomSelect(props: CustomSelectProps) {
 
   const [filterInput, setFilterInput] = useState("");
 
-  function initialization() {
+  const initialization = () => {
+    console.log("💙 Initialization");
+    console.log("Props: ", props);
     if (props.list.length == 0) {
       let emptyItem = {
         id: OptionID.EMPTY_SEARCT_RESULT,
@@ -40,13 +42,13 @@ export function CustomSelect(props: CustomSelectProps) {
     } else {
       setSearchList(props.list);
 
-      setSelected(props.list.find((item) => item == props.selected));
+      setSelected(
+        props.list.find((item) => JSON.stringify(item) == JSON.stringify(props.selected))
+      );
     }
-  }
+  };
 
-  useEffect(() => {
-    initialization();
-  }, []);
+  useEffect(initialization, []);
 
   useEffect(() => {
     if (selected != undefined) {
@@ -84,6 +86,7 @@ export function CustomSelect(props: CustomSelectProps) {
   }
 
   function handleSelect(item: LiquidDTO | LiquidTypeDTO) {
+    console.log("HANDLE SELECT!");
     if (item.id == -1 && canAdd) {
       let newReagent = {
         id: searchList.length == 0 ? 0 : searchList[searchList.length - 1].id + 1,
@@ -106,13 +109,13 @@ export function CustomSelect(props: CustomSelectProps) {
         }}
       >
         {props.label && <Txt style={s.span}>{props.label}</Txt>}
-        {searchList && selected && selected?.id != -1 && (
+        {searchList && selected != undefined && (
           <>
             <SelectDropdown
               //
               //Data
               data={suggestAdd(filterInput)}
-              defaultValue={props.selected}
+              defaultValue={selected}
               search={true}
               searchPlaceHolder={"Search by name ..."}
               disabledIndexs={

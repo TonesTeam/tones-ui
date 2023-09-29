@@ -9,6 +9,8 @@ import {
   Vibration,
   PermissionsAndroid,
   Button,
+  Modal,
+  Alert,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -123,7 +125,6 @@ export default function Constructor(props: any) {
   }
 
   function addBlock(newBlock: StepDTO) {
-    //const newID = editedBlock.id == 0 ? 0 : blocks.length;
     const finalBlocks = [
       ...blocks,
       {
@@ -140,13 +141,21 @@ export default function Constructor(props: any) {
     }
   }
 
-  useEffect(() => {
-    console.log("(Constructor) Blocks changed. ");
-    console.log(blocks);
-  }, [blocks]);
+  // useEffect(() => {
+  //   console.log("(Constructor) Blocks changed. ");
+  //   console.log(blocks);
+  // }, [blocks]);
 
   function revealWorkBlock(step_data: StepDTO) {
+    console.log("😍 REVEALING BLOCK IN CONSTRUCTOR | with step data: ", step_data);
     setWorkBlock(step_data);
+  }
+
+  function deleteBlock(blockToRemove: StepDTO) {
+    console.log("😱 DELETING BLOCK IN CONSTRUCTOR");
+    const newBlocs = blocks.filter((block) => block.id !== blockToRemove.id);
+    //TODO: Update temperature
+    setBlocks(newBlocs);
   }
 
   return (
@@ -190,14 +199,13 @@ export default function Constructor(props: any) {
                     id: -1,
                     params: {
                       source: currentTemp,
-                      target: -1,
                     } as TemperatureStep,
                   } as StepDTO)
                 }
               />
             </View>
             <View style={s.workspace}>
-              {workBlock?.id && (
+              {workBlock != undefined && (
                 <WorkBlock
                   addBlock={addBlock}
                   addCustomLiquid={updateCustomLiquids}
@@ -214,7 +222,13 @@ export default function Constructor(props: any) {
               data={blocks}
               onDragEnd={({ data }) => setBlocks(data)}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={renderTimelineBlock}
+              renderItem={(params) =>
+                renderTimelineBlock({
+                  renderParams: params,
+                  deleteStep: deleteBlock,
+                  editStep: revealWorkBlock,
+                })
+              }
               onDragBegin={() => Vibration.vibrate([100])}
             />
           </View>

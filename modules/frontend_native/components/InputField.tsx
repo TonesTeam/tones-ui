@@ -13,12 +13,13 @@ export default function InputField(props: {
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const editable = props.disabled ? !props.disabled : true;
+  const [value, setValue] = useState(String(props.value != undefined ? props.value : ""));
 
   return (
     <View style={[s.container, props.containerStyle]}>
       {props.label && <Text style={s.span}>{props.label}</Text>}
       <TextInput
-        value={props.value || undefined}
+        value={value}
         placeholder={props.placeholder || ""}
         style={[
           s.input,
@@ -31,9 +32,8 @@ export default function InputField(props: {
         onFocus={() => setIsFocused(true)}
         inputMode={props.type || "text"}
         editable={editable}
-        //onChangeText={(text) => props.onInputChange(text)}
+        onChangeText={(text) => setValue(text)}
         onSubmitEditing={({ nativeEvent }) => {
-          console.log("OnSubmitEditing with text: ", nativeEvent.text);
           props.onInputChange && props.onInputChange(nativeEvent.text);
         }}
       />

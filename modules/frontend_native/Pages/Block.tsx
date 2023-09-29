@@ -11,7 +11,7 @@ import {
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { LiquidDTO, LiquidTypeDTO } from "sharedlib/dto/liquid.dto";
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import Txt from "../components/Txt";
 import { getRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
@@ -56,7 +56,6 @@ const bs = StyleSheet.create({
 function WashInputs(props: BlockInputsProps) {
   const [washParams, setWashParams] = useState(props.stepData.params as WashStep);
   const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
-  const [allowSave, setAllowSave] = useState(false);
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
   const listInitilizer = () => {
@@ -65,7 +64,7 @@ function WashInputs(props: BlockInputsProps) {
       setLiquidList(filtered);
       let liquid = washParams.liquid != undefined ? washParams.liquid : filtered[0];
       setSelectedLiquid(liquid);
-      handleParamChange("liquid", liquid);
+      //handleParamChange("liquid", liquid);
     });
   };
   useEffect(listInitilizer, []);
@@ -91,7 +90,10 @@ function WashInputs(props: BlockInputsProps) {
               selected={selectedLiquid || liquidsList[0]}
               canAdd={false}
               label="REAGENT:"
-              onChangeSelect={(liq) => handleParamChange("liquid", liq)}
+              onChangeSelect={(liq) => {
+                console.log("HandleChange pseudo");
+                handleParamChange("liquid", liq);
+              }}
             />
           </View>
           <View style={[bs.row]}>
@@ -117,41 +119,37 @@ function WashInputs(props: BlockInputsProps) {
 
 function ReagentInputs(props: BlockInputsProps) {
   const [reagParams, setReagParams] = useState(props.stepData.params as ReagentStep);
+
   const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
 
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<LiquidTypeDTO>();
 
-  const [wash, setWash] = useState(reagParams.autoWash);
+  async function listInitilizer() {
+    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
+    const categoryList = (await getRequest<LiquidTypeDTO[]>("/types")).data;
 
-  const listInitilizer = () => {
-    getRequest<LiquidTypeDTO[]>("/types").then((r) => {
-      let filteredCat = r.data.filter((type) => type.id != 2); //id=2 -> Washing
-      setCategories(filteredCat);
+    const finalLiquids = [
+      ...liquidList.filter((liq) => liq.type.id != 2),
+      ...props.existingCustomLiquids!,
+    ];
+    setLiquidList(finalLiquids);
+    setCategories(categoryList.filter((cat) => cat.id != 2));
 
-      let cat = reagParams.liquid != undefined ? reagParams.liquid.type : filteredCat[0];
-      setSelectedCategory(cat);
+    let category = reagParams.liquid == undefined ? categoryList[0] : reagParams.liquid.type;
+    setSelectedCategory(category);
 
-      getRequest<LiquidDTO[]>("/liquids").then((r) => {
-        let existing = props.existingCustomLiquids
-          ? Array.isArray(props.existingCustomLiquids)
-            ? props.existingCustomLiquids
-            : [props.existingCustomLiquids]
-          : [];
-        let allLiquids = [...r.data, ...existing];
-
-        setLiquidList(allLiquids);
-
-        let filteredLiq = allLiquids.filter((liq) => liq.type.id == cat.id);
-        let liquid = reagParams.liquid != undefined ? reagParams.liquid : filteredLiq[0];
-        setSelectedLiquid(liquid);
-
-        handleParamChange("liquid", liquid);
-      });
-    });
-  };
-  useEffect(listInitilizer, []);
+    let liquid =
+      reagParams.liquid == undefined
+        ? finalLiquids.filter((liq) => liq.type.id == category.id)[0]
+        : reagParams.liquid;
+    setSelectedLiquid(liquid);
+    handleParamChange("liquid", liquid);
+  }
+  useEffect(() => {
+    listInitilizer();
+  }, []);
 
   function handleParamChange(key: string, value: any) {
     setReagParams((prevState) => ({
@@ -185,7 +183,7 @@ function ReagentInputs(props: BlockInputsProps) {
 
   return (
     <>
-      {liquidsList && categories && selectedCategory && (
+      {liquidsList && categories && selectedCategory && selectedLiquid && (
         <ScrollView
           style={{
             flex: 1,
@@ -219,6 +217,7 @@ function ReagentInputs(props: BlockInputsProps) {
           </View>
           <View style={[bs.row]}>
             <InputField
+              value={reagParams.incubation}
               placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
@@ -234,26 +233,10 @@ function ReagentInputs(props: BlockInputsProps) {
               >
                 AUTOMATIC WASHING (after step):
               </Txt>
-              {/* <Switch
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              //thumbColor={"#f5dd4b"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                console.log("SWITCH");
-                setWash(!wash);
-              }}
-              style={{
-                alignSelf: "flex-start",
-                transform: [{ scaleX: 1. }, { scaleY: 2 }],
-              }}
-              value={wash}
-            /> */}
               <Switch
-                value={wash}
+                value={reagParams.autoWash}
                 onValueChange={(val) => {
-                  //console.log("Switch value: ", val);
-                  handleParamChange("autoWash", !wash);
-                  setWash(!wash);
+                  handleParamChange("autoWash", !reagParams.autoWash);
                 }}
                 activeText={"ON"}
                 inActiveText={"OFF"}
@@ -283,9 +266,12 @@ function ReagentInputs(props: BlockInputsProps) {
   );
 }
 
+//React.memo(ReagentInputs);
+
 function TemperatureInputs(props: BlockInputsProps) {
   const [temperParams, setTemperParams] = useState(props.stepData.params as TemperatureStep);
 
+  console.log("👀 Temperature inputs received params: ", props.stepData.params as TemperatureStep);
   function handleParamChange(key: string, value: any) {
     setTemperParams((prevState) => ({
       ...prevState,
@@ -302,13 +288,14 @@ function TemperatureInputs(props: BlockInputsProps) {
       <View style={[bs.row]}>
         <InputField
           placeholder="|"
-          value={String(temperParams.source)}
+          value={temperParams.source}
           containerStyle={{ marginRight: 100 }}
           label="FROM:"
           type={"numeric" as InputModeOptions}
           disabled={true}
         />
         <InputField
+          value={temperParams.target}
           placeholder="|"
           label="TARGET:"
           type={"numeric" as InputModeOptions}
@@ -325,8 +312,9 @@ export default function WorkBlock(props: WorkBlockProps) {
 
   let block = props.block;
 
+  console.log("❗ REVEALING BLOCK IN BLOCK");
+
   function updateParams(step_params: any) {
-    //console.log("🟩 (WorkBlock) param change: ", step_params);
     setParams((params) => ({
       ...params,
       ...step_params,
@@ -345,23 +333,25 @@ export default function WorkBlock(props: WorkBlockProps) {
     block.id == -1 && props.addBlock(block); //: props.editBlock(block);
   }
 
+  const memorizedParamUpdate = useCallback(updateParams, [params]);
+
   return (
     <>
       <View style={s.block_container}>
         <View style={s.section_inputs}>
           {props.block.type == StepType.WASHING && (
-            <WashInputs stepData={props.block} change={updateParams} />
+            <WashInputs stepData={props.block} change={memorizedParamUpdate} />
           )}
           {props.block.type == StepType.LIQUID_APPL && (
             <ReagentInputs
               stepData={props.block}
-              change={updateParams}
+              change={memorizedParamUpdate}
               addNewLiquid={updateCustomLiquids}
               existingCustomLiquids={customLiquids}
             />
           )}
           {props.block.type == StepType.TEMP_CHANGE && (
-            <TemperatureInputs stepData={props.block} change={updateParams} />
+            <TemperatureInputs stepData={props.block} change={memorizedParamUpdate} />
           )}
           <View style={{ alignSelf: "flex-start", paddingVertical: 30 }}>
             <TouchableOpacity style={s.setting_btn}>
