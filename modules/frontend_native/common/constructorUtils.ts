@@ -1,6 +1,6 @@
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
-import { DEFAULT_TEMEPRATURE, LIQUID_INJECT_TIME } from "../Pages/Constructor";
+import { DEFAULT_TEMEPRATURE, LIQUID_INJECT_TIME } from "../constants/protocol_constants";
 
 export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
   let tempBlocks = [...blocks];
@@ -29,6 +29,16 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
         (editedBlock.params as TemperatureStep).target
       ) {
         editedBlock.id = -1;
+      }
+
+      if (i != 0 && tempBlocks[i - 1].type == StepType.TEMP_CHANGE) {
+        //Remove doubling temperature change
+        tempBlocks[i - 1].id = -1;
+
+        editedBlock.params = {
+          source: (tempBlocks[i - 1].params as TemperatureStep).source,
+          target: (tempBlocks[i].params as TemperatureStep).target,
+        } as TemperatureStep;
       }
 
       tempBlocks[i] = editedBlock;

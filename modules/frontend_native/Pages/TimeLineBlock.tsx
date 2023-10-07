@@ -1,18 +1,5 @@
-import {
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Vibration,
-  Modal,
-  Alert,
-} from "react-native";
-import {
-  OpacityDecorator,
-  RenderItemParams,
-  ScaleDecorator,
-  ShadowDecorator,
-} from "react-native-draggable-flatlist";
+import { StyleSheet, TouchableOpacity, View, Modal } from "react-native";
+import { RenderItemParams } from "react-native-draggable-flatlist";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import Txt from "../components/Txt";
 import { StepType } from "sharedlib/enum/DBEnums";
@@ -35,7 +22,6 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     supplementary: {
       fontSize: 13,
       color: "#ffffffcc",
-      //textTransform: "uppercase",
       fontFamily: "Roboto-thin",
     },
     container: {
@@ -47,7 +33,6 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
   });
   return (
     <View style={st.container}>
-      {/* <Arrow_icon height={10} width={10} stroke={AppStyles.color.elem_back} /> */}
       <Txt style={[st.supplementary, { textTransform: "uppercase" }]}>{props.label}: </Txt>
       <Txt style={st.text} numberOfLines={1}>
         {props.value}

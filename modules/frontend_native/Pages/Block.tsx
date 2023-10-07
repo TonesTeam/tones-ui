@@ -101,12 +101,14 @@ function WashInputs(props: BlockInputsProps) {
               containerStyle={{ marginRight: 100 }}
               label="ITERATIONS:"
               type={"numeric" as InputModeOptions}
+              value={washParams.iters}
               onInputChange={(iters) => handleParamChange("iters", Number(iters))}
             />
             <InputField
               placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
+              value={washParams.incubation}
               onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
             />
           </View>
@@ -213,7 +215,9 @@ function ReagentInputs(props: BlockInputsProps) {
               onChangeSelect={(liq) => {
                 handleParamChange("liquid", liq);
               }}
-              onCreateOption={(liq: LiquidDTO) => addCustomLiquid(liq)}
+              onCreateOption={(liq: LiquidDTO) => {
+                addCustomLiquid(liq);
+              }}
             />
           </View>
           <View style={[bs.row]}>
@@ -318,10 +322,7 @@ export default function WorkBlock(props: WorkBlockProps) {
   }
 
   function updateCustomLiquids(newLiquid: LiquidDTO) {
-    setCustomLiquids((exisiting) => ({
-      ...exisiting,
-      ...newLiquid,
-    }));
+    setCustomLiquids((exisiting) => [...exisiting, newLiquid]);
   }
 
   function saveBlockToParent() {
