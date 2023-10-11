@@ -18,6 +18,7 @@ type InputFieldProps = TextProps & {
   disabled?: boolean;
   value?: any;
   onInputChange?: (inp: string) => void;
+  multiline?: boolean;
 };
 
 export default function InputField({ ...props }: InputFieldProps) {
@@ -31,6 +32,7 @@ export default function InputField({ ...props }: InputFieldProps) {
       <TextInput
         value={value}
         placeholder={props.placeholder || ""}
+        multiline={props.multiline || false}
         style={[
           s.input,
           { borderWidth: 1 },
@@ -38,6 +40,7 @@ export default function InputField({ ...props }: InputFieldProps) {
             ? { borderColor: AppStyles.color.primary }
             : { borderColor: AppStyles.color.accent_back },
         ]}
+        blurOnSubmit={true}
         onBlur={() => setIsFocused(false)}
         onFocus={() => setIsFocused(true)}
         inputMode={props.type || "text"}
@@ -67,5 +70,6 @@ const s = StyleSheet.create({
     padding: AppStyles.layout.elem_padding,
     color: AppStyles.color.text_primary,
     fontSize: 18,
+    width: "100%",
   },
 });
