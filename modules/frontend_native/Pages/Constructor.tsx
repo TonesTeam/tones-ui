@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   Dimensions,
+  InputModeOptions,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -29,6 +30,8 @@ import { DEFAULT_TEMEPRATURE, DEFAULT_WASH_STEP } from "../constants/protocol_co
 import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
 import { getRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
+import { Switch } from "react-native-switch";
+import RadioButton from "../components/RadioButton";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
@@ -116,16 +119,8 @@ export default function Constructor(props: { id?: number }) {
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
   const [protocolName, setProtocolName] = useState("protocol_001");
   const [defaultWashStep, setDefaultWashStep] = useState<WashStep | undefined>(undefined);
-  const [settings, setSettings] = useState<ProtocolSettings>({
-    autoWashConfig: defaultWashStep,
-    timeUnits: "sec",
-    description: "",
-  } as ProtocolSettings);
-  const [tempSettings, setTempSettings] = useState<ProtocolSettings>({
-    autoWashConfig: defaultWashStep,
-    timeUnits: "sec",
-    description: "",
-  } as ProtocolSettings);
+  const [settings, setSettings] = useState<ProtocolSettings>();
+  const [tempSettings, setTempSettings] = useState<ProtocolSettings>();
   const [washLiquids, setWashLiquids] = useState<LiquidDTO[]>([]);
 
   function initialization() {
@@ -152,11 +147,23 @@ export default function Constructor(props: { id?: number }) {
     initialization();
   }, []);
 
+  useEffect(() => {
+    setSettings({
+      autoWashConfig: defaultWashStep,
+      timeUnits: "sec",
+      description: "",
+    } as ProtocolSettings);
+
+    setTempSettings({
+      autoWashConfig: defaultWashStep,
+      timeUnits: "sec",
+      description: "",
+    } as ProtocolSettings);
+  }, [defaultWashStep]);
+
   function updateCustomLiquids(newLiquids: LiquidDTO[]) {
     setCustomLiquids(newLiquids);
   }
-
-  useEffect(() => {}, [customLiquids]);
 
   function addBlock(newBlock: StepDTO) {
     const newID =
@@ -216,10 +223,10 @@ export default function Constructor(props: { id?: number }) {
       id: -1,
       name: protocolName,
       customLiquids: customLiquids,
-      description: "Lorem Ipsum",
+      description: settings?.description, //Can only be called when settings are initialized
       steps: blocks,
       creationDate: new Date(),
-      defaultWash: defaultWashStep,
+      defaultWash: settings?.autoWashConfig,
       author: null,
     } as ProtocolWithStepsDTO;
 
@@ -229,7 +236,7 @@ export default function Constructor(props: { id?: number }) {
   return (
     <MainContainer>
       <NavBar />
-      {defaultWashStep != undefined && (
+      {defaultWashStep != undefined && tempSettings != undefined && tempSettings.autoWashConfig && (
         <>
           <View style={[globalElementStyle.page_container]}>
             <View style={[s.header_section]}>
@@ -551,61 +558,111 @@ export default function Constructor(props: { id?: number }) {
           >
             <View style={stng.modal_container}>
               <View style={stng.modal_body}>
-                <ScrollView scrollEnabled={true}>
+                <ScrollView scrollEnabled={true} persistentScrollbar={true}>
                   <View style={stng.section}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={stng.topic_header}>
                       <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
                       <Txt style={stng.topic}> Edit automatic washing step:</Txt>
                     </View>
-                    <View>
-                      {/* <CustomSelect
+                    <View style={{ marginRight: 10 }}>
+                      <CustomSelect
                         list={washLiquids}
-                        selected={settings.autoWashConfig.liquid || washLiquids[0]}
+                        label="REAGENT: "
+                        selected={tempSettings.autoWashConfig.liquid}
                         canAdd={false}
-                        label="REAGENT:"
                         onChangeSelect={(liq) => {
                           setTempSettings({
-                            ...settings,
+                            ...tempSettings,
                             autoWashConfig: {
-                              liquid: liq,
+                              liquid: liq as LiquidDTO,
                               iters: tempSettings.autoWashConfig.iters,
                               incubation: tempSettings.autoWashConfig.incubation,
+                              temperature: null,
                             } as WashStep,
-                          });
+                          } as ProtocolSettings);
                         }}
-                      /> */}
-                      <Txt>{defaultWashStep.liquid.name}</Txt>
-                      <Txt>{washLiquids[0].name}</Txt>
-                      <Txt>{settings.autoWashConfig?.liquid.name}</Txt>
+                      />
+
+                      <View style={{ flexDirection: "row", marginTop: 25 }}>
+                        <InputField
+                          placeholder="|"
+                          containerStyle={{ marginRight: 100 }}
+                          label="ITERATIONS:"
+                          type={"numeric" as InputModeOptions}
+                          value={tempSettings.autoWashConfig.iters}
+                          onInputChange={(iters) => {
+                            setTempSettings({
+                              ...tempSettings,
+                              autoWashConfig: {
+                                liquid: tempSettings.autoWashConfig.liquid,
+                                iters: Number(iters),
+                                incubation: tempSettings.autoWashConfig.incubation,
+                                temperature: null,
+                              } as WashStep,
+                            } as ProtocolSettings);
+                          }}
+                        />
+                        <InputField
+                          placeholder="|"
+                          label="INCUBATION TIME:"
+                          type={"numeric" as InputModeOptions}
+                          value={tempSettings.autoWashConfig.incubation}
+                          onInputChange={(incub) => {
+                            setTempSettings({
+                              ...tempSettings,
+                              autoWashConfig: {
+                                liquid: tempSettings.autoWashConfig.liquid,
+                                iters: tempSettings.autoWashConfig.iters,
+                                incubation: Number(incub),
+                                temperature: null,
+                              } as WashStep,
+                            } as ProtocolSettings);
+                          }}
+                        />
+                      </View>
                     </View>
                   </View>
                   <View style={stng.section}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={stng.topic_header}>
                       <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
                       <Txt style={stng.topic}> Default time units:</Txt>
                     </View>
-                    <View>
-                      <InputField
-                        onInputChange={() => {
+                    <View style={{ flexDirection: "row" }}>
+                      <RadioButton
+                        isChecked={tempSettings.timeUnits == "sec"}
+                        label="Seconds"
+                        onPress={() => {
                           setTempSettings({
-                            ...settings,
+                            ...tempSettings,
                             timeUnits: "sec",
+                          });
+                        }}
+                      />
+                      <RadioButton
+                        isChecked={tempSettings.timeUnits == "min"}
+                        label="Minutes"
+                        onPress={() => {
+                          setTempSettings({
+                            ...tempSettings,
+                            timeUnits: "min",
                           });
                         }}
                       />
                     </View>
                   </View>
                   <View style={stng.section}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={stng.topic_header}>
                       <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
                       <Txt style={stng.topic}> Add protocol description:</Txt>
                     </View>
-                    <View>
+                    <View style={{ marginRight: 10 }}>
                       <InputField
                         multiline={true}
+                        placeholder="Description..."
+                        value={tempSettings.description}
                         onInputChange={(e) => {
-                          setSettings({
-                            ...settings,
+                          setTempSettings({
+                            ...tempSettings,
                             description: e,
                           });
                         }}
@@ -625,6 +682,7 @@ export default function Constructor(props: { id?: number }) {
                     style={[s.modal_btn, { backgroundColor: AppStyles.color.warning }]}
                     onPress={() => {
                       setSettingsModal(false);
+                      setSettings(tempSettings); //Update settings
                     }}
                   >
                     <Txt style={s.modal_btn_text}>APPLY</Txt>
@@ -633,6 +691,7 @@ export default function Constructor(props: { id?: number }) {
                     style={[s.modal_btn, { backgroundColor: AppStyles.color.accent_dark }]}
                     onPress={() => {
                       setSettingsModal(false);
+                      setTempSettings(settings); //Drop all changes
                     }}
                   >
                     <Txt style={s.modal_btn_text}>DISCARD</Txt>
@@ -865,16 +924,20 @@ const stng = StyleSheet.create({
   section: {
     alignSelf: "stretch",
     flexDirection: "column",
-    // borderTopColor: AppStyles.color.background,
-    // borderTopWidth: 1,
     borderBottomColor: AppStyles.color.background,
     borderBottomWidth: 1,
-    paddingVertical: 15,
+    paddingVertical: 20,
   },
 
   topic: {
     fontFamily: "Roboto-thin",
     fontSize: 18,
     marginLeft: 10,
+  },
+
+  topic_header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
   },
 });
