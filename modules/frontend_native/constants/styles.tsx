@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 export const AppStyles = {
   color: {
     primary: "#2d4cc9",
-    secondary: "#26b65c",
+    secondary: "#26b640", //"#26b65c",
     warning: "#d14633",
     text_primary: "#3b3d44",
     text_faded: "#838488",
@@ -20,9 +20,9 @@ export const AppStyles = {
       main_temperature: "#f49e1e",
       faded_temperature: "#fde9c8",
       transp_temperature: "#f49e1ecc",
-      main_reagent: "#26b65c",
+      main_reagent: "#26b640",
       faded_reagent: "#ddffed",
-      transp_reagent: "#26b65ccc",
+      transp_reagent: "#26b6540c",
     },
   },
 
