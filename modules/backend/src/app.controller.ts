@@ -1,5 +1,6 @@
-import { Controller, Get, Logger, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
 
 @Controller()
 export class AppController {
@@ -16,10 +17,16 @@ export class AppController {
         return this.appService.getProtocols();
     }
 
-    @Get("protocol/:id")
+    @Get("protocol/steps/:id")
     getProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Retrieving protocol ${id}`)
         return this.appService.getProtocolSteps(id);
+    }
+
+    @Get("protocol/:id")
+    getProtocolWithSteps(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Retrieving protocol ${id}`)
+        return this.appService.getProtocolWithSteps(id);
     }
 
     @Get("liquids")
@@ -38,6 +45,12 @@ export class AppController {
     getCustomProtocolLiquids(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Retrieving custom liquids for protocol ${id}`);
         return this.appService.getCustomProtocolLiquids(id);
+    }
+
+    @Post("/protocol/save")
+    async saveProtocol(@Body() protocol: ProtocolWithStepsDTO) {
+        this.logger.log(`Saving protocol: ${JSON.stringify(protocol)}`)
+        await this.appService.saveProtocol(protocol);
     }
 
 }

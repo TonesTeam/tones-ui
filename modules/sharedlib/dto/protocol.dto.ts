@@ -1,6 +1,5 @@
 import { LiquidDTO } from "./liquid.dto";
 import { WashStep, StepDTO } from "./step.dto";
-import { UserDTO } from "./user.dto";
 
 export interface ProtocolDto {
   id: number;
