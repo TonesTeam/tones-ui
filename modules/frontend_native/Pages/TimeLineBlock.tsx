@@ -180,7 +180,13 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                   />
                   <ParamItem
                     label={"Autowash"}
-                    value={(block.params as ReagentStep).autoWash == true ? "Yes" : "No"}
+                    value={
+                      (block.params as ReagentStep).autoWash == true
+                        ? "Yes"
+                        : (block.params as ReagentStep).autoWash == undefined
+                        ? "Undf"
+                        : "No"
+                    }
                   />
                 </View>
               </>

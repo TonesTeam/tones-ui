@@ -28,10 +28,11 @@ import Close_icon from "../assets/icons/close.svg";
 import Point_icon from "../assets/icons/point.svg";
 import { DEFAULT_TEMEPRATURE, DEFAULT_WASH_STEP } from "../constants/protocol_constants";
 import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
-import { getRequest } from "../common/util";
+import { getRequest, makeRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
 import { Switch } from "react-native-switch";
 import RadioButton from "../components/RadioButton";
+import { Method } from "axios";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
@@ -178,9 +179,13 @@ export default function Constructor(props: { id?: number }) {
       {
         type: newBlock.type,
         id: newBlock.id == -1 ? newID : newBlock.id,
-        params: { ...newBlock.params, temperature: currentTemp },
+        params:
+          newBlock.type == StepType.TEMP_CHANGE
+            ? newBlock.params
+            : { ...newBlock.params, temperature: currentTemp },
       } as StepDTO,
     ];
+
     handleBlocksChange(finalBlocks);
     setWorkBlock(undefined);
   }
@@ -222,15 +227,21 @@ export default function Constructor(props: { id?: number }) {
     let new_protocol = {
       id: -1,
       name: protocolName,
-      customLiquids: customLiquids,
-      description: settings?.description, //Can only be called when settings are initialized
+      customLiquids: customLiquids.map((liq) => {
+        return { ...liq, id: 0 };
+      }),
+      description: settings?.description, //Method can only be called when settings are initialized, so chill
       steps: blocks,
-      creationDate: new Date(),
+      creationDate: new Date().toISOString().split("T")[0],
       defaultWash: settings?.autoWashConfig,
       author: null,
     } as ProtocolWithStepsDTO;
 
-    console.log(new_protocol);
+    console.log(JSON.stringify(new_protocol));
+
+    // makeRequest("post" as Method, "/protocol/save", JSON.stringify(new_protocol)).then((r) => {
+    //   console.log(r);
+    // });
   }
 
   return (

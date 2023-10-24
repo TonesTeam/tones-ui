@@ -85,6 +85,7 @@ function ProtocolItem(props: any) {
       backgroundColor: AppStyles.color.elem_back,
       paddingHorizontal: "2%",
       paddingVertical: 1,
+      marginBottom: 20,
     },
     header: {
       flexDirection: "row",

@@ -119,7 +119,13 @@ function WashInputs(props: BlockInputsProps) {
 }
 
 function ReagentInputs(props: BlockInputsProps) {
-  const [reagParams, setReagParams] = useState(props.stepData.params as ReagentStep);
+  const [reagParams, setReagParams] = useState({
+    ...props.stepData.params,
+    autoWash:
+      (props.stepData.params as ReagentStep).autoWash == undefined
+        ? false
+        : (props.stepData.params as ReagentStep).autoWash,
+  } as ReagentStep);
 
   const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
   const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);

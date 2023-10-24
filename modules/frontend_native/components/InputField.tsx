@@ -45,10 +45,13 @@ export default function InputField({ ...props }: InputFieldProps) {
         onFocus={() => setIsFocused(true)}
         inputMode={props.type || "text"}
         editable={editable}
-        onChangeText={(text) => setValue(text)}
-        onSubmitEditing={({ nativeEvent }) => {
-          props.onInputChange && props.onInputChange(nativeEvent.text);
+        onChangeText={(text) => {
+          setValue(text);
+          props.onInputChange && props.onInputChange(text);
         }}
+        // onSubmitEditing={({ nativeEvent }) => {
+        //   props.onInputChange && props.onInputChange(nativeEvent.text);
+        // }}
       />
     </View>
   );

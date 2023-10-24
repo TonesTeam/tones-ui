@@ -15,6 +15,7 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
   // 5️⃣  After loop filter all steps with ID = -1, return filtered list
 
   for (let i = 0; i < tempBlocks.length; i++) {
+    console.log("!!! 💙 Processing step with type: ", tempBlocks[i].type);
     if (tempBlocks[i].type == StepType.TEMP_CHANGE) {
       const fromTemp = (tempBlocks[i].params as TemperatureStep).source;
       const target = (tempBlocks[i].params as TemperatureStep).target;
@@ -45,6 +46,8 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
 
       currentTemp = (tempBlocks[i].params as TemperatureStep).target as number;
     } else {
+      console.log("💙 In temp recalc, before assigning temperature field. Block: ", tempBlocks[i]);
+      console.log("💁🏻‍♀️");
       (tempBlocks[i].params as WashStep | ReagentStep).temperature = currentTemp;
     }
   }
