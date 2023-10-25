@@ -83,6 +83,10 @@ export class AppService {
         this.protocolSaving.saveProtocol(protocol);
     }
 
+    async saveLiquid(liquid: PermanentLiquidDTO) {
+        return this.dbService.saveLiquid(liquid);
+    }
+
 
     private async stepToDto(step: ProtocolStep): Promise<StepDTO> {
         return {

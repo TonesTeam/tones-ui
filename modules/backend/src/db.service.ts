@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, Protocol } from '@prisma/client'
-import { LiquidDTO } from "sharedlib/dto/liquid.dto";
+import { LiquidDTO, PermanentLiquidDTO } from "sharedlib/dto/liquid.dto";
 import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
 import { ReagentStep, StepDTO, WashStep } from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
@@ -104,6 +104,26 @@ export class DatabaseService {
             where: { id },
             include: {
                 type: true
+            }
+        })
+    }
+
+    async saveLiquid(liquid: PermanentLiquidDTO) {
+        return await this.prisma.permanentLiquid.upsert({
+            where: {id: liquid.id},
+            update: {},
+            create: {
+                requiresCooling: liquid.usedCold,
+                liquidInfo: {
+                    create: {
+                        name: liquid.name,
+                        type:{
+                            connect: {
+                                id: liquid.type.id
+                            }
+                        },
+                    }
+                }
             }
         })
     }
