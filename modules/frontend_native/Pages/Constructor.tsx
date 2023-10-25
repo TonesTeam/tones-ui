@@ -232,16 +232,16 @@ export default function Constructor(props: { id?: number }) {
       }),
       description: settings?.description, //Method can only be called when settings are initialized, so chill
       steps: blocks,
-      creationDate: new Date().toISOString().split("T")[0],
+      creationDate: new Date(),
       defaultWash: settings?.autoWashConfig,
       author: null,
     } as ProtocolWithStepsDTO;
 
     console.log(JSON.stringify(new_protocol));
 
-    // makeRequest("post" as Method, "/protocol/save", JSON.stringify(new_protocol)).then((r) => {
-    //   console.log(r);
-    // });
+    makeRequest("POST" as Method, "/protocol/save", JSON.stringify(new_protocol)).then((r) => {
+      console.log(r);
+    });
   }
 
   return (

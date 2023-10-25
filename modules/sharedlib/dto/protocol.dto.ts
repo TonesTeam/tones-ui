@@ -5,7 +5,7 @@ export interface ProtocolDto {
   id: number;
   name: string;
   author: string | null; //UserDTO | null
-  creationDate: string;
+  creationDate: Date;
   description: string;
 }
 

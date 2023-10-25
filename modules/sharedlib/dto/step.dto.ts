@@ -21,7 +21,6 @@ export interface ReagentStep extends StepParams {
   liquid: LiquidDTO;
   autoWash: boolean;
   temperature: number; //at which step is applied, calculated
-  custom: boolean;
 }
 
 export interface TemperatureStep extends StepParams {

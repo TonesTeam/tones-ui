@@ -25,7 +25,7 @@ const isoDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2
 //   return originalResponse;
 // });
 
-const domain = "http://192.168.0.177:8080";
+const domain = "http://192.168.42.126:8080";
 const prefix = "/api/v2";
 
 export async function getRequest<T>(path: string): Promise<AxiosResponse<T, any>> {
@@ -42,6 +42,9 @@ export async function makeRequest<R>(
   const fullpath = domain + prefix + path;
   console.log(`${method}: ${fullpath}`);
   return await client.request({
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: method,
     url: fullpath,
     data: payload,

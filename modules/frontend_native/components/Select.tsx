@@ -32,7 +32,7 @@ export function CustomSelect(props: CustomSelectProps) {
     if (props.list.length == 0) {
       let emptyItem = {
         id: OptionID.EMPTY_SEARCT_RESULT,
-        name: `No options found.${canAdd && " Add your own option by typing"}`,
+        name: `No options found.${canAdd ? " Add your own option by typing" : ""}`,
         type: { id: 0, name: "Test cat" } as LiquidTypeDTO,
       } as LiquidDTO;
       setSearchList([emptyItem]);

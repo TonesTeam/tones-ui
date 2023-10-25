@@ -16,6 +16,9 @@ import Txt from "../components/Txt";
 import Search_Icon from "../assets/icons/search.svg";
 import Edit_Icon from "../assets/icons/edit_btn.svg";
 import Delete_Icon from "../assets/icons/delete_btn.svg";
+import User_s_Icon from "../assets/icons/user_settings.svg";
+import System_s_Icon from "../assets/icons/system_settings.svg";
+import Lib_s_Icon from "../assets/icons/reag_lib_settings.svg";
 
 enum SettingTabs {
   USER = "User Settings",
@@ -256,6 +259,16 @@ export default function Settings(props: any) {
               ]}
               onPress={() => setCurrentTab(SettingTabs.USER)}
             >
+              <View
+                style={[
+                  s.tab_icon,
+                  currentTab == SettingTabs.USER && {
+                    backgroundColor: AppStyles.color.elem_back,
+                  },
+                ]}
+              >
+                <User_s_Icon height={25} width={25} fill={AppStyles.color.accent_dark} />
+              </View>
               <Txt
                 style={[
                   s.tab_text,
@@ -275,6 +288,16 @@ export default function Settings(props: any) {
               ]}
               onPress={() => setCurrentTab(SettingTabs.SYSTEM)}
             >
+              <View
+                style={[
+                  s.tab_icon,
+                  currentTab == SettingTabs.SYSTEM && {
+                    backgroundColor: AppStyles.color.elem_back,
+                  },
+                ]}
+              >
+                <System_s_Icon height={30} width={30} fill={AppStyles.color.accent_dark} />
+              </View>
               <Txt
                 style={[
                   s.tab_text,
@@ -296,6 +319,16 @@ export default function Settings(props: any) {
               ]}
               onPress={() => setCurrentTab(SettingTabs.LIBRARY)}
             >
+              <View
+                style={[
+                  s.tab_icon,
+                  currentTab == SettingTabs.LIBRARY && {
+                    backgroundColor: AppStyles.color.elem_back,
+                  },
+                ]}
+              >
+                <Lib_s_Icon height={27} width={27} fill={AppStyles.color.accent_dark} />
+              </View>
               <Txt
                 style={[
                   s.tab_text,
@@ -329,6 +362,7 @@ const s = StyleSheet.create({
 
   tab: {
     flex: 1,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     borderLeftWidth: 1,
@@ -343,6 +377,16 @@ const s = StyleSheet.create({
     color: AppStyles.color.text_primary,
     fontSize: 18,
     fontFamily: "Roboto-regular",
+  },
+
+  tab_icon: {
+    height: 50,
+    width: 50,
+    borderRadius: 40,
+    backgroundColor: AppStyles.color.background,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
   },
 
   body: {

@@ -7,11 +7,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Animated,
+  TouchableHighlight,
 } from "react-native";
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { LiquidDTO, LiquidTypeDTO } from "sharedlib/dto/liquid.dto";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState, useRef } from "react";
 import Txt from "../components/Txt";
 import { getRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
@@ -102,14 +104,18 @@ function WashInputs(props: BlockInputsProps) {
               label="ITERATIONS:"
               type={"numeric" as InputModeOptions}
               value={washParams.iters}
-              onInputChange={(iters) => handleParamChange("iters", Number(iters))}
+              onInputChange={(iters) =>
+                handleParamChange("iters", iters == "" ? null : Number(iters))
+              }
             />
             <InputField
               placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
               value={washParams.incubation}
-              onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
+              onInputChange={(incub) =>
+                handleParamChange("incubation", incub == "" ? null : Number(incub))
+              }
             />
           </View>
         </>
@@ -232,7 +238,9 @@ function ReagentInputs(props: BlockInputsProps) {
               placeholder="|"
               label="INCUBATION TIME:"
               type={"numeric" as InputModeOptions}
-              onInputChange={(incub) => handleParamChange("incubation", Number(incub))}
+              onInputChange={(incub) =>
+                handleParamChange("incubation", incub == "" ? null : Number(incub))
+              }
             />
 
             <View style={{ flexDirection: "column", paddingLeft: 30 }}>
@@ -307,7 +315,9 @@ function TemperatureInputs(props: BlockInputsProps) {
           placeholder="|"
           label="TARGET:"
           type={"numeric" as InputModeOptions}
-          onInputChange={(target) => handleParamChange("target", Number(target))}
+          onInputChange={(target) =>
+            handleParamChange("target", target == "" ? null : Number(target))
+          }
         />
       </View>
     </KeyboardAvoidingView>
@@ -317,6 +327,7 @@ function TemperatureInputs(props: BlockInputsProps) {
 export default function WorkBlock(props: WorkBlockProps) {
   const [params, setParams] = useState<{ [key: string]: any }>({});
   const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(props.customLiquids);
+  const [allowSave, setAllowSave] = useState(false);
 
   let block = props.block;
 
@@ -325,6 +336,8 @@ export default function WorkBlock(props: WorkBlockProps) {
       ...params,
       ...step_params,
     }));
+
+    validateParams(block.type, step_params);
   }
 
   function updateCustomLiquids(newLiquid: LiquidDTO) {
@@ -338,7 +351,59 @@ export default function WorkBlock(props: WorkBlockProps) {
     block.id == -1 ? props.addBlock(block) : props.editBlock(block);
   }
 
+  function validateParams(type: StepType, params: { [key: string]: any }) {
+    let valid = true;
+    switch (type) {
+      case StepType.LIQUID_APPL:
+        {
+          let reag_params = params as ReagentStep;
+          if (
+            reag_params.incubation == undefined ||
+            reag_params.incubation < 0 ||
+            reag_params.liquid == undefined ||
+            reag_params.liquid.id < 0
+          ) {
+            valid = false;
+          }
+        }
+        break;
+      case StepType.WASHING:
+        {
+          let wash_params = params as WashStep;
+          if (
+            wash_params.incubation == undefined ||
+            wash_params.incubation < 0 ||
+            wash_params.iters == undefined ||
+            wash_params.iters < 0
+          ) {
+            valid = false;
+          }
+        }
+        break;
+      case StepType.TEMP_CHANGE:
+        {
+          let temp_params = params as TemperatureStep;
+          if (
+            temp_params.source == undefined ||
+            temp_params.source <= 0 ||
+            temp_params.target == undefined
+          ) {
+            valid = false;
+          }
+        }
+        break;
+    }
+    setAllowSave(valid);
+  }
+
   const memorizedParamUpdate = useCallback(updateParams, [params]);
+
+  const block_color =
+    props.block.type == StepType.WASHING
+      ? AppStyles.color.block.main_washing
+      : props.block.type == StepType.LIQUID_APPL
+      ? AppStyles.color.block.main_reagent
+      : AppStyles.color.block.main_temperature;
 
   return (
     <>
@@ -370,32 +435,25 @@ export default function WorkBlock(props: WorkBlockProps) {
           <TouchableOpacity style={[s.btn, { backgroundColor: AppStyles.color.background }]}>
             <Info_icon width={20} height={20} stroke={AppStyles.color.text_primary} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              s.btn,
-              {
-                width: "85%",
-                backgroundColor:
-                  props.block.type == StepType.WASHING
-                    ? AppStyles.color.block.main_washing
-                    : props.block.type == StepType.LIQUID_APPL
-                    ? AppStyles.color.block.main_reagent
-                    : AppStyles.color.block.main_temperature,
-              },
-            ]}
-            onPressIn={() => saveBlockToParent()}
+          <View
+            style={{ borderRadius: 10, width: "85%", backgroundColor: AppStyles.color.warning }}
           >
-            <Txt
-              style={{
-                color: AppStyles.color.elem_back,
-                alignSelf: "center",
-                fontFamily: "Roboto-bold",
-                textTransform: "uppercase",
-              }}
+            <TouchableOpacity
+              style={[s.btn, { backgroundColor: block_color }]}
+              onPressIn={() => allowSave && saveBlockToParent()}
             >
-              {props.block.id == -1 ? "Add" : "Update"} Step
-            </Txt>
-          </TouchableOpacity>
+              <Txt
+                style={{
+                  color: AppStyles.color.elem_back,
+                  alignSelf: "center",
+                  fontFamily: "Roboto-bold",
+                  textTransform: "uppercase",
+                }}
+              >
+                {props.block.id == -1 ? "Add" : "Update"} Step
+              </Txt>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </>
