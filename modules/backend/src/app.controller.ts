@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { ParseDatePipe } from './parse-date.pipe';
 
 @Controller()
+@UsePipes(new ParseDatePipe())
 export class AppController {
 
     private readonly logger = new Logger(AppController.name);
