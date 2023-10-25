@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService, FullProtocols, ProtocolStep } from './db.service';
-import { ProtocolDto } from 'sharedlib/dto/protocol.dto'
+import { ProtocolDto, ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto'
 import { StepDTO, ReagentStep, StepParams, TemperatureStep, WashStep } from 'sharedlib/dto/step.dto'
 import { PermanentLiquidDTO, LiquidDTO, LiquidTypeDTO } from 'sharedlib/dto/liquid.dto'
 import { StepType } from 'sharedlib/enum/DBEnums';
+import { ProtocolSavingService } from './protocol-saving.service';
 
 
 @Injectable()
@@ -13,6 +14,7 @@ export class AppService {
 
     constructor(
         private readonly dbService: DatabaseService,
+        private readonly protocolSaving: ProtocolSavingService
     ) { }
 
     async getProtocols() {
@@ -26,9 +28,29 @@ export class AppService {
         } as ProtocolDto))
     }
 
-    async getProtocolSteps(id: number) {
+    async getProtocolSteps(id: number): Promise<StepDTO[]> {
         let p = await this.dbService.getProtocolById(id);
         return Promise.all(p.steps.map(async s => await this.stepToDto(s)));
+    }
+
+    async getProtocolWithSteps(id: number): Promise<ProtocolWithStepsDTO> {
+        let steps = await this.getProtocolSteps(id);
+        let pr = await this.dbService.getProtocolById(id);
+        return {
+            id: pr.id,
+            name: pr.name,
+            author: pr.creator.username,
+            description: pr.description,
+            steps: steps,
+            creationDate: pr.creationDate,
+            customLiquids: (await this.getCustomProtocolLiquids(id)),
+            defaultWash: {
+                temperature: 0, //FIXME: TEMPERATURE
+                incubation: pr.defaultWashing.incubationTime,
+                iters: pr.defaultWashing.iter,
+                liquid: (await this.dbService.getLiquidInfo(pr.defaultWashing.permanentLiquidId))
+            }
+        }
     }
 
     async getLiquidTypes() {
@@ -55,6 +77,10 @@ export class AppService {
     async getCustomProtocolLiquids(id: number) {
         let liquids = await this.dbService.getCustomProtocolLiquids(id)
         return Promise.all(liquids.map(async l => await this.toLiquidDto(l.id)));
+    }
+
+    async saveProtocol(protocol: ProtocolWithStepsDTO) {
+        this.protocolSaving.saveProtocol(protocol);
     }
 
 

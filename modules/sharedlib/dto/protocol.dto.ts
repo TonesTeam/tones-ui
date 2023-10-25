@@ -1,12 +1,11 @@
 import { LiquidDTO } from "./liquid.dto";
 import { WashStep, StepDTO } from "./step.dto";
-import { UserDTO } from "./user.dto";
 
 export interface ProtocolDto {
   id: number;
   name: string;
   author: string | null; //UserDTO | null
-  creationDate: Date;
+  creationDate: string;
   description: string;
 }
 

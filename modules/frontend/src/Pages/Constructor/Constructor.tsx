@@ -50,7 +50,7 @@ export default function Constructor() {
   }, []);
 
   async function getLiquids() {
-    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data;
+    const liquidList = (await getRequest<LiquidDTO[]>("/liquids")).data as LiquidDTO[];
     setLiquidList(liquidList.filter((liq) => liq.type.id == 2));
   }
 
