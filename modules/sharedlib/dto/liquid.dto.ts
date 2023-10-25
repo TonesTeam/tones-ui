@@ -12,4 +12,5 @@ export interface LiquidDTO {
 
 export interface PermanentLiquidDTO extends LiquidDTO {
     usedCold: boolean;
+    toxic: boolean;
 }

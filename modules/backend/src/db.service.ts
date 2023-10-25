@@ -113,6 +113,7 @@ export class DatabaseService {
             where: {id: liquid.id},
             update: {},
             create: {
+                toxic: liquid.toxic,
                 requiresCooling: liquid.usedCold,
                 liquidInfo: {
                     create: {

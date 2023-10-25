@@ -71,6 +71,7 @@ export class AppService {
             id: pl.id,
             name: pl.liquidInfo.name,
             usedCold: pl.requiresCooling,
+            toxic: pl.toxic
         } as PermanentLiquidDTO))
     }
 
