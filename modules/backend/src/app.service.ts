@@ -71,6 +71,7 @@ export class AppService {
             id: pl.id,
             name: pl.liquidInfo.name,
             usedCold: pl.requiresCooling,
+            toxic: pl.toxic
         } as PermanentLiquidDTO))
     }
 
@@ -81,6 +82,10 @@ export class AppService {
 
     async saveProtocol(protocol: ProtocolWithStepsDTO) {
         this.protocolSaving.saveProtocol(protocol);
+    }
+
+    async saveLiquid(liquid: PermanentLiquidDTO) {
+        return this.dbService.saveLiquid(liquid);
     }
 
 

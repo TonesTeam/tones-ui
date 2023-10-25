@@ -175,6 +175,7 @@ model LiquidInfo {
 model PermanentLiquid {
     id              Int        @id @default(autoincrement())
     shortname       String?
+    toxic           Boolean    @default(false)
     deleted         Boolean    @default(false)
     requiresCooling Boolean    @default(false)
     liquidInfo      LiquidInfo @relation(fields: [liquidInfoId], references: [id])

@@ -35,7 +35,7 @@ export class ProtocolSavingService {
                 },
                 creator: {
                     connect: {
-                        username: protocol.author
+                        username: protocol.author ?? "Jefferey"
                     }
                 },
                 washingLiquid: {

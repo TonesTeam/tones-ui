@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { ParseDatePipe } from './parse-date.pipe';
+import { PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto';
 
 @Controller()
+@UsePipes(new ParseDatePipe())
 export class AppController {
 
     private readonly logger = new Logger(AppController.name);
@@ -50,7 +53,13 @@ export class AppController {
     @Post("/protocol/save")
     async saveProtocol(@Body() protocol: ProtocolWithStepsDTO) {
         this.logger.log(`Saving protocol: ${JSON.stringify(protocol)}`)
-        await this.appService.saveProtocol(protocol);
+        return await this.appService.saveProtocol(protocol);
+    }
+
+    @Post("/liquid/save")
+    async saveLiquid(@Body() liquid: PermanentLiquidDTO) {
+        this.logger.log(`Saving liquid: ${JSON.stringify(liquid)}`)
+        return await this.appService.saveLiquid(liquid);
     }
 
 }
