@@ -22,7 +22,7 @@ export const AppStyles = {
       transp_temperature: "#f49e1ecc",
       main_reagent: "#26b640",
       faded_reagent: "#ddffed",
-      transp_reagent: "#26b6540c",
+      transp_reagent: "#26b640cc",
     },
   },
 

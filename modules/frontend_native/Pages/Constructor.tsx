@@ -7,6 +7,8 @@ import {
   ScrollView,
   Dimensions,
   InputModeOptions,
+  FlatList,
+  FlatListProps,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -14,9 +16,9 @@ import Txt from "../components/Txt";
 import Washing_icon from "../assets/icons/washing_icon.svg";
 import Reagent_icon from "../assets/icons/reagent_icon.svg";
 import Temperature_icon from "../assets/icons/temperature_icon.svg";
-import React, { useEffect, useState } from "react";
+import React, { ForwardedRef, MutableRefObject, useEffect, useRef, useState } from "react";
 import { LiquidDTO } from "sharedlib/dto/liquid.dto";
-import DraggableFlatList from "react-native-draggable-flatlist";
+import DraggableFlatList, { DraggableFlatListProps } from "react-native-draggable-flatlist";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { StepType } from "sharedlib/enum/DBEnums";
 import { SvgProps } from "react-native-svg";
@@ -30,7 +32,6 @@ import { DEFAULT_TEMEPRATURE, DEFAULT_WASH_STEP } from "../constants/protocol_co
 import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
 import { getRequest, makeRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
-import { Switch } from "react-native-switch";
 import RadioButton from "../components/RadioButton";
 import { Method } from "axios";
 
@@ -123,6 +124,7 @@ export default function Constructor(props: { id?: number }) {
   const [settings, setSettings] = useState<ProtocolSettings>();
   const [tempSettings, setTempSettings] = useState<ProtocolSettings>();
   const [washLiquids, setWashLiquids] = useState<LiquidDTO[]>([]);
+  const flatListRef: MutableRefObject<any> = useRef(null);
 
   function initialization() {
     if (props.id) {
@@ -336,6 +338,13 @@ export default function Constructor(props: { id?: number }) {
                   style={{ marginHorizontal: 20 }}
                   containerStyle={{ paddingBottom: 60 }}
                   data={blocks}
+                  ref={flatListRef}
+                  onContentSizeChange={() => {
+                    if (flatListRef.current && blocks.length > 1) {
+                      let index = blocks.length - 1;
+                      flatListRef.current.scrollToIndex({ animated: true, index });
+                    }
+                  }}
                   onDragEnd={({ data }) => handleBlocksChange(data)}
                   keyExtractor={(item) => item.id.toString()}
                   renderItem={(params) =>

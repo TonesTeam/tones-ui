@@ -23,6 +23,7 @@ import Launch_btn_Icon from "../assets/icons/launch_btn.svg";
 import Template_btn_Icon from "../assets/icons/template_btn.svg";
 import Edit_btn_Icon from "../assets/icons/edit_btn.svg";
 import Delete_btn_Icon from "../assets/icons/delete_btn.svg";
+import { ScrollView } from "react-native-gesture-handler";
 
 function ProtocolItem(props: any) {
   const [expanded, setExpanded] = useState(false);
@@ -240,6 +241,7 @@ function ProtocolItem(props: any) {
 }
 
 export default function ProtocolList(props: any) {
+  const scrollViewRef = useRef<ScrollView>(null);
   //Protocol data
   const [protocols, setProtocols] = useState<ProtocolDto[]>([]);
   const listInitilizer = () => {
@@ -262,6 +264,12 @@ export default function ProtocolList(props: any) {
     let sortedList = filteredList; //.sort(getComparator((e) => e.creationDate.getTime())).reverse();
     return sortedList;
   }
+
+  const scrollToBottom = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  };
 
   return (
     <MainContainer>
@@ -302,20 +310,28 @@ export default function ProtocolList(props: any) {
               </Txt>
             </View>
           )}
-          {filterAndSort().map(function (protocol) {
-            let date = new Date(protocol.creationDate);
-            let formattedDate = date.toLocaleDateString();
-            return (
-              <ProtocolItem
-                listInitializer={listInitilizer}
-                id={protocol.id}
-                key={protocol.id}
-                name={protocol.name}
-                authorName={protocol.author}
-                creationDate={formattedDate} //.toLocaleDateString()
-              />
-            );
-          })}
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            scrollEnabled={true}
+            ref={scrollViewRef}
+            onContentSizeChange={scrollToBottom}
+            showsVerticalScrollIndicator={true}
+          >
+            {filterAndSort().map(function (protocol) {
+              let date = new Date(protocol.creationDate);
+              let formattedDate = date.toLocaleDateString();
+              return (
+                <ProtocolItem
+                  listInitializer={listInitilizer}
+                  id={protocol.id}
+                  key={protocol.id}
+                  name={protocol.name}
+                  authorName={protocol.author}
+                  creationDate={formattedDate} //.toLocaleDateString()
+                />
+              );
+            })}
+          </ScrollView>
         </View>
       </View>
     </MainContainer>
@@ -334,9 +350,9 @@ const s = StyleSheet.create({
     marginTop: 20,
     flex: 9,
     width: "95%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    // flexDirection: "column",
+    // alignItems: "center",
+    // justifyContent: "flex-start",
   },
   search_bar: {
     flexDirection: "row",

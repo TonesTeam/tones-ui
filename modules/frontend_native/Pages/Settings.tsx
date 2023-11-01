@@ -6,11 +6,13 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Dimensions,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
 import { useEffect, useState } from "react";
-import { LiquidDTO, LiquidTypeDTO } from "sharedlib/dto/liquid.dto";
+import { LiquidDTO, LiquidTypeDTO, PermanentLiquidDTO } from "sharedlib/dto/liquid.dto";
 import { getRequest } from "../common/util";
 import Txt from "../components/Txt";
 import Search_Icon from "../assets/icons/search.svg";
@@ -19,6 +21,9 @@ import Delete_Icon from "../assets/icons/delete_btn.svg";
 import User_s_Icon from "../assets/icons/user_settings.svg";
 import System_s_Icon from "../assets/icons/system_settings.svg";
 import Lib_s_Icon from "../assets/icons/reag_lib_settings.svg";
+import InputField from "../components/InputField";
+import { CustomSelect } from "../components/Select";
+import { Switch } from "react-native-switch";
 
 enum SettingTabs {
   USER = "User Settings",
@@ -26,15 +31,196 @@ enum SettingTabs {
   LIBRARY = "Reagent Library",
 }
 
+function LiquidsModal(props: {
+  liquid: PermanentLiquidDTO | null;
+  categories: LiquidTypeDTO[];
+  closeModal: () => void;
+}) {
+  const ms = StyleSheet.create({
+    modal_container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#001f6d42",
+    },
+
+    modal_body: {
+      backgroundColor: AppStyles.color.elem_back,
+      borderRadius: 8,
+      paddingHorizontal: 20,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 10,
+      elevation: 15,
+      height: Dimensions.get("window").height * 0.8,
+      width: Dimensions.get("window").width * 0.35,
+    },
+
+    header: {
+      flex: 2,
+      justifyContent: "center",
+      alignItems: "flex-start",
+    },
+
+    form: {
+      flex: 15,
+      flexDirection: "column",
+    },
+    footer: {
+      flex: 3,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+
+    modal_btn: {
+      width: 150,
+      height: 50,
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      marginHorizontal: 20,
+    },
+
+    field: {
+      flexDirection: "column",
+      marginVertical: 10,
+      flex: 1,
+    },
+    label: {
+      fontFamily: "Roboto-thin",
+      textTransform: "uppercase",
+      color: AppStyles.color.accent_dark,
+    },
+  });
+  return (
+    <View style={ms.modal_container}>
+      <ScrollView
+        scrollEnabled={false}
+        contentContainerStyle={{ marginTop: 70, alignItems: "center", justifyContent: "center" }}
+      >
+        <View style={ms.modal_body}>
+          <View style={ms.header}>
+            <Txt style={{ fontFamily: "Roboto-bold", fontSize: 20 }}>
+              {props.liquid != null ? "Updating reagent data" : "Adding new reagent"}
+            </Txt>
+          </View>
+
+          <View style={ms.form}>
+            <ScrollView>
+              <View style={ms.field}>
+                <Txt style={ms.label}>REAGENT NAME:</Txt>
+                <InputField value={props.liquid?.name} />
+              </View>
+              <View style={ms.field}>
+                <Txt style={ms.label}>CATEGORY:</Txt>
+                <CustomSelect
+                  list={props.categories}
+                  selected={props.liquid?.type}
+                  canAdd={false}
+                  onChangeSelect={(cat) => console.log("Selected", cat)}
+                />
+              </View>
+              <View style={{ flex: 1, flexDirection: "row" }}>
+                <View style={ms.field}>
+                  <Txt style={ms.label}>USED COLD:</Txt>
+                  <Switch
+                    value={props.liquid?.usedCold}
+                    onValueChange={(val) => {
+                      console.log("Switch toggled");
+                    }}
+                    activeText={"ON"}
+                    inActiveText={"OFF"}
+                    circleSize={40}
+                    barHeight={40}
+                    circleBorderWidth={1}
+                    backgroundActive={AppStyles.color.primary}
+                    backgroundInactive={AppStyles.color.background}
+                    circleActiveColor={AppStyles.color.elem_back}
+                    circleInActiveColor={AppStyles.color.elem_back}
+                    changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                    innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                    outerCircleStyle={{}} // style for outer animated circle
+                    renderActiveText={true}
+                    renderInActiveText={true}
+                    switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                    switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                    switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
+                    switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                  />
+                </View>
+                <View style={ms.field}>
+                  <Txt style={ms.label}>TOXIC:</Txt>
+                  <Switch
+                    value={props.liquid?.usedCold}
+                    onValueChange={(val) => {
+                      console.log("Switch toggled");
+                    }}
+                    activeText={"ON"}
+                    inActiveText={"OFF"}
+                    circleSize={40}
+                    barHeight={40}
+                    circleBorderWidth={1}
+                    backgroundActive={AppStyles.color.primary}
+                    backgroundInactive={AppStyles.color.background}
+                    circleActiveColor={AppStyles.color.elem_back}
+                    circleInActiveColor={AppStyles.color.elem_back}
+                    changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                    innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                    outerCircleStyle={{}} // style for outer animated circle
+                    renderActiveText={true}
+                    renderInActiveText={true}
+                    switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                    switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                    switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
+                    switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                  />
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+          <View style={ms.footer}>
+            <TouchableOpacity
+              style={[
+                ms.modal_btn,
+                {
+                  backgroundColor: AppStyles.color.elem_back,
+                  borderWidth: 1,
+                  borderColor: AppStyles.color.primary,
+                },
+              ]}
+              onPress={() => props.closeModal()}
+            >
+              <Txt>Cancel</Txt>
+            </TouchableOpacity>
+            <TouchableOpacity style={[ms.modal_btn, { backgroundColor: AppStyles.color.primary }]}>
+              <Txt style={{ color: AppStyles.color.elem_back }}>
+                {props.liquid != null ? "Update" : "Save"}
+              </Txt>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
 function Library() {
-  const [liquids, setLiquids] = useState<LiquidDTO[]>([]);
+  const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
-  const [liquidModal, setLiquidModal] = useState(false);
   const [filterInput, setFilterInput] = useState("");
   const [active, setActive] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(null);
 
   const listInitilizer = () => {
-    getRequest<LiquidDTO[]>("/liquids").then((r) => {
+    getRequest<PermanentLiquidDTO[]>("/liquids").then((r) => {
       setLiquids(r.data);
     });
 
@@ -66,7 +252,7 @@ function Library() {
       borderWidth: 1,
       borderColor: AppStyles.color.accent_back,
       overflow: "hidden",
-      //backgroundColor: "#ff366f",
+      marginBottom: 30,
     },
     btn: {
       flex: 2,
@@ -114,129 +300,158 @@ function Library() {
 
   return (
     <>
-      {liquids.length != 0 && (
-        <View>
-          <View style={lib_s.header}>
-            <View
-              style={[
-                lib_s.search_bar,
-                {
-                  borderWidth: 1,
-                  borderColor: active ? AppStyles.color.primary : AppStyles.color.elem_back,
-                },
-              ]}
-            >
-              <Search_Icon height={30} width={50} stroke={AppStyles.color.text_faded} />
-              <TextInput
-                placeholder="Search by reagent name ..."
-                value={filterInput}
-                style={{ fontFamily: "Roboto-regular" }}
-                onFocus={() => setActive(true)}
-                onBlur={() => setActive(false)}
-                onChangeText={(e) => setFilterInput(e.toLowerCase())}
-              />
+      {liquids.length != 0 && categories.length != 0 && (
+        <>
+          <View>
+            <View style={lib_s.header}>
+              <View
+                style={[
+                  lib_s.search_bar,
+                  {
+                    borderWidth: 1,
+                    borderColor: active ? AppStyles.color.primary : AppStyles.color.elem_back,
+                  },
+                ]}
+              >
+                <Search_Icon height={30} width={50} stroke={AppStyles.color.text_faded} />
+                <TextInput
+                  placeholder="Search by reagent name ..."
+                  value={filterInput}
+                  style={{ fontFamily: "Roboto-regular" }}
+                  onFocus={() => setActive(true)}
+                  onBlur={() => setActive(false)}
+                  onChangeText={(e) => setFilterInput(e.toLowerCase())}
+                />
+              </View>
+              <TouchableOpacity style={lib_s.btn} onPress={() => setEditModal(true)}>
+                <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                  Add New Reagent
+                </Txt>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={lib_s.btn} onPress={() => setLiquidModal(true)}>
-              <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                Add New Reagent
-              </Txt>
-            </TouchableOpacity>
-          </View>
-          <View style={lib_s.list}>
-            <View style={[lib_s.row, { backgroundColor: AppStyles.color.accent_dark, height: 40 }]}>
-              <View style={[lib_s.cell, { flex: 3 }]}>
-                <Txt style={{ color: AppStyles.color.elem_back }}>Reagent name</Txt>
+            <View style={lib_s.list}>
+              <View
+                style={[lib_s.row, { backgroundColor: AppStyles.color.accent_dark, height: 40 }]}
+              >
+                <View style={[lib_s.cell, { flex: 3 }]}>
+                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                    Reagent name
+                  </Txt>
+                </View>
+                <View style={[lib_s.cell, { flex: 2 }]}>
+                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                    Categoty
+                  </Txt>
+                </View>
+                <View style={[lib_s.cell, { flex: 1 }]}>
+                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                    Toxicity
+                  </Txt>
+                </View>
+                <View style={[lib_s.cell, { flex: 1 }]}>
+                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                    Used cold
+                  </Txt>
+                </View>
+                <View style={[lib_s.cell, { flex: 3 }]}>
+                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                    Options
+                  </Txt>
+                </View>
               </View>
-              <View style={[lib_s.cell, { flex: 2 }]}>
-                <Txt style={{ color: AppStyles.color.elem_back }}>Categoty</Txt>
-              </View>
-              <View style={[lib_s.cell, { flex: 1 }]}>
-                <Txt style={{ color: AppStyles.color.elem_back }}>Toxicity</Txt>
-              </View>
-              <View style={[lib_s.cell, { flex: 1 }]}>
-                <Txt style={{ color: AppStyles.color.elem_back }}>Used cold</Txt>
-              </View>
-              <View style={[lib_s.cell, { flex: 3 }]}>
-                <Txt style={{ color: AppStyles.color.elem_back }}>Options</Txt>
-              </View>
-            </View>
-            <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-              {liquids.map((liq, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={[
-                      lib_s.row,
-                      {
-                        backgroundColor:
-                          index % 2 != 0 ? AppStyles.color.background : AppStyles.color.elem_back,
-                      },
-                    ]}
-                  >
-                    <View style={[lib_s.cell, { flex: 3 }]}>
-                      <Txt>{liq.name}</Txt>
-                    </View>
-                    <View style={[lib_s.cell, { flex: 2 }]}>
-                      <Txt>{liq.type.name}</Txt>
-                    </View>
-                    <View style={[lib_s.cell, { flex: 1 }]}>
-                      <Txt>{liq.id}</Txt>
-                    </View>
-                    <View style={[lib_s.cell, { flex: 1 }]}>
-                      <Txt>{liq.id}</Txt>
-                    </View>
-                    <View style={[lib_s.cell, { flex: 3, flexDirection: "row" }]}>
-                      {/* <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      > */}
-                      <TouchableOpacity
-                        style={[
-                          lib_s.option_cell,
-                          { borderRightColor: AppStyles.color.background, borderRightWidth: 0.5 },
-                        ]}
-                      >
-                        <Edit_Icon height={15} width={15} stroke={AppStyles.color.primary} />
-                        <Txt
-                          style={{
-                            marginLeft: 10,
-                            color: AppStyles.color.primary,
-                            letterSpacing: 1.1,
-                            fontSize: 12,
+              <ScrollView>
+                {liquids.map((liq, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[
+                        lib_s.row,
+                        {
+                          backgroundColor:
+                            index % 2 != 0 ? AppStyles.color.background : AppStyles.color.elem_back,
+                        },
+                        index == liquids.length - 1 && {
+                          borderBottomLeftRadius: 10,
+                          borderBottomRightRadius: 10,
+                        },
+                      ]}
+                    >
+                      <View style={[lib_s.cell, { flex: 3 }]}>
+                        <Txt>{liq.name}</Txt>
+                      </View>
+                      <View style={[lib_s.cell, { flex: 2 }]}>
+                        <Txt>{liq.type.name}</Txt>
+                      </View>
+                      <View style={[lib_s.cell, { flex: 1 }]}>
+                        <Txt>{liq.toxic && "X"}</Txt>
+                      </View>
+                      <View style={[lib_s.cell, { flex: 1 }]}>
+                        <Txt>{liq.usedCold && "X"}</Txt>
+                      </View>
+                      <View style={[lib_s.cell, { flex: 3, flexDirection: "row" }]}>
+                        <TouchableOpacity
+                          style={[
+                            lib_s.option_cell,
+                            { borderRightColor: AppStyles.color.background, borderRightWidth: 0.5 },
+                          ]}
+                          onPress={() => {
+                            setEditedLiquid(liq);
+                            setEditModal(true);
                           }}
                         >
-                          EDIT
-                        </Txt>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          lib_s.option_cell,
-                          { borderLeftColor: AppStyles.color.accent_back, borderLeftWidth: 0.5 },
-                        ]}
-                      >
-                        <Delete_Icon height={15} width={15} stroke={AppStyles.color.warning} />
-                        <Txt
-                          style={{
-                            marginLeft: 10,
-                            color: AppStyles.color.warning,
-                            letterSpacing: 1.1,
-                            fontSize: 12,
-                          }}
+                          <Edit_Icon height={15} width={15} stroke={AppStyles.color.primary} />
+                          <Txt
+                            style={{
+                              marginLeft: 10,
+                              color: AppStyles.color.primary,
+                              letterSpacing: 1.1,
+                              fontSize: 12,
+                            }}
+                          >
+                            EDIT
+                          </Txt>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[
+                            lib_s.option_cell,
+                            { borderLeftColor: AppStyles.color.accent_back, borderLeftWidth: 0.5 },
+                          ]}
                         >
-                          DELETE
-                        </Txt>
-                      </TouchableOpacity>
-                      {/* </View> */}
+                          <Delete_Icon height={15} width={15} stroke={AppStyles.color.warning} />
+                          <Txt
+                            style={{
+                              marginLeft: 10,
+                              color: AppStyles.color.warning,
+                              letterSpacing: 1.1,
+                              fontSize: 12,
+                            }}
+                          >
+                            DELETE
+                          </Txt>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                );
-              })}
-            </ScrollView>
+                  );
+                })}
+              </ScrollView>
+            </View>
           </View>
-        </View>
+
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={editModal}
+            onRequestClose={() => {
+              setEditModal(!editModal);
+            }}
+          >
+            <LiquidsModal
+              liquid={editedLiquid}
+              categories={categories}
+              closeModal={() => setEditModal(false)}
+            />
+          </Modal>
+        </>
       )}
     </>
   );

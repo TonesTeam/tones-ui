@@ -386,7 +386,8 @@ export default function WorkBlock(props: WorkBlockProps) {
           if (
             temp_params.source == undefined ||
             temp_params.source <= 0 ||
-            temp_params.target == undefined
+            temp_params.target == undefined ||
+            temp_params.target <= 0
           ) {
             valid = false;
           }
