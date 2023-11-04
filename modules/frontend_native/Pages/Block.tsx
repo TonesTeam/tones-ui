@@ -5,10 +5,7 @@ import {
   Dimensions,
   InputModeOptions,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
-  Animated,
-  TouchableHighlight,
 } from "react-native";
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
@@ -22,15 +19,15 @@ import Info_icon from "../assets/icons/info.svg";
 import { StepType } from "sharedlib/enum/DBEnums";
 import Setting_icon from "../assets/icons/setting.svg";
 import { Switch } from "react-native-switch";
+import { ProtocolSettings } from "../common/constructorUtils";
 
 export interface WorkBlockProps {
   block: StepDTO;
   addBlock: (block: StepDTO) => void;
   editBlock: (block: StepDTO) => void;
-  //toggleAutoWash: (val: boolean) => void;
-  //currentAutoWash: boolean;
   updateCustomLiquids: (liquids: LiquidDTO[]) => void;
   customLiquids: LiquidDTO[];
+  settings: ProtocolSettings;
 }
 
 interface BlockInputsProps {
@@ -38,6 +35,7 @@ interface BlockInputsProps {
   change: (arg0: WashStep | ReagentStep | TemperatureStep) => void;
   addNewLiquid?: (liquid: LiquidDTO) => void;
   existingCustomLiquids?: LiquidDTO[];
+  timeUnits?: "sec" | "min";
 }
 
 const bs = StyleSheet.create({
@@ -110,7 +108,7 @@ function WashInputs(props: BlockInputsProps) {
             />
             <InputField
               placeholder="|"
-              label="INCUBATION TIME:"
+              label={`INCUBATION TIME (${props.timeUnits || "seconds"}):`}
               type={"numeric" as InputModeOptions}
               value={washParams.incubation}
               onInputChange={(incub) =>
@@ -159,6 +157,7 @@ function ReagentInputs(props: BlockInputsProps) {
       reagParams.liquid == undefined
         ? finalLiquids.filter((liq) => liq.type.id == category.id)[0]
         : reagParams.liquid;
+
     setSelectedLiquid(liquid);
     handleParamChange("liquid", liquid);
   }
@@ -192,13 +191,18 @@ function ReagentInputs(props: BlockInputsProps) {
   function handleCategoryChange(cat: LiquidTypeDTO) {
     setSelectedCategory(cat);
     let filteredLiquids = liquidsList.filter((liq) => liq.type.id == cat.id);
-    let liquid = filteredLiquids.length == 0 ? undefined : filteredLiquids[0];
+    let liquid =
+      selectedLiquid?.type.id != cat.id
+        ? filteredLiquids.length == 0
+          ? undefined
+          : filteredLiquids[0]
+        : selectedLiquid;
     setSelectedLiquid(liquid);
   }
 
   return (
     <>
-      {liquidsList && categories && selectedCategory && (
+      {liquidsList && categories && selectedCategory && selectedLiquid && (
         <ScrollView
           style={{
             flex: 1,
@@ -208,6 +212,7 @@ function ReagentInputs(props: BlockInputsProps) {
           showsVerticalScrollIndicator={true}
           persistentScrollbar={true}
         >
+          <Txt>Liquid: {selectedLiquid?.name}</Txt>
           <View style={bs.row}>
             <CustomSelect
               list={categories}
@@ -236,7 +241,7 @@ function ReagentInputs(props: BlockInputsProps) {
             <InputField
               value={reagParams.incubation}
               placeholder="|"
-              label="INCUBATION TIME:"
+              label={`INCUBATION TIME (${props.timeUnits || "seconds"}):`}
               type={"numeric" as InputModeOptions}
               onInputChange={(incub) =>
                 handleParamChange("incubation", incub == "" ? null : Number(incub))
@@ -306,14 +311,14 @@ function TemperatureInputs(props: BlockInputsProps) {
           placeholder="|"
           value={temperParams.source}
           containerStyle={{ marginRight: 100 }}
-          label="FROM:"
+          label="FROM (°C):"
           type={"numeric" as InputModeOptions}
           disabled={true}
         />
         <InputField
           value={temperParams.target}
           placeholder="|"
-          label="TARGET:"
+          label="TARGET (°C):"
           type={"numeric" as InputModeOptions}
           onInputChange={(target) =>
             handleParamChange("target", target == "" ? null : Number(target))
@@ -411,7 +416,11 @@ export default function WorkBlock(props: WorkBlockProps) {
       <View style={s.block_container}>
         <View style={s.section_inputs}>
           {props.block.type == StepType.WASHING && (
-            <WashInputs stepData={props.block} change={memorizedParamUpdate} />
+            <WashInputs
+              stepData={props.block}
+              change={memorizedParamUpdate}
+              timeUnits={props.settings.timeUnits}
+            />
           )}
           {props.block.type == StepType.LIQUID_APPL && (
             <ReagentInputs
@@ -419,6 +428,7 @@ export default function WorkBlock(props: WorkBlockProps) {
               change={memorizedParamUpdate}
               addNewLiquid={updateCustomLiquids}
               existingCustomLiquids={customLiquids}
+              timeUnits={props.settings.timeUnits}
             />
           )}
           {props.block.type == StepType.TEMP_CHANGE && (

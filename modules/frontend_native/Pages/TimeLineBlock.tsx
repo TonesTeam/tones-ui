@@ -9,7 +9,10 @@ import Reagent_icon from "../assets/icons/reagent_icon.svg";
 import Temperature_icon from "../assets/icons/temperature_icon.svg";
 import Edit_icon from "../assets/icons/edit_btn.svg";
 import Delete_icon from "../assets/icons/delete_btn.svg";
+import AW_icon from "../assets/icons/auto-wash.svg";
+import Close_icon from "../assets/icons/X.svg";
 import { useState } from "react";
+import { ProtocolSettings } from "../common/constructorUtils";
 
 const iconSize = 18;
 
@@ -18,6 +21,8 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     text: {
       color: AppStyles.color.elem_back,
       fontFamily: "Roboto-bold",
+      flex: 1,
+      justifyContent: "flex-start",
     },
     supplementary: {
       fontSize: 13,
@@ -27,17 +32,17 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     container: {
       flex: 1,
       flexDirection: "row",
-      alignItems: "center",
       justifyContent: "flex-start",
+      width: 180, //shady workaround for collapsed text
     },
   });
   return (
     <View style={st.container}>
       <Txt style={[st.supplementary, { textTransform: "uppercase" }]}>{props.label}: </Txt>
-      <Txt style={st.text} numberOfLines={1}>
-        {props.value}
+      <Txt style={st.text} numberOfLines={1} ellipsizeMode={"tail"}>
+        {props.value} {props.measurement}
       </Txt>
-      <Txt style={st.supplementary}> {props.measurement}</Txt>
+      {/* <Txt style={st.supplementary}> {props.measurement}</Txt> */}
     </View>
   );
 }
@@ -46,6 +51,8 @@ interface timelineBlockProps {
   renderParams: RenderItemParams<StepDTO>;
   deleteStep: (step: StepDTO) => void;
   editStep: (step: StepDTO) => void;
+  deleteAutoWash: (step: StepDTO) => void;
+  settings: ProtocolSettings;
 }
 
 export const renderTimelineBlock = (props: timelineBlockProps) => {
@@ -145,14 +152,14 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                   <ParamItem
                     label={"Incubate for"}
                     value={(block.params as WashStep).incubation}
-                    measurement="sec"
+                    measurement={props.settings.timeUnits}
                   />
                 </View>
                 <View style={s.col}>
                   <ParamItem
                     label={"Iterate for"}
                     value={(block.params as WashStep).iters}
-                    measurement="times"
+                    measurement="time(s)"
                   />
                   <ParamItem
                     label={"At"}
@@ -169,7 +176,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                   <ParamItem
                     label={"Incubate for"}
                     value={(block.params as ReagentStep).incubation}
-                    measurement="sec"
+                    measurement={props.settings.timeUnits}
                   />
                 </View>
                 <View style={s.col}>
@@ -178,7 +185,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                     value={(block.params as ReagentStep).temperature}
                     measurement="°C"
                   />
-                  <ParamItem
+                  {/* <ParamItem
                     label={"Autowash"}
                     value={
                       (block.params as ReagentStep).autoWash == true
@@ -187,7 +194,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                         ? "Undf"
                         : "No"
                     }
-                  />
+                  /> */}
                 </View>
               </>
             )}
@@ -232,6 +239,22 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
             </View>
           </View>
         </View>
+        {block.type == StepType.LIQUID_APPL && (block.params as ReagentStep).autoWash == true && (
+          <View style={s.autoWash}>
+            <AW_icon height={20} width={20} style={{ marginRight: 5 }} />
+            <Txt>
+              Auto Washing: {props.settings.autoWashConfig.iters} x{" "}
+              {props.settings.autoWashConfig.incubation} {props.settings.timeUnits}
+            </Txt>
+            <TouchableOpacity
+              onPress={() =>
+                props.deleteAutoWash({ ...block, params: { ...block.params, autoWash: false } })
+              }
+            >
+              <Close_icon height={25} width={25} style={{ marginLeft: 30 }} />
+            </TouchableOpacity>
+          </View>
+        )}
       </TouchableOpacity>
       <Modal
         animationType="fade"
@@ -332,7 +355,20 @@ const s = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     paddingHorizontal: 10,
-    marginRight: 15,
+    marginRight: 10,
+  },
+
+  autoWash: {
+    alignSelf: "flex-start",
+    flex: 1,
+    backgroundColor: AppStyles.color.elem_back,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 8,
+    marginHorizontal: 10,
+    marginBottom: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
 
   modal_container: {

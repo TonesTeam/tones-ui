@@ -24,7 +24,7 @@ import { StepType } from "sharedlib/enum/DBEnums";
 import { SvgProps } from "react-native-svg";
 import WorkBlock from "./Block";
 import { renderTimelineBlock } from "./TimeLineBlock";
-import { updateTemperature } from "../common/constructorUtils";
+import { ProtocolSettings, modifyTimeUnits, updateTemperature } from "../common/constructorUtils";
 import InputField from "../components/InputField";
 import Close_icon from "../assets/icons/close.svg";
 import Point_icon from "../assets/icons/point.svg";
@@ -103,12 +103,6 @@ function StepTab(props: { type: StepType; active: boolean; onPress: () => void }
       </Txt>
     </TouchableOpacity>
   );
-}
-
-interface ProtocolSettings {
-  autoWashConfig: WashStep;
-  timeUnits: "sec" | "min";
-  description: String;
 }
 
 export default function Constructor(props: { id?: number }) {
@@ -233,7 +227,10 @@ export default function Constructor(props: { id?: number }) {
         return { ...liq, id: 0 };
       }),
       description: settings?.description, //Method can only be called when settings are initialized, so chill
-      steps: blocks,
+      steps:
+        settings?.timeUnits == "sec"
+          ? blocks
+          : blocks.map((block) => modifyTimeUnits(block, "sec")),
       creationDate: new Date(),
       defaultWash: settings?.autoWashConfig,
       author: null,
@@ -249,479 +246,491 @@ export default function Constructor(props: { id?: number }) {
   return (
     <MainContainer>
       <NavBar />
-      {defaultWashStep != undefined && tempSettings != undefined && tempSettings.autoWashConfig && (
-        <>
-          <View style={[globalElementStyle.page_container]}>
-            <View style={[s.header_section]}>
-              <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold", alignSelf: "center" }}>
-                Protocol Constructor
-              </Txt>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity
-                  style={[
-                    s.save_proto_btn,
-                    {
-                      backgroundColor: AppStyles.color.block.faded_washing,
-                      borderColor: AppStyles.color.background,
-                      borderWidth: 1,
-                      marginRight: 50,
-                    },
-                  ]}
-                  onPress={() => setSettingsModal(true)}
-                >
-                  <Txt style={{ fontFamily: "Roboto-bold" }}>Workspace Settings</Txt>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[s.save_proto_btn, { backgroundColor: "#000" }]}
-                  onPress={() => setPreSaveModal(true)}
-                >
-                  <Txt style={{ fontFamily: "Roboto-bold", color: AppStyles.color.elem_back }}>
-                    Save Protocol
-                  </Txt>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={s.body_section}>
-              <View style={s.workspace_container}>
-                <View style={s.tabs}>
-                  <StepTab
-                    type={StepType.WASHING}
-                    active={workBlock?.type == StepType.WASHING}
-                    onPress={() =>
-                      revealWorkBlock({
-                        type: StepType.WASHING,
-                        id: -1,
-                        params: {} as WashStep,
-                      } as StepDTO)
-                    }
-                  />
-                  <StepTab
-                    type={StepType.LIQUID_APPL}
-                    active={workBlock?.type == StepType.LIQUID_APPL}
-                    onPress={() =>
-                      revealWorkBlock({
-                        type: StepType.LIQUID_APPL,
-                        id: -1,
-                        params: {} as ReagentStep,
-                      } as StepDTO)
-                    }
-                  />
-                  <StepTab
-                    type={StepType.TEMP_CHANGE}
-                    active={workBlock?.type == StepType.TEMP_CHANGE}
-                    onPress={() =>
-                      setWorkBlock({
-                        type: StepType.TEMP_CHANGE,
-                        id: -1,
-                        params: {
-                          source: currentTemp,
-                        } as TemperatureStep,
-                      } as StepDTO)
-                    }
-                  />
+      {settings != undefined &&
+        defaultWashStep != undefined &&
+        tempSettings != undefined &&
+        tempSettings.autoWashConfig && (
+          <>
+            <View style={[globalElementStyle.page_container]}>
+              <View style={[s.header_section]}>
+                <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold", alignSelf: "center" }}>
+                  Protocol Constructor
+                </Txt>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={[
+                      s.save_proto_btn,
+                      {
+                        backgroundColor: AppStyles.color.block.faded_washing,
+                        borderColor: AppStyles.color.background,
+                        borderWidth: 1,
+                        marginRight: 50,
+                      },
+                    ]}
+                    onPress={() => setSettingsModal(true)}
+                  >
+                    <Txt style={{ fontFamily: "Roboto-bold" }}>Workspace Settings</Txt>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[s.save_proto_btn, { backgroundColor: "#000" }]}
+                    onPress={() => setPreSaveModal(true)}
+                  >
+                    <Txt style={{ fontFamily: "Roboto-bold", color: AppStyles.color.elem_back }}>
+                      Save Protocol
+                    </Txt>
+                  </TouchableOpacity>
                 </View>
-                <View style={s.workspace}>
-                  {workBlock != undefined && (
-                    <WorkBlock
-                      addBlock={addBlock}
-                      editBlock={editBlock}
-                      updateCustomLiquids={updateCustomLiquids}
-                      customLiquids={customLiquids}
-                      block={workBlock}
+              </View>
+              <View style={s.body_section}>
+                <View style={s.workspace_container}>
+                  <View style={s.tabs}>
+                    <StepTab
+                      type={StepType.WASHING}
+                      active={workBlock?.type == StepType.WASHING}
+                      onPress={() =>
+                        revealWorkBlock({
+                          type: StepType.WASHING,
+                          id: -1,
+                          params: {} as WashStep,
+                        } as StepDTO)
+                      }
                     />
-                  )}
+                    <StepTab
+                      type={StepType.LIQUID_APPL}
+                      active={workBlock?.type == StepType.LIQUID_APPL}
+                      onPress={() =>
+                        revealWorkBlock({
+                          type: StepType.LIQUID_APPL,
+                          id: -1,
+                          params: {} as ReagentStep,
+                        } as StepDTO)
+                      }
+                    />
+                    <StepTab
+                      type={StepType.TEMP_CHANGE}
+                      active={workBlock?.type == StepType.TEMP_CHANGE}
+                      onPress={() =>
+                        setWorkBlock({
+                          type: StepType.TEMP_CHANGE,
+                          id: -1,
+                          params: {
+                            source: currentTemp,
+                          } as TemperatureStep,
+                        } as StepDTO)
+                      }
+                    />
+                  </View>
+                  <View style={s.workspace}>
+                    {workBlock != undefined && (
+                      <WorkBlock
+                        addBlock={addBlock}
+                        editBlock={editBlock}
+                        updateCustomLiquids={updateCustomLiquids}
+                        customLiquids={customLiquids}
+                        block={workBlock}
+                        settings={settings}
+                      />
+                    )}
+                  </View>
+                </View>
+                <View style={s.timeline}>
+                  <Txt style={s.timelineHeader}>Protocol timeline</Txt>
+                  <DraggableFlatList
+                    style={{ marginHorizontal: 20 }}
+                    containerStyle={{ paddingBottom: 60 }}
+                    data={blocks}
+                    ref={flatListRef}
+                    onContentSizeChange={() => {
+                      if (flatListRef.current && blocks.length > 1) {
+                        let index = blocks.length - 1;
+                        flatListRef.current.scrollToIndex({ animated: true, index });
+                      }
+                    }}
+                    onDragEnd={({ data }) => handleBlocksChange(data)}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={(params) =>
+                      renderTimelineBlock({
+                        renderParams: params,
+                        deleteStep: deleteBlock,
+                        editStep: revealWorkBlock,
+                        deleteAutoWash: editBlock,
+                        settings: settings,
+                      })
+                    }
+                    onDragBegin={() => Vibration.vibrate([100])}
+                  />
                 </View>
               </View>
-              <View style={s.timeline}>
-                <Txt style={s.timelineHeader}>Protocol timeline</Txt>
-                <DraggableFlatList
-                  style={{ marginHorizontal: 20 }}
-                  containerStyle={{ paddingBottom: 60 }}
-                  data={blocks}
-                  ref={flatListRef}
-                  onContentSizeChange={() => {
-                    if (flatListRef.current && blocks.length > 1) {
-                      let index = blocks.length - 1;
-                      flatListRef.current.scrollToIndex({ animated: true, index });
-                    }
-                  }}
-                  onDragEnd={({ data }) => handleBlocksChange(data)}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={(params) =>
-                    renderTimelineBlock({
-                      renderParams: params,
-                      deleteStep: deleteBlock,
-                      editStep: revealWorkBlock,
-                    })
-                  }
-                  onDragBegin={() => Vibration.vibrate([100])}
-                />
-              </View>
             </View>
-          </View>
 
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={preSaveModal}
-            onRequestClose={() => {
-              setPreSaveModal(!preSaveModal);
-            }}
-          >
-            <View style={s.modal_overlay}>
-              <ScrollView
-                contentContainerStyle={{
-                  height: Dimensions.get("screen").height * 0.95,
-                }}
-                scrollEnabled={false}
-              >
-                <View style={s.modal_body}>
-                  <View style={s.modal_header}>
-                    <View style={{ flex: 5, flexDirection: "row", alignItems: "center" }}>
-                      <Txt style={{ fontFamily: "Roboto-bold", marginRight: 20 }}>
-                        Protocol Name:
-                      </Txt>
-                      <InputField onInputChange={setProtocolName} placeholder="Protocol Name" />
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={preSaveModal}
+              onRequestClose={() => {
+                setPreSaveModal(!preSaveModal);
+              }}
+            >
+              <View style={s.modal_overlay}>
+                <ScrollView
+                  contentContainerStyle={{
+                    height: Dimensions.get("screen").height * 0.95,
+                  }}
+                  scrollEnabled={false}
+                >
+                  <View style={s.modal_body}>
+                    <View style={s.modal_header}>
+                      <View style={{ flex: 5, flexDirection: "row", alignItems: "center" }}>
+                        <Txt style={{ fontFamily: "Roboto-bold", marginRight: 20 }}>
+                          Protocol Name:
+                        </Txt>
+                        <InputField onInputChange={setProtocolName} placeholder="Protocol Name" />
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => setPreSaveModal(false)}
+                        style={{ flex: 1, alignItems: "flex-end" }}
+                      >
+                        <Close_icon width={40} height={40} />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                      onPress={() => setPreSaveModal(false)}
-                      style={{ flex: 1, alignItems: "flex-end" }}
-                    >
-                      <Close_icon width={40} height={40} />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={s.modal_list}>
-                    <View style={[s.list_row, { backgroundColor: AppStyles.color.accent_dark }]}>
-                      <View style={[s.list_cell, { flex: 1 }]}>
-                        <Txt style={s.list_header_txt}>Step №</Txt>
-                      </View>
+                    <View style={s.modal_list}>
+                      <View style={[s.list_row, { backgroundColor: AppStyles.color.accent_dark }]}>
+                        <View style={[s.list_cell, { flex: 1 }]}>
+                          <Txt style={s.list_header_txt}>Step №</Txt>
+                        </View>
 
-                      <View style={[s.list_cell, { flex: 2 }]}>
-                        <Txt style={s.list_header_txt}>Type</Txt>
-                      </View>
+                        <View style={[s.list_cell, { flex: 2 }]}>
+                          <Txt style={s.list_header_txt}>Type</Txt>
+                        </View>
 
-                      <View style={[s.list_cell, { flex: 2 }]}>
-                        <Txt style={s.list_header_txt}>Reagent</Txt>
-                      </View>
+                        <View style={[s.list_cell, { flex: 2 }]}>
+                          <Txt style={s.list_header_txt}>Reagent</Txt>
+                        </View>
 
-                      <View style={[s.list_cell, { flex: 1 }]}>
-                        <Txt style={s.list_header_txt}>Temperature</Txt>
-                      </View>
+                        <View style={[s.list_cell, { flex: 1 }]}>
+                          <Txt style={s.list_header_txt}>Temperature (°C)</Txt>
+                        </View>
 
-                      <View style={[s.list_cell, { flex: 1 }]}>
-                        <Txt style={s.list_header_txt}>Inc. time</Txt>
-                      </View>
+                        <View style={[s.list_cell, { flex: 1 }]}>
+                          <Txt style={s.list_header_txt}>Inc. time ({settings.timeUnits})</Txt>
+                        </View>
 
-                      <View style={[s.list_cell, { flex: 1 }]}>
-                        <Txt style={s.list_header_txt}>Iterations</Txt>
+                        <View style={[s.list_cell, { flex: 1 }]}>
+                          <Txt style={s.list_header_txt}>Iterations</Txt>
+                        </View>
                       </View>
-                    </View>
-                    <ScrollView style={{ maxHeight: 500 }} showsVerticalScrollIndicator={true}>
-                      {blocks.map((block, index) => {
-                        return (
-                          <View key={index}>
-                            <View
-                              key={index}
-                              style={[
-                                s.list_row,
-                                {
-                                  backgroundColor:
-                                    index % 2 != 0
-                                      ? AppStyles.color.background
-                                      : AppStyles.color.elem_back,
-                                },
-                              ]}
-                            >
-                              <View style={[s.list_cell_id, { flex: 1 }]}>
-                                <View
-                                  style={{
-                                    flex: 1,
+                      <ScrollView style={{ maxHeight: 500 }} showsVerticalScrollIndicator={true}>
+                        {blocks.map((block, index) => {
+                          return (
+                            <View key={index}>
+                              <View
+                                key={index}
+                                style={[
+                                  s.list_row,
+                                  {
                                     backgroundColor:
-                                      block.type == StepType.LIQUID_APPL
-                                        ? AppStyles.color.block.main_reagent
-                                        : block.type == StepType.TEMP_CHANGE
-                                        ? AppStyles.color.block.main_temperature
-                                        : AppStyles.color.block.main_washing,
-                                  }}
-                                ></View>
-                                <View
-                                  style={{
-                                    flex: 11,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Txt style={[s.list_cell_txt]}>{index + 1}</Txt>
+                                      index % 2 != 0
+                                        ? AppStyles.color.background
+                                        : AppStyles.color.elem_back,
+                                  },
+                                ]}
+                              >
+                                <View style={[s.list_cell_id, { flex: 1 }]}>
+                                  <View
+                                    style={{
+                                      flex: 1,
+                                      backgroundColor:
+                                        block.type == StepType.LIQUID_APPL
+                                          ? AppStyles.color.block.main_reagent
+                                          : block.type == StepType.TEMP_CHANGE
+                                          ? AppStyles.color.block.main_temperature
+                                          : AppStyles.color.block.main_washing,
+                                    }}
+                                  ></View>
+                                  <View
+                                    style={{
+                                      flex: 11,
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <Txt style={[s.list_cell_txt]}>{index + 1}</Txt>
+                                  </View>
+                                </View>
+                                <View style={[s.list_cell, { flex: 2 }]}>
+                                  <Txt style={s.list_cell_txt}>{block.type}</Txt>
+                                </View>
+                                <View style={[s.list_cell, { flex: 2 }]}>
+                                  <Txt style={s.list_cell_txt}>
+                                    {block.type != StepType.TEMP_CHANGE
+                                      ? (block.params as ReagentStep | WashStep).liquid.name
+                                      : "-"}
+                                  </Txt>
+                                </View>
+                                <View style={[s.list_cell, { flex: 1 }]}>
+                                  <Txt style={s.list_cell_txt}>
+                                    {block.type != StepType.TEMP_CHANGE
+                                      ? (block.params as Partial<WashStep>).temperature
+                                      : (block.params as TemperatureStep).target}
+                                    °C
+                                  </Txt>
+                                </View>
+                                <View style={[s.list_cell, { flex: 1 }]}>
+                                  <Txt style={s.list_cell_txt}>
+                                    {block.type != StepType.TEMP_CHANGE
+                                      ? (block.params as ReagentStep | WashStep).incubation
+                                      : "-"}
+                                  </Txt>
+                                </View>
+
+                                <View style={[s.list_cell, { flex: 1 }]}>
+                                  <Txt style={s.list_cell_txt}>
+                                    {block.type == StepType.WASHING
+                                      ? (block.params as WashStep).iters
+                                      : "-"}
+                                  </Txt>
                                 </View>
                               </View>
-                              <View style={[s.list_cell, { flex: 2 }]}>
-                                <Txt style={s.list_cell_txt}>{block.type}</Txt>
-                              </View>
-                              <View style={[s.list_cell, { flex: 2 }]}>
-                                <Txt style={s.list_cell_txt}>
-                                  {block.type != StepType.TEMP_CHANGE
-                                    ? (block.params as ReagentStep | WashStep).liquid.name
-                                    : "-"}
-                                </Txt>
-                              </View>
-                              <View style={[s.list_cell, { flex: 1 }]}>
-                                <Txt style={s.list_cell_txt}>
-                                  {block.type != StepType.TEMP_CHANGE
-                                    ? (block.params as Partial<WashStep>).temperature
-                                    : (block.params as TemperatureStep).target}
-                                  °C
-                                </Txt>
-                              </View>
-                              <View style={[s.list_cell, { flex: 1 }]}>
-                                <Txt style={s.list_cell_txt}>
-                                  {block.type != StepType.TEMP_CHANGE
-                                    ? (block.params as ReagentStep | WashStep).incubation
-                                    : "-"}
-                                </Txt>
-                              </View>
-
-                              <View style={[s.list_cell, { flex: 1 }]}>
-                                <Txt style={s.list_cell_txt}>
-                                  {block.type == StepType.WASHING
-                                    ? (block.params as WashStep).iters
-                                    : "-"}
-                                </Txt>
-                              </View>
-                            </View>
-                            {block.type == StepType.LIQUID_APPL &&
-                              (block.params as ReagentStep).autoWash == true && (
-                                <View
-                                  key={index + 200}
-                                  style={[
-                                    s.list_row,
-                                    {
-                                      backgroundColor: AppStyles.color.block.faded_washing,
-                                    },
-                                  ]}
-                                >
-                                  <View style={[s.list_cell_id, { flex: 1 }]}>
-                                    <View
-                                      style={{
-                                        flex: 1,
-                                        backgroundColor: AppStyles.color.block.main_washing,
-                                      }}
-                                    ></View>
-                                    <View
-                                      style={{
-                                        flex: 11,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                      }}
-                                    >
-                                      <Txt style={[s.list_cell_txt]}>*</Txt>
+                              {block.type == StepType.LIQUID_APPL &&
+                                (block.params as ReagentStep).autoWash == true && (
+                                  <View
+                                    key={index + 200}
+                                    style={[
+                                      s.list_row,
+                                      {
+                                        backgroundColor: AppStyles.color.block.faded_washing,
+                                      },
+                                    ]}
+                                  >
+                                    <View style={[s.list_cell_id, { flex: 1 }]}>
+                                      <View
+                                        style={{
+                                          flex: 1,
+                                          backgroundColor: AppStyles.color.block.main_washing,
+                                        }}
+                                      ></View>
+                                      <View
+                                        style={{
+                                          flex: 11,
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                        }}
+                                      >
+                                        <Txt style={[s.list_cell_txt]}>*</Txt>
+                                      </View>
+                                    </View>
+                                    <View style={[s.list_cell, { flex: 2 }]}>
+                                      <Txt style={s.list_cell_txt}>Auto-washing</Txt>
+                                    </View>
+                                    <View style={[s.list_cell, { flex: 2 }]}>
+                                      <Txt style={s.list_cell_txt}>
+                                        {" "}
+                                        {defaultWashStep.liquid.name}
+                                      </Txt>
+                                    </View>
+                                    <View style={[s.list_cell, { flex: 1 }]}>
+                                      <Txt style={s.list_cell_txt}>
+                                        {(block.params as ReagentStep).temperature}
+                                      </Txt>
+                                    </View>
+                                    <View style={[s.list_cell, { flex: 1 }]}>
+                                      <Txt style={s.list_cell_txt}>
+                                        {defaultWashStep.incubation}
+                                      </Txt>
+                                    </View>
+                                    <View style={[s.list_cell, { flex: 1 }]}>
+                                      <Txt style={s.list_cell_txt}>{defaultWashStep.iters}</Txt>
                                     </View>
                                   </View>
-                                  <View style={[s.list_cell, { flex: 2 }]}>
-                                    <Txt style={s.list_cell_txt}>Auto-washing</Txt>
-                                  </View>
-                                  <View style={[s.list_cell, { flex: 2 }]}>
-                                    <Txt style={s.list_cell_txt}>
-                                      {" "}
-                                      {defaultWashStep.liquid.name}
-                                    </Txt>
-                                  </View>
-                                  <View style={[s.list_cell, { flex: 1 }]}>
-                                    <Txt style={s.list_cell_txt}>
-                                      {(block.params as ReagentStep).temperature}
-                                      °C
-                                    </Txt>
-                                  </View>
-                                  <View style={[s.list_cell, { flex: 1 }]}>
-                                    <Txt style={s.list_cell_txt}>{defaultWashStep.incubation}</Txt>
-                                  </View>
-                                  <View style={[s.list_cell, { flex: 1 }]}>
-                                    <Txt style={s.list_cell_txt}>{defaultWashStep.iters}</Txt>
-                                  </View>
-                                </View>
-                              )}
-                          </View>
-                        );
-                      })}
-                    </ScrollView>
-                  </View>
-                  <View style={s.modal_footer}>
-                    <TouchableOpacity
-                      style={[s.modal_btn, { backgroundColor: AppStyles.color.secondary }]}
-                      onPress={() => {
-                        setPreSaveModal(false);
-                        save();
-                      }}
-                    >
-                      <Txt style={s.modal_btn_text}>SAVE</Txt>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[s.modal_btn, { backgroundColor: AppStyles.color.primary }]}
-                      onPress={() => {
-                        setPreSaveModal(false);
-                      }}
-                    >
-                      <Txt style={s.modal_btn_text}>RETURN</Txt>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </ScrollView>
-            </View>
-          </Modal>
-
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={settingsModal}
-            onRequestClose={() => {
-              setPreSaveModal(!settingsModal);
-            }}
-          >
-            <View style={stng.modal_container}>
-              <View style={stng.modal_body}>
-                <ScrollView scrollEnabled={true} persistentScrollbar={true}>
-                  <View style={stng.section}>
-                    <View style={stng.topic_header}>
-                      <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
-                      <Txt style={stng.topic}> Edit automatic washing step:</Txt>
+                                )}
+                            </View>
+                          );
+                        })}
+                      </ScrollView>
                     </View>
-                    <View style={{ marginRight: 10 }}>
-                      <CustomSelect
-                        list={washLiquids}
-                        label="REAGENT: "
-                        selected={tempSettings.autoWashConfig.liquid}
-                        canAdd={false}
-                        onChangeSelect={(liq) => {
-                          setTempSettings({
-                            ...tempSettings,
-                            autoWashConfig: {
-                              liquid: liq as LiquidDTO,
-                              iters: tempSettings.autoWashConfig.iters,
-                              incubation: tempSettings.autoWashConfig.incubation,
-                              temperature: null,
-                            } as WashStep,
-                          } as ProtocolSettings);
+                    <View style={s.modal_footer}>
+                      <TouchableOpacity
+                        style={[s.modal_btn, { backgroundColor: AppStyles.color.secondary }]}
+                        onPress={() => {
+                          setPreSaveModal(false);
+                          save();
                         }}
-                      />
+                      >
+                        <Txt style={s.modal_btn_text}>SAVE</Txt>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[s.modal_btn, { backgroundColor: AppStyles.color.primary }]}
+                        onPress={() => {
+                          setPreSaveModal(false);
+                        }}
+                      >
+                        <Txt style={s.modal_btn_text}>RETURN</Txt>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </ScrollView>
+              </View>
+            </Modal>
 
-                      <View style={{ flexDirection: "row", marginTop: 25 }}>
-                        <InputField
-                          placeholder="|"
-                          containerStyle={{ marginRight: 100 }}
-                          label="ITERATIONS:"
-                          type={"numeric" as InputModeOptions}
-                          value={tempSettings.autoWashConfig.iters}
-                          onInputChange={(iters) => {
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={settingsModal}
+              onRequestClose={() => {
+                setPreSaveModal(!settingsModal);
+              }}
+            >
+              <View style={stng.modal_container}>
+                <View style={stng.modal_body}>
+                  <ScrollView scrollEnabled={true} persistentScrollbar={true}>
+                    <View style={stng.section}>
+                      <View style={stng.topic_header}>
+                        <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
+                        <Txt style={stng.topic}> Edit automatic washing step:</Txt>
+                      </View>
+                      <View style={{ marginRight: 10 }}>
+                        <CustomSelect
+                          list={washLiquids}
+                          label="REAGENT: "
+                          selected={tempSettings.autoWashConfig.liquid}
+                          canAdd={false}
+                          onChangeSelect={(liq) => {
                             setTempSettings({
                               ...tempSettings,
                               autoWashConfig: {
-                                liquid: tempSettings.autoWashConfig.liquid,
-                                iters: Number(iters),
+                                liquid: liq as LiquidDTO,
+                                iters: tempSettings.autoWashConfig.iters,
                                 incubation: tempSettings.autoWashConfig.incubation,
                                 temperature: null,
                               } as WashStep,
                             } as ProtocolSettings);
                           }}
                         />
-                        <InputField
-                          placeholder="|"
-                          label="INCUBATION TIME:"
-                          type={"numeric" as InputModeOptions}
-                          value={tempSettings.autoWashConfig.incubation}
-                          onInputChange={(incub) => {
+
+                        <View style={{ flexDirection: "row", marginTop: 25 }}>
+                          <InputField
+                            placeholder="|"
+                            containerStyle={{ marginRight: 100 }}
+                            label="ITERATIONS:"
+                            type={"numeric" as InputModeOptions}
+                            value={tempSettings.autoWashConfig.iters}
+                            onInputChange={(iters) => {
+                              setTempSettings({
+                                ...tempSettings,
+                                autoWashConfig: {
+                                  liquid: tempSettings.autoWashConfig.liquid,
+                                  iters: Number(iters),
+                                  incubation: tempSettings.autoWashConfig.incubation,
+                                  temperature: null,
+                                } as WashStep,
+                              } as ProtocolSettings);
+                            }}
+                          />
+                          <InputField
+                            placeholder="|"
+                            label="INCUBATION TIME:"
+                            type={"numeric" as InputModeOptions}
+                            value={tempSettings.autoWashConfig.incubation}
+                            onInputChange={(incub) => {
+                              setTempSettings({
+                                ...tempSettings,
+                                autoWashConfig: {
+                                  liquid: tempSettings.autoWashConfig.liquid,
+                                  iters: tempSettings.autoWashConfig.iters,
+                                  incubation: Number(incub),
+                                  temperature: null,
+                                } as WashStep,
+                              } as ProtocolSettings);
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                    <View style={stng.section}>
+                      <View style={stng.topic_header}>
+                        <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
+                        <Txt style={stng.topic}> Default time units:</Txt>
+                      </View>
+                      <View style={{ flexDirection: "row" }}>
+                        <RadioButton
+                          isChecked={tempSettings.timeUnits == "sec"}
+                          label="Seconds"
+                          onPress={() => {
                             setTempSettings({
                               ...tempSettings,
-                              autoWashConfig: {
-                                liquid: tempSettings.autoWashConfig.liquid,
-                                iters: tempSettings.autoWashConfig.iters,
-                                incubation: Number(incub),
-                                temperature: null,
-                              } as WashStep,
-                            } as ProtocolSettings);
+                              timeUnits: "sec",
+                            });
+                          }}
+                        />
+                        <RadioButton
+                          isChecked={tempSettings.timeUnits == "min"}
+                          label="Minutes"
+                          onPress={() => {
+                            setTempSettings({
+                              ...tempSettings,
+                              timeUnits: "min",
+                            });
                           }}
                         />
                       </View>
                     </View>
-                  </View>
-                  <View style={stng.section}>
-                    <View style={stng.topic_header}>
-                      <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
-                      <Txt style={stng.topic}> Default time units:</Txt>
+                    <View style={stng.section}>
+                      <View style={stng.topic_header}>
+                        <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
+                        <Txt style={stng.topic}> Add protocol description:</Txt>
+                      </View>
+                      <View style={{ marginRight: 10 }}>
+                        <InputField
+                          multiline={true}
+                          placeholder="Description..."
+                          value={tempSettings.description}
+                          onInputChange={(e) => {
+                            setTempSettings({
+                              ...tempSettings,
+                              description: e,
+                            });
+                          }}
+                        />
+                      </View>
                     </View>
-                    <View style={{ flexDirection: "row" }}>
-                      <RadioButton
-                        isChecked={tempSettings.timeUnits == "sec"}
-                        label="Seconds"
-                        onPress={() => {
-                          setTempSettings({
-                            ...tempSettings,
-                            timeUnits: "sec",
-                          });
-                        }}
-                      />
-                      <RadioButton
-                        isChecked={tempSettings.timeUnits == "min"}
-                        label="Minutes"
-                        onPress={() => {
-                          setTempSettings({
-                            ...tempSettings,
-                            timeUnits: "min",
-                          });
-                        }}
-                      />
-                    </View>
-                  </View>
-                  <View style={stng.section}>
-                    <View style={stng.topic_header}>
-                      <Point_icon height={15} width={15} stroke={AppStyles.color.primary} />
-                      <Txt style={stng.topic}> Add protocol description:</Txt>
-                    </View>
-                    <View style={{ marginRight: 10 }}>
-                      <InputField
-                        multiline={true}
-                        placeholder="Description..."
-                        value={tempSettings.description}
-                        onInputChange={(e) => {
-                          setTempSettings({
-                            ...tempSettings,
-                            description: e,
-                          });
-                        }}
-                      />
-                    </View>
-                  </View>
-                </ScrollView>
+                  </ScrollView>
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingTop: 40,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <TouchableOpacity
-                    style={[s.modal_btn, { backgroundColor: AppStyles.color.warning }]}
-                    onPress={() => {
-                      setSettingsModal(false);
-                      setSettings(tempSettings); //Update settings
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      paddingTop: 40,
+                      justifyContent: "space-between",
                     }}
                   >
-                    <Txt style={s.modal_btn_text}>APPLY</Txt>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[s.modal_btn, { backgroundColor: AppStyles.color.accent_dark }]}
-                    onPress={() => {
-                      setSettingsModal(false);
-                      setTempSettings(settings); //Drop all changes
-                    }}
-                  >
-                    <Txt style={s.modal_btn_text}>DISCARD</Txt>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[s.modal_btn, { backgroundColor: AppStyles.color.warning }]}
+                      onPress={() => {
+                        if (tempSettings.timeUnits != settings.timeUnits) {
+                          setBlocks(
+                            blocks.map((block) => modifyTimeUnits(block, tempSettings.timeUnits))
+                          );
+                        }
+                        setSettingsModal(false);
+                        setSettings(tempSettings); //Update settings
+                      }}
+                    >
+                      <Txt style={s.modal_btn_text}>APPLY</Txt>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[s.modal_btn, { backgroundColor: AppStyles.color.accent_dark }]}
+                      onPress={() => {
+                        setSettingsModal(false);
+                        setTempSettings(settings); //Drop all changes
+                      }}
+                    >
+                      <Txt style={s.modal_btn_text}>DISCARD</Txt>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          </Modal>
-        </>
-      )}
+            </Modal>
+          </>
+        )}
     </MainContainer>
   );
 }

@@ -2,6 +2,12 @@ import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/s
 import { StepType } from "sharedlib/enum/DBEnums";
 import { DEFAULT_TEMEPRATURE, LIQUID_INJECT_TIME } from "../constants/protocol_constants";
 
+export interface ProtocolSettings {
+  autoWashConfig: WashStep;
+  timeUnits: "sec" | "min";
+  description: String;
+}
+
 export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
   let tempBlocks = [...blocks];
   let currentTemp = DEFAULT_TEMEPRATURE; //Current temperature of protocol for given step
@@ -59,6 +65,27 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
       : (temperatures[temperatures.length - 1].params as TemperatureStep).target;
 
   return [refactoredBlocks, newCurrentTemp];
+}
+
+export function modifyTimeUnits(step: StepDTO, newUnits: string): StepDTO {
+  console.log("New time unit:", newUnits);
+  const coefficient = newUnits == "min" ? 1 / 60 : 60;
+  console.log("Coef  = ", coefficient);
+
+  let newStep =
+    step.type == StepType.TEMP_CHANGE
+      ? step
+      : {
+          ...step,
+          params: {
+            ...step.params,
+            incubation:
+              ((step.params as WashStep | ReagentStep).incubation * coefficient) % 1 != 0
+                ? ((step.params as WashStep | ReagentStep).incubation * coefficient).toFixed(2)
+                : (step.params as WashStep | ReagentStep).incubation * coefficient,
+          },
+        };
+  return newStep;
 }
 
 export function calcDuration(blocks: StepDTO[]) {
