@@ -34,6 +34,7 @@ import { getRequest, makeRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
 import RadioButton from "../components/RadioButton";
 import { Method } from "axios";
+import SavingModal from "../components/SavingModal";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
@@ -118,6 +119,7 @@ export default function Constructor(props: { id?: number }) {
   const [settings, setSettings] = useState<ProtocolSettings>();
   const [tempSettings, setTempSettings] = useState<ProtocolSettings>();
   const [washLiquids, setWashLiquids] = useState<LiquidDTO[]>([]);
+  const [successSaving, setSuccessSaving] = useState<boolean | undefined>(undefined);
   const flatListRef: MutableRefObject<any> = useRef(null);
 
   function initialization() {
@@ -238,9 +240,15 @@ export default function Constructor(props: { id?: number }) {
 
     console.log(JSON.stringify(new_protocol));
 
-    makeRequest("POST" as Method, "/protocol/save", JSON.stringify(new_protocol)).then((r) => {
-      console.log(r);
-    });
+    makeRequest("POST" as Method, "/protocol/save", JSON.stringify(new_protocol))
+      .then((r) => {
+        if (r.status >= 200 && r.status <= 299) setSuccessSaving(true);
+        else setSuccessSaving(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setSuccessSaving(false);
+      });
   }
 
   return (
@@ -729,6 +737,17 @@ export default function Constructor(props: { id?: number }) {
                 </View>
               </View>
             </Modal>
+
+            {successSaving != undefined && (
+              <SavingModal
+                result={successSaving}
+                text={"Protocol"}
+                unsetVisible={() => {
+                  //TODO: NAVIGATE TO PROTOCOL LIST
+                  setSuccessSaving(undefined);
+                }}
+              />
+            )}
           </>
         )}
     </MainContainer>

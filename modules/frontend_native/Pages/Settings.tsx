@@ -13,7 +13,7 @@ import { AppStyles, MainContainer, globalElementStyle } from "../constants/style
 import NavBar from "../navigation/CustomNavigator";
 import { useEffect, useState } from "react";
 import { LiquidDTO, LiquidTypeDTO, PermanentLiquidDTO } from "sharedlib/dto/liquid.dto";
-import { getRequest } from "../common/util";
+import { getRequest, makeRequest } from "../common/util";
 import Txt from "../components/Txt";
 import Search_Icon from "../assets/icons/search.svg";
 import Edit_Icon from "../assets/icons/edit_btn.svg";
@@ -24,6 +24,8 @@ import Lib_s_Icon from "../assets/icons/reag_lib_settings.svg";
 import InputField from "../components/InputField";
 import { CustomSelect } from "../components/Select";
 import { Switch } from "react-native-switch";
+import { Method } from "axios";
+import SavingModal from "../components/SavingModal";
 
 enum SettingTabs {
   USER = "User Settings",
@@ -35,7 +37,20 @@ function LiquidsModal(props: {
   liquid: PermanentLiquidDTO | null;
   categories: LiquidTypeDTO[];
   closeModal: () => void;
+  saveLiquid: (liq: PermanentLiquidDTO) => void;
 }) {
+  const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>(
+    props.liquid
+      ? props.liquid
+      : ({
+          id: 0,
+          name: "",
+          type: props.categories[0],
+          usedCold: false,
+          toxic: false,
+        } as PermanentLiquidDTO)
+  );
+
   const ms = StyleSheet.create({
     modal_container: {
       flex: 1,
@@ -96,6 +111,7 @@ function LiquidsModal(props: {
       fontFamily: "Roboto-thin",
       textTransform: "uppercase",
       color: AppStyles.color.accent_dark,
+      marginBottom: 5,
     },
   });
   return (
@@ -110,80 +126,86 @@ function LiquidsModal(props: {
               {props.liquid != null ? "Updating reagent data" : "Adding new reagent"}
             </Txt>
           </View>
+          {props.categories && (
+            <View style={ms.form}>
+              <ScrollView>
+                <View style={ms.field}>
+                  <Txt style={ms.label}>REAGENT NAME:</Txt>
+                  <InputField
+                    value={newLiquid.name}
+                    onInputChange={(text) => setNewLiquid({ ...newLiquid, name: text })}
+                  />
+                </View>
+                <View style={ms.field}>
+                  <Txt style={ms.label}>CATEGORY:</Txt>
+                  <CustomSelect
+                    list={props.categories}
+                    selected={newLiquid.type}
+                    canAdd={false}
+                    onChangeSelect={(cat) => setNewLiquid({ ...newLiquid, type: cat })}
+                  />
+                </View>
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <View style={ms.field}>
+                    <Txt style={ms.label}>USED COLD:</Txt>
+                    <Switch
+                      value={newLiquid.usedCold}
+                      onValueChange={(val) => {
+                        setNewLiquid({ ...newLiquid, usedCold: val });
+                      }}
+                      containerStyle={{ marginLeft: 10 }}
+                      activeText={"YES"}
+                      inActiveText={"NO"}
+                      circleSize={40}
+                      barHeight={40}
+                      circleBorderWidth={1}
+                      backgroundActive={AppStyles.color.primary}
+                      backgroundInactive={AppStyles.color.accent_dark}
+                      circleActiveColor={AppStyles.color.elem_back}
+                      circleInActiveColor={AppStyles.color.elem_back}
+                      changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                      innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                      outerCircleStyle={{}} // style for outer animated circle
+                      renderActiveText={true}
+                      renderInActiveText={true}
+                      switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                      switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                      switchWidthMultiplier={3.1} // multiplied by the `circleSize` prop to calculate total width of the Switch
+                      switchBorderRadius={10} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                    />
+                  </View>
+                  <View style={ms.field}>
+                    <Txt style={ms.label}>TOXIC:</Txt>
+                    <Switch
+                      value={newLiquid.toxic}
+                      onValueChange={(val) => {
+                        setNewLiquid({ ...newLiquid, toxic: val });
+                      }}
+                      activeText={"YES"}
+                      inActiveText={"NO"}
+                      circleSize={40}
+                      barHeight={40}
+                      circleBorderWidth={1}
+                      backgroundActive={AppStyles.color.primary}
+                      backgroundInactive={AppStyles.color.accent_dark}
+                      circleActiveColor={AppStyles.color.elem_back}
+                      circleInActiveColor={AppStyles.color.elem_back}
+                      changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                      innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                      outerCircleStyle={{}} // style for outer animated circle
+                      renderActiveText={true}
+                      renderInActiveText={true}
+                      switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                      switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                      switchWidthMultiplier={3.1} // multiplied by the `circleSize` prop to calculate total width of the Switch
+                      switchBorderRadius={10} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                    />
+                  </View>
+                </View>
+              </ScrollView>
+            </View>
+          )}
 
-          <View style={ms.form}>
-            <ScrollView>
-              <View style={ms.field}>
-                <Txt style={ms.label}>REAGENT NAME:</Txt>
-                <InputField value={props.liquid?.name} />
-              </View>
-              <View style={ms.field}>
-                <Txt style={ms.label}>CATEGORY:</Txt>
-                <CustomSelect
-                  list={props.categories}
-                  selected={props.liquid?.type}
-                  canAdd={false}
-                  onChangeSelect={(cat) => console.log("Selected", cat)}
-                />
-              </View>
-              <View style={{ flex: 1, flexDirection: "row" }}>
-                <View style={ms.field}>
-                  <Txt style={ms.label}>USED COLD:</Txt>
-                  <Switch
-                    value={props.liquid?.usedCold}
-                    onValueChange={(val) => {
-                      console.log("Switch toggled");
-                    }}
-                    activeText={"ON"}
-                    inActiveText={"OFF"}
-                    circleSize={40}
-                    barHeight={40}
-                    circleBorderWidth={1}
-                    backgroundActive={AppStyles.color.primary}
-                    backgroundInactive={AppStyles.color.background}
-                    circleActiveColor={AppStyles.color.elem_back}
-                    circleInActiveColor={AppStyles.color.elem_back}
-                    changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                    innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
-                    outerCircleStyle={{}} // style for outer animated circle
-                    renderActiveText={true}
-                    renderInActiveText={true}
-                    switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                    switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                    switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                    switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
-                  />
-                </View>
-                <View style={ms.field}>
-                  <Txt style={ms.label}>TOXIC:</Txt>
-                  <Switch
-                    value={props.liquid?.usedCold}
-                    onValueChange={(val) => {
-                      console.log("Switch toggled");
-                    }}
-                    activeText={"ON"}
-                    inActiveText={"OFF"}
-                    circleSize={40}
-                    barHeight={40}
-                    circleBorderWidth={1}
-                    backgroundActive={AppStyles.color.primary}
-                    backgroundInactive={AppStyles.color.background}
-                    circleActiveColor={AppStyles.color.elem_back}
-                    circleInActiveColor={AppStyles.color.elem_back}
-                    changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                    innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
-                    outerCircleStyle={{}} // style for outer animated circle
-                    renderActiveText={true}
-                    renderInActiveText={true}
-                    switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                    switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                    switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                    switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
-                  />
-                </View>
-              </View>
-            </ScrollView>
-          </View>
           <View style={ms.footer}>
             <TouchableOpacity
               style={[
@@ -191,16 +213,24 @@ function LiquidsModal(props: {
                 {
                   backgroundColor: AppStyles.color.elem_back,
                   borderWidth: 1,
-                  borderColor: AppStyles.color.primary,
+                  borderColor: AppStyles.color.accent_dark,
                 },
               ]}
               onPress={() => props.closeModal()}
             >
-              <Txt>Cancel</Txt>
+              <Txt>CANCEL</Txt>
             </TouchableOpacity>
-            <TouchableOpacity style={[ms.modal_btn, { backgroundColor: AppStyles.color.primary }]}>
+            <TouchableOpacity
+              style={[ms.modal_btn, { backgroundColor: AppStyles.color.primary }]}
+              onPress={() => {
+                if (newLiquid.name.trim() != "") {
+                  props.saveLiquid(newLiquid);
+                  props.closeModal();
+                }
+              }}
+            >
               <Txt style={{ color: AppStyles.color.elem_back }}>
-                {props.liquid != null ? "Update" : "Save"}
+                {props.liquid != null ? "UPDATE" : "SAVE"}
               </Txt>
             </TouchableOpacity>
           </View>
@@ -218,6 +248,7 @@ function Library() {
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(null);
+  const [successSaving, setSuccessSaving] = useState<boolean | undefined>(undefined);
 
   const listInitilizer = () => {
     getRequest<PermanentLiquidDTO[]>("/liquids").then((r) => {
@@ -227,17 +258,33 @@ function Library() {
     getRequest<LiquidTypeDTO[]>("/types").then((r) => {
       setCategories(r.data);
     });
+
+    setEditedLiquid(null);
   };
 
   useEffect(listInitilizer, []);
 
-  // function filterAndSort() {
-  //   let filteredList = liquids.filter((e) =>
-  //     filterInput === "" ? e : e.name.toLowerCase().includes(filterInput.toLowerCase())
-  //   );
-  //   let sortedList = filteredList;
-  //   return sortedList;
-  // }
+  function saveOrUpdateLiquid(liq: PermanentLiquidDTO) {
+    makeRequest("POST" as Method, "/liquid/save", JSON.stringify(liq))
+      .then((r) => {
+        if (r.status >= 200 && r.status <= 299) setSuccessSaving(true);
+        else setSuccessSaving(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setSuccessSaving(false);
+      });
+  }
+
+  function filterAndSort() {
+    if (liquids) {
+      let filteredList = liquids.filter((e) =>
+        filterInput === "" ? e : e.name.toLowerCase().includes(filterInput.toLowerCase())
+      );
+      let sortedList = filteredList;
+      return sortedList;
+    } else return [] as PermanentLiquidDTO[];
+  }
 
   const lib_s = StyleSheet.create({
     header: {
@@ -317,7 +364,11 @@ function Library() {
                 <TextInput
                   placeholder="Search by reagent name ..."
                   value={filterInput}
-                  style={{ fontFamily: "Roboto-regular" }}
+                  style={{
+                    fontFamily: "Roboto-regular",
+                    fontSize: 18,
+                    width: "90%",
+                  }}
                   onFocus={() => setActive(true)}
                   onBlur={() => setActive(false)}
                   onChangeText={(e) => setFilterInput(e.toLowerCase())}
@@ -329,112 +380,127 @@ function Library() {
                 </Txt>
               </TouchableOpacity>
             </View>
-            <View style={lib_s.list}>
-              <View
-                style={[lib_s.row, { backgroundColor: AppStyles.color.accent_dark, height: 40 }]}
-              >
-                <View style={[lib_s.cell, { flex: 3 }]}>
-                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                    Reagent name
-                  </Txt>
-                </View>
-                <View style={[lib_s.cell, { flex: 2 }]}>
-                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                    Categoty
-                  </Txt>
-                </View>
-                <View style={[lib_s.cell, { flex: 1 }]}>
-                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                    Toxicity
-                  </Txt>
-                </View>
-                <View style={[lib_s.cell, { flex: 1 }]}>
-                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                    Used cold
-                  </Txt>
-                </View>
-                <View style={[lib_s.cell, { flex: 3 }]}>
-                  <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
-                    Options
-                  </Txt>
-                </View>
+            {filterAndSort().length == 0 && (
+              <View style={[lib_s.list, { borderWidth: 0 }]}>
+                <Txt>No liquids found!</Txt>
               </View>
-              <ScrollView>
-                {liquids.map((liq, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={[
-                        lib_s.row,
-                        {
-                          backgroundColor:
-                            index % 2 != 0 ? AppStyles.color.background : AppStyles.color.elem_back,
-                        },
-                        index == liquids.length - 1 && {
-                          borderBottomLeftRadius: 10,
-                          borderBottomRightRadius: 10,
-                        },
-                      ]}
-                    >
-                      <View style={[lib_s.cell, { flex: 3 }]}>
-                        <Txt>{liq.name}</Txt>
-                      </View>
-                      <View style={[lib_s.cell, { flex: 2 }]}>
-                        <Txt>{liq.type.name}</Txt>
-                      </View>
-                      <View style={[lib_s.cell, { flex: 1 }]}>
-                        <Txt>{liq.toxic && "X"}</Txt>
-                      </View>
-                      <View style={[lib_s.cell, { flex: 1 }]}>
-                        <Txt>{liq.usedCold && "X"}</Txt>
-                      </View>
-                      <View style={[lib_s.cell, { flex: 3, flexDirection: "row" }]}>
-                        <TouchableOpacity
-                          style={[
-                            lib_s.option_cell,
-                            { borderRightColor: AppStyles.color.background, borderRightWidth: 0.5 },
-                          ]}
-                          onPress={() => {
-                            setEditedLiquid(liq);
-                            setEditModal(true);
-                          }}
-                        >
-                          <Edit_Icon height={15} width={15} stroke={AppStyles.color.primary} />
-                          <Txt
-                            style={{
-                              marginLeft: 10,
-                              color: AppStyles.color.primary,
-                              letterSpacing: 1.1,
-                              fontSize: 12,
+            )}
+            {filterAndSort().length != 0 && (
+              <View style={lib_s.list}>
+                <View
+                  style={[lib_s.row, { backgroundColor: AppStyles.color.accent_dark, height: 40 }]}
+                >
+                  <View style={[lib_s.cell, { flex: 3 }]}>
+                    <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                      Reagent name
+                    </Txt>
+                  </View>
+                  <View style={[lib_s.cell, { flex: 2 }]}>
+                    <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                      Categoty
+                    </Txt>
+                  </View>
+                  <View style={[lib_s.cell, { flex: 1 }]}>
+                    <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                      Toxicity
+                    </Txt>
+                  </View>
+                  <View style={[lib_s.cell, { flex: 1 }]}>
+                    <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                      Used cold
+                    </Txt>
+                  </View>
+                  <View style={[lib_s.cell, { flex: 3 }]}>
+                    <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+                      Options
+                    </Txt>
+                  </View>
+                </View>
+                <ScrollView>
+                  {filterAndSort().map((liq, index) => {
+                    return (
+                      <View
+                        key={index}
+                        style={[
+                          lib_s.row,
+                          {
+                            backgroundColor:
+                              index % 2 != 0
+                                ? AppStyles.color.background
+                                : AppStyles.color.elem_back,
+                          },
+                          index == liquids.length - 1 && {
+                            borderBottomLeftRadius: 10,
+                            borderBottomRightRadius: 10,
+                          },
+                        ]}
+                      >
+                        <View style={[lib_s.cell, { flex: 3 }]}>
+                          <Txt>{liq.name}</Txt>
+                        </View>
+                        <View style={[lib_s.cell, { flex: 2 }]}>
+                          <Txt>{liq.type.name}</Txt>
+                        </View>
+                        <View style={[lib_s.cell, { flex: 1 }]}>
+                          <Txt>{liq.toxic && "X"}</Txt>
+                        </View>
+                        <View style={[lib_s.cell, { flex: 1 }]}>
+                          <Txt>{liq.usedCold && "X"}</Txt>
+                        </View>
+                        <View style={[lib_s.cell, { flex: 3, flexDirection: "row" }]}>
+                          <TouchableOpacity
+                            style={[
+                              lib_s.option_cell,
+                              {
+                                borderRightColor: AppStyles.color.background,
+                                borderRightWidth: 0.5,
+                              },
+                            ]}
+                            onPress={() => {
+                              setEditedLiquid(liq);
+                              setEditModal(true);
                             }}
                           >
-                            EDIT
-                          </Txt>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={[
-                            lib_s.option_cell,
-                            { borderLeftColor: AppStyles.color.accent_back, borderLeftWidth: 0.5 },
-                          ]}
-                        >
-                          <Delete_Icon height={15} width={15} stroke={AppStyles.color.warning} />
-                          <Txt
-                            style={{
-                              marginLeft: 10,
-                              color: AppStyles.color.warning,
-                              letterSpacing: 1.1,
-                              fontSize: 12,
-                            }}
+                            <Edit_Icon height={15} width={15} stroke={AppStyles.color.primary} />
+                            <Txt
+                              style={{
+                                marginLeft: 10,
+                                color: AppStyles.color.primary,
+                                letterSpacing: 1.1,
+                                fontSize: 12,
+                              }}
+                            >
+                              EDIT
+                            </Txt>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={[
+                              lib_s.option_cell,
+                              {
+                                borderLeftColor: AppStyles.color.accent_back,
+                                borderLeftWidth: 0.5,
+                              },
+                            ]}
                           >
-                            DELETE
-                          </Txt>
-                        </TouchableOpacity>
+                            <Delete_Icon height={15} width={15} stroke={AppStyles.color.warning} />
+                            <Txt
+                              style={{
+                                marginLeft: 10,
+                                color: AppStyles.color.warning,
+                                letterSpacing: 1.1,
+                                fontSize: 12,
+                              }}
+                            >
+                              DELETE
+                            </Txt>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  );
-                })}
-              </ScrollView>
-            </View>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           <Modal
@@ -449,8 +515,19 @@ function Library() {
               liquid={editedLiquid}
               categories={categories}
               closeModal={() => setEditModal(false)}
+              saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
             />
           </Modal>
+          {successSaving != undefined && (
+            <SavingModal
+              result={successSaving}
+              text={"Liquid"}
+              unsetVisible={() => {
+                setSuccessSaving(undefined);
+                listInitilizer;
+              }}
+            />
+          )}
         </>
       )}
     </>
@@ -482,7 +559,7 @@ export default function Settings(props: any) {
                   },
                 ]}
               >
-                <User_s_Icon height={25} width={25} fill={AppStyles.color.accent_dark} />
+                <User_s_Icon height={20} width={20} fill={AppStyles.color.accent_dark} />
               </View>
               <Txt
                 style={[
@@ -511,7 +588,7 @@ export default function Settings(props: any) {
                   },
                 ]}
               >
-                <System_s_Icon height={30} width={30} fill={AppStyles.color.accent_dark} />
+                <System_s_Icon height={22} width={22} fill={AppStyles.color.accent_dark} />
               </View>
               <Txt
                 style={[
@@ -542,7 +619,7 @@ export default function Settings(props: any) {
                   },
                 ]}
               >
-                <Lib_s_Icon height={27} width={27} fill={AppStyles.color.accent_dark} />
+                <Lib_s_Icon height={20} width={20} fill={AppStyles.color.accent_dark} />
               </View>
               <Txt
                 style={[
@@ -591,12 +668,12 @@ const s = StyleSheet.create({
     textTransform: "uppercase",
     color: AppStyles.color.text_primary,
     fontSize: 18,
-    fontFamily: "Roboto-regular",
+    fontFamily: "Roboto-thin",
   },
 
   tab_icon: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     borderRadius: 40,
     backgroundColor: AppStyles.color.background,
     alignItems: "center",

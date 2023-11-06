@@ -212,7 +212,6 @@ function ReagentInputs(props: BlockInputsProps) {
           showsVerticalScrollIndicator={true}
           persistentScrollbar={true}
         >
-          <Txt>Liquid: {selectedLiquid?.name}</Txt>
           <View style={bs.row}>
             <CustomSelect
               list={categories}

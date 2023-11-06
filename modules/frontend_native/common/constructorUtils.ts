@@ -68,9 +68,7 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
 }
 
 export function modifyTimeUnits(step: StepDTO, newUnits: string): StepDTO {
-  console.log("New time unit:", newUnits);
   const coefficient = newUnits == "min" ? 1 / 60 : 60;
-  console.log("Coef  = ", coefficient);
 
   let newStep =
     step.type == StepType.TEMP_CHANGE
