@@ -35,6 +35,7 @@ import { CustomSelect } from "../components/Select";
 import RadioButton from "../components/RadioButton";
 import { Method } from "axios";
 import SavingModal from "../components/SavingModal";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
@@ -106,7 +107,10 @@ function StepTab(props: { type: StepType; active: boolean; onPress: () => void }
   );
 }
 
-export default function Constructor(props: { id?: number }) {
+export default function Constructor({ route, navigation }: NativeStackScreenProps<any>) {
+  const protocol_ID = route.params
+    ? (route.params as { protocol_ID: number }).protocol_ID
+    : undefined;
   const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
   const [workBlock, setWorkBlock] = useState<StepDTO>(); //Currently edited block
   const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE); //Last temperature used in steps
@@ -123,12 +127,15 @@ export default function Constructor(props: { id?: number }) {
   const flatListRef: MutableRefObject<any> = useRef(null);
 
   function initialization() {
-    if (props.id) {
-      getRequest<ProtocolWithStepsDTO>(`/protocol/${props.id}`).then((r) => {
+    if (protocol_ID) {
+      getRequest<ProtocolWithStepsDTO>(`/protocol/${protocol_ID.toString()}`).then((r) => {
         setCustomLiquids(r.data.customLiquids);
         setDefaultWashStep(r.data.defaultWash);
+        setProtocolName(r.data.name);
+        handleBlocksChange(r.data.steps);
       });
     } else {
+      console.log("Executing ELSE");
       getRequest<LiquidDTO[]>(`/liquids`).then((r) => {
         setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
         let defaultWashing = {
@@ -392,7 +399,11 @@ export default function Constructor(props: { id?: number }) {
                         <Txt style={{ fontFamily: "Roboto-bold", marginRight: 20 }}>
                           Protocol Name:
                         </Txt>
-                        <InputField onInputChange={setProtocolName} placeholder="Protocol Name" />
+                        <InputField
+                          value={protocolName}
+                          onInputChange={setProtocolName}
+                          placeholder="Protocol Name"
+                        />
                       </View>
                       <TouchableOpacity
                         onPress={() => setPreSaveModal(false)}

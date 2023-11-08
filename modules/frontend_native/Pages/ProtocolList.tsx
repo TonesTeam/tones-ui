@@ -24,14 +24,18 @@ import Template_btn_Icon from "../assets/icons/template_btn.svg";
 import Edit_btn_Icon from "../assets/icons/edit_btn.svg";
 import Delete_btn_Icon from "../assets/icons/delete_btn.svg";
 import { ScrollView } from "react-native-gesture-handler";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 // import Loading from "../assets/pics/loading.gif";
 
-function ProtocolItem(props: any) {
+function ProtocolItem(props: {
+  protocol: ProtocolDto;
+  navigation: NativeStackNavigationProp<any>;
+}) {
   const [expanded, setExpanded] = useState(false);
   //const dispatch = useAppDispatch();
   let disableLaunch = useAppSelector((state) => state.isRunning);
   let protoInList = useAppSelector((state) => state.protocols).find(
-    (e) => e.protocol.id == props.id
+    (e) => e.protocol.id == props.protocol.id
   );
 
   let protocolStatus: string;
@@ -168,7 +172,7 @@ function ProtocolItem(props: any) {
         <View style={ps.header}>
           <View style={ps.header_box}>
             <Txt style={ps.thin_label}>ID:</Txt>
-            <Txt style={ps.bold_label}>{props.id}</Txt>
+            <Txt style={ps.bold_label}>{props.protocol.id}</Txt>
             <View style={ps.status_span}>
               <Txt
                 style={{ fontSize: 12, fontFamily: "Roboto-bold", color: AppStyles.color.primary }}
@@ -179,15 +183,17 @@ function ProtocolItem(props: any) {
           </View>
           <View style={ps.header_box}>
             <Txt style={ps.thin_label}>Name:</Txt>
-            <Txt style={ps.bold_label}>{props.name}</Txt>
+            <Txt style={ps.bold_label}>{props.protocol.name}</Txt>
           </View>
           <View style={ps.header_box}>
             <Txt style={ps.thin_label}>Author:</Txt>
-            <Txt style={ps.bold_label}>{props.authorName}</Txt>
+            <Txt style={ps.bold_label}>{props.protocol.author}</Txt>
           </View>
           <View style={ps.header_box}>
             <Txt style={ps.thin_label}>Date of creation:</Txt>
-            <Txt style={ps.bold_label}>{props.creationDate}</Txt>
+            <Txt style={ps.bold_label}>
+              {new Date(props.protocol.creationDate).toLocaleDateString()}
+            </Txt>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -204,7 +210,12 @@ function ProtocolItem(props: any) {
             odio commodi
           </Txt>
           <View style={ps.button_panel}>
-            <TouchableOpacity style={[ps.button, { backgroundColor: AppStyles.color.primary }]}>
+            <TouchableOpacity
+              style={[ps.button, { backgroundColor: AppStyles.color.primary }]}
+              onPress={() =>
+                props.navigation.navigate("Create protocol", { protocol_ID: props.protocol.id })
+              }
+            >
               <Launch_btn_Icon width={20} height={20} stroke={"#fff"} />
               <Txt style={{ marginLeft: 8, color: AppStyles.color.elem_back }}>
                 Prepare to Launch
@@ -241,7 +252,7 @@ function ProtocolItem(props: any) {
   );
 }
 
-export default function ProtocolList(props: any) {
+export default function ProtocolList({ route, navigation }: NativeStackScreenProps<any>) {
   const scrollViewRef = useRef<ScrollView>(null);
   //Protocol data
   const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(undefined);
@@ -330,17 +341,20 @@ export default function ProtocolList(props: any) {
                 //onContentSizeChange={scrollToBottom}
                 showsVerticalScrollIndicator={true}
               >
-                {filterAndSort().map(function (protocol) {
+                {filterAndSort().map(function (protocol, index) {
                   let date = new Date(protocol.creationDate);
                   let formattedDate = date.toLocaleDateString();
                   return (
                     <ProtocolItem
-                      listInitializer={listInitilizer}
-                      id={protocol.id}
-                      key={protocol.id}
-                      name={protocol.name}
-                      authorName={protocol.author}
-                      creationDate={formattedDate} //.toLocaleDateString()
+                      //listInitializer={listInitilizer}
+                      // id={protocol.id}
+                      // key={protocol.id}
+                      // name={protocol.name}
+                      // authorName={protocol.author}
+                      // creationDate={formattedDate} //.toLocaleDateString()
+                      key={index}
+                      protocol={protocol}
+                      navigation={navigation}
                     />
                   );
                 })}
