@@ -14,7 +14,7 @@ import NavBar from "../navigation/CustomNavigator";
 import { ProtocolDto } from "sharedlib/dto/protocol.dto";
 import { useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
-import { getRequest, makeRequest } from "../common/util"; //"common/util";
+import { getRequest, makeRequest } from "../common/util";
 import Txt from "../components/Txt";
 import Search_Icon from "../assets/icons/search.svg";
 import Arrow_Icon from "../assets/icons/arrow-down.svg";
@@ -25,7 +25,6 @@ import Edit_btn_Icon from "../assets/icons/edit_btn.svg";
 import Delete_btn_Icon from "../assets/icons/delete_btn.svg";
 import { ScrollView } from "react-native-gesture-handler";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-// import Loading from "../assets/pics/loading.gif";
 
 function ProtocolItem(props: {
   protocol: ProtocolDto;
@@ -213,7 +212,7 @@ function ProtocolItem(props: {
             <TouchableOpacity
               style={[ps.button, { backgroundColor: AppStyles.color.primary }]}
               onPress={() =>
-                props.navigation.navigate("Create protocol", { protocol_ID: props.protocol.id })
+                props.navigation.navigate("Launch", { protocol_ID: props.protocol.id })
               }
             >
               <Launch_btn_Icon width={20} height={20} stroke={"#fff"} />
@@ -225,7 +224,12 @@ function ProtocolItem(props: {
               <Template_btn_Icon width={20} height={20} stroke={AppStyles.color.text_primary} />
               <Txt style={{ marginLeft: 8 }}>Use as Template</Txt>
             </TouchableOpacity>
-            <TouchableOpacity style={ps.button}>
+            <TouchableOpacity
+              style={ps.button}
+              onPress={() =>
+                props.navigation.navigate("Create protocol", { protocol_ID: props.protocol.id })
+              }
+            >
               <Edit_btn_Icon width={20} height={20} stroke={AppStyles.color.text_primary} />
               <Txt style={{ marginLeft: 8 }}>Edit protocol</Txt>
             </TouchableOpacity>
@@ -276,16 +280,10 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
       let filteredList = protocols.filter((e) =>
         filterInput === "" ? e : e.name.toLowerCase().includes(filterInput.toLowerCase())
       );
-      let sortedList = filteredList; //.sort(getComparator((e) => e.creationDate.getTime())).reverse();
+      let sortedList = filteredList;
       return sortedList;
     } else return [] as ProtocolDto[];
   }
-
-  // const scrollToBottom = () => {
-  //   if (scrollViewRef.current) {
-  //     scrollViewRef.current.scrollToEnd({ animated: true });
-  //   }
-  // };
 
   return (
     <MainContainer>
@@ -338,25 +336,10 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
                 contentContainerStyle={{ flexGrow: 1 }}
                 scrollEnabled={true}
                 ref={scrollViewRef}
-                //onContentSizeChange={scrollToBottom}
                 showsVerticalScrollIndicator={true}
               >
                 {filterAndSort().map(function (protocol, index) {
-                  let date = new Date(protocol.creationDate);
-                  let formattedDate = date.toLocaleDateString();
-                  return (
-                    <ProtocolItem
-                      //listInitializer={listInitilizer}
-                      // id={protocol.id}
-                      // key={protocol.id}
-                      // name={protocol.name}
-                      // authorName={protocol.author}
-                      // creationDate={formattedDate} //.toLocaleDateString()
-                      key={index}
-                      protocol={protocol}
-                      navigation={navigation}
-                    />
-                  );
+                  return <ProtocolItem key={index} protocol={protocol} navigation={navigation} />;
                 })}
               </ScrollView>
             </View>
@@ -379,9 +362,6 @@ const s = StyleSheet.create({
     marginTop: 20,
     flex: 9,
     width: "95%",
-    // flexDirection: "column",
-    // alignItems: "center",
-    // justifyContent: "flex-start",
   },
   search_bar: {
     flexDirection: "row",

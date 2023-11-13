@@ -59,7 +59,7 @@ export default function NavBar() {
         delayPressIn={0} //TODO: edit prop config or make component? + test
         onPress={() => setOpen(!open)}
       >
-        {open && <Logo width={120} height={50} style={{ marginRight: 20 }}></Logo>}
+        {open && <Logo width={50} height={50} style={{ marginRight: 20 }}></Logo>}
 
         <Animated.View
           style={[
@@ -76,12 +76,12 @@ export default function NavBar() {
             },
           ]}
         >
-          <Arrow width={300} height={50} stroke={AppStyles.color.primary}></Arrow>
+          <Arrow width={50} height={50} stroke={AppStyles.color.primary}></Arrow>
         </Animated.View>
       </TouchableOpacity>
 
       <View style={s.section_links}>
-        {Pages.map((page, index) => {
+        {Pages.filter((page) => page.icon != undefined).map((page, index) => {
           return (
             <TouchableOpacity
               style={[
@@ -96,12 +96,14 @@ export default function NavBar() {
               }}
             >
               <View>
-                <page.icon
-                  height={30}
-                  stroke={
-                    activePage == page ? AppStyles.color.primary : AppStyles.color.text_primary
-                  }
-                />
+                {page.icon && (
+                  <page.icon
+                    height={30}
+                    stroke={
+                      activePage == page ? AppStyles.color.primary : AppStyles.color.text_primary
+                    }
+                  />
+                )}
               </View>
               {open && (
                 <View style={s.link_label}>

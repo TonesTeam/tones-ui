@@ -11,11 +11,12 @@ import Create_icon from "../assets/icons/create.svg";
 import Clock_icon from "../assets/icons/clock.svg";
 import Setting_icon from "../assets/icons/setting.svg";
 import Logout_icon from "../assets/icons/logout.svg";
+import Launch from "../Pages/Launch";
 
 export type Page = {
   name: string;
   component: ({ route, navigation }: NativeStackScreenProps<any>) => React.JSX.Element;
-  icon: React.FC<SvgProps>;
+  icon?: React.FC<SvgProps>;
 };
 
 export const Pages: Page[] = [
@@ -43,5 +44,9 @@ export const Pages: Page[] = [
     name: "Logout",
     component: Login,
     icon: Logout_icon,
+  },
+  {
+    name: "Launch",
+    component: Launch,
   },
 ];
