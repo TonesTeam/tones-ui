@@ -12,6 +12,7 @@ export const AppStyles = {
     accent_back: "#e4e4e4",
     accent_dark: "#475569",
     elem_back: "#ffffffff",
+    dark_btn: "#000000",
     primary_faded: "#DFF2FF",
     block: {
       main_washing: "#2d4cc9",

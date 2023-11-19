@@ -1,7 +1,7 @@
 import { View, StyleSheet, ScrollView } from "react-native";
-import Txt from "../components/Txt";
-import { CARTRIDGE_CONFIG } from "../common/cartridgeConfig";
-import { AppStyles } from "../constants/styles";
+import Txt from "../../components/Txt";
+import { CARTRIDGE_CONFIG } from "../../common/cartridgeConfig";
+import { AppStyles } from "../../constants/styles";
 import { StyleProps } from "react-native-reanimated";
 
 function Table(props: { config: { x: number; y: number }; color: string; letterOffset: number }) {
@@ -70,6 +70,7 @@ export function LiquidTable(props: { slots: number }) {
       <ScrollView
         horizontal={true}
         showsHorizontalScrollIndicator={true}
+        persistentScrollbar={true}
         contentContainerStyle={{ flexGrow: 1, alignItems: "center" }}
       >
         <Table config={table_config.size_S} letterOffset={0} color={AppStyles.color.primary} />

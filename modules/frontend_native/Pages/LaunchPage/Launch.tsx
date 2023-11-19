@@ -7,17 +7,22 @@ import {
   TouchableOpacity,
   InputModeOptions,
 } from "react-native";
-import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
-import NavBar from "../navigation/CustomNavigator";
+import { AppStyles, MainContainer, globalElementStyle } from "../../constants/styles";
+import NavBar from "../../navigation/CustomNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import Txt from "../components/Txt";
-import Step1 from "../assets/pics/step1.svg";
-import Step2 from "../assets/pics/step2.svg";
-import Step2_inactive from "../assets/pics/step2_inactive.svg";
-import Step3 from "../assets/pics/step3.svg";
-import Step3_inactive from "../assets/pics/step3_inactive.svg";
-import { useState } from "react";
+import Txt from "../../components/Txt";
+import Step1 from "../../assets/pics/step1.svg";
+import Step2 from "../../assets/pics/step2.svg";
+import Step2_inactive from "../../assets/pics/step2_inactive.svg";
+import Step3 from "../../assets/pics/step3.svg";
+import Step3_inactive from "../../assets/pics/step3_inactive.svg";
+import Slot_quantity_active_Icon from "../../assets/icons/slot_active_mark.svg";
+import Slot_quantity_inactive_Icon from "../../assets/icons/slots_quantity_inactive.svg";
+import { useEffect, useState } from "react";
 import { LiquidTable } from "./LiquidTable";
+import { SlotMap } from "./SlotMap";
+import { SLOT_QUANTITY } from "../../common/cartridgeConfig";
+import { Confirmations } from "./Confirmations";
 
 enum LaunchStage {
   STEP_ONE = 1,
@@ -102,6 +107,17 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
 
   const [stage, setStage] = useState<LaunchStage>(LaunchStage.STEP_ONE);
   const [slotNumber, setSlotNumber] = useState<number | "">(1);
+  const [slotActivityMap, setSlotActivityMap] = useState<boolean[]>(
+    Array(SLOT_QUANTITY).fill(false)
+  );
+  const [confirmations, setConfirmations] = useState(0);
+
+  function toggleSlotActivity(idx: number) {
+    const newSlotActivityMap = slotActivityMap.map((slot, index) => {
+      return index === idx ? !slot : slot;
+    });
+    setSlotActivityMap(newSlotActivityMap);
+  }
 
   return (
     <MainContainer>
@@ -163,7 +179,11 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
                       maxLength={1}
                       value={slotNumber.toString()}
                       onChangeText={(text) =>
-                        setSlotNumber(Number(text) == 0 || isNaN(Number(text)) ? "" : Number(text))
+                        setSlotNumber(
+                          Number(text) == 0 || isNaN(Number(text)) || Number(text) > SLOT_QUANTITY
+                            ? ""
+                            : Number(text)
+                        )
                       }
                       onBlur={(e) => {
                         if (slotNumber == "") setSlotNumber(1);
@@ -178,12 +198,56 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
                       alignItems: "center",
                       justifyContent: "center",
                     }}
-                    onPress={() => setSlotNumber(slotNumber == "" ? 1 : Number(slotNumber) + 1)}
+                    onPress={() =>
+                      setSlotNumber(
+                        slotNumber == ""
+                          ? 1
+                          : Number(slotNumber) + 1 <= SLOT_QUANTITY
+                          ? Number(slotNumber) + 1
+                          : Number(slotNumber)
+                      )
+                    }
                   >
                     <Txt style={{ fontSize: 40 }}>+</Txt>
                   </TouchableOpacity>
                 </View>
               </View>
+            )}
+            {stage == LaunchStage.STEP_TWO && (
+              <View
+                style={{
+                  alignSelf: "flex-end",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: AppStyles.color.background,
+                  padding: 10,
+                  justifyContent: "center",
+                }}
+              >
+                {slotActivityMap.filter((slot) => slot == true).length == Number(slotNumber) ? (
+                  <Slot_quantity_active_Icon height={30} />
+                ) : (
+                  <Slot_quantity_inactive_Icon height={30} />
+                )}
+                <Txt style={{ fontSize: 20 }}>Selected </Txt>
+                <Txt style={{ fontSize: 26, fontFamily: "Roboto-bold" }}>
+                  {slotActivityMap.filter((slot) => slot == true).length}
+                </Txt>
+                <Txt style={{ fontSize: 20 }}> slots out of </Txt>
+                <Txt style={{ fontSize: 26, fontFamily: "Roboto-bold" }}>{Number(slotNumber)}</Txt>
+              </View>
+            )}
+            {stage == LaunchStage.STEP_THREE && (
+              <Txt
+                style={{
+                  fontSize: 18,
+                }}
+              >
+                This is final step before launching protocol. Please go through check-up points and
+                confirm all before launching protocol.
+              </Txt>
             )}
           </View>
         </View>
@@ -191,9 +255,51 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
           {stage == LaunchStage.STEP_ONE && (
             <LiquidTable slots={slotNumber == "" ? 1 : Number(slotNumber)} />
           )}
+          {stage == LaunchStage.STEP_TWO && (
+            <SlotMap
+              slotsMap={slotActivityMap}
+              limitReached={
+                slotActivityMap.filter((slot) => slot == true).length == Number(slotNumber)
+              }
+              changeActiveSlots={(idx) => toggleSlotActivity(idx)}
+            />
+          )}
+          {stage == LaunchStage.STEP_THREE && (
+            <Confirmations
+              updateConfirmations={(state: boolean) =>
+                state == true
+                  ? setConfirmations(confirmations + 1)
+                  : confirmations > 0
+                  ? setConfirmations(confirmations - 1)
+                  : setConfirmations(0)
+              }
+            />
+          )}
         </View>
         <View style={s.footer}>
-          <Txt>Footer</Txt>
+          <TouchableOpacity
+            style={s.footer_btn_back}
+            onPress={() => stage != 1 && setStage(stage - 1)}
+          >
+            <Txt style={{ fontFamily: "Roboto-bold" }}>{stage == 1 ? "Discard" : "Back"}</Txt>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.footer_btn_next}
+            onPress={() => {
+              if (
+                stage == LaunchStage.STEP_TWO &&
+                slotActivityMap.filter((slot) => slot == true).length == Number(slotNumber)
+              ) {
+                setStage(stage + 1);
+              }
+              if (stage == LaunchStage.STEP_ONE && Number(slotNumber)) setStage(stage + 1);
+              if (stage == LaunchStage.STEP_THREE && confirmations == 4) console.log("Launch!");
+            }}
+          >
+            <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>
+              {stage == 3 ? "Launch" : "Next"}
+            </Txt>
+          </TouchableOpacity>
         </View>
       </View>
     </MainContainer>
@@ -206,6 +312,7 @@ const s = StyleSheet.create({
     backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 25,
   },
 
   header: {
@@ -213,17 +320,42 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 25,
   },
 
   body: {
     flex: 10,
-    //width: "100%",
-    paddingHorizontal: 25,
-    backgroundColor: AppStyles.color.background,
+    borderTopWidth: 2,
+    borderTopColor: AppStyles.color.background,
+    borderBottomWidth: 2,
+    borderBottomColor: AppStyles.color.background,
+    width: "100%",
   },
 
   footer: {
     flex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },
+
+  footer_btn_back: {
+    paddingVertical: 15,
+    width: 200,
+    backgroundColor: AppStyles.color.elem_back,
+    borderWidth: 1,
+    borderColor: AppStyles.color.accent_back,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+
+  footer_btn_next: {
+    paddingVertical: 15,
+    width: 200,
+    backgroundColor: AppStyles.color.dark_btn,
+    borderWidth: 1,
+    borderColor: AppStyles.color.dark_btn,
+    borderRadius: 8,
+    alignItems: "center",
   },
 });

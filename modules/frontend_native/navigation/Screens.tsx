@@ -11,7 +11,7 @@ import Create_icon from "../assets/icons/create.svg";
 import Clock_icon from "../assets/icons/clock.svg";
 import Setting_icon from "../assets/icons/setting.svg";
 import Logout_icon from "../assets/icons/logout.svg";
-import Launch from "../Pages/Launch";
+import Launch from "../Pages/LaunchPage/Launch";
 
 export type Page = {
   name: string;
