@@ -112,7 +112,7 @@ model UsedSlot {
 
 model Step {
     id                Int                @id @default(autoincrement())
-    protocol          Protocol           @relation(fields: [protocolId], references: [id])
+    protocol          Protocol           @relation(fields: [protocolId], references: [id], onDelete: Cascade)
     protocolId        Int
     sequenceOrder     Int
     stepType          String
@@ -136,7 +136,7 @@ model LiquidApplication {
     id                    Int        @id @default(autoincrement())
     liquidInfo            LiquidInfo @relation(fields: [liquidInfoId], references: [id])
     liquidInfoId          Int
-    step                  Step       @relation(fields: [stepId], references: [id])
+    step                  Step       @relation(fields: [stepId], references: [id], onDelete: Cascade)
     stepId                Int        @unique
     liquidIncubationTime  Int // Stores seconds
     incubationTemperature Int
@@ -149,7 +149,7 @@ model Washing {
     incubationTime    Int //Seconds
     permanentLiquid   PermanentLiquid @relation(fields: [permanentLiquidId], references: [id])
     permanentLiquidId Int
-    Step              Step?           @relation(fields: [stepId], references: [id]) // Optional because washing may be related to default protocol configuration
+    Step              Step?           @relation(fields: [stepId], references: [id], onDelete: Cascade) // Optional because washing may be related to default protocol configuration
     stepId            Int?            @unique
     Protocol          Protocol[]
 }
@@ -158,7 +158,7 @@ model TemperatureChange {
     id                Int  @id @default(autoincrement())
     sourceTemperature Int // From temperature
     targetTemperature Int // To temperature
-    step              Step @relation(fields: [stepId], references: [id])
+    step              Step @relation(fields: [stepId], references: [id], onDelete: Cascade)
     stepId            Int  @unique
 }
 

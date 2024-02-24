@@ -108,10 +108,24 @@ export class DatabaseService {
         })
     }
 
+    async deleteProtocol(id: number) {
+        await this.prisma.protocol.delete({where: {id: id}});
+    }
+
+
     async saveLiquid(liquid: PermanentLiquidDTO) {
         return await this.prisma.permanentLiquid.upsert({
             where: {id: liquid.id},
-            update: {},
+            update: {
+                toxic: liquid.toxic,
+                requiresCooling: liquid.usedCold,
+                liquidInfo: {
+                    update: {
+                        liquidTypeId: liquid.type.id,
+                        name: liquid.name,
+                    }
+                }
+            },
             create: {
                 toxic: liquid.toxic,
                 requiresCooling: liquid.usedCold,

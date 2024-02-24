@@ -1,0 +1,21 @@
+{
+    "magic-word": "zhizha",
+    "liquid-application-volume": 0.2,
+    "liquids-tube-holders": [
+        {
+            "size": 5,
+            "count": 24,
+            "external": false
+        },
+        {
+            "size": 15,
+            "count": 6,
+            "external": false
+        },
+        {
+            "size": 500,
+            "count": 2,
+            "external": true
+        }
+    ],
+}

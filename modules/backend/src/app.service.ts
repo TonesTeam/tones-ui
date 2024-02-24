@@ -88,6 +88,10 @@ export class AppService {
         return this.dbService.saveLiquid(liquid);
     }
 
+    async deleteProtocol(id: number) {
+        await this.dbService.deleteProtocol(id);
+    }
+
 
     private async stepToDto(step: ProtocolStep): Promise<StepDTO> {
         return {

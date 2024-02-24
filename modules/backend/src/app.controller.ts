@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
 import { ParseDatePipe } from './parse-date.pipe';
@@ -30,6 +30,13 @@ export class AppController {
     getProtocolWithSteps(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Retrieving protocol ${id}`)
         return this.appService.getProtocolWithSteps(id);
+    }
+
+    @Delete("/protocol/delete/:id")
+    async deleteProtocol(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Deleting protocol ${id}`);
+        await this.appService.deleteProtocol(id);
+        return 'Deleted protocol';
     }
 
     @Get("liquids")
