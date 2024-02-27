@@ -50,7 +50,7 @@ export function AppStack(props: any) {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        presentation: "modal",
+        presentation: "card",
         animationTypeForReplace: "pop",
         animation: "fade", //"none",
       }}

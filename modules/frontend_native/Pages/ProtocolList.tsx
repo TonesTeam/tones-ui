@@ -290,11 +290,18 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
       <NavBar />
       <View style={[globalElementStyle.page_container]}>
         <View style={s.section_search}>
-          <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold" }}>Protocol List</Txt>
+          <Txt
+            style={{ fontFamily: "Roboto-bold", fontSize: 24, flex: 1 }}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}
+          >
+            Protocol List
+          </Txt>
           <View
             style={[
               s.search_bar,
               active && { borderWidth: 2, borderColor: AppStyles.color.primary },
+              { flex: 5 },
             ]}
           >
             <Search_Icon height={30} width={60} stroke={AppStyles.color.text_faded} />
@@ -357,6 +364,7 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    top: 10,
   },
   section_list: {
     marginTop: 20,
@@ -369,5 +377,6 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
+    marginLeft: 20,
   },
 });

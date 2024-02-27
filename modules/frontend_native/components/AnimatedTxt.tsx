@@ -18,6 +18,7 @@ export function OpacityText({ style, children, ...otherProps }: OpacityTextProps
 
   return (
     <Animated.Text
+      allowFontScaling={false}
       style={[
         style,
         {

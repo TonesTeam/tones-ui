@@ -59,7 +59,7 @@ export default function NavBar() {
         delayPressIn={0} //TODO: edit prop config or make component? + test
         onPress={() => setOpen(!open)}
       >
-        {open && <Logo width={50} height={50} style={{ marginRight: 20 }}></Logo>}
+        {open && <Logo width={100} height={80} style={{ marginRight: 20 }}></Logo>}
 
         <Animated.View
           style={[
@@ -138,6 +138,7 @@ export default function NavBar() {
             ref={progressRef}
             value={90} //count == 0 ? 0 : 90
             valueSuffix={"%"}
+            allowFontScaling={false}
             radius={open ? 50 : 40}
             duration={open ? 800 : 0}
             progressValueColor={AppStyles.color.text_primary}
