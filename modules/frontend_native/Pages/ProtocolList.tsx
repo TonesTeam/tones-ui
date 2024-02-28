@@ -25,10 +25,15 @@ import Edit_btn_Icon from "../assets/icons/edit_btn.svg";
 import Delete_btn_Icon from "../assets/icons/delete_btn.svg";
 import { ScrollView } from "react-native-gesture-handler";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Method } from "axios";
+import InfoModal from "../components/InfoModal";
+import { useIsFocused } from "@react-navigation/native";
+import { InfoType } from "../common/types";
 
 function ProtocolItem(props: {
   protocol: ProtocolDto;
   navigation: NativeStackNavigationProp<any>;
+  toggleDeletionModal: (val: boolean) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   //const dispatch = useAppDispatch();
@@ -80,6 +85,24 @@ function ProtocolItem(props: {
     }).start();
 
     setExpanded(!expanded);
+  };
+
+  const deleteProtocol = (id: number) => {
+    makeRequest("DELETE" as Method, `/protocol/delete/${id}`)
+      .then((r) => {
+        if (r.status >= 200 && r.status <= 299) {
+          console.log("Successfuly deleted");
+          props.toggleDeletionModal(true);
+        } else {
+          console.log("Some mistical not catched error"); //setSuccessDeletion(false);
+          props.toggleDeletionModal(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+        props.toggleDeletionModal(false);
+        //setSuccessDeletion(false);
+      });
   };
 
   const ps = StyleSheet.create({
@@ -233,8 +256,8 @@ function ProtocolItem(props: {
               <Edit_btn_Icon width={20} height={20} stroke={AppStyles.color.text_primary} />
               <Txt style={{ marginLeft: 8 }}>Edit protocol</Txt>
             </TouchableOpacity>
-            <TouchableOpacity style={ps.button}>
-              <Delete_btn_Icon width={20} height={20} stroke={AppStyles.color.text_primary} />
+            <TouchableOpacity style={ps.button} onPress={() => deleteProtocol(props.protocol.id)}>
+              <Delete_btn_Icon width={20} height={20} stroke={AppStyles.color.warning} />
               <Txt style={{ marginLeft: 8 }}>Delete</Txt>
             </TouchableOpacity>
           </View>
@@ -258,12 +281,25 @@ function ProtocolItem(props: {
 
 export default function ProtocolList({ route, navigation }: NativeStackScreenProps<any>) {
   const scrollViewRef = useRef<ScrollView>(null);
+  const isFocused = useIsFocused();
+
+  //Deletion modal
+  const [deletionModal, setDeletionModal] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    if (isFocused) {
+      listInitilizer();
+    } else {
+      setProtocols(undefined);
+    }
+  }, [isFocused]);
+
   //Protocol data
   const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(undefined);
   const listInitilizer = () => {
     setTimeout(() => {
       getRequest<ProtocolDto[]>("/protocols").then((r) => setProtocols(r.data));
-    }, 3000);
+    }, 1000);
   };
   useEffect(listInitilizer, []);
 
@@ -346,10 +382,29 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
                 showsVerticalScrollIndicator={true}
               >
                 {filterAndSort().map(function (protocol, index) {
-                  return <ProtocolItem key={index} protocol={protocol} navigation={navigation} />;
+                  return (
+                    <ProtocolItem
+                      key={index}
+                      protocol={protocol}
+                      navigation={navigation}
+                      toggleDeletionModal={(val) => setDeletionModal(val)}
+                    />
+                  );
                 })}
               </ScrollView>
             </View>
+          )}
+          {deletionModal != undefined && (
+            <InfoModal
+              type={InfoType.DELETE}
+              result={deletionModal}
+              text={"Protocol"}
+              unsetVisible={() => {
+                setDeletionModal(undefined);
+                //listInitilizer();
+              }}
+              actionDuring={() => listInitilizer()}
+            />
           )}
         </View>
       </View>

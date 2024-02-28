@@ -25,7 +25,8 @@ import InputField from "../components/InputField";
 import { CustomSelect } from "../components/Select";
 import { Switch } from "react-native-switch";
 import { Method } from "axios";
-import SavingModal from "../components/SavingModal";
+import InfoModal from "../components/InfoModal";
+import { InfoType } from "../common/types";
 
 enum SettingTabs {
   USER = "User Settings",
@@ -519,7 +520,8 @@ function Library() {
             />
           </Modal>
           {successSaving != undefined && (
-            <SavingModal
+            <InfoModal
+              type={InfoType.SAVE}
               result={successSaving}
               text={"Liquid"}
               unsetVisible={() => {

@@ -5,11 +5,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import Txt from "./Txt";
 import Success_icon from "../assets/icons/save_success.svg";
 import Fail_icon from "../assets/icons/save_fail.svg";
+import { InfoType } from "../common/types";
 
-export default function SavingModal(props: {
+export default function InfoModal(props: {
   result: boolean; //True = success, False = fail
+  type: InfoType;
   text: string;
   unsetVisible: () => void;
+  actionDuring?: () => void;
 }) {
   const [modalVisible, setModalVisible] = useState(true);
   const bounceAnim = new Animated.Value(0);
@@ -25,10 +28,23 @@ export default function SavingModal(props: {
   }, []);
 
   useEffect(() => {
+    props.actionDuring && props.actionDuring();
     setTimeout(() => {
       setModalVisible(false);
+      props.unsetVisible();
     }, 3000);
   }, []);
+
+  const text_success = `${props.text} was successfully ${
+    props.type == InfoType.SAVE ? "saved" : props.type == InfoType.DELETE ? "deleted" : "modified"
+  }`;
+  const text_error = `Error occured while ${
+    props.type == InfoType.SAVE
+      ? "saving"
+      : props.type == InfoType.DELETE
+      ? "deleting"
+      : "modifying"
+  } ${props.text.toLowerCase()}`;
 
   return (
     <Modal animationType="fade" transparent={true} visible={modalVisible}>
@@ -48,9 +64,7 @@ export default function SavingModal(props: {
               <Fail_icon height={40} width={40} />
             )}
             <Txt style={{ marginLeft: 10, fontFamily: "Roboto-bold" }}>
-              {props.result == true
-                ? `${props.text} was successfully saved `
-                : `Error occured while saving ${props.text.toLowerCase()}`}
+              {props.result == true ? text_success : text_error}
             </Txt>
           </View>
           <View></View>

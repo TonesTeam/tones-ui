@@ -25,7 +25,8 @@ const isoDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2
 //   return originalResponse;
 // });
 
-const domain = "https://tones-api-3qrwq.ondigitalocean.app";
+//const domain = "https://tones-api-3qrwq.ondigitalocean.app";
+const domain = "http://192.168.215.126:8080";
 const prefix = "/api/v2";
 
 export async function getRequest<T>(path: string): Promise<AxiosResponse<T, any>> {

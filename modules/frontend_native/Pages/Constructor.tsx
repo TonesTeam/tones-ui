@@ -34,8 +34,9 @@ import { getRequest, makeRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
 import RadioButton from "../components/RadioButton";
 import { Method } from "axios";
-import SavingModal from "../components/SavingModal";
+import InfoModal from "../components/InfoModal";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { InfoType } from "../common/types";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],
@@ -750,7 +751,8 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
             </Modal>
 
             {successSaving != undefined && (
-              <SavingModal
+              <InfoModal
+                type={protocol_ID == undefined ? InfoType.SAVE : InfoType.UPDATE}
                 result={successSaving}
                 text={"Protocol"}
                 unsetVisible={() => {
