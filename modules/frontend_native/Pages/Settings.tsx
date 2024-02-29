@@ -27,6 +27,7 @@ import { Switch } from "react-native-switch";
 import { Method } from "axios";
 import InfoModal from "../components/InfoModal";
 import { InfoType } from "../common/types";
+import { useIsFocused } from "@react-navigation/native";
 
 enum SettingTabs {
   USER = "User Settings",
@@ -241,7 +242,7 @@ function LiquidsModal(props: {
   );
 }
 
-function Library() {
+function Library(props: { toggleLiquidUpdateModal: (val: boolean) => void }) {
   const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
   const [filterInput, setFilterInput] = useState("");
@@ -249,7 +250,15 @@ function Library() {
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(null);
-  const [successSaving, setSuccessSaving] = useState<boolean | undefined>(undefined);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      listInitilizer();
+    } else {
+      setLiquids([]);
+    }
+  }, [isFocused]);
 
   const listInitilizer = () => {
     getRequest<PermanentLiquidDTO[]>("/liquids").then((r) => {
@@ -268,12 +277,14 @@ function Library() {
   function saveOrUpdateLiquid(liq: PermanentLiquidDTO) {
     makeRequest("POST" as Method, "/liquid/save", JSON.stringify(liq))
       .then((r) => {
-        if (r.status >= 200 && r.status <= 299) setSuccessSaving(true);
-        else setSuccessSaving(false);
+        if (r.status >= 200 && r.status <= 299) {
+          props.toggleLiquidUpdateModal(true);
+          listInitilizer(); //workaround. buggy. TODO: pass rigger from parent (Settings)
+        } else props.toggleLiquidUpdateModal(false);
       })
       .catch((err) => {
         console.log(err.message);
-        setSuccessSaving(false);
+        props.toggleLiquidUpdateModal(false);
       });
   }
 
@@ -519,17 +530,6 @@ function Library() {
               saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
             />
           </Modal>
-          {successSaving != undefined && (
-            <InfoModal
-              type={InfoType.SAVE}
-              result={successSaving}
-              text={"Liquid"}
-              unsetVisible={() => {
-                setSuccessSaving(undefined);
-                listInitilizer;
-              }}
-            />
-          )}
         </>
       )}
     </>
@@ -538,6 +538,7 @@ function Library() {
 
 export default function Settings(props: any) {
   const [currentTab, setCurrentTab] = useState<SettingTabs>(SettingTabs.LIBRARY);
+  const [liquidUpdateModal, setLiquidUpdateModal] = useState<boolean | undefined>(undefined);
 
   return (
     <MainContainer>
@@ -637,9 +638,23 @@ export default function Settings(props: any) {
             </TouchableOpacity>
           </View>
           <View style={s.body}>
-            {currentTab == SettingTabs.LIBRARY && <Library />}
+            {currentTab == SettingTabs.LIBRARY && (
+              <Library toggleLiquidUpdateModal={(val) => setLiquidUpdateModal(val)} />
+            )}
             {currentTab != SettingTabs.LIBRARY && <Txt>Other tab</Txt>}
           </View>
+          {liquidUpdateModal != undefined && (
+            <InfoModal
+              type={InfoType.UPDATE}
+              result={liquidUpdateModal}
+              text={"Liquid"}
+              unsetVisible={() => {
+                setLiquidUpdateModal(undefined);
+                //listInitilizer;
+              }}
+              //actionDuring={() => listInitilizer()}
+            />
+          )}
         </View>
       </View>
     </MainContainer>

@@ -91,17 +91,14 @@ function ProtocolItem(props: {
     makeRequest("DELETE" as Method, `/protocol/delete/${id}`)
       .then((r) => {
         if (r.status >= 200 && r.status <= 299) {
-          console.log("Successfuly deleted");
           props.toggleDeletionModal(true);
         } else {
-          console.log("Some mistical not catched error"); //setSuccessDeletion(false);
           props.toggleDeletionModal(false);
         }
       })
       .catch((err) => {
         console.log(err.message);
         props.toggleDeletionModal(false);
-        //setSuccessDeletion(false);
       });
   };
 
@@ -286,14 +283,6 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
   //Deletion modal
   const [deletionModal, setDeletionModal] = useState<boolean | undefined>(undefined);
 
-  useEffect(() => {
-    if (isFocused) {
-      listInitilizer();
-    } else {
-      setProtocols(undefined);
-    }
-  }, [isFocused]);
-
   //Protocol data
   const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(undefined);
   const listInitilizer = () => {
@@ -302,6 +291,13 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
     }, 1000);
   };
   useEffect(listInitilizer, []);
+  useEffect(() => {
+    if (isFocused) {
+      listInitilizer();
+    } else {
+      setProtocols(undefined);
+    }
+  }, [isFocused]);
 
   //Search bar input
   const [filterInput, setfilterInput] = useState("");
