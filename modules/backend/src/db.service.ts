@@ -112,6 +112,12 @@ export class DatabaseService {
         await this.prisma.protocol.delete({where: {id: id}});
     }
 
+    async deleteLiquid(id: number) {
+        await this.prisma.permanentLiquid.delete({
+            where: {id},
+        })
+    }
+
 
     async saveLiquid(liquid: PermanentLiquidDTO) {
         return await this.prisma.permanentLiquid.upsert({

@@ -178,7 +178,7 @@ model PermanentLiquid {
     toxic           Boolean    @default(false)
     deleted         Boolean    @default(false)
     requiresCooling Boolean    @default(false)
-    liquidInfo      LiquidInfo @relation(fields: [liquidInfoId], references: [id])
+    liquidInfo      LiquidInfo @relation(fields: [liquidInfoId], references: [id], onDelete: Cascade)
     liquidInfoId    Int        @unique
     protocols       Protocol[]
     washing         Washing[]
