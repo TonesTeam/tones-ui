@@ -17,10 +17,12 @@ export class ProtocolSavingService {
     }
 
     async saveProtocol(protocol: ProtocolWithStepsDTO) {
-        protocol.defaultWash
+        if(protocol.id) {
+            await this.updateProtocol(protocol);
+        }
         await this.prisma.protocol.upsert({
-            where: { id: protocol.id ?? -1 },
-            update: {},
+            where: { id: +protocol.id ?? -1 },
+            update: { },
             create: {
                 name: protocol.name,
                 creationDate: protocol.creationDate,
@@ -51,6 +53,42 @@ export class ProtocolSavingService {
                 }
             },
         })
+    }
+
+    async updateProtocol(protocol: ProtocolWithStepsDTO) {
+        const steps: number[] =  (await this.prisma.step.findMany({
+            where: {
+                protocol: {
+                    id: +protocol.id
+                }
+            },
+            select: {
+                id: true
+            }
+        })).map(i => i.id)
+        const deleteOldSteps = this.prisma.step.deleteMany({where:{id:{in:steps}}});
+
+        const updateProtocolWithNewSteps = this.prisma.protocol.update({
+            where: { id: +protocol.id ?? -1 },
+            data: {
+                name: protocol.name,
+                description: protocol.description,
+                defaultWashing: {
+                    update: {
+                        incubationTime: protocol.defaultWash.incubation,
+                        iter: protocol.defaultWash.iters,
+                        permanentLiquidId: protocol.defaultWash.liquid.id,
+                    }
+                },
+                steps: {
+                    create: protocol.steps.map(s => {
+                        let i = 0;
+                        return this.createStep(s, ++i)
+                    })
+                }
+            }
+        });
+        await this.prisma.$transaction([deleteOldSteps, updateProtocolWithNewSteps]);
     }
 
     private createStep(s: StepDTO, order: number): Prisma.StepCreateWithoutProtocolInput {

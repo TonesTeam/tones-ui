@@ -116,13 +116,13 @@ model UsedSlot {
 
 model Step {
     id                Int                @id @default(autoincrement())
-    protocol          Protocol           @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+    protocol          Protocol           @relation(fields: [protocolId], references: [id])
     protocolId        Int
     sequenceOrder     Int
     stepType          String
-    liquidApplication LiquidApplication?
-    washing           Washing?
-    temperatureChange TemperatureChange?
+    liquidApplication LiquidApplication? 
+    washing           Washing?           
+    temperatureChange TemperatureChange? 
     ExecutedStep      ExecutedStep[]
 }
 

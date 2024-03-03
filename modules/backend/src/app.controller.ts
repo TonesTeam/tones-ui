@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, Logger, Param, ParseIntPipe, Post, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
 import { ParseDatePipe } from './parse-date.pipe';
@@ -78,6 +78,7 @@ export class AppController {
     }
 
     @Post("/protocol/save")
+    @Header("Content-Type", "application/json")
     async saveProtocol(@Body() protocol: ProtocolWithStepsDTO) {
         this.logger.log(`Saving protocol: ${JSON.stringify(protocol)}`)
         return await this.appService.saveProtocol(protocol);

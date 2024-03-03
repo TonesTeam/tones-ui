@@ -1,9 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma, Protocol } from '@prisma/client'
-import { LiquidDTO, PermanentLiquidDTO } from "sharedlib/dto/liquid.dto";
-import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
-import { ReagentStep, StepDTO, WashStep } from "sharedlib/dto/step.dto";
-import { StepType } from "sharedlib/enum/DBEnums";
+import { Prisma } from '@prisma/client';
+import { PermanentLiquidDTO } from "sharedlib/dto/liquid.dto";
 import { PrismaService } from "./prisma.service";
 
 
