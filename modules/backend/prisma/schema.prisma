@@ -38,9 +38,12 @@ model Protocol {
     id                 Int                  @id @default(autoincrement())
     name               String
     creationDate       DateTime
+    lastUpdate         DateTime?
     description        String?
-    creator            User                 @relation(fields: [userId], references: [id])
+    creator            User                 @relation("created", fields: [userId], references: [id])
+    lastUpdatedBy      User?                @relation("updated", fields: [lastUserId], references: [id])
     userId             Int
+    lastUserId         Int?
     washingLiquid      PermanentLiquid      @relation(fields: [liquidId], references: [id]) // Default liquid used for washing steps (washing slots)
     steps              Step[]
     protocolDeployment ProtocolDeployment[]
@@ -89,11 +92,12 @@ model DeploymentError {
 }
 
 model User {
-    id        Int        @id @default(autoincrement())
-    username  String     @unique
-    role      String
-    protocols Protocol[]
-    deleted   Boolean    @default(false)
+    id       Int        @id @default(autoincrement())
+    username String     @unique
+    role     String
+    created  Protocol[] @relation("created")
+    updated  Protocol[] @relation("updated")
+    deleted  Boolean    @default(false)
 }
 
 model Slot {
