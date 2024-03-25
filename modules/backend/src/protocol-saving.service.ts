@@ -17,7 +17,7 @@ export class ProtocolSavingService {
     }
 
     async saveProtocol(protocol: ProtocolWithStepsDTO) {
-        if(protocol.id) {
+        if(protocol.id && protocol.id != -1) {
             await this.updateProtocol(protocol);
         }
         await this.prisma.protocol.upsert({
