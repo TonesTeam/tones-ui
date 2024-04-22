@@ -109,15 +109,13 @@ export class DatabaseService {
       await this.prisma.protocol.delete({ where: { id: id } });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.log('💀');
         console.log('Error code: ', error.code);
         if (error.code === 'P2003') {
-          console.log('💀💀');
-          console.log(error.message);
+          console.log('💀 foreign key');
         }
+        console.log(error.message);
       } else {
         console.log(error);
-        console.log('💀💀💀');
       }
     }
   }

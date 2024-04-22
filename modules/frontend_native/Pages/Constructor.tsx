@@ -139,7 +139,6 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
         handleBlocksChange(r.data.steps);
       });
     } else {
-      console.log("Executing ELSE");
       getRequest<LiquidDTO[]>(`/liquids`).then((r) => {
         setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
         let defaultWashing = {
@@ -234,7 +233,7 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
 
   function save() {
     let new_protocol = {
-      id: -1,
+      id: protocol_ID ? protocol_ID : -1,
       name: protocolName,
       customLiquids: customLiquids.map((liq) => {
         return { ...liq, id: 0 };
@@ -579,7 +578,7 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                           save();
                         }}
                       >
-                        <Txt style={s.modal_btn_text}>SAVE</Txt>
+                        <Txt style={s.modal_btn_text}>{protocol_ID ? `UPDATE` : `SAVE`}</Txt>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[s.modal_btn, { backgroundColor: AppStyles.color.primary }]}
@@ -759,8 +758,8 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                 result={successSaving}
                 text={"Protocol"}
                 unsetVisible={() => {
-                  //TODO: NAVIGATE TO PROTOCOL LIST
                   setSuccessSaving(undefined);
+                  navigation.navigate("Protocol List");
                 }}
               />
             )}

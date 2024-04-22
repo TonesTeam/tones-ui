@@ -15,25 +15,29 @@ export default function InfoModal(props: {
   actionDuring?: () => void;
 }) {
   const [modalVisible, setModalVisible] = useState(true);
-  const bounceAnim = new Animated.Value(0);
+
+  const bounceAnim = useRef(new Animated.Value(-70)).current; //new Animated.Value(0);
 
   useEffect(() => {
-    bounceAnim.setValue(-70);
     Animated.timing(bounceAnim, {
       toValue: 30,
       duration: 1000,
       easing: Easing.bounce,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, []);
 
   useEffect(() => {
     props.actionDuring && props.actionDuring();
     setTimeout(() => {
-      setModalVisible(false);
-      props.unsetVisible();
+      hide();
     }, 3000);
   }, []);
+
+  function hide() {
+    setModalVisible(false);
+    props.unsetVisible();
+  }
 
   const text_success = `${props.text} was successfully ${
     props.type == InfoType.SAVE ? "saved" : props.type == InfoType.DELETE ? "deleted" : "modified"
@@ -48,28 +52,30 @@ export default function InfoModal(props: {
 
   return (
     <Modal animationType="fade" transparent={true} visible={modalVisible}>
-      <LinearGradient colors={["#001f6d98", "transparent"]} style={s.modal_container}>
-        <Animated.View style={[s.modal_body, { top: bounceAnim }]}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: 50,
-              paddingVertical: 10,
-            }}
-          >
-            {props.result == true ? (
-              <Success_icon height={40} width={40} />
-            ) : (
-              <Fail_icon height={40} width={40} />
-            )}
-            <Txt style={{ marginLeft: 10, fontFamily: "Roboto-bold" }}>
-              {props.result == true ? text_success : text_error}
-            </Txt>
-          </View>
-          <View></View>
-        </Animated.View>
-      </LinearGradient>
+      <TouchableOpacity style={{ flex: 1 }} onPress={() => hide()}>
+        <LinearGradient colors={["#001f6d98", "transparent"]} style={s.modal_container}>
+          <Animated.View style={[s.modal_body, { transform: [{ translateY: bounceAnim }] }]}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: 50,
+                paddingVertical: 10,
+              }}
+            >
+              {props.result == true ? (
+                <Success_icon height={40} width={40} />
+              ) : (
+                <Fail_icon height={40} width={40} />
+              )}
+              <Txt style={{ marginLeft: 10, fontFamily: "Roboto-bold" }}>
+                {props.result == true ? text_success : text_error}
+              </Txt>
+            </View>
+            <View></View>
+          </Animated.View>
+        </LinearGradient>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -86,6 +92,8 @@ const s = StyleSheet.create({
   },
 
   modal_body: {
+    // width: 100,
+    // height: 100,
     backgroundColor: AppStyles.color.elem_back,
     borderRadius: 8,
     alignItems: "center",

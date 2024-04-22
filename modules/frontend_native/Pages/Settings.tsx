@@ -641,7 +641,7 @@ export default function Settings(props: any) {
             {currentTab == SettingTabs.LIBRARY && (
               <Library toggleLiquidUpdateModal={(val) => setLiquidUpdateModal(val)} />
             )}
-            {currentTab != SettingTabs.LIBRARY && <Txt>Other tab</Txt>}
+            {currentTab != SettingTabs.LIBRARY && <Txt>Page under development</Txt>}
           </View>
           {liquidUpdateModal != undefined && (
             <InfoModal
@@ -650,7 +650,6 @@ export default function Settings(props: any) {
               text={"Liquid"}
               unsetVisible={() => {
                 setLiquidUpdateModal(undefined);
-                //listInitilizer;
               }}
               //actionDuring={() => listInitilizer()}
             />

@@ -294,7 +294,6 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
     setTimeout(() => {
       getRequest<ProtocolDto[]>("/protocols")
         .then((r) => {
-          console.log("Here!");
           if ("data" in r) {
             setProtocols(r.data);
           } else {
@@ -315,7 +314,7 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
     } else {
       setProtocols(undefined);
     }
-  }, [isFocused]);
+  }, [isFocused, deletionModal]);
 
   //Search bar input
   const [filterInput, setfilterInput] = useState("");
@@ -456,7 +455,7 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
             setDeletionModal(undefined);
             //listInitilizer();
           }}
-          //actionDuring={() => listInitilizer()}
+          actionDuring={() => listInitilizer()}
         />
       )}
     </MainContainer>
