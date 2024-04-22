@@ -45,7 +45,7 @@ model Protocol {
     userId             Int
     lastUserId         Int?
     washingLiquid      PermanentLiquid      @relation(fields: [liquidId], references: [id]) // Default liquid used for washing steps (washing slots)
-    steps              Step[]
+    steps              Step[]               
     protocolDeployment ProtocolDeployment[]
     liquidId           Int
     deleted            Boolean              @default(false)
@@ -55,8 +55,8 @@ model Protocol {
 
 model ProtocolDeployment {
     id                     Int                      @id @default(autoincrement())
-    protocol               Protocol                 @relation(fields: [protocolId], references: [id])
-    protocolId             Int
+    protocol               Protocol                 @relation(fields: [protocolId], references: [id], onDelete:Cascade)
+    protocolId             Int                
     deploymentError        DeploymentError[]
     usedSlot               UsedSlot[]
     DeploymentLiquidConfig DeploymentLiquidConfig[]
@@ -116,7 +116,7 @@ model UsedSlot {
 
 model Step {
     id                Int                @id @default(autoincrement())
-    protocol          Protocol           @relation(fields: [protocolId], references: [id])
+    protocol          Protocol           @relation(fields: [protocolId], references: [id], onDelete: Cascade)
     protocolId        Int
     sequenceOrder     Int
     stepType          String

@@ -8,6 +8,7 @@ import {
   Easing,
   Image,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -29,6 +30,7 @@ import { Method } from "axios";
 import InfoModal from "../components/InfoModal";
 import { useIsFocused } from "@react-navigation/native";
 import { InfoType } from "../common/types";
+import { LinearGradient } from "expo-linear-gradient";
 
 function ProtocolItem(props: {
   protocol: ProtocolDto;
@@ -371,92 +373,92 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
             </View>
           )}
           {protocols != undefined && (
-            <View style={{ flex: 1 }}>
-              {filterAndSort().length == 0 && (
-                <View style={{ flex: 1 }}>
-                  {networkError && (
-                    <View
-                      style={{
-                        flex: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Txt
+            <>
+              <View style={{ flex: 1 }}>
+                {filterAndSort().length == 0 && (
+                  <View style={{ flex: 1 }}>
+                    {networkError && (
+                      <View
                         style={{
-                          color: AppStyles.color.text_faded,
-                          fontSize: 30,
-                          marginTop: 30,
+                          flex: 1,
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        Cannot connect to server
-                      </Txt>
-                      <View style={{ flex: 1, marginBottom: "5%" }}>
-                        <Image
-                          source={require("../assets/pics/tech_support.jpg")}
-                          style={{ flex: 1, height: "100%", resizeMode: "contain" }}
-                          //resizeMethod="c"
-                        ></Image>
+                        <Txt
+                          style={{
+                            color: AppStyles.color.text_faded,
+                            fontSize: 30,
+                            marginTop: 30,
+                          }}
+                        >
+                          Cannot connect to server. Please contact tech support.
+                        </Txt>
+                        <View style={{ flex: 1, marginBottom: "5%" }}>
+                          <Image
+                            source={require("../assets/pics/tech_support.jpg")}
+                            style={{ flex: 1, height: "100%", resizeMode: "contain" }}
+                          ></Image>
+                        </View>
                       </View>
-                      {/* <Image
-                        source={require("../assets/pics/tech_support.jpg")}
-                        style={{ height: "100%" }}
-                        resizeMethod="contain"
-                      ></Image> */}
-                    </View>
-                  )}
-                  {!networkError && (
-                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                      <NotFound_Icon height={100} width={100} stroke={AppStyles.color.text_faded} />
+                    )}
+                    {!networkError && (
+                      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                        <NotFound_Icon
+                          height={100}
+                          width={100}
+                          stroke={AppStyles.color.text_faded}
+                        />
 
-                      <Txt
-                        style={{
-                          color: AppStyles.color.text_faded,
-                          fontSize: 30,
-                          marginTop: 30,
-                        }}
-                      >
-                        No protocols were found
-                      </Txt>
-                    </View>
-                  )}
-                </View>
-              )}
-              {filterAndSort().length != 0 && (
-                <ScrollView
-                  contentContainerStyle={{ flexGrow: 1 }}
-                  scrollEnabled={true}
-                  ref={scrollViewRef}
-                  showsVerticalScrollIndicator={true}
-                >
-                  {filterAndSort().map(function (protocol, index) {
-                    return (
-                      <ProtocolItem
-                        key={index}
-                        protocol={protocol}
-                        navigation={navigation}
-                        toggleDeletionModal={(val) => setDeletionModal(val)}
-                      />
-                    );
-                  })}
-                </ScrollView>
-              )}
-            </View>
-          )}
-          {deletionModal != undefined && (
-            <InfoModal
-              type={InfoType.DELETE}
-              result={deletionModal}
-              text={"Protocol"}
-              unsetVisible={() => {
-                setDeletionModal(undefined);
-                //listInitilizer();
-              }}
-              actionDuring={() => listInitilizer()}
-            />
+                        <Txt
+                          style={{
+                            color: AppStyles.color.text_faded,
+                            fontSize: 30,
+                            marginTop: 30,
+                          }}
+                        >
+                          No protocols were found
+                        </Txt>
+                      </View>
+                    )}
+                  </View>
+                )}
+                {filterAndSort().length != 0 && (
+                  <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    scrollEnabled={true}
+                    ref={scrollViewRef}
+                    showsVerticalScrollIndicator={true}
+                  >
+                    {filterAndSort().map(function (protocol, index) {
+                      return (
+                        <ProtocolItem
+                          key={index}
+                          protocol={protocol}
+                          navigation={navigation}
+                          toggleDeletionModal={(val) => setDeletionModal(val)}
+                        />
+                      );
+                    })}
+                  </ScrollView>
+                )}
+              </View>
+            </>
           )}
         </View>
       </View>
+      {deletionModal != undefined && (
+        <InfoModal
+          type={InfoType.DELETE}
+          result={deletionModal}
+          text={"Protocol"}
+          unsetVisible={() => {
+            setDeletionModal(undefined);
+            //listInitilizer();
+          }}
+          //actionDuring={() => listInitilizer()}
+        />
+      )}
     </MainContainer>
   );
 }

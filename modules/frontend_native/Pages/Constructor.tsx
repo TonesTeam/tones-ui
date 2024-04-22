@@ -9,6 +9,8 @@ import {
   InputModeOptions,
   FlatList,
   FlatListProps,
+  Animated,
+  Easing,
 } from "react-native";
 import { AppStyles, MainContainer, globalElementStyle } from "../constants/styles";
 import NavBar from "../navigation/CustomNavigator";
@@ -37,6 +39,7 @@ import { Method } from "axios";
 import InfoModal from "../components/InfoModal";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { InfoType } from "../common/types";
+import { LinearGradient } from "expo-linear-gradient";
 
 export const stepTypeClass = new Map<StepType, string>([
   [StepType.WASHING, "washing"],

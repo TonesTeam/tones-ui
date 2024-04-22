@@ -76,6 +76,7 @@ export default function InfoModal(props: {
 
 const s = StyleSheet.create({
   modal_container: {
+    flex: 1,
     alignItems: "center",
     position: "absolute",
     left: 0,
