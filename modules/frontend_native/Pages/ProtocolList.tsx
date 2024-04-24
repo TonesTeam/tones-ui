@@ -296,6 +296,7 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
         .then((r) => {
           if ("data" in r) {
             setProtocols(r.data);
+            console.log(r.data);
           } else {
             setNetworkError(true);
             setProtocols([]);
@@ -432,7 +433,7 @@ export default function ProtocolList({ route, navigation }: NativeStackScreenPro
                     {filterAndSort().map(function (protocol, index) {
                       return (
                         <ProtocolItem
-                          key={index}
+                          key={protocol.id}
                           protocol={protocol}
                           navigation={navigation}
                           toggleDeletionModal={(val) => setDeletionModal(val)}

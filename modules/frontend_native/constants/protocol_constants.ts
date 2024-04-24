@@ -10,3 +10,10 @@ export const DEFAULT_WASH_STEP = {
   temperature: null,
   //liquid: define default liquid prefferbly without request ?
 } as Partial<WashStep>;
+
+export const TEMPERATURE_MAX = 90;
+export const TEMPERATURE_MIN = 10;
+export const INCUBATION_MAX = 36000;
+export const INCUBATION_MIN = 0;
+export const ITERATIONS_MAX = 100;
+export const ITERATIONS_MIN = 0;

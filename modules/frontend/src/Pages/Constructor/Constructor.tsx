@@ -77,7 +77,6 @@ export default function Constructor() {
   };
 
   const addBlock = (blockToAdd: StepDTO) => {
-    console.log("This is block to add: ", blockToAdd);
     let id =
       blocks.length == 0
         ? 0
@@ -125,8 +124,6 @@ export default function Constructor() {
   };
 
   const editBlock = (block: StepDTO) => {
-    console.log("In Edit: ", block);
-
     //remove "editing" class from block in timeline
     let blockInTL = document.querySelector("div.editing");
     blockInTL?.classList.remove("editing");
@@ -204,8 +201,6 @@ export default function Constructor() {
       } as WashStep,
       author: null,
     } as ProtocolWithStepsDTO;
-
-    console.log(new_protocol);
 
     //save(new_protocol) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }

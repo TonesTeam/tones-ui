@@ -274,6 +274,14 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                 <Txt style={{ fontSize: 24, fontFamily: "Roboto-bold", alignSelf: "center" }}>
                   Protocol Constructor
                 </Txt>
+                {/* <View style={{ flex: 1, paddingHorizontal: 20, alignContent: "center" }}>
+                  <InputField
+                    background={"#ffffff"}
+                    value={protocolName}
+                    placeholder="Type protocol name .."
+                    onInputChange={(text) => setProtocolName(text)}
+                  />
+                </View> */}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <TouchableOpacity
                     style={[
@@ -418,7 +426,7 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                     <View style={s.modal_list}>
                       <View style={[s.list_row, { backgroundColor: AppStyles.color.accent_dark }]}>
                         <View style={[s.list_cell, { flex: 1 }]}>
-                          <Txt style={s.list_header_txt}>Step №</Txt>
+                          <Txt style={s.list_header_txt}>Step #</Txt>
                         </View>
 
                         <View style={[s.list_cell, { flex: 2 }]}>
@@ -572,10 +580,20 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                     </View>
                     <View style={s.modal_footer}>
                       <TouchableOpacity
-                        style={[s.modal_btn, { backgroundColor: AppStyles.color.secondary }]}
+                        style={[
+                          s.modal_btn,
+                          {
+                            backgroundColor:
+                              blocks.length != 0
+                                ? AppStyles.color.secondary
+                                : AppStyles.color.text_faded,
+                          },
+                        ]}
                         onPress={() => {
-                          setPreSaveModal(false);
-                          save();
+                          if (blocks.length != 0) {
+                            setPreSaveModal(false);
+                            save();
+                          }
                         }}
                       >
                         <Txt style={s.modal_btn_text}>{protocol_ID ? `UPDATE` : `SAVE`}</Txt>

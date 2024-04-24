@@ -5,10 +5,11 @@ export const AppStyles = {
   color: {
     primary: "#2d4cc9",
     secondary: "#26b640", //"#26b65c",
-    warning: "#d14633",
+    warning: "rgb(209, 70, 51)",
+    warning_faded: "rgba(209, 69, 51, 0.771)",
     text_primary: "#3b3d44",
     text_faded: "#838488",
-    background: "#ebeced",
+    background: "rgb(235, 236, 237)",
     accent_back: "#e4e4e4",
     accent_dark: "#475569",
     elem_back: "#ffffffff",

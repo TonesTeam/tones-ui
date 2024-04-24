@@ -242,7 +242,10 @@ function LiquidsModal(props: {
   );
 }
 
-function Library(props: { toggleLiquidUpdateModal: (val: boolean) => void }) {
+function Library(props: {
+  toggleLiquidUpdateModal: (val: boolean) => void;
+  toggleLiquidDeleteModal: (val: boolean) => void;
+}) {
   const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
   const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
   const [filterInput, setFilterInput] = useState("");
@@ -285,6 +288,22 @@ function Library(props: { toggleLiquidUpdateModal: (val: boolean) => void }) {
       .catch((err) => {
         console.log(err.message);
         props.toggleLiquidUpdateModal(false);
+      });
+  }
+
+  function deleteLiquid(id: number) {
+    makeRequest("DELETE" as Method, `/liquid/delete/${id}`)
+      .then((r) => {
+        if (r.status >= 200 && r.status <= 299) {
+          props.toggleLiquidDeleteModal(true);
+          listInitilizer();
+        } else {
+          props.toggleLiquidDeleteModal(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+        props.toggleLiquidDeleteModal(false);
       });
   }
 
@@ -493,6 +512,7 @@ function Library(props: { toggleLiquidUpdateModal: (val: boolean) => void }) {
                                 borderLeftWidth: 0.5,
                               },
                             ]}
+                            onPress={() => deleteLiquid(liq.id)}
                           >
                             <Delete_Icon height={15} width={15} stroke={AppStyles.color.warning} />
                             <Txt
@@ -539,6 +559,7 @@ function Library(props: { toggleLiquidUpdateModal: (val: boolean) => void }) {
 export default function Settings(props: any) {
   const [currentTab, setCurrentTab] = useState<SettingTabs>(SettingTabs.LIBRARY);
   const [liquidUpdateModal, setLiquidUpdateModal] = useState<boolean | undefined>(undefined);
+  const [liquidDeleteModal, setLiquidDeleteModal] = useState<boolean | undefined>(undefined);
 
   return (
     <MainContainer>
@@ -639,7 +660,10 @@ export default function Settings(props: any) {
           </View>
           <View style={s.body}>
             {currentTab == SettingTabs.LIBRARY && (
-              <Library toggleLiquidUpdateModal={(val) => setLiquidUpdateModal(val)} />
+              <Library
+                toggleLiquidUpdateModal={(val) => setLiquidUpdateModal(val)}
+                toggleLiquidDeleteModal={(val) => setLiquidDeleteModal(val)}
+              />
             )}
             {currentTab != SettingTabs.LIBRARY && <Txt>Page under development</Txt>}
           </View>
@@ -647,6 +671,17 @@ export default function Settings(props: any) {
             <InfoModal
               type={InfoType.UPDATE}
               result={liquidUpdateModal}
+              text={"Liquid"}
+              unsetVisible={() => {
+                setLiquidUpdateModal(undefined);
+              }}
+              //actionDuring={() => listInitilizer()}
+            />
+          )}
+          {liquidDeleteModal != undefined && (
+            <InfoModal
+              type={InfoType.DELETE}
+              result={liquidDeleteModal}
               text={"Liquid"}
               unsetVisible={() => {
                 setLiquidUpdateModal(undefined);

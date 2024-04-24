@@ -1,0 +1,155 @@
+{
+  "id": -1,
+  "name": "Test_protocol",
+  "customLiquids": [],
+  "description": "",
+  "steps": [
+    {
+      "type": "Liquid Application",
+      "id": 0,
+      "params": {
+        "autoWash": false,
+        "liquid": {
+          "type": {
+            "id": 1,
+            "name": "Alcohol"
+          },
+          "id": 1,
+          "name": "Alcohol 95%",
+          "usedCold": true,
+          "toxic": false
+        },
+        "incubation": 10,
+        "temperature": 25
+      }
+    },
+    {
+      "type": "Washing",
+      "id": 1,
+      "params": {
+        "liquid": {
+          "type": {
+            "id": 2,
+            "name": "Washing"
+          },
+          "id": 4,
+          "name": "Washing Buffer",
+          "usedCold": false,
+          "toxic": false
+        },
+        "iters": 11,
+        "incubation": 27,
+        "temperature": 25
+      }
+    },
+    {
+      "type": "Liquid Application",
+      "id": 2,
+      "params": {
+        "autoWash": true,
+        "liquid": {
+          "type": {
+            "id": 7,
+            "name": "Deparaphinization"
+          },
+          "id": 23,
+          "name": "Xylene substitute",
+          "usedCold": false,
+          "toxic": false
+        },
+        "incubation": 44,
+        "temperature": 25
+      }
+    },
+    {
+      "type": "Temperature Change",
+      "id": 3,
+      "params": {
+        "source": 25,
+        "target": 55
+      }
+    },
+    {
+      "type": "Liquid Application",
+      "id": 4,
+      "params": {
+        "autoWash": false,
+        "liquid": {
+          "type": {
+            "id": 5,
+            "name": "Blocking Buffer"
+          },
+          "id": 27,
+          "name": "Fairy with lemon scent",
+          "usedCold": true,
+          "toxic": true
+        },
+        "incubation": 88,
+        "temperature": 55
+      }
+    },
+    {
+      "type": "Washing",
+      "id": 5,
+      "params": {
+        "liquid": {
+          "type": {
+            "id": 2,
+            "name": "Washing"
+          },
+          "id": 4,
+          "name": "Washing Buffer",
+          "usedCold": false,
+          "toxic": false
+        },
+        "iters": 4,
+        "incubation": 2,
+        "temperature": 55
+      }
+    },
+    {
+      "type": "Temperature Change",
+      "id": 6,
+      "params": {
+        "source": 55,
+        "target": 28
+      }
+    },
+    {
+      "type": "Liquid Application",
+      "id": 7,
+      "params": {
+        "autoWash": false,
+        "liquid": {
+          "type": {
+            "id": 1,
+            "name": "Alcohol"
+          },
+          "id": 1,
+          "name": "Alcohol 95%",
+          "usedCold": true,
+          "toxic": false
+        },
+        "incubation": 77,
+        "temperature": 28
+      }
+    }
+  ],
+  "creationDate": "2024-04-22T15:49:32.314Z",
+  "defaultWash": {
+    "iters": 1,
+    "incubation": 10,
+    "liquid": {
+      "type": {
+        "id": 2,
+        "name": "Washing"
+      },
+      "id": 4,
+      "name": "Washing Buffer",
+      "usedCold": false,
+      "toxic": false
+    },
+    "temperature": null
+  },
+  "author": null
+}

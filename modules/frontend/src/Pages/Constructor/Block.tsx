@@ -111,8 +111,6 @@ function WashInputs(props: BlockInputsProps) {
 }
 
 function ReagentInputs(props: BlockInputsProps) {
-  console.log("Initial step params are: ", props.stepData);
-
   const [reagParams, setReagParams] = useState(props.stepData.params as ReagentStep);
   const [categories, setCategories] = useState<LiquidTypeDTO[]>();
   const [liquids, setLiquids] = useState<LiquidDTO[]>();

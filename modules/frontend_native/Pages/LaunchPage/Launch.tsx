@@ -30,10 +30,18 @@ enum LaunchStage {
   STEP_THREE = 3,
 }
 
-function StageMenu(props: { stage: LaunchStage; changeStage: (stage: LaunchStage) => void }) {
+function StageMenu(props: {
+  stage: LaunchStage;
+  changeStage: (stage: LaunchStage) => void;
+  prohibitStageThree: boolean;
+}) {
   return (
     <View style={{ flex: 1, alignItems: "center", flexDirection: "row" }}>
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <TouchableOpacity
+        style={{ justifyContent: "center", alignItems: "center", zIndex: 100 }}
+        onPress={() => props.changeStage(LaunchStage.STEP_ONE)}
+        activeOpacity={1}
+      >
         <Step1 height={50} width={180} style={{ zIndex: 100 }} />
         <Txt
           style={{
@@ -45,23 +53,17 @@ function StageMenu(props: { stage: LaunchStage; changeStage: (stage: LaunchStage
         >
           Step 1
         </Txt>
-      </View>
+      </TouchableOpacity>
 
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <TouchableOpacity
+        style={{ justifyContent: "center", alignItems: "center", zIndex: 90 }}
+        onPress={() => props.changeStage(LaunchStage.STEP_TWO)}
+        activeOpacity={1}
+      >
         {props.stage.valueOf() > 1 ? (
-          <Step2_inactive
-            height={50}
-            width={180}
-            style={{ left: -30, zIndex: 90 }}
-            onPress={() => console.log("Pressed!")}
-          />
+          <Step2_inactive height={50} width={180} style={{ left: -30, zIndex: 90 }} />
         ) : (
-          <Step2
-            height={50}
-            width={180}
-            style={{ left: -30, zIndex: 90 }}
-            onPress={() => console.log("Pressed!")}
-          />
+          <Step2 height={50} width={180} style={{ left: -30, zIndex: 90 }} />
         )}
 
         <Txt
@@ -75,9 +77,13 @@ function StageMenu(props: { stage: LaunchStage; changeStage: (stage: LaunchStage
         >
           Step 2
         </Txt>
-      </View>
+      </TouchableOpacity>
 
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <TouchableOpacity
+        style={{ justifyContent: "center", alignItems: "center", zIndex: 80 }}
+        onPress={() => !props.prohibitStageThree && props.changeStage(LaunchStage.STEP_THREE)}
+        activeOpacity={1}
+      >
         {props.stage.valueOf() > 2 ? (
           <Step3_inactive height={50} width={180} style={{ left: -70, zIndex: 80 }} />
         ) : (
@@ -95,7 +101,7 @@ function StageMenu(props: { stage: LaunchStage; changeStage: (stage: LaunchStage
         >
           Step 3
         </Txt>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -125,7 +131,13 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
       <View style={[globalElementStyle.page_container, s.container]}>
         <View style={s.header}>
           <View style={{ flex: 1 }}>
-            <StageMenu stage={stage} changeStage={setStage} />
+            <StageMenu
+              stage={stage}
+              changeStage={setStage}
+              prohibitStageThree={
+                slotActivityMap.filter((val) => val === true).length < Number(slotNumber)
+              }
+            />
           </View>
           <View style={{ flex: 1, alignItems: "center" }}>
             {stage == LaunchStage.STEP_ONE && (

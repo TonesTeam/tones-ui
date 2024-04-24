@@ -51,8 +51,18 @@ function Table(props: { config: { x: number; y: number }; color: string; letterO
                 .fill(null)
                 .map((_, col_index) => {
                   return (
-                    <View key={col_index} style={[s.cell, { backgroundColor: props.color }]}>
-                      <Txt>Aaa x{col_index}</Txt>
+                    <View
+                      key={col_index}
+                      style={[s.cell, { backgroundColor: props.color, alignItems: "center" }]}
+                    >
+                      <Txt
+                        style={{
+                          color: AppStyles.color.background,
+                          alignSelf: "center",
+                        }}
+                      >
+                        Sample liquid {row_index}x{col_index}
+                      </Txt>
                     </View>
                   );
                 })}

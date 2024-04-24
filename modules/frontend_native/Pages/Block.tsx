@@ -10,7 +10,7 @@ import {
 import { AppStyles } from "../constants/styles";
 import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
 import { LiquidDTO, LiquidTypeDTO } from "sharedlib/dto/liquid.dto";
-import React, { memo, useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import Txt from "../components/Txt";
 import { getRequest } from "../common/util";
 import { CustomSelect } from "../components/Select";
@@ -20,6 +20,14 @@ import { StepType } from "sharedlib/enum/DBEnums";
 import Setting_icon from "../assets/icons/setting.svg";
 import { Switch } from "react-native-switch";
 import { ProtocolSettings } from "../common/constructorUtils";
+import {
+  INCUBATION_MAX,
+  INCUBATION_MIN,
+  ITERATIONS_MAX,
+  ITERATIONS_MIN,
+  TEMPERATURE_MAX,
+  TEMPERATURE_MIN,
+} from "../constants/protocol_constants";
 
 export interface WorkBlockProps {
   block: StepDTO;
@@ -100,6 +108,9 @@ function WashInputs(props: BlockInputsProps) {
               placeholder="|"
               containerStyle={{ marginRight: 100 }}
               label="ITERATIONS:"
+              decimals={false}
+              limit_max={ITERATIONS_MAX}
+              limit_min={ITERATIONS_MIN}
               type={"numeric" as InputModeOptions}
               value={washParams.iters}
               onInputChange={(iters) =>
@@ -109,6 +120,13 @@ function WashInputs(props: BlockInputsProps) {
             <InputField
               placeholder="|"
               label={`INCUBATION TIME (${props.timeUnits || "seconds"}):`}
+              decimals={false}
+              limit_min={
+                props.timeUnits && props.timeUnits == "min" ? INCUBATION_MIN / 60 : INCUBATION_MIN
+              }
+              limit_max={
+                props.timeUnits && props.timeUnits == "min" ? INCUBATION_MAX / 60 : INCUBATION_MAX
+              }
               type={"numeric" as InputModeOptions}
               value={washParams.incubation}
               onInputChange={(incub) =>
@@ -202,7 +220,7 @@ function ReagentInputs(props: BlockInputsProps) {
 
   return (
     <>
-      {liquidsList && categories && selectedCategory && selectedLiquid && (
+      {liquidsList && categories && selectedCategory && (
         <ScrollView
           style={{
             flex: 1,
@@ -240,6 +258,9 @@ function ReagentInputs(props: BlockInputsProps) {
             <InputField
               value={reagParams.incubation}
               placeholder="|"
+              decimals={false}
+              limit_max={INCUBATION_MAX}
+              limit_min={INCUBATION_MIN}
               label={`INCUBATION TIME (${props.timeUnits || "seconds"}):`}
               type={"numeric" as InputModeOptions}
               onInputChange={(incub) =>
@@ -317,7 +338,10 @@ function TemperatureInputs(props: BlockInputsProps) {
         <InputField
           value={temperParams.target}
           placeholder="|"
+          limit_max={TEMPERATURE_MAX}
+          limit_min={TEMPERATURE_MIN}
           label="TARGET (°C):"
+          decimals={true}
           type={"numeric" as InputModeOptions}
           onInputChange={(target) =>
             handleParamChange("target", target == "" ? null : Number(target))
