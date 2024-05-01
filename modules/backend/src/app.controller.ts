@@ -5,6 +5,7 @@ import { ParseDatePipe } from './parse-date.pipe';
 import { PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto';
 import { Request as ExpressRequest, Router} from "express";
 import { Request } from "@nestjs/common";
+import { ProtocolDeploymentService } from './protocol-deployment.service';
 
 
 @Controller()
@@ -15,6 +16,7 @@ export class AppController {
 
     constructor(
         private readonly appService: AppService,
+        private readonly deploymentService: ProtocolDeploymentService,
     ) { }
 
     @Get("/")
@@ -95,6 +97,12 @@ export class AppController {
         this.logger.log(`Deleting liquid ${id}`)
         await this.appService.deleteLiquid(id);
         return 'Deleted liquid';
+    }
+
+    @Get("/protocol/:id/deployment")
+    async deployProtocol(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Figuring out deployment for protocol ${id}`);
+        return await this.deploymentService.deployProtocol(id);
     }
 
 }
