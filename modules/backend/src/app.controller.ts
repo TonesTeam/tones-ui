@@ -6,6 +6,8 @@ import { PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto';
 import { Request as ExpressRequest, Router} from "express";
 import { Request } from "@nestjs/common";
 import { ProtocolDeploymentService } from './protocol-deployment.service';
+import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
+import * as net from 'net';
 
 
 @Controller()
@@ -17,6 +19,7 @@ export class AppController {
     constructor(
         private readonly appService: AppService,
         private readonly deploymentService: ProtocolDeploymentService,
+        private readonly stepsResolver: ProtocolStepsResolver,
     ) { }
 
     @Get("/")
@@ -34,6 +37,12 @@ export class AppController {
                 })
                 .filter(item => item !== undefined)
         }
+    }
+
+    @Get("ping")
+    ping() {
+        this.logger.log("Got pinged");
+        return "pong";
     }
 
     @Get("protocols")
@@ -103,6 +112,20 @@ export class AppController {
     async deployProtocol(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Figuring out deployment for protocol ${id}`);
         return await this.deploymentService.deployProtocol(id);
+    }
+
+    @Get("/protocol/:id/test-steps")
+    async resolveProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
+        this.logger.log(`Figuring out steps for protocol ${id}`);
+        const prot = await this.stepsResolver.resolveProtocolSteps(id);
+        try {
+            const client = new net.Socket();
+            client.connect(9090, '127.0.0.1', () => {
+                client.write(JSON.stringify(prot));
+            });
+        } catch(e) {
+        }
+        return prot;
     }
 
 }

@@ -39,7 +39,7 @@ export class ProtocolDeploymentService {
 
 }
 
-function liquidConfigToMap(): Map<number, number> {
+export function liquidConfigToMap(): Map<number, number> {
     return toKVMap(tonesConfig["liquids-tube-holders"].filter(lh => !lh.external), i => i.size, i => i.count);
 }
 
