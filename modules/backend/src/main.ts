@@ -19,6 +19,10 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('/api/v2');
   logger.log(`Listening on port ${PORT}`)
+  process.on('SIGINT', async () => {
+    await app.close();
+    process.exit(0);
+  });
   await app.listen(PORT);
 }
 bootstrap();
