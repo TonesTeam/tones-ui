@@ -9,4 +9,28 @@ To launch all modules, run:
 `> npm install`  
 `> npm run start-dev`  
 Or to run just FE, cd to frontend module, run npm install and then:  
-`> npm run dev`
+`> npm run dev
+
+
+
+cd modules/backend
+
+    npm install
+
+    npx prisma generate
+
+
+    modules\frontend_native\common\util.ts → 28 строка, поменяй IP, порт 8080
+
+cd /modules
+
+    npm run start-dev:be
+
+cd modules/frontend_native
+
+    npm install
+
+    npx expo start
+    Тут начнётся билд приложения, когда забилдится в терминале выдаст QR код
+
+

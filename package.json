@@ -5,7 +5,6 @@
     "modules/backend",
     "modules/legacy_backend",
     "modules/frontend",
-    "modules/frontend_native",
     "modules/electron"
   ],
   "version": "1.0.0",
@@ -40,6 +39,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
     "@types/lodash": "^4.14.182",
+    "expo": "^51.0.38",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
