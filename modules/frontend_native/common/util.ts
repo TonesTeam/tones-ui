@@ -1,36 +1,11 @@
-import axios, { Axios, AxiosError, AxiosResponse, Method } from "axios";
-import { parseISO } from "date-fns";
-import { ProtocolDto } from "sharedlib/dto/protocol.dto";
-import { fetch } from "@react-native-community/netinfo";
-import { chunk } from "lodash";
+import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import * as Network from 'expo-network';
+
 
 
 const client = axios.create();
 const isoDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2}:?\d{2}|Z)?$/;
 
-// function isIsoDateString(value: any): boolean {
-//   return value && typeof value === "string" && isoDateFormat.test(value);
-// }
-
-// export function handleDates(body: any) {
-//   if (body === null || body === undefined || typeof body !== "object") return body;
-
-//   for (const key of Object.keys(body)) {
-//     const value = body[key];
-//     if (isIsoDateString(value)) {
-//       body[key] = parseISO(value);
-//     } else if (typeof value === "object") handleDates(value);
-//   }
-// }
-
-// client.interceptors.response.use((originalResponse) => {
-//   handleDates(originalResponse.data);
-//   return originalResponse;
-// });
-
-//const domain = "https://tones-api-8rpnd.ondigitalocean.app";
-//const domain = "http://192.168.129.126:8080";
 let domain: string | null = null;
 const prefix = "/api/v2";
 
@@ -63,43 +38,46 @@ function generateIPRange(ip, subnetMask) {
 }
 
 
+
 async function scanNetwork(ipList: string[]): Promise<string | null> {
-  const backendIPs: string[] = [];
-  const totalIPs = ipList.length;
-  const batch = 20;
-  const ipBatches = chunk(ipList, batch);
-  for(const ips of ipBatches) {
-    const requests = ips.map((ip) => {
-      const url = `http://${ip}:8080/api/v2/ping`; // Include the protocol
-      return client.get(url, {timeout: 500})
-        .catch(e => e)
-        .then(r => {
-          console.log(`Received response from ${url}: ${r}`);
-          if(ip.split('.')[3] == "84") {
-            console.log('=================================')
-          }
-          if (r.status == 200) {
-            backendIPs.push(ip);
-          }
-        })
-    });
-    await axios.all(requests)
-  }
-  // Create an AbortController for the batch
-  return backendIPs[0];
+  const requests = ipList.map(async (ip) => {
+    const fullip = `http://${ip}:8080/api/v2/ping`;
+    try {
+      const resp = (await client.get(fullip, {timeout: 500})).status;
+      console.log(`Response from ${fullip}: ${resp}`);
+      if (resp === 200) {
+        return ip;
+      }
+    } catch (err) {
+      console.log(`Response from ${fullip}: 500`);
+    }
+    return null;
+  });
+  const results = await Promise.all(requests);
+  return results.find((result) => result !== null) || null;
 }
 
 async function findBE(): Promise<string> {
   const ipAddress = await Network.getIpAddressAsync();
   const subnetMask = "255.255.254.0";
+  console.log(`subnet mask - ${subnetMask}`)
   const ipList = generateIPRange(ipAddress, subnetMask);
   const foundIP = await scanNetwork(ipList);
   return  'http://' + foundIP + ':8080';
 }
 
+
+let domainPromise: Promise<string> | null = null;
+
 async function getDomain() {
   if (domain == null) {
-    domain = await findBE();
+    if (!domainPromise) {
+      domainPromise = findBE();  // Start the initial findBE call
+      domain = await domainPromise;  // Wait for it to complete and store the result in domain
+      domainPromise = null;  // Clear the temporary promise once done
+    } else {
+      domain = await domainPromise;  // Wait for the ongoing promise if it already exists
+    }
   }
   return domain;
 }
