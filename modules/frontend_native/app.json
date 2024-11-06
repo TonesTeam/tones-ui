@@ -37,6 +37,11 @@
           "initialOrientation": "LANDSCAPE"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8b32f306-94c0-4dd1-b010-630dcfc7f868"
+      }
+    }
   }
 }
