@@ -1,0 +1,1 @@
+{"id":1,"steps":[{"step_type":{"Reagent":{"liquid_params":{"reagent_type":{"External":0},"used_cold":true,"toxic":false},"incubation":200,"temperature":0}},"id":666},{"step_type":{"Reagent":{"liquid_params":{"reagent_type":{"External":1},"used_cold":true,"toxic":false},"incubation":210,"temperature":0}},"id":666}]}

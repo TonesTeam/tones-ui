@@ -9,6 +9,8 @@ import { ProtocolDeploymentService } from './protocol-deployment.service';
 import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
 import * as net from 'net';
 
+import RustProtocolManager from './app.controller.rust';
+
 
 @Controller()
 @UsePipes(new ParseDatePipe())
@@ -118,14 +120,23 @@ export class AppController {
     async resolveProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
         this.logger.log(`Figuring out steps for protocol ${id}`);
         const prot = await this.stepsResolver.resolveProtocolSteps(id);
+        console.log(JSON.stringify(prot));
+
+        const rust_prot = new RustProtocolManager();
+        rust_prot.convert(prot);
+        console.log('Converted protocol:');
+        console.log(JSON.stringify(rust_prot));
         try {
             const client = new net.Socket();
-            client.connect(9090, '127.0.0.1', () => {
-                client.write(JSON.stringify(prot));
+            client.connect(8090, '127.0.0.1', () => {
+                client.write(JSON.stringify(rust_prot), () => {
+                    console.log('Sent protocol to Rust');
+                    client.end();
+                });
             });
         } catch(e) {
         }
-        return prot;
+        return rust_prot;
     }
 
 }

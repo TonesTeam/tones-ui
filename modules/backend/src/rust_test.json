@@ -1,0 +1,31 @@
+{
+    "protocol": {
+        "id": 1,
+        "steps": [
+            {
+                "type": "Reagent",
+                "params": {
+                    "liquid": {
+                        "External": {
+                            "id": 0
+                        }
+                    },
+                    "incubation": 200,
+                    "temperature": 50
+                }
+            },
+            {
+                "type": "Reagent",
+                "params": {
+                    "liquid": {
+                        "External": {
+                            "id": 1
+                        }
+                    },
+                    "incubation": 210,
+                    "temperature": 60
+                }
+            }
+        ]
+    }
+}

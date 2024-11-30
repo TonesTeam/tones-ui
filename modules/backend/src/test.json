@@ -1,0 +1,37 @@
+{
+    "id": 2,
+    "steps": [
+        {
+            "type": "Reagent",
+            "params": {
+                "liquid": {
+                    "slot": 0,
+                    "Internal": {
+                        "x": -1,
+                        "y": -1
+                    }
+                },
+                "incubation": 101,
+                "temperature": 50
+            }
+        },
+        {
+            "type": "Reagent",
+            "params": {
+                "liquid": {
+                    "slot": 1,
+                    "Internal": {
+                        "x": -1,
+                        "y": -1
+                    }
+                },
+                "incubation": 210,
+                "temperature": 60
+            }
+        }
+    ],
+    "default_wash": {
+        "iters": 2,
+        "incubation": 5
+    }
+}
