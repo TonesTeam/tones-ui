@@ -51,11 +51,11 @@ function StepTab(props: { type: StepType; active: boolean; onPress: () => void }
   let params = {
     main_color:
       AppStyles.color.block[
-        `main_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+      `main_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
       ],
     back_color:
       AppStyles.color.block[
-        `faded_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+      `faded_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
       ],
     icon: {} as React.FC<SvgProps>,
   };
@@ -179,8 +179,8 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
       blocks.length == 0
         ? 0
         : blocks.length == 1
-        ? 1
-        : blocks.reduce((prev, current) => (prev && prev.id > current.id ? prev : current)).id + 1;
+          ? 1
+          : blocks.reduce((prev, current) => (prev && prev.id > current.id ? prev : current)).id + 1;
 
     const finalBlocks = [
       ...blocks,
@@ -366,6 +366,9 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                     containerStyle={{ paddingBottom: 60 }}
                     data={blocks}
                     ref={flatListRef}
+                    onScrollToIndexFailed={info => {
+                      console.log("Failed to scroll to index: ", info.index);
+                    }}
                     onContentSizeChange={() => {
                       if (flatListRef.current && blocks.length > 1) {
                         let index = blocks.length - 1;
@@ -473,8 +476,8 @@ export default function Constructor({ route, navigation }: NativeStackScreenProp
                                         block.type == StepType.LIQUID_APPL
                                           ? AppStyles.color.block.main_reagent
                                           : block.type == StepType.TEMP_CHANGE
-                                          ? AppStyles.color.block.main_temperature
-                                          : AppStyles.color.block.main_washing,
+                                            ? AppStyles.color.block.main_temperature
+                                            : AppStyles.color.block.main_washing,
                                     }}
                                   ></View>
                                   <View

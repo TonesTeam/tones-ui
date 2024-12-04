@@ -23,6 +23,7 @@ import { LiquidTable } from "./LiquidTable";
 import { SlotMap } from "./SlotMap";
 import { SLOT_QUANTITY } from "../../common/cartridgeConfig";
 import { Confirmations } from "./Confirmations";
+import { getRequest } from "../../common/util";
 
 enum LaunchStage {
   STEP_ONE = 1,
@@ -215,8 +216,8 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
                         slotNumber == ""
                           ? 1
                           : Number(slotNumber) + 1 <= SLOT_QUANTITY
-                          ? Number(slotNumber) + 1
-                          : Number(slotNumber)
+                            ? Number(slotNumber) + 1
+                            : Number(slotNumber)
                       )
                     }
                   >
@@ -282,8 +283,8 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
                 state == true
                   ? setConfirmations(confirmations + 1)
                   : confirmations > 0
-                  ? setConfirmations(confirmations - 1)
-                  : setConfirmations(0)
+                    ? setConfirmations(confirmations - 1)
+                    : setConfirmations(0)
               }
             />
           )}
@@ -305,7 +306,7 @@ export default function Launch({ route, navigation }: NativeStackScreenProps<any
                 setStage(stage + 1);
               }
               if (stage == LaunchStage.STEP_ONE && Number(slotNumber)) setStage(stage + 1);
-              if (stage == LaunchStage.STEP_THREE && confirmations == 4) console.log("Launch!");
+              if (stage == LaunchStage.STEP_THREE && confirmations == 4) getRequest(`/protocol/${protocol_ID}/test-steps`);
             }}
           >
             <Txt style={{ color: AppStyles.color.elem_back, fontFamily: "Roboto-bold" }}>

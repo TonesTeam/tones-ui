@@ -9,8 +9,12 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./state/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { LogBox } from 'react-native';
 
 export default function App() {
+
+  // Ignore specific warning by message
+  LogBox.ignoreLogs(['Require cycle:']);
   const [fontsLoaded, fontError] = useFonts({
     "Roboto-thin": require("./assets/fonts/Roboto-Light.ttf"),
     "Roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
