@@ -2,17 +2,17 @@
     --navbar-width: clamp(250px, 280px, 300px);
     --navbar-width-collapsed: 120px;
     --navbar-lr-padding: 20px;
-    --animation-time: 0.4s
+    --animation-time: 0.4s;
 }
 
-#main{
+#main {
     margin: 0 0 0 var(--navbar-width-collapsed);
     height: 100vh;
-    transition: opacity .3s;
+    transition: opacity 0.3s;
     border-left: 10px solid var(--color-back);
 }
 
-.sidenav-open+#main{
+.sidenav-open + #main {
     opacity: 0.3;
 }
 
@@ -31,7 +31,7 @@
     width: var(--navbar-width-collapsed);
 
     -webkit-transition: width var(--animation-time);
-    -moz-transition: width var(--animation-time) ;
+    -moz-transition: width var(--animation-time);
     -o-transition: width var(--animation-time);
     transition: width var(--animation-time);
 }
@@ -40,7 +40,7 @@
     width: var(--navbar-width);
 }
 
-#nav-header{
+#nav-header {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -49,10 +49,9 @@
     position: relative;
 }
 
-#nav-logo{
+#nav-logo {
     float: left;
 }
-
 
 /*----------SIDE NAV, OPEN/CLOSE BTN----------*/
 input#menu {
@@ -60,7 +59,7 @@ input#menu {
 }
 
 .icon {
-    background: #FFF;
+    background: #fff;
     cursor: pointer;
     display: block;
     width: 62px;
@@ -72,8 +71,8 @@ input#menu {
     transition: all 0.2s ease;
 }
 
-.sidenav-open .icon{
-    left:10px;
+.sidenav-open .icon {
+    left: 10px;
 }
 
 .icon .menu,
@@ -84,7 +83,10 @@ input#menu {
     display: block;
     height: 4px;
     position: absolute;
-    transition: background ease .2s, top ease .2s .2s, transform ease .2s;
+    transition:
+        background ease 0.2s,
+        top ease 0.2s 0.2s,
+        transform ease 0.2s;
     width: 35px;
     border-radius: 8px;
 }
@@ -117,7 +119,9 @@ input#menu {
 #menu:checked + .icon .menu::before,
 #menu:checked + .icon .menu::after {
     top: 0;
-    transition: top ease .2s, transform ease .2s .2s;
+    transition:
+        top ease 0.2s,
+        transform ease 0.2s 0.2s;
 }
 
 /*----------- NAVBAR ITEMS ------------*/
@@ -169,15 +173,14 @@ a.nav-item-link {
 }
 
 #selected-navbar-item .nav-item-txt-box,
-#selected-navbar-item .svg_icon>path{
+#selected-navbar-item .svg_icon > path {
     color: var(--color-primary);
     fill: var(--color-primary);
 }
 
-
 /*--------USER PROFILE PIC & NAME-----------*/
 
-#user-prof{
+#user-prof {
     display: grid;
     grid-template-columns: 1fr 2fr;
     padding: 0 0 0 30px;
@@ -185,12 +188,12 @@ a.nav-item-link {
     align-items: center;
 }
 
-#user-prof>[class~="fas"] {
+#user-prof > [class~='fas'] {
     /* margin-bottom: 1rem; */
     font-size: 3.5em;
 }
 
-#user-prof p{
+#user-prof p {
     font-size: 0.8rem;
 }
 
@@ -206,20 +209,20 @@ a.nav-item-link {
     display: flex;
     justify-content: center;
     align-items: center;
-  
+
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: 
-      radial-gradient(closest-side, white 79%, transparent 80% 100%),
-      conic-gradient(hotpink 15%, pink 0);    
+    background:
+        radial-gradient(closest-side, white 79%, transparent 80% 100%),
+        conic-gradient(hotpink 15%, pink 0);
 }
 
 .progress-bar::before {
-    content: "75%";
+    content: '75%';
 }
 
-#progress-track-full{
+#progress-track-full {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -228,12 +231,9 @@ a.nav-item-link {
     border: 1px solid #d1d1d1;
     margin: 0 30px;
     padding: 10px 0;
-    align-content: space-around
+    align-content: space-around;
 }
 
-#progress-track-full p{
+#progress-track-full p {
     font-size: 0.8rem;
 }
-
-
-  

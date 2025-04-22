@@ -1,4 +1,4 @@
-const createExpoWebpackConfigAsync = require("@expo/webpack-config");
+const createExpoWebpackConfigAsync = require('@expo/webpack-config');
 const path = require('path');
 
 module.exports = async function (env, argv) {
@@ -7,7 +7,7 @@ module.exports = async function (env, argv) {
     config.module.rules.push({
         test: /\.tsx?$/,
         use: 'ts-loader',
-        include: [path.resolve(__dirname, 'node_modules/sharedlib')]
+        include: [path.resolve(__dirname, 'node_modules/sharedlib')],
     });
     config.module.rules.forEach((rule) => {
         if (rule.oneOf) {
@@ -16,7 +16,7 @@ module.exports = async function (env, argv) {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: require.resolve("@svgr/webpack"),
+                        loader: require.resolve('@svgr/webpack'),
                         options: {
                             inlineStyles: {
                                 onlyMatchedOnce: false,

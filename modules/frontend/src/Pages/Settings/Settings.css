@@ -1,14 +1,14 @@
-.settings-container{
+.settings-container {
     display: grid;
     grid-template-rows: 1fr 10fr;
 }
 
-.settings-tabs{
+.settings-tabs {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-.settings-tabs>.tab{
+.settings-tabs > .tab {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,16 +18,16 @@
     text-transform: uppercase;
     font-weight: 500;
     cursor: pointer;
-    transition: all .1s ease;
+    transition: all 0.1s ease;
 }
 
-.settings-tabs>.tab.active{
+.settings-tabs > .tab.active {
     background-color: var(--color-back);
     color: var(--color-primary);
     font-weight: 600;
 }
 
-.settings-body{
+.settings-body {
     display: flex;
     align-items: flex-start;
     justify-content: space-around;
@@ -36,14 +36,14 @@
 
 /*----- USER SETTINGS TAB -------*/
 
-#user-set{
+#user-set {
     display: flex;
     width: 100%;
     /* align-items: center; */
     justify-content: space-between;
 }
 
-#user-set>div{
+#user-set > div {
     background-color: #fff;
     color: var(--text-primary);
     width: 20%;
@@ -53,20 +53,20 @@
     padding: 3%;
 }
 
-#user-set .inp-row{
+#user-set .inp-row {
     display: flex;
     flex-direction: column;
     padding: 3vh 0;
 }
 
-#user-set button{
+#user-set button {
     margin-top: 2vh;
     padding: 3% 8%;
     background-color: var(--color-primary);
     color: #fff;
 }
 
-#user-set .inp-row-col{
+#user-set .inp-row-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1vw;
@@ -74,11 +74,11 @@
     max-width: 100%;
 }
 
-#user-set>div>div:last-of-type{
+#user-set > div > div:last-of-type {
     border-top: 1px solid var(--color-back);
 }
 
-#user-set .inp-row>label{
+#user-set .inp-row > label {
     font-size: 0.8rem;
     font-weight: 550;
     color: var(--text-faded);

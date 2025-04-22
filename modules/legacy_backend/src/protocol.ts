@@ -14,132 +14,135 @@ type InternalLiquid = {
 type LiquidType = { Internal: InternalLiquid } | { External: ExternalLiquid };
 
 type WashType = { Custom: string } | { Sys: string };
-  
+
 interface ReagentStep {
-type: "Reagent";
-id: number;
-params: {
-    liquid: {
-    type: LiquidType;
-    used_cold: boolean;
-    toxic: boolean;
+    type: 'Reagent';
+    id: number;
+    params: {
+        liquid: {
+            type: LiquidType;
+            used_cold: boolean;
+            toxic: boolean;
+        };
+        incubation: number;
+        temperature: number;
     };
-    incubation: number;
-    temperature: number;
-};
 }
-  
-  interface WashingStep {
-    type: "Washing";
+
+interface WashingStep {
+    type: 'Washing';
     id: number;
     params: {
-      wash: {
-        type: WashType;
-        used_cold: boolean;
-        toxic: boolean;
-      };
-      iters: number;
-      incubation: number;
-      temperature: number;
+        wash: {
+            type: WashType;
+            used_cold: boolean;
+            toxic: boolean;
+        };
+        iters: number;
+        incubation: number;
+        temperature: number;
     };
-  }
-  
-  interface TemperatureChangeStep {
+}
+
+interface TemperatureChangeStep {
     id: number;
-    type: "TemperatureChange";
+    type: 'TemperatureChange';
     params: {
-      target: number;
+        target: number;
     };
-  }
-  
-  type ProtocolStep = ReagentStep | WashingStep | TemperatureChangeStep;
-  
-  class ProtocolManager {
+}
+
+type ProtocolStep = ReagentStep | WashingStep | TemperatureChangeStep;
+
+class ProtocolManager {
     private protocol: {
-      id: number;
-      steps: ProtocolStep[];
+        id: number;
+        steps: ProtocolStep[];
     };
-  
+
     constructor() {
-      this.protocol = {
-        id: 0,
-        steps: [],
-      };
+        this.protocol = {
+            id: 0,
+            steps: [],
+        };
     }
-  
+
     addReagent(
-      liquidType: LiquidType,
-      usedCold: boolean,
-      toxic: boolean,
-      incubation: number,
-      temperature: number,
-      id: number = 0
+        liquidType: LiquidType,
+        usedCold: boolean,
+        toxic: boolean,
+        incubation: number,
+        temperature: number,
+        id: number = 0,
     ): void {
-      const step: ReagentStep = {
-        type: "Reagent",
-        id,
-        params: {
-          liquid: {
-            type: liquidType,
-            used_cold: usedCold,
-            toxic,
-          },
-          incubation,
-          temperature,
-        },
-      };
-      this.protocol.steps.push(step);
+        const step: ReagentStep = {
+            type: 'Reagent',
+            id,
+            params: {
+                liquid: {
+                    type: liquidType,
+                    used_cold: usedCold,
+                    toxic,
+                },
+                incubation,
+                temperature,
+            },
+        };
+        this.protocol.steps.push(step);
     }
-  
+
     addWashing(
-      washType: WashType,
-      usedCold: boolean,
-      toxic: boolean,
-      iters: number,
-      incubation: number,
-      temperature: number,
-      id: number = 1
+        washType: WashType,
+        usedCold: boolean,
+        toxic: boolean,
+        iters: number,
+        incubation: number,
+        temperature: number,
+        id: number = 1,
     ): void {
-      const step: WashingStep = {
-        type: "Washing",
-        id,
-        params: {
-          wash: {
-            type: washType,
-            used_cold: usedCold,
-            toxic,
-          },
-          iters,
-          incubation,
-          temperature,
-        },
-      };
-      this.protocol.steps.push(step);
+        const step: WashingStep = {
+            type: 'Washing',
+            id,
+            params: {
+                wash: {
+                    type: washType,
+                    used_cold: usedCold,
+                    toxic,
+                },
+                iters,
+                incubation,
+                temperature,
+            },
+        };
+        this.protocol.steps.push(step);
     }
-  
+
     addTemperatureChange(target: number, id: number = 10): void {
-      const step: TemperatureChangeStep = {
-        id,
-        type: "TemperatureChange",
-        params: {
-          target,
-        },
-      };
-      this.protocol.steps.push(step);
+        const step: TemperatureChangeStep = {
+            id,
+            type: 'TemperatureChange',
+            params: {
+                target,
+            },
+        };
+        this.protocol.steps.push(step);
     }
-  
-    build(filename: string = "protocol.json"): void {
+
+    build(filename: string = 'protocol.json'): void {
         const jsonData = JSON.stringify(this.protocol, null, 4);
         try {
             fs.writeFileSync(filename, jsonData);
             console.log(`Protocol saved to ${filename}:`);
             console.log(jsonData);
         } catch (err) {
-            console.error(`Error writing to file ${filename}:`, (err as Error).message);
+            console.error(
+                `Error writing to file ${filename}:`,
+                (err as Error).message,
+            );
         }
     }
 
-    save(filename: string = "protocol.json"): void {
+    save(filename: string = 'protocol.json'): void {
         const jsonData = JSON.stringify(this.protocol, null, 4);
         const databasePath = path.join(__dirname, 'database');
         const filePath = path.join(databasePath, filename);
@@ -154,10 +157,13 @@ params: {
             console.log(`Protocol saved to ${filePath}:`);
             console.log(jsonData);
         } catch (err) {
-            console.error(`Error writing to file ${filePath}:`, (err as Error).message);
+            console.error(
+                `Error writing to file ${filePath}:`,
+                (err as Error).message,
+            );
         }
     }
-  
+
     async send(destination: string, port: number = 8081): Promise<void> {
         try {
             await sendJSONOverPort(destination, port);
@@ -166,15 +172,18 @@ params: {
             console.error(`Error sending protocol to ${destination}:`, err);
         }
     }
-  }
+}
 
-  /**
+/**
  * Отправляет JSON-файл по порту 8081.
  *
  * @param {string} filePath - Путь к JSON-файлу.
  * @returns {Promise<string>} - Сообщение об успехе или ошибке.
  */
-async function sendJSONOverPort(filePath: string, port: number = 8081): Promise<string> {
+async function sendJSONOverPort(
+    filePath: string,
+    port: number = 8081,
+): Promise<string> {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {

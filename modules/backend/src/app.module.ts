@@ -9,7 +9,13 @@ import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
 @Module({
     imports: [],
     controllers: [AppController],
-    providers: [AppService, DatabaseService, Logger, ProtocolSavingService, ProtocolDeploymentService, 
-        ProtocolStepsResolver],
+    providers: [
+        AppService,
+        DatabaseService,
+        Logger,
+        ProtocolSavingService,
+        ProtocolDeploymentService,
+        ProtocolStepsResolver,
+    ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,10 +1,9 @@
-
 export class Maybe<T> {
-    private constructor(private value: T | null) { }
+    private constructor(private value: T | null) {}
 
     static some<T>(value: T) {
         if (!value) {
-            throw Error("Provided value must not be empty");
+            throw Error('Provided value must not be empty');
         }
         return new Maybe(value);
     }
@@ -17,7 +16,7 @@ export class Maybe<T> {
         if (value === null || value === undefined) {
             return Maybe.none<T>();
         }
-        return Maybe.some(value!)
+        return Maybe.some(value!);
     }
 
     getOrElse(defaultValue: T) {
@@ -50,5 +49,4 @@ export class Maybe<T> {
     isPresent(): boolean {
         return this.value !== null;
     }
-
 }

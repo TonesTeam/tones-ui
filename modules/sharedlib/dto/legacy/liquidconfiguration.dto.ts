@@ -1,4 +1,4 @@
-import { LiquidDto } from "./liquid.dto";
+import { LiquidDto } from './liquid.dto';
 
 export interface DeploymentLiquidConfiguration {
     liquidSlotNumber: number;

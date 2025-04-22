@@ -1,9 +1,14 @@
-import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Entity } from "typeorm";
-import { Step } from "./Step";
+import {
+    PrimaryGeneratedColumn,
+    Column,
+    OneToOne,
+    JoinColumn,
+    Entity,
+} from 'typeorm';
+import { Step } from './Step';
 
 @Entity()
 export class Waiting {
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -11,6 +16,6 @@ export class Waiting {
     waitingTime: number;
 
     @JoinColumn()
-    @OneToOne(() => Step, step => step.waiting, { nullable: false })
+    @OneToOne(() => Step, (step) => step.waiting, { nullable: false })
     step: Step;
 }

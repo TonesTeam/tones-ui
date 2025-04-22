@@ -1,15 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "./prisma.service";
-import { Prisma, Protocol, TemperatureChange } from "@prisma/client";
-import { ProtocolWithStepsDTO } from "sharedlib/dto/protocol.dto";
-import { LiquidDTO } from "sharedlib/dto/liquid.dto";
-import { StepType } from "sharedlib/enum/DBEnums";
-import { ReagentStep, StepDTO, TemperatureStep, WashStep } from "sharedlib/dto/step.dto";
-
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+import { Prisma, Protocol, TemperatureChange } from '@prisma/client';
+import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { LiquidDTO } from 'sharedlib/dto/liquid.dto';
+import { StepType } from 'sharedlib/enum/DBEnums';
+import {
+    ReagentStep,
+    StepDTO,
+    TemperatureStep,
+    WashStep,
+} from 'sharedlib/dto/step.dto';
 
 @Injectable()
 export class ProtocolSavingService {
-
     prisma: PrismaService;
 
     constructor() {
@@ -17,12 +20,12 @@ export class ProtocolSavingService {
     }
 
     async saveProtocol(protocol: ProtocolWithStepsDTO) {
-        if(protocol.id && protocol.id != -1) {
+        if (protocol.id && protocol.id != -1) {
             await this.updateProtocol(protocol);
         }
         await this.prisma.protocol.upsert({
             where: { id: +protocol.id ?? -1 },
-            update: { },
+            update: {},
             create: {
                 name: protocol.name,
                 creationDate: protocol.creationDate,
@@ -33,40 +36,44 @@ export class ProtocolSavingService {
                         incubationTime: protocol.defaultWash.incubation,
                         iter: protocol.defaultWash.iters,
                         permanentLiquidId: protocol.defaultWash.liquid.id,
-                    }
+                    },
                 },
                 creator: {
                     connect: {
-                        username: protocol.author ?? "Jefferey"
-                    }
+                        username: protocol.author ?? 'Jefferey',
+                    },
                 },
                 washingLiquid: {
                     connect: {
-                        id: protocol.defaultWash.liquid.id
-                    }
+                        id: protocol.defaultWash.liquid.id,
+                    },
                 },
                 steps: {
-                    create: protocol.steps.map(s => {
+                    create: protocol.steps.map((s) => {
                         let i = 0;
-                        return this.createStep(s, ++i)
-                    })
-                }
+                        return this.createStep(s, ++i);
+                    }),
+                },
             },
-        })
+        });
     }
 
     async updateProtocol(protocol: ProtocolWithStepsDTO) {
-        const steps: number[] =  (await this.prisma.step.findMany({
-            where: {
-                protocol: {
-                    id: +protocol.id
-                }
-            },
-            select: {
-                id: true
-            }
-        })).map(i => i.id)
-        const deleteOldSteps = this.prisma.step.deleteMany({where:{id:{in:steps}}});
+        const steps: number[] = (
+            await this.prisma.step.findMany({
+                where: {
+                    protocol: {
+                        id: +protocol.id,
+                    },
+                },
+                select: {
+                    id: true,
+                },
+            })
+        ).map((i) => i.id);
+        const deleteOldSteps = this.prisma.step.deleteMany({
+            where: { id: { in: steps } },
+        });
 
         const updateProtocolWithNewSteps = this.prisma.protocol.update({
             where: { id: +protocol.id ?? -1 },
@@ -78,20 +85,26 @@ export class ProtocolSavingService {
                         incubationTime: protocol.defaultWash.incubation,
                         iter: protocol.defaultWash.iters,
                         permanentLiquidId: protocol.defaultWash.liquid.id,
-                    }
+                    },
                 },
                 steps: {
-                    create: protocol.steps.map(s => {
+                    create: protocol.steps.map((s) => {
                         let i = 0;
-                        return this.createStep(s, ++i)
-                    })
-                }
-            }
+                        return this.createStep(s, ++i);
+                    }),
+                },
+            },
         });
-        await this.prisma.$transaction([deleteOldSteps, updateProtocolWithNewSteps]);
+        await this.prisma.$transaction([
+            deleteOldSteps,
+            updateProtocolWithNewSteps,
+        ]);
     }
 
-    private createStep(s: StepDTO, order: number): Prisma.StepCreateWithoutProtocolInput {
+    private createStep(
+        s: StepDTO,
+        order: number,
+    ): Prisma.StepCreateWithoutProtocolInput {
         const step: Prisma.StepCreateWithoutProtocolInput = {
             sequenceOrder: order,
             stepType: s.type,
@@ -104,7 +117,7 @@ export class ProtocolSavingService {
                     incubationTemperature: params.temperature,
                     autoWash: params.autoWash,
                     liquidInfo: this.getLiquidInfo(params.liquid),
-                }
+                },
             };
         }
         if (s.type == StepType.TEMP_CHANGE) {
@@ -112,9 +125,9 @@ export class ProtocolSavingService {
             step.temperatureChange = {
                 create: {
                     sourceTemperature: params.source,
-                    targetTemperature: params.target
-                }
-            }
+                    targetTemperature: params.target,
+                },
+            };
         }
         if (s.type == StepType.WASHING) {
             let params = s.params as WashStep;
@@ -124,32 +137,34 @@ export class ProtocolSavingService {
                     iter: params.iters,
                     permanentLiquid: {
                         connect: {
-                            id: params.liquid.id
-                        }
-                    }
-                }
-            }
+                            id: params.liquid.id,
+                        },
+                    },
+                },
+            };
         }
         return step;
     }
 
-    private getLiquidInfo(l: LiquidDTO): Prisma.LiquidInfoCreateNestedOneWithoutLiquidApplicationInput {
+    private getLiquidInfo(
+        l: LiquidDTO,
+    ): Prisma.LiquidInfoCreateNestedOneWithoutLiquidApplicationInput {
         if (l.id > 0) {
             return {
                 connect: {
-                    id: l.id
-                }
-            }
+                    id: l.id,
+                },
+            };
         }
         return {
             create: {
                 name: l.name,
                 type: {
                     connect: {
-                        id: l.type.id
-                    }
+                        id: l.type.id,
+                    },
                 },
-            }
-        }
+            },
+        };
     }
 }
