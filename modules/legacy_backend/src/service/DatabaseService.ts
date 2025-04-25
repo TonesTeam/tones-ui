@@ -1,9 +1,16 @@
-import { inject, injectable } from "inversify";
-import { provide } from "inversify-binding-decorators";
-import { Logger } from "tslog";
-import { Connection, createConnection, EntityTarget, ObjectLiteral, ObjectType, Repository } from "typeorm";
-import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { connectionOptions } from "./ormconfig";
+import { inject, injectable } from 'inversify';
+import { provide } from 'inversify-binding-decorators';
+import { Logger } from 'tslog';
+import {
+    Connection,
+    createConnection,
+    EntityTarget,
+    ObjectLiteral,
+    ObjectType,
+    Repository,
+} from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { connectionOptions } from './ormconfig';
 @provide(DatabaseService)
 export class DatabaseService {
     private static connection: Connection;
@@ -11,18 +18,18 @@ export class DatabaseService {
     @inject(Logger)
     private logger: Logger;
 
-
     public async getConnection(): Promise<Connection> {
         if (DatabaseService.connection instanceof Connection) {
             return DatabaseService.connection;
         }
 
         try {
-            DatabaseService.connection = await createConnection(connectionOptions);
+            DatabaseService.connection =
+                await createConnection(connectionOptions);
             this.logger.info(`Connection established`);
             return DatabaseService.connection;
         } catch (e) {
-            this.logger.error("Cannot establish database connection");
+            this.logger.error('Cannot establish database connection');
             this.logger.error(e);
             process.exit(1);
         }

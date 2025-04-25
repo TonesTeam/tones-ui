@@ -1,5 +1,5 @@
 /*---------- STATUS BAR (BY STEPS) -----------*/
-:root{
+:root {
     --step1-init: #2d4cc9;
     --step2-init: #8d98a9;
     --step2-comp: #2641b1;
@@ -10,7 +10,7 @@
     --trans-bar: 0.4s;
 }
 
-#stage-bar{
+#stage-bar {
     width: 35vw;
     border-radius: 8px;
     display: grid;
@@ -19,11 +19,11 @@
     /* margin: auto; */
 }
 
-#stage-bar p{
+#stage-bar p {
     color: #fff;
 }
 
-.stage{
+.stage {
     position: relative;
     display: flex;
     align-items: center;
@@ -31,64 +31,64 @@
     transition: all var(--trans-bar) ease;
 }
 
-#s1{
+#s1 {
     background-color: var(--step1-init);
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 }
 
-#s2{
+#s2 {
     background-color: var(--step2-init);
 }
 
-.stage.active#s2{
+.stage.active#s2 {
     background-color: var(--step2-comp);
 }
 
-#s3{
+#s3 {
     background-color: var(--step3-init);
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
 
-.stage.active#s3{
+.stage.active#s3 {
     background-color: var(--step3-comp);
 }
 
-.pseudo{
-    position:absolute;
-    width: 0; 
-    height: 0; 
+.pseudo {
+    position: absolute;
+    width: 0;
+    height: 0;
     left: 0;
     transition: all var(--trans-bar) ease;
 }
 
-.pseudo#step1{
+.pseudo#step1 {
     border-top: var(--border-top-bottom) solid var(--step2-init);
     border-bottom: var(--border-top-bottom) solid var(--step2-init);
     border-left: var(--border-left) solid var(--step1-init);
     border-radius: 0;
 }
 
-.stage.active#s2>.pseudo{
+.stage.active#s2 > .pseudo {
     border-top-color: var(--step2-comp);
     border-bottom-color: var(--step2-comp);
     border-left-color: var(--step1-init);
 }
 
-.stage.active#s2+#s3>.pseudo{
+.stage.active#s2 + #s3 > .pseudo {
     border-top-color: var(--step3-init);
     border-bottom-color: var(--step3-init);
     border-left-color: var(--step2-comp);
 }
 
-.pseudo#step2{
+.pseudo#step2 {
     border-top: var(--border-top-bottom) solid var(--step3-init);
     border-bottom: var(--border-top-bottom) solid var(--step3-init);
     border-left: var(--border-left) solid var(--step2-init);
 }
 
-.stage.active#s3>.pseudo{
+.stage.active#s3 > .pseudo {
     border-top-color: var(--step3-comp) !important;
     border-bottom-color: var(--step3-comp) !important;
     border-left-color: var(--step2-comp);
@@ -97,16 +97,16 @@
 /* ------------------------------------------- */
 
 /*---------- NUMBER TOGGLE ------------*/
-#slot-inp{
+#slot-inp {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: auto;
 }
 
-#slot-inp>p{
+#slot-inp > p {
     width: 90%;
 }
-.number-toggle{
+.number-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
@@ -116,13 +116,13 @@
     background-color: var(--color-back);
 }
 
-.number-toggle>.plus,
-.number-toggle>.minus{
-    font-size:xx-large;
+.number-toggle > .plus,
+.number-toggle > .minus {
+    font-size: xx-large;
     cursor: pointer;
 }
 
-.number-toggle>#slot-val{
+.number-toggle > #slot-val {
     background-color: #fff;
     width: 100%;
     height: 100%;
@@ -132,48 +132,47 @@
 
 /*-------------------------------------*/
 
-.preparation-wrapper{
+.preparation-wrapper {
     display: grid;
     grid-template-rows: 2fr 8fr 1fr;
     background-color: #fff;
 }
 
-.preparation-wrapper #header{
+.preparation-wrapper #header {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding:0 2vw;
+    padding: 0 2vw;
     align-items: center;
 }
 
-.preparation-wrapper #body{
-    padding:0 2vw;
+.preparation-wrapper #body {
+    padding: 0 2vw;
 }
 
-.preparation-wrapper #footer{
+.preparation-wrapper #footer {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
-#footer>button{
+#footer > button {
     box-sizing: border-box;
     padding: 1.2vh 8vw;
     margin: 0 5%;
     font-weight: 300;
 }
 
-#footer>#back{
+#footer > #back {
     background-color: #fff;
     border: 2px solid var(--color-back);
 }
 
-#footer>#next{
+#footer > #next {
     background-color: #000;
     color: #fff;
 }
 
-#footer>button:disabled{
+#footer > button:disabled {
     background-color: var(--color-back) !important;
     color: #8d98a9 !important;
 }

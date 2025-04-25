@@ -1,1 +1,1 @@
-export * from './dataobjects'
+export * from './dataobjects';

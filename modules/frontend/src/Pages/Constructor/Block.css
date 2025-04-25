@@ -1,4 +1,4 @@
-.handle{
+.handle {
     position: absolute;
     border-radius: 10px;
     text-align: center;
@@ -10,13 +10,13 @@
 
 /* BUTTONS (Workspace)*/
 
-button#info-btn{
+button#info-btn {
     height: 50px;
     width: 50px;
     background-color: var(--color-back);
 }
 
-button.save-btn{
+button.save-btn {
     height: 50px;
     width: auto;
     width: 25vw;
@@ -24,48 +24,48 @@ button.save-btn{
     margin-left: 1vw;
 }
 
-button.save-btn.washing{
+button.save-btn.washing {
     background-color: var(--washing);
 }
 
-button.save-btn.reagent{
+button.save-btn.reagent {
     background-color: var(--reagent);
 }
 
-button.save-btn.temperature{
+button.save-btn.temperature {
     background-color: var(--temperature);
 }
 
 /*------- WORKSPACE BLOCK LAYOUTS -------*/
 
-.inputs{
+.inputs {
     justify-content: center;
     align-items: center;
 }
 
-.block-body-row{
-    display: flex;  
+.block-body-row {
+    display: flex;
     flex-direction: row;
     justify-content: center;
     width: 100%;
     padding: 5% 0;
-    border-bottom: 1px solid var(--color-back); 
+    border-bottom: 1px solid var(--color-back);
 }
 
-.block-body-row.col{
+.block-body-row.col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 2vw;
 }
 
-.block-inp{
+.block-inp {
     display: flex;
     flex-direction: column;
     justify-items: left;
     width: 100%;
 }
 
-.workspace-footer{
+.workspace-footer {
     margin-left: auto;
     margin-right: auto;
     border-top: 1px solid var(--color-back);
@@ -73,30 +73,29 @@ button.save-btn.temperature{
 }
 /*--------------------------*/
 
-
 /*--------- INPUT STYLES -------*/
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-  appearance: textfield;
+input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
-.block-inp details{
+.block-inp details {
     width: 100%;
 }
 
-.block-inp ul{
+.block-inp ul {
     height: 50vh !important;
 }
 
-.block-inp>label{
+.block-inp > label {
     text-align: left;
     font-size: 0.8em;
     text-transform: uppercase;
@@ -105,12 +104,12 @@ input[type=number] {
     font-weight: 600;
 }
 
-.block-footer{
+.block-footer {
     padding-top: 5vh;
     text-align: left;
 }
 
-.block-footer button#constr-settings{
+.block-footer button#constr-settings {
     background-color: #fff;
     color: var(--text-primary);
     text-align: left;
@@ -121,80 +120,78 @@ input[type=number] {
     align-items: center;
 }
 
-.block-footer #constr-settings>div{
+.block-footer #constr-settings > div {
     width: 100%;
     display: inline-flex;
     padding-right: 3vw;
 }
 
-.block-footer #constr-settings>div p{
+.block-footer #constr-settings > div p {
     padding-left: 1vw;
     margin: 0;
 }
 
-.block-footer #constr-settings .svg_icon path{
+.block-footer #constr-settings .svg_icon path {
     fill: var(--text-faded);
 }
 
-.block-footer #constr-settings>div .svg_icon path{
+.block-footer #constr-settings > div .svg_icon path {
     fill: var(--text-faded);
 }
 
-.block-header{
+.block-header {
     margin: 0;
 }
 
-
 /*-------- TIMELINE STYLES ------------*/
-.step{
+.step {
     display: grid;
     grid-template-rows: 1fr auto;
-    color:#fff;
+    color: #fff;
     height: auto;
     padding: 0 7%;
     border-radius: 8px;
 }
 
-
-.step>*,
+.step > *,
 .step-params,
-.step-params>*,
+.step-params > *,
 .param-cell,
-.param-cell>*{
-    color:#fff;
+.param-cell > * {
+    color: #fff;
 }
 
-.step.washing{
+.step.washing {
     background-color: var(--washing);
 }
 
-.step.reagent{
+.step.reagent {
     background-color: var(--reagent);
 }
 
-.step.temperature{
+.step.temperature {
     background-color: var(--temperature);
 }
 
-.step-header{
+.step-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 2vh 0;
 }
 
-.step-header>h3{
+.step-header > h3 {
     color: #fff;
     text-transform: capitalize;
     font-weight: 100;
     margin: 0;
 }
 
-.step-header>div{
+.step-header > div {
     display: flex;
 }
 
-button.step-btn{
+button.step-btn {
     background-color: #0000002b;
     color: #fff;
     padding: 5px 2px;
@@ -203,76 +200,75 @@ button.step-btn{
     margin-left: 10px;
 }
 
-button.step-btn path{
+button.step-btn path {
     fill: #fff;
 }
 
-button.step-btn svg{
+button.step-btn svg {
     margin-right: 5px;
 }
 
-
-.step-params{
+.step-params {
     border-top: 1px solid #ffffff62;
     padding: 1vh 0;
 }
 
-.param-row{
+.param-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-.param-cell{
+.param-cell {
     font-size: 16px;
     display: flex;
 }
 
-.param-cell> p{
+.param-cell > p {
     margin: 0;
     margin-left: 10px;
 }
 
-.param-cell> span{
+.param-cell > span {
     color: #ffffffb8;
 }
 
-.auto-wash-mark{
+.auto-wash-mark {
     display: flex;
     flex-direction: row;
     align-items: center;
     background-color: #fff;
     color: var(--text-primary);
-    border-radius: 8px; 
+    border-radius: 8px;
     font-size: 16px;
     width: fit-content;
     padding: 1% 1%;
     margin-top: 20px;
 }
 
-.param-row.extra{
+.param-row.extra {
     display: grid;
     grid-template-columns: 1fr;
 }
 
 .auto-wash-mark p,
-.auto-wash-mark h3{
+.auto-wash-mark h3 {
     margin: 0;
     width: auto;
 }
 
-.auto-wash-mark>*{
+.auto-wash-mark > * {
     padding-right: 20px;
 }
 
-.auto-wash-mark>svg>path{
+.auto-wash-mark > svg > path {
     fill: var(--text-faded-accent);
 }
 
 /* -------- SETTINGS MODAL (POP-UP) ---------*/
-.modal{
+.modal {
     /* display properly is defined and toggled in JSX directly as state */
     position: absolute;
-    z-index: 101; 
+    z-index: 101;
     height: 100%;
     width: 100%;
     left: 0;
@@ -282,8 +278,7 @@ button.step-btn svg{
     justify-items: center;
 }
 
-
-.modal-content{
+.modal-content {
     background-color: #fff;
     border-radius: 8px;
     box-sizing: border-box;
@@ -295,12 +290,12 @@ button.step-btn svg{
     padding: 1% 3%;
 }
 
-.modal-content>div{
+.modal-content > div {
     border-top: 1px solid var(--color-back);
     padding: 10px 0;
 }
 
-.modal-header{
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -308,23 +303,23 @@ button.step-btn svg{
     padding: none !important;
 }
 
-.modal-header>h2,
-.modal-header>h3{
+.modal-header > h2,
+.modal-header > h3 {
     margin: 0;
 }
 
-.modal-toggle{
+.modal-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: left;
 }
 
-.modal-toggle>label{
+.modal-toggle > label {
     text-align: left;
 }
 
-.modal-inp{
+.modal-inp {
     display: grid;
     grid-template-rows: 1fr auto;
     justify-content: flex-start;
@@ -334,8 +329,3 @@ button.step-btn svg{
 {
     zoom: 3;
 } */
-
-
-
-
-

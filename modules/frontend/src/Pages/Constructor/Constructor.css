@@ -8,30 +8,28 @@
 }
 
 /*----------- GRID LAYOUTS --------------*/
-.global-constructor{
+.global-constructor {
     display: grid;
     grid-template-rows: 1fr 10fr;
     text-align: center;
     background-color: #fff;
 }
 
-#container{
+#container {
     height: 100%;
     max-height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-#workspace{
+#workspace {
     display: grid;
     grid-template-rows: 1fr 7fr 1fr;
     background-color: #fff;
 }
 
-
-
 /*--------- HEADER -----------*/
-#protocol-meta{
+#protocol-meta {
     display: flex;
     flex-direction: row;
     max-width: 100%;
@@ -42,13 +40,13 @@
     text-align: center;
 }
 
-#protocol-meta>#name{
+#protocol-meta > #name {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-#protocol-meta>#name>input{
+#protocol-meta > #name > input {
     height: fit-content;
     width: 100%;
     margin-left: 10px;
@@ -56,7 +54,7 @@
     font-size: 1.1em;
 }
 
-#protocol-meta>button{
+#protocol-meta > button {
     height: fit-content;
     padding: 1% 1%;
     background-color: var(--text-faded-accent);
@@ -64,7 +62,7 @@
 }
 
 /*-------- CONTROL PANEL: BUTTON STYLES -------------*/
-.options{
+.options {
     /* background-color: #fff; */
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -81,15 +79,14 @@
     flex-direction: column;
     align-items: center;
     border-right: 1px solid var(--color-back);
-    justify-content: center
+    justify-content: center;
 }
 
-.construct-btn:last-of-type{
+.construct-btn:last-of-type {
     border-right: none;
 }
 
-
-.construct-btn>div{
+.construct-btn > div {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -98,10 +95,10 @@
     justify-content: center;
     text-align: center;
     flex-direction: column;
-    align-items: center
+    align-items: center;
 }
 
-.construct-btn p{
+.construct-btn p {
     text-transform: uppercase;
     color: var(--text-faded);
     font-size: 0.55em;
@@ -111,7 +108,7 @@
     letter-spacing: 2px;
 }
 
-.construct-btn.active p{
+.construct-btn.active p {
     color: var(--text-primary);
 }
 
@@ -128,7 +125,7 @@
     background-color: var(--washing-back);
 }
 
-.construct-btn.active#cb-washing>div {
+.construct-btn.active#cb-washing > div {
     background-color: var(--washing);
 }
 
@@ -136,25 +133,23 @@
     background-color: var(--temperature-back);
 }
 
-.construct-btn.active#cb-temperature>div{
+.construct-btn.active#cb-temperature > div {
     background-color: var(--temperature);
 }
 
 .construct-btn .fas,
-.construct-btn svg path
-{
+.construct-btn svg path {
     color: var(--text-faded-accent);
     fill: var(--text-faded-accent);
 }
 
 .construct-btn.active .fas,
-.construct-btn.active svg path
-{
+.construct-btn.active svg path {
     color: #fff;
     fill: #fff;
 }
 
-#block-edit{
+#block-edit {
     text-align: center;
     height: 100%;
     display: grid;
@@ -164,50 +159,48 @@
 
 /*----------- TIMELINE -------------*/
 
-#timeline{
+#timeline {
     display: grid;
     grid-template-rows: 1fr 10fr;
     background-color: var(--color-back);
     margin: 0;
 }
 
-#timeline>.header{
+#timeline > .header {
     display: flex;
     padding: 0 2vw;
     justify-content: space-between;
     align-items: center;
 }
 
-#timeline>.header>#duration{
+#timeline > .header > #duration {
     text-transform: uppercase;
     font-size: 0.7em;
     color: var(--text-faded-accent);
 }
 
-#steps{
+#steps {
     padding: 0 2vw;
     height: 80vh;
     overflow: auto;
 }
 
-
 /* Fixing off-positioning while dragging */
-[data-rbd-draggable-id] { 
-    left: auto !important; 
+[data-rbd-draggable-id] {
+    left: auto !important;
 }
 
-.editing{
+.editing {
     box-sizing: border-box;
     /* border-radius: 8px; */
     border: 4px solid #0000007c;
 }
 
-
 /*-------- FINAL STEP TABLE (PRE-SAVE) ---------*/
-#pre-save-wrapper{
+#pre-save-wrapper {
     /* display properly is defined and toggled in JSX directly as state */
     position: absolute;
-    z-index: 1000; 
+    z-index: 1000;
     height: 100%;
     width: 100%;
     left: 0;
@@ -218,7 +211,7 @@
     justify-content: center;
 }
 
-.pre-save-content{
+.pre-save-content {
     background-color: #fff;
     border-radius: 8px;
     box-sizing: border-box;
@@ -229,7 +222,7 @@
     grid-template-rows: 1fr 7fr 1fr;
 }
 
-.pre-save-content>.header{
+.pre-save-content > .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -237,15 +230,15 @@
     border-bottom: 2px solid var(--color-back);
 }
 
-.pre-save-content>.body{
+.pre-save-content > .body {
     overflow-y: scroll;
 }
 
-.pre-save-content .body-footer{
+.pre-save-content .body-footer {
     padding: 0 3% 40vh 3%;
 }
 
-.body-footer textarea{
+.body-footer textarea {
     resize: none;
     width: 70%;
     background-color: var(--color-back);
@@ -256,7 +249,7 @@
     outline: none;
 }
 
-.pre-save-content>.pre-save-footer{
+.pre-save-content > .pre-save-footer {
     display: flex;
     flex-direction: row;
     padding: 0 30%;
@@ -265,39 +258,39 @@
     align-items: center;
 }
 
-.pre-save-footer button{
+.pre-save-footer button {
     height: fit-content;
     width: 30%;
     padding: 10px 0;
 }
 
-.pre-save-footer button#save-prt{
+.pre-save-footer button#save-prt {
     background-color: var(--text-primary);
     color: #fff;
 }
 
-.pre-save-content>.header>h2{
-    margin:0;
+.pre-save-content > .header > h2 {
+    margin: 0;
 }
 
-.step-table{
+.step-table {
     width: 100%;
 }
 
-.step-table>thead{
+.step-table > thead {
     background-color: var(--text-faded-accent);
 }
 
-.step-table>thead>tr>th{
+.step-table > thead > tr > th {
     color: #fff;
     font-weight: 500;
 }
 
 .step-table tr:nth-child(even) {
     background-color: var(--color-back);
-  }
+}
 
-.step-table tr{
+.step-table tr {
     line-height: 4vh;
 }
 
@@ -310,28 +303,27 @@
     box-sizing: border-box; */
 }
 
-.step-table tr td p{
+.step-table tr td p {
     margin: 0;
     font-size: 0.9em;
 }
 
-.step-table .label{
+.step-table .label {
     position: absolute;
     left: 0;
-    top:0;
+    top: 0;
     width: 15px;
     height: 100%;
 }
 
-.label.washing{
+.label.washing {
     background-color: var(--washing);
 }
 
-.label.reagent{
+.label.reagent {
     background-color: var(--reagent);
 }
 
-.label.temperature{
+.label.temperature {
     background-color: var(--temperature);
 }
-

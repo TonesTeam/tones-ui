@@ -1,6 +1,15 @@
-import { LiquidTypeName } from "sharedlib/enum/LiquidTypes";
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, ManyToOne, EntityRepository, Repository } from "typeorm";
-import { LiquidApplication } from "./LiquidApplication";
+import { LiquidTypeName } from 'sharedlib/enum/LiquidTypes';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    CreateDateColumn,
+    ManyToOne,
+    EntityRepository,
+    Repository,
+} from 'typeorm';
+import { LiquidApplication } from './LiquidApplication';
 
 @Entity()
 export class LiquidType {
@@ -10,7 +19,7 @@ export class LiquidType {
     @Column({ nullable: false })
     typeName: LiquidTypeName;
 
-    @OneToMany(() => Liquid, liquid => liquid.liquidType)
+    @OneToMany(() => Liquid, (liquid) => liquid.liquidType)
     liquids: Liquid[];
 }
 
@@ -22,29 +31,33 @@ export class LiquidSubType {
     @Column({ nullable: false })
     subTypeName: string;
 
-    @OneToMany(() => Liquid, liquid => liquid.liquidSubType)
+    @OneToMany(() => Liquid, (liquid) => liquid.liquidSubType)
     liquids: Liquid[];
-
 }
 
 @Entity()
 export class Liquid {
-
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ nullable: false })
     liquidName: string;
 
-    @ManyToOne(() => LiquidType, liquidType => liquidType.liquids, { nullable: false })
+    @ManyToOne(() => LiquidType, (liquidType) => liquidType.liquids, {
+        nullable: false,
+    })
     liquidType: LiquidType;
 
-    @ManyToOne(() => LiquidSubType, liquidSubType => liquidSubType.liquids, { nullable: true })
+    @ManyToOne(() => LiquidSubType, (liquidSubType) => liquidSubType.liquids, {
+        nullable: true,
+    })
     liquidSubType: LiquidSubType;
 
-    @OneToMany(() => LiquidApplication, liquidApplication => liquidApplication.liquid)
+    @OneToMany(
+        () => LiquidApplication,
+        (liquidApplication) => liquidApplication.liquid,
+    )
     liquidApplications: LiquidApplication[];
-
 }
 
 // @EntityRepository(Liquid)

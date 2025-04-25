@@ -1,10 +1,14 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Protocol } from "./Protocol";
-
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Protocol } from './Protocol';
 
 @Entity()
 export class ProtocolXml {
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -12,6 +16,8 @@ export class ProtocolXml {
     xml: string;
 
     @JoinColumn()
-    @OneToOne(() => Protocol, protocol => protocol.protocolXml, { nullable: false })
+    @OneToOne(() => Protocol, (protocol) => protocol.protocolXml, {
+        nullable: false,
+    })
     protocol: Protocol;
 }

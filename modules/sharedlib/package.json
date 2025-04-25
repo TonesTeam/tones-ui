@@ -1,15 +1,15 @@
 {
-  "name": "sharedlib",
-  "version": "1.0.0",
-  "description": "Common libs and interfaces for FE and BE",
-  "main": "index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-	"build": "tsc"
-  },
-  "author": "drewman",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^4.6.2"
-  }
+    "name": "sharedlib",
+    "version": "1.0.0",
+    "description": "Common libs and interfaces for FE and BE",
+    "main": "index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc"
+    },
+    "author": "drewman",
+    "license": "ISC",
+    "devDependencies": {
+        "typescript": "^4.6.2"
+    }
 }

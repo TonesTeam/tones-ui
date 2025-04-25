@@ -1,47 +1,45 @@
 {
-  "expo": {
-    "jsEngine": "hermes",
-    "name": "tones-frontend",
-    "slug": "tones-frontend",
-    "version": "1.0.0",
-    "orientation": "landscape",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#2d4cc9"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.drewzxcvbnm0.tonesfrontend"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#2d4cc9"
-      },
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.drewzxcvbnm0.tonesfrontend"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      [
-        "expo-screen-orientation",
-        {
-          "initialOrientation": "LANDSCAPE"
+    "expo": {
+        "jsEngine": "hermes",
+        "name": "tones-frontend",
+        "slug": "tones-frontend",
+        "version": "1.0.0",
+        "orientation": "landscape",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#2d4cc9"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.drewzxcvbnm0.tonesfrontend"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#2d4cc9"
+            },
+            "softwareKeyboardLayoutMode": "pan",
+            "package": "com.drewzxcvbnm0.tonesfrontend"
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            [
+                "expo-screen-orientation",
+                {
+                    "initialOrientation": "LANDSCAPE"
+                }
+            ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "8b32f306-94c0-4dd1-b010-630dcfc7f868"
+            }
         }
-      ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "8b32f306-94c0-4dd1-b010-630dcfc7f868"
-      }
     }
-  }
 }

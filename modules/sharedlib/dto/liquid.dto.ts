@@ -1,4 +1,3 @@
-
 export interface LiquidTypeDTO {
     id: number;
     name: string;

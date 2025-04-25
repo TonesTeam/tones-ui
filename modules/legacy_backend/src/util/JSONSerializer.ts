@@ -1,16 +1,16 @@
 const getCircularReplacer = () => {
-    const seen = new WeakSet()
+    const seen = new WeakSet();
     return (key: any, value: any) => {
-        if (typeof value === "object" && value !== null) {
+        if (typeof value === 'object' && value !== null) {
             if (seen.has(value)) {
-                return
+                return;
             }
-            seen.add(value)
+            seen.add(value);
         }
-        return value
-    }
-}
+        return value;
+    };
+};
 
 export function safeJSONSerialize(obj: any) {
-    return JSON.stringify(obj, getCircularReplacer())
+    return JSON.stringify(obj, getCircularReplacer());
 }
