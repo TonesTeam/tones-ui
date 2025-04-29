@@ -519,20 +519,6 @@ export default function WorkBlock(props: WorkBlockProps) {
                             change={memorizedParamUpdate}
                         />
                     )}
-                    <View
-                        style={{ alignSelf: 'flex-start', paddingVertical: 30 }}
-                    >
-                        <TouchableOpacity style={s.setting_btn}>
-                            <Setting_icon
-                                height={20}
-                                width={20}
-                                stroke={AppStyles.color.text_primary}
-                            />
-                            <Txt style={{ marginLeft: 10 }}>
-                                Workspace Settings
-                            </Txt>
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
                 <View style={s.section_footer}>
