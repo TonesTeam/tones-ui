@@ -522,18 +522,6 @@ export default function WorkBlock(props: WorkBlockProps) {
                 </View>
 
                 <View style={s.section_footer}>
-                    <TouchableOpacity
-                        style={[
-                            s.btn,
-                            { backgroundColor: AppStyles.color.background },
-                        ]}
-                    >
-                        <Info_icon
-                            width={20}
-                            height={20}
-                            stroke={AppStyles.color.text_primary}
-                        />
-                    </TouchableOpacity>
                     <View
                         style={{
                             borderRadius: 10,
