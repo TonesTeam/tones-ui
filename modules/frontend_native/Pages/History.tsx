@@ -12,7 +12,7 @@ import Txt from '../components/Txt';
 import Search_Icon from '../assets/icons/search.svg';
 import NotFound_Icon from '../assets/icons/question.svg';
 import { useIsFocused } from '@react-navigation/native';
-import { Calendar } from '@react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 
 export default function History(props: any) {
     const scrollViewRef = useRef<ScrollView>(null);
