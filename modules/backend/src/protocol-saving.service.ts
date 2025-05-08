@@ -24,7 +24,7 @@ export class ProtocolSavingService {
             await this.updateProtocol(protocol);
         }
         await this.prisma.protocol.upsert({
-            where: { id: +protocol.id ?? -1 },
+            where: { id: +protocol.id },
             update: {},
             create: {
                 name: protocol.name,
@@ -76,7 +76,7 @@ export class ProtocolSavingService {
         });
 
         const updateProtocolWithNewSteps = this.prisma.protocol.update({
-            where: { id: +protocol.id ?? -1 },
+            where: { id: +protocol.id },
             data: {
                 name: protocol.name,
                 description: protocol.description,
