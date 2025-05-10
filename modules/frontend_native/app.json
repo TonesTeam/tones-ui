@@ -25,7 +25,12 @@
         "backgroundColor": "#2d4cc9"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.drewzxcvbnm0.tonesfrontend"
+      "package": "com.drewzxcvbnm0.tonesfrontend",
+      "permissions": [
+          "ACCESS_NETWORK_STATE",
+          "INTERNET",
+          "ACCESS_WIFI_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
