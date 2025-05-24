@@ -39,7 +39,6 @@ export default function Login({
                         <Txt
                             style={{
                                 color: '#fff',
-                                textTransform: 'uppercase',
                                 fontWeight: '800',
                             }}
                         >

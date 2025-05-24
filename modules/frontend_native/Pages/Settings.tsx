@@ -274,7 +274,7 @@ function LiquidsModal(props: {
                             ]}
                             onPress={() => props.closeModal()}
                         >
-                            <Txt>CANCEL</Txt>
+                            <Txt>Cancel</Txt>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -289,7 +289,7 @@ function LiquidsModal(props: {
                             }}
                         >
                             <Txt style={{ color: AppStyles.color.elem_back }}>
-                                {props.liquid != null ? 'UPDATE' : 'SAVE'}
+                                {props.liquid != null ? 'Update' : 'Save'}
                             </Txt>
                         </TouchableOpacity>
                     </View>

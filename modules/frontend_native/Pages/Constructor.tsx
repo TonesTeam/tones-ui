@@ -64,6 +64,7 @@ import InfoModal from '../components/InfoModal';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InfoType } from '../common/types';
 import { LinearGradient } from 'expo-linear-gradient';
+import App from '../App';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -1026,26 +1027,16 @@ export default function Constructor({
                                                     s.modal_btn,
                                                     {
                                                         backgroundColor:
-                                                            blocks.length != 0
-                                                                ? AppStyles
-                                                                      .color
-                                                                      .secondary
-                                                                : AppStyles
-                                                                      .color
-                                                                      .text_faded,
+                                                            AppStyles.color
+                                                                .text_faded,
                                                     },
                                                 ]}
                                                 onPress={() => {
-                                                    if (blocks.length != 0) {
-                                                        setPreSaveModal(false);
-                                                        save();
-                                                    }
+                                                    setPreSaveModal(false);
                                                 }}
                                             >
                                                 <Txt style={s.modal_btn_text}>
-                                                    {protocol_ID
-                                                        ? `UPDATE`
-                                                        : `SAVE`}
+                                                    Cancel
                                                 </Txt>
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -1058,11 +1049,16 @@ export default function Constructor({
                                                     },
                                                 ]}
                                                 onPress={() => {
-                                                    setPreSaveModal(false);
+                                                    if (blocks.length != 0) {
+                                                        setPreSaveModal(false);
+                                                        save();
+                                                    }
                                                 }}
                                             >
                                                 <Txt style={s.modal_btn_text}>
-                                                    RETURN
+                                                    {protocol_ID
+                                                        ? `Update`
+                                                        : `Save`}
                                                 </Txt>
                                             </TouchableOpacity>
                                         </View>
@@ -1297,7 +1293,25 @@ export default function Constructor({
                                                 s.modal_btn,
                                                 {
                                                     backgroundColor:
-                                                        AppStyles.color.warning,
+                                                        AppStyles.color
+                                                            .text_faded,
+                                                },
+                                            ]}
+                                            onPress={() => {
+                                                setSettingsModal(false);
+                                                setTempSettings(settings); //Drop all changes
+                                            }}
+                                        >
+                                            <Txt style={s.modal_btn_text}>
+                                                Cancel
+                                            </Txt>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[
+                                                s.modal_btn,
+                                                {
+                                                    backgroundColor:
+                                                        AppStyles.color.primary,
                                                 },
                                             ]}
                                             onPress={() => {
@@ -1319,25 +1333,7 @@ export default function Constructor({
                                             }}
                                         >
                                             <Txt style={s.modal_btn_text}>
-                                                APPLY
-                                            </Txt>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[
-                                                s.modal_btn,
-                                                {
-                                                    backgroundColor:
-                                                        AppStyles.color
-                                                            .accent_dark,
-                                                },
-                                            ]}
-                                            onPress={() => {
-                                                setSettingsModal(false);
-                                                setTempSettings(settings); //Drop all changes
-                                            }}
-                                        >
-                                            <Txt style={s.modal_btn_text}>
-                                                DISCARD
+                                                Confirm
                                             </Txt>
                                         </TouchableOpacity>
                                     </View>

@@ -172,7 +172,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                     marginLeft: 8,
                                 }}
                             >
-                                DELETE
+                                Delete
                             </Txt>
                         </TouchableOpacity>
                     </View>
@@ -310,7 +310,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                         marginLeft: 8,
                                     }}
                                 >
-                                    EDIT
+                                    Edit
                                 </Txt>
                             </TouchableOpacity>
                         </View>
@@ -375,6 +375,20 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                     s.modal_btn,
                                     {
                                         backgroundColor:
+                                            AppStyles.color.primary,
+                                    },
+                                ]}
+                                onPress={() => {
+                                    setDeleteModal(false);
+                                }}
+                            >
+                                <Txt style={s.modal_btn_text}>CANCEL</Txt>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    s.modal_btn,
+                                    {
+                                        backgroundColor:
                                             AppStyles.color.warning,
                                     },
                                 ]}
@@ -383,21 +397,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                     setDeleteModal(false);
                                 }}
                             >
-                                <Txt style={s.modal_btn_text}>CONFIRM</Txt>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    s.modal_btn,
-                                    {
-                                        backgroundColor:
-                                            AppStyles.color.primary,
-                                    },
-                                ]}
-                                onPress={() => {
-                                    setDeleteModal(false);
-                                }}
-                            >
-                                <Txt style={s.modal_btn_text}>RETURN</Txt>
+                                <Txt style={s.modal_btn_text}>Delete</Txt>
                             </TouchableOpacity>
                         </View>
                     </View>

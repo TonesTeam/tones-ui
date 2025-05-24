@@ -373,7 +373,7 @@ export default function Launch({
                         onPress={() => stage != 1 && setStage(stage - 1)}
                     >
                         <Txt style={{ fontFamily: 'Roboto-bold' }}>
-                            {stage == 1 ? 'Discard' : 'Back'}
+                            {stage == 1 ? 'Cancel' : 'Back'}
                         </Txt>
                     </TouchableOpacity>
                     <TouchableOpacity
