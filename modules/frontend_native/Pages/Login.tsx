@@ -58,11 +58,7 @@ export default function Login({
             </View>
 
             <LinearGradient
-                colors={[
-                    'transparent',
-                    AppStyles.color.secondary,
-                    'transparent',
-                ]}
+                colors={['#fff', '#fff', '#fff']}
                 style={s.credits}
                 start={[0, 0]}
                 end={[1, 1]}
