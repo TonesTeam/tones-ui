@@ -45,7 +45,6 @@ import WorkBlock from './Block';
 import { renderTimelineBlock } from './TimeLineBlock';
 import {
     ProtocolSettings,
-    modifyTimeUnits,
     updateTemperature,
 } from '../common/constructorUtils';
 import InputField from '../components/InputField';
@@ -297,10 +296,7 @@ export default function Constructor({
                 return { ...liq, id: 0 };
             }),
             description: protocolDescription,
-            steps:
-                settings?.timeUnits == 'sec'
-                    ? blocks
-                    : blocks.map((block) => modifyTimeUnits(block, 'sec')),
+            steps: blocks,
             creationDate: new Date(),
             defaultWash: settings?.autoWashConfig,
             author: null,
@@ -864,12 +860,25 @@ export default function Constructor({
                                                                     >
                                                                         {block.type !=
                                                                         StepType.TEMP_CHANGE
-                                                                            ? (
-                                                                                  block.params as
-                                                                                      | ReagentStep
-                                                                                      | WashStep
-                                                                              )
-                                                                                  .incubation
+                                                                            ? settings.timeUnits ==
+                                                                              'sec'
+                                                                                ? (
+                                                                                      block.params as
+                                                                                          | ReagentStep
+                                                                                          | WashStep
+                                                                                  )
+                                                                                      .incubation
+                                                                                : Math.round(
+                                                                                      ((
+                                                                                          block.params as
+                                                                                              | WashStep
+                                                                                              | WashStep
+                                                                                      )
+                                                                                          .incubation /
+                                                                                          60) *
+                                                                                          100,
+                                                                                  ) /
+                                                                                  100
                                                                             : '-'}
                                                                     </Txt>
                                                                 </View>
@@ -1133,7 +1142,7 @@ export default function Constructor({
                                             <View style={{ marginRight: 10 }}>
                                                 <CustomSelect
                                                     list={washLiquids}
-                                                    label="REAGENT: "
+                                                    label="Reagent: "
                                                     selected={
                                                         tempSettings
                                                             .autoWashConfig
@@ -1170,7 +1179,7 @@ export default function Constructor({
                                                         containerStyle={{
                                                             marginRight: 100,
                                                         }}
-                                                        label="ITERATIONS:"
+                                                        label="Iterations:"
                                                         type={
                                                             'numeric' as InputModeOptions
                                                         }
@@ -1204,7 +1213,7 @@ export default function Constructor({
                                                     />
                                                     <InputField
                                                         placeholder="|"
-                                                        label="INCUBATION TIME:"
+                                                        label="Incubarion time:"
                                                         type={
                                                             'numeric' as InputModeOptions
                                                         }
@@ -1350,19 +1359,6 @@ export default function Constructor({
                                                 },
                                             ]}
                                             onPress={() => {
-                                                if (
-                                                    tempSettings.timeUnits !=
-                                                    settings.timeUnits
-                                                ) {
-                                                    setBlocks(
-                                                        blocks.map((block) =>
-                                                            modifyTimeUnits(
-                                                                block,
-                                                                tempSettings.timeUnits,
-                                                            ),
-                                                        ),
-                                                    );
-                                                }
                                                 setSettingsModal(false);
                                                 setSettings(tempSettings); //Update settings
                                             }}

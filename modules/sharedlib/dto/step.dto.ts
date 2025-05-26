@@ -11,7 +11,7 @@ export interface StepParams {}
 
 export interface WashStep extends StepParams {
     iters: number;
-    incubation: number;
+    incubation: number; // in seconds
     liquid: LiquidDTO;
     temperature: number | null; //at which step is applied, calculated
 }

@@ -81,32 +81,6 @@ export function updateTemperature(blocks: StepDTO[]): [StepDTO[], number] {
     return [refactoredBlocks, newCurrentTemp];
 }
 
-export function modifyTimeUnits(step: StepDTO, newUnits: string): StepDTO {
-    const coefficient = newUnits == 'min' ? 1 / 60 : 60;
-
-    let newStep =
-        step.type == StepType.TEMP_CHANGE
-            ? step
-            : {
-                  ...step,
-                  params: {
-                      ...step.params,
-                      incubation:
-                          ((step.params as WashStep | ReagentStep).incubation *
-                              coefficient) %
-                              1 !=
-                          0
-                              ? (
-                                    (step.params as WashStep | ReagentStep)
-                                        .incubation * coefficient
-                                ).toFixed(2)
-                              : (step.params as WashStep | ReagentStep)
-                                    .incubation * coefficient,
-                  },
-              };
-    return newStep;
-}
-
 export function calcDuration(blocks: StepDTO[]) {
     let duration = 0;
     for (let i = 0; i < blocks.length; i++) {

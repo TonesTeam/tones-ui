@@ -107,7 +107,7 @@ function WashInputs(props: BlockInputsProps) {
                             list={liquidsList}
                             selected={selectedLiquid || liquidsList[0]}
                             canAdd={false}
-                            label="REAGENT:"
+                            label="Reagent:"
                             onChangeSelect={(liq) => {
                                 handleParamChange('liquid', liq);
                             }}
@@ -117,7 +117,7 @@ function WashInputs(props: BlockInputsProps) {
                         <InputField
                             placeholder="|"
                             containerStyle={{ marginRight: 100 }}
-                            label="ITERATIONS:"
+                            label="Iterations:"
                             decimals={false}
                             limit_max={ITERATIONS_MAX}
                             limit_min={ITERATIONS_MIN}
@@ -132,7 +132,7 @@ function WashInputs(props: BlockInputsProps) {
                         />
                         <InputField
                             placeholder="|"
-                            label={`INCUBATION TIME (${props.timeUnits || 'seconds'}):`}
+                            label={`Incubation time (${props.timeUnits || 'seconds'}):`}
                             decimals={false}
                             limit_min={
                                 props.timeUnits && props.timeUnits == 'min'
@@ -263,7 +263,7 @@ function ReagentInputs(props: BlockInputsProps) {
                             list={categories}
                             selected={selectedCategory}
                             canAdd={false}
-                            label="REAGENT CATEGORY:"
+                            label="Reagent category:"
                             onChangeSelect={(cat) => handleCategoryChange(cat)}
                         />
                     </View>
@@ -284,7 +284,7 @@ function ReagentInputs(props: BlockInputsProps) {
                                     ? true
                                     : false
                             }
-                            label="REAGENT:"
+                            label="Reagent:"
                             onChangeSelect={(liq) => {
                                 handleParamChange('liquid', liq);
                             }}
@@ -320,7 +320,7 @@ function ReagentInputs(props: BlockInputsProps) {
                                         AppStyles.layout.elem_padding,
                                 }}
                             >
-                                AUTOMATIC WASHING (after step):
+                                Automatic washing (after step):
                             </Txt>
                             <Switch
                                 value={reagParams.autoWash}
@@ -384,7 +384,7 @@ function TemperatureInputs(props: BlockInputsProps) {
                     placeholder="|"
                     value={temperParams.source}
                     containerStyle={{ marginRight: 100 }}
-                    label="FROM (°C):"
+                    label="From (°C):"
                     type={'numeric' as InputModeOptions}
                     disabled={true}
                 />
@@ -393,7 +393,7 @@ function TemperatureInputs(props: BlockInputsProps) {
                     placeholder="|"
                     limit_max={TEMPERATURE_MAX}
                     limit_min={TEMPERATURE_MIN}
-                    label="TARGET (°C):"
+                    label="Target (°C):"
                     decimals={true}
                     type={'numeric' as InputModeOptions}
                     onInputChange={(target) =>
@@ -435,6 +435,9 @@ export default function WorkBlock(props: WorkBlockProps) {
             props.updateCustomLiquids(customLiquids);
 
         block.params = params as typeof block.params;
+        if ('incubation' in block.params && props.settings.timeUnits == 'min')
+            (block.params as WashStep).incubation *= 60;
+
         block.id == -1 ? props.addBlock(block) : props.editBlock(block);
     }
 
@@ -538,7 +541,6 @@ export default function WorkBlock(props: WorkBlockProps) {
                                     color: AppStyles.color.elem_back,
                                     alignSelf: 'center',
                                     fontFamily: 'Roboto-bold',
-                                    textTransform: 'uppercase',
                                 }}
                             >
                                 {props.block.id == -1 ? 'Add' : 'Update'} Step
