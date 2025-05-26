@@ -277,7 +277,15 @@ function ProtocolItem(props: {
                                 Prepare to Launch
                             </Txt>
                         </TouchableOpacity>
-                        <TouchableOpacity style={ps.button}>
+                        <TouchableOpacity
+                            style={ps.button}
+                            onPress={() =>
+                                props.navigation.navigate('Create protocol', {
+                                    protocol_ID: props.protocol.id,
+                                    preserveID: false,
+                                })
+                            }
+                        >
                             <Template_btn_Icon
                                 width={20}
                                 height={20}
@@ -290,6 +298,7 @@ function ProtocolItem(props: {
                             onPress={() =>
                                 props.navigation.navigate('Create protocol', {
                                     protocol_ID: props.protocol.id,
+                                    preserveID: true,
                                 })
                             }
                         >

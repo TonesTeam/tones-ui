@@ -157,9 +157,12 @@ export default function Constructor({
     route,
     navigation,
 }: NativeStackScreenProps<any>) {
-    const protocol_ID = route.params
-        ? (route.params as { protocol_ID: number }).protocol_ID
-        : undefined;
+    let protocol_ID: undefined | number = undefined;
+    let reference_ID: undefined | number = undefined;
+    if (route.params && route.params.preserveID)
+        protocol_ID = reference_ID = route.params.protocol_ID;
+    else if (route.params && !route.params.preserveID)
+        reference_ID = route.params.protocol_ID;
     const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
     const [workBlock, setWorkBlock] = useState<StepDTO>(); //Currently edited block
     const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE); //Last temperature used in steps
@@ -181,9 +184,9 @@ export default function Constructor({
     const flatListRef: MutableRefObject<any> = useRef(null);
 
     function initialization() {
-        if (protocol_ID) {
+        if (reference_ID) {
             getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${protocol_ID.toString()}`,
+                `/protocol/${reference_ID.toString()}`,
             ).then((r) => {
                 setCustomLiquids(r.data.customLiquids);
                 setDefaultWashStep(r.data.defaultWash);
