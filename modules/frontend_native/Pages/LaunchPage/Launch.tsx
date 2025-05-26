@@ -370,7 +370,11 @@ export default function Launch({
                 <View style={s.footer}>
                     <TouchableOpacity
                         style={s.footer_btn_back}
-                        onPress={() => stage != 1 && setStage(stage - 1)}
+                        onPress={() => {
+                            if (stage == 1)
+                                navigation.navigate('Protocol List');
+                            else setStage(stage - 1);
+                        }}
                     >
                         <Txt style={{ fontFamily: 'Roboto-bold' }}>
                             {stage == 1 ? 'Cancel' : 'Back'}
