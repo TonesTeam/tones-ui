@@ -168,7 +168,8 @@ export default function Constructor({
     const [settingsModal, setSettingsModal] = useState(false);
     const [duration, setDuration] = useState<number>(0);
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
-    const [protocolName, setProtocolName] = useState('protocol_001');
+    const [protocolName, setProtocolName] = useState('');
+    const [protocolDescription, setProtocolDescription] = useState('');
     const [defaultWashStep, setDefaultWashStep] = useState<
         WashStep | undefined
     >(undefined);
@@ -295,7 +296,7 @@ export default function Constructor({
             customLiquids: customLiquids.map((liq) => {
                 return { ...liq, id: 0 };
             }),
-            description: settings?.description, //Method can only be called when settings are initialized, so chill
+            description: protocolDescription,
             steps:
                 settings?.timeUnits == 'sec'
                     ? blocks
@@ -530,38 +531,72 @@ export default function Constructor({
                                         <View style={s.modal_header}>
                                             <View
                                                 style={{
-                                                    flex: 5,
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
+                                                    display: 'flex',
+                                                    direction: 'column',
+                                                    flex: '5',
                                                 }}
                                             >
-                                                <Txt
+                                                <View
                                                     style={{
-                                                        fontFamily:
-                                                            'Roboto-bold',
-                                                        marginRight: 20,
+                                                        flex: 5,
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    Protocol Name:
-                                                </Txt>
-                                                <InputField
-                                                    value={protocolName}
-                                                    onInputChange={
-                                                        setProtocolName
-                                                    }
-                                                    placeholder="Protocol Name"
-                                                />
+                                                    <Txt
+                                                        style={{
+                                                            fontFamily:
+                                                                'Roboto-bold',
+                                                            marginRight: 20,
+                                                        }}
+                                                    >
+                                                        Protocol Name:
+                                                    </Txt>
+                                                    <InputField
+                                                        value={protocolName}
+                                                        onInputChange={
+                                                            setProtocolName
+                                                        }
+                                                        placeholder=""
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{
+                                                        flex: 5,
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <Txt
+                                                        style={{
+                                                            fontFamily:
+                                                                'Roboto-bold',
+                                                            marginRight: 20,
+                                                        }}
+                                                    >
+                                                        Description:
+                                                    </Txt>
+                                                    <InputField
+                                                        value={
+                                                            protocolDescription
+                                                        }
+                                                        onInputChange={
+                                                            setProtocolDescription
+                                                        }
+                                                        placeholder=""
+                                                    />
+                                                </View>
                                             </View>
                                             <TouchableOpacity
-                                                onPress={() =>
-                                                    setPreSaveModal(false)
-                                                }
                                                 style={{
-                                                    flex: 1,
                                                     alignItems: 'flex-end',
+                                                    flex: 1,
                                                 }}
                                             >
                                                 <Close_icon
+                                                    onPress={() =>
+                                                        setPreSaveModal(false)
+                                                    }
                                                     width={40}
                                                     height={40}
                                                 />

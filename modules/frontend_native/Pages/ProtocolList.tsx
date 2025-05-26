@@ -244,12 +244,13 @@ function ProtocolItem(props: {
                     }}
                     style={ps.body_container}
                 >
-                    <Txt>
-                        Description: Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Placeat, repellendus sit! Cum numquam
-                        eveniet vel a hic pariatur quod. Cumque quibusdam magnam
-                        odio commodi
-                    </Txt>
+                    {props.protocol.description ? (
+                        <Txt>Description: {props.protocol.description}</Txt>
+                    ) : (
+                        <Txt style={s.no_description}>
+                            no description provided
+                        </Txt>
+                    )}
                     <View style={ps.button_panel}>
                         <TouchableOpacity
                             style={[
@@ -607,5 +608,9 @@ const s = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 10,
         marginLeft: 20,
+    },
+    no_description: {
+        fontStyle: 'italic',
+        color: AppStyles.color.text_faded,
     },
 });
