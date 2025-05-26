@@ -52,7 +52,7 @@ export default function Login({
                             alignSelf: 'center',
                         }}
                     >
-                        Copyright @ Tones 2021-2023
+                        © 2021-2025 Tones. All rights reserved.
                     </Txt>
                 </View>
             </View>
