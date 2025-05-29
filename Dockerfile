@@ -1,5 +1,4 @@
-FROM node:latest
-
+FROM node:current-alpine
 
 COPY . /usr/tones-ui
 
