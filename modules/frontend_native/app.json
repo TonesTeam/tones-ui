@@ -25,9 +25,9 @@
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.drewzxcvbnm0.tonesfrontend",
       "permissions": [
-          "ACCESS_NETWORK_STATE",
-          "INTERNET",
-          "ACCESS_WIFI_STATE"
+        "ACCESS_NETWORK_STATE",
+        "INTERNET",
+        "ACCESS_WIFI_STATE"
       ]
     },
     "web": {
@@ -44,7 +44,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "8b32f306-94c0-4dd1-b010-630dcfc7f868"
+        "projectId": "d11bf65a-55c8-40e2-b39b-5e6a03d62d98"
       }
     }
   }

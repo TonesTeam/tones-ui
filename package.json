@@ -1,11 +1,8 @@
 {
   "name": "tones",
   "workspaces": [
-    "modules/router",
     "modules/backend",
-    "modules/legacy_backend",
-    "modules/frontend",
-    "modules/electron"
+    "modules/frontend_native"
   ],
   "version": "1.0.0",
   "description": "tones ui",
@@ -33,13 +30,12 @@
   "devDependencies": {
     "@types/react-redux": "^7.1.24",
     "cross-env": "^7.0.3",
-    "electron-devtools-installer": "^3.2.0",
     "npm-run-all": "^4.1.5"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
     "@types/lodash": "^4.14.182",
-    "expo": "^51.0.38",
+    "expo": "^53.0.0",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
