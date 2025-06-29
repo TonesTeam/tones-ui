@@ -59,7 +59,7 @@ async function findBE(): Promise<string> {
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
     let foundIP = await scanNetwork(ipList);
-    foundIP = '192.168.1.106';
+    // foundIP = '192.168.1.106';
     return 'http://' + foundIP + ':8080';
 }
 

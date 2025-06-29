@@ -65,7 +65,8 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.2",
     "rnpm": "^1.9.0",
-    "sharedlib": "file:../sharedlib"
+    "sharedlib": "file:../sharedlib",
+    "expo-image": "~2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",

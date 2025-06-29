@@ -20,6 +20,7 @@ export default function App() {
         'Roboto-thin': require('./assets/fonts/Roboto-Light.ttf'),
         'Roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
         'Roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
+        Newsreader: require('./assets/fonts/Newsreader-VariableFont_opsz,wght.ttf'),
     });
 
     const onLayoutRootView = useCallback(async () => {
