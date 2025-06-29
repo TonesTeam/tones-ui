@@ -1,6 +1,5 @@
 import {
     StyleSheet,
-    Text,
     View,
     TextInput,
     Image,
@@ -12,6 +11,7 @@ import InputField from '../components/InputField';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Logo from '../assets/pics/tones_logo.svg';
 import Txt from '../components/Txt';
+import { Button, Text } from '@gluestack-ui/themed';
 
 export default function Login({
     route,
@@ -32,19 +32,11 @@ export default function Login({
 
                     <View style={s.line}></View>
 
-                    <TouchableOpacity
-                        style={s.login_btn}
+                    <Button
                         onPress={() => navigation.navigate('Protocol List')}
                     >
-                        <Txt
-                            style={{
-                                color: '#fff',
-                                fontWeight: '800',
-                            }}
-                        >
-                            Login
-                        </Txt>
-                    </TouchableOpacity>
+                        <Text style={{ color: '#fff' }}>Login</Text>
+                    </Button>
 
                     <Txt
                         style={{

@@ -10,6 +10,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './state/store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
+import { config } from '@gluestack-ui/config';
+import { GluestackUIProvider } from '@gluestack-ui/themed';
 
 export default function App() {
     // Ignore specific warning by message
@@ -39,7 +41,9 @@ export default function App() {
                     <NavigationContainer>
                         <SafeAreaProvider>
                             <SafeAreaView style={{ flex: 1 }}>
-                                <AppStack />
+                                <GluestackUIProvider config={config}>
+                                    <AppStack />
+                                </GluestackUIProvider>
                             </SafeAreaView>
                         </SafeAreaProvider>
                     </NavigationContainer>
