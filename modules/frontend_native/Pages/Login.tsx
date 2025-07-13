@@ -1,10 +1,4 @@
-import {
-    StyleSheet,
-    View,
-    TextInput,
-    TouchableOpacity,
-    Image,
-} from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Logo from '../assets/pics/tones_logo.svg';
@@ -26,9 +20,15 @@ import {
     Link,
     LinkText,
     Heading,
+    Image,
+    EyeIcon,
+    EyeOffIcon,
+    InputSlot,
+    InputIcon,
 } from '@gluestack-ui/themed';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 
 export default function Login({
     route,
@@ -44,6 +44,13 @@ export default function Login({
 
 const FormColumn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleState = () => {
+        setShowPassword((showState) => {
+            return !showState;
+        });
+    };
 
     return (
         <View style={s.form_container}>
@@ -70,9 +77,17 @@ const FormColumn = () => {
                     </FormControlLabel>
                     <Input>
                         <InputField
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="Enter your password"
                         />
+                        <InputSlot
+                            style={{ paddingRight: 5 }}
+                            onPress={handleState}
+                        >
+                            <InputIcon
+                                as={showPassword ? EyeIcon : EyeOffIcon}
+                            />
+                        </InputSlot>
                     </Input>
                 </FormControl>
 
@@ -127,8 +142,9 @@ const PictureColumn = () => {
                 source={require('../assets/pics/login-art.jpg')}
                 alt="Blue clouds"
                 style={s.image}
+                size="full"
             />
-            <Text style={s.credit_text}>
+            <Text style={s.credits_text}>
                 Photo by Matthew McBrayer on Unsplash
             </Text>
         </View>
@@ -184,10 +200,10 @@ const s = StyleSheet.create({
     },
 
     image: {
-        borderRadius: 50,
+        borderRadius: 20,
     },
 
-    credit_text: {
+    credits_text: {
         position: 'absolute',
         color: '#fff',
         right: '5%',
