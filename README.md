@@ -34,7 +34,7 @@ npm install
 1. **Navigate to the Backend Module**\
    Open a terminal and change directory to the backend module:
    ```bash
-   cd modules/backend
+   cd backend
    ```
 
 2. **Generate Prisma Client**\
@@ -44,10 +44,10 @@ npm install
    ```
 
 3. **Start the Backend Server**\
-   Navigate to the root of the `modules` directory and run the following
+   Navigate to the root of the project and run the following
    command to start the backend server in development mode:
    ```bash
-   cd /modules
+   # Make sure you are in the root direcotory of the project
    npm run start-dev:be
    ```
 
@@ -58,12 +58,12 @@ This will start a REST API on port 8080 connected to the database.
 1. **Navigate to the Frontend Module**\
    Open a new terminal window and change directory to the frontend module:
    ```bash
-   cd modules/frontend_native
+   cd frontend_native
    ```
 2. **Adjust Configuration (if needed)**\
    Open the following file to adjust the backend API's IP address and port if necessary:
    ```plaintext
-   modules/frontend_native/common/util.ts
+   frontend_native/common/util.ts
    ```
    On line 61, make sure the IP is correct and the port is set to `8080` if needed.
    It may be the case that the frontend can't find the backend, so then one can
@@ -85,6 +85,7 @@ This will start a REST API on port 8080 connected to the database.
    Start the Expo development server using the following command:
 
    ```bash
+   # This should be run while inside /frontend_native
    npx expo start
    ```
 
