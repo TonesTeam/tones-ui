@@ -47,3 +47,6 @@ npm-debug.log
 .pnp.*
 
 docs/.obsidian/workspace.json
+
+# Expo
+.expo
