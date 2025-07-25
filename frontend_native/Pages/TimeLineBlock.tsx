@@ -391,7 +391,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                         setDeleteModal(false);
                                     }}
                                 >
-                                    <Txt style={s.modal_btn_text}>CANCEL</Txt>
+                                    <Txt style={s.modal_btn_text}>Cancel</Txt>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[
