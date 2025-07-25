@@ -715,21 +715,23 @@ function Library(props: {
                         )}
                     </View>
 
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={editModal}
-                        onRequestClose={() => {
-                            setEditModal(!editModal);
-                        }}
-                    >
-                        <LiquidsModal
-                            liquid={editedLiquid}
-                            categories={categories}
-                            closeModal={() => setEditModal(false)}
-                            saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
-                        />
-                    </Modal>
+                    <View>
+                        <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={editModal}
+                            onRequestClose={() => {
+                                setEditModal(!editModal);
+                            }}
+                        >
+                            <LiquidsModal
+                                liquid={editedLiquid}
+                                categories={categories}
+                                closeModal={() => setEditModal(false)}
+                                saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
+                            />
+                        </Modal>
+                    </View>
                 </>
             )}
         </>

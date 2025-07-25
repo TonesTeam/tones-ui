@@ -358,59 +358,61 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                         </View>
                     )}
             </TouchableOpacity>
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={deleteModal}
-                onRequestClose={() => {
-                    setDeleteModal(!deleteModal);
-                }}
-            >
-                <View style={s.modal_container}>
-                    <View style={s.modal_body}>
-                        <Txt style={s.modal_comment}>
-                            Are you sure you want to delete this step?
-                        </Txt>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                paddingTop: 40,
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <TouchableOpacity
-                                style={[
-                                    s.modal_btn,
-                                    {
-                                        backgroundColor:
-                                            AppStyles.color.primary,
-                                    },
-                                ]}
-                                onPress={() => {
-                                    setDeleteModal(false);
+            <View>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={deleteModal}
+                    onRequestClose={() => {
+                        setDeleteModal(!deleteModal);
+                    }}
+                >
+                    <View style={s.modal_container}>
+                        <View style={s.modal_body}>
+                            <Txt style={s.modal_comment}>
+                                Are you sure you want to delete this step?
+                            </Txt>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    paddingTop: 40,
+                                    justifyContent: 'space-between',
                                 }}
                             >
-                                <Txt style={s.modal_btn_text}>CANCEL</Txt>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    s.modal_btn,
-                                    {
-                                        backgroundColor:
-                                            AppStyles.color.warning,
-                                    },
-                                ]}
-                                onPress={() => {
-                                    props.deleteStep(item);
-                                    setDeleteModal(false);
-                                }}
-                            >
-                                <Txt style={s.modal_btn_text}>Delete</Txt>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        s.modal_btn,
+                                        {
+                                            backgroundColor:
+                                                AppStyles.color.primary,
+                                        },
+                                    ]}
+                                    onPress={() => {
+                                        setDeleteModal(false);
+                                    }}
+                                >
+                                    <Txt style={s.modal_btn_text}>CANCEL</Txt>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        s.modal_btn,
+                                        {
+                                            backgroundColor:
+                                                AppStyles.color.warning,
+                                        },
+                                    ]}
+                                    onPress={() => {
+                                        props.deleteStep(item);
+                                        setDeleteModal(false);
+                                    }}
+                                >
+                                    <Txt style={s.modal_btn_text}>Delete</Txt>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </Modal>
+                </Modal>
+            </View>
         </>
     );
 };

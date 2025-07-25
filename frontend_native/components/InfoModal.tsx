@@ -62,47 +62,53 @@ export default function InfoModal(props: {
     } ${props.text.toLowerCase()}`;
 
     return (
-        <Modal animationType="fade" transparent={true} visible={modalVisible}>
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => hide()}>
-                <LinearGradient
-                    colors={['#001f6d98', 'transparent']}
-                    style={s.modal_container}
-                >
-                    <Animated.View
-                        style={[
-                            s.modal_body,
-                            { transform: [{ translateY: bounceAnim }] },
-                        ]}
+        <View>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+            >
+                <TouchableOpacity style={{ flex: 1 }} onPress={() => hide()}>
+                    <LinearGradient
+                        colors={['#001f6d98', 'transparent']}
+                        style={s.modal_container}
                     >
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                paddingHorizontal: 50,
-                                paddingVertical: 10,
-                            }}
+                        <Animated.View
+                            style={[
+                                s.modal_body,
+                                { transform: [{ translateY: bounceAnim }] },
+                            ]}
                         >
-                            {props.result == true ? (
-                                <Success_icon height={40} width={40} />
-                            ) : (
-                                <Fail_icon height={40} width={40} />
-                            )}
-                            <Txt
+                            <View
                                 style={{
-                                    marginLeft: 10,
-                                    fontFamily: 'Roboto-bold',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingHorizontal: 50,
+                                    paddingVertical: 10,
                                 }}
                             >
-                                {props.result == true
-                                    ? text_success
-                                    : text_error}
-                            </Txt>
-                        </View>
-                        <View></View>
-                    </Animated.View>
-                </LinearGradient>
-            </TouchableOpacity>
-        </Modal>
+                                {props.result == true ? (
+                                    <Success_icon height={40} width={40} />
+                                ) : (
+                                    <Fail_icon height={40} width={40} />
+                                )}
+                                <Txt
+                                    style={{
+                                        marginLeft: 10,
+                                        fontFamily: 'Roboto-bold',
+                                    }}
+                                >
+                                    {props.result == true
+                                        ? text_success
+                                        : text_error}
+                                </Txt>
+                            </View>
+                            <View></View>
+                        </Animated.View>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </Modal>
+        </View>
     );
 }
 

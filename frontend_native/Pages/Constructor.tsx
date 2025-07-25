@@ -509,425 +509,237 @@ export default function Constructor({
                             </View>
                         </View>
 
-                        <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={preSaveModal}
-                            onRequestClose={() => {
-                                setPreSaveModal(!preSaveModal);
-                            }}
-                        >
-                            <View style={s.modal_overlay}>
-                                <ScrollView
-                                    contentContainerStyle={{
-                                        height:
-                                            Dimensions.get('screen').height *
-                                            0.95,
-                                    }}
-                                    scrollEnabled={false}
-                                >
-                                    <View style={s.modal_body}>
-                                        <View style={s.modal_header}>
-                                            <View
-                                                style={{
-                                                    display: 'flex',
-                                                    direction: 'column',
-                                                    flex: '5',
-                                                }}
-                                            >
+                        <View>
+                            <Modal
+                                animationType="fade"
+                                transparent={true}
+                                visible={preSaveModal}
+                                onRequestClose={() => {
+                                    setPreSaveModal(!preSaveModal);
+                                }}
+                            >
+                                <View style={s.modal_overlay}>
+                                    <ScrollView
+                                        contentContainerStyle={{
+                                            height:
+                                                Dimensions.get('screen')
+                                                    .height * 0.95,
+                                        }}
+                                        scrollEnabled={false}
+                                    >
+                                        <View style={s.modal_body}>
+                                            <View style={s.modal_header}>
                                                 <View
                                                     style={{
-                                                        flex: 5,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
+                                                        display: 'flex',
+                                                        direction: 'column',
+                                                        flex: '5',
                                                     }}
                                                 >
-                                                    <Txt
+                                                    <View
                                                         style={{
-                                                            fontFamily:
-                                                                'Roboto-bold',
-                                                            marginRight: 20,
+                                                            flex: 5,
+                                                            flexDirection:
+                                                                'row',
+                                                            alignItems:
+                                                                'center',
                                                         }}
                                                     >
-                                                        Protocol Name:
-                                                    </Txt>
-                                                    <InputField
-                                                        value={protocolName}
-                                                        onInputChange={
-                                                            setProtocolName
-                                                        }
-                                                        placeholder=""
-                                                    />
+                                                        <Txt
+                                                            style={{
+                                                                fontFamily:
+                                                                    'Roboto-bold',
+                                                                marginRight: 20,
+                                                            }}
+                                                        >
+                                                            Protocol Name:
+                                                        </Txt>
+                                                        <InputField
+                                                            value={protocolName}
+                                                            onInputChange={
+                                                                setProtocolName
+                                                            }
+                                                            placeholder=""
+                                                        />
+                                                    </View>
+                                                    <View
+                                                        style={{
+                                                            flex: 5,
+                                                            flexDirection:
+                                                                'row',
+                                                            alignItems:
+                                                                'center',
+                                                        }}
+                                                    >
+                                                        <Txt
+                                                            style={{
+                                                                fontFamily:
+                                                                    'Roboto-bold',
+                                                                marginRight: 20,
+                                                            }}
+                                                        >
+                                                            Description:
+                                                        </Txt>
+                                                        <InputField
+                                                            value={
+                                                                protocolDescription
+                                                            }
+                                                            onInputChange={
+                                                                setProtocolDescription
+                                                            }
+                                                            placeholder=""
+                                                        />
+                                                    </View>
                                                 </View>
-                                                <View
+                                                <TouchableOpacity
                                                     style={{
-                                                        flex: 5,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
+                                                        alignItems: 'flex-end',
+                                                        flex: 1,
                                                     }}
                                                 >
-                                                    <Txt
-                                                        style={{
-                                                            fontFamily:
-                                                                'Roboto-bold',
-                                                            marginRight: 20,
-                                                        }}
-                                                    >
-                                                        Description:
-                                                    </Txt>
-                                                    <InputField
-                                                        value={
-                                                            protocolDescription
+                                                    <Close_icon
+                                                        onPress={() =>
+                                                            setPreSaveModal(
+                                                                false,
+                                                            )
                                                         }
-                                                        onInputChange={
-                                                            setProtocolDescription
-                                                        }
-                                                        placeholder=""
+                                                        width={40}
+                                                        height={40}
                                                     />
-                                                </View>
+                                                </TouchableOpacity>
                                             </View>
-                                            <TouchableOpacity
-                                                style={{
-                                                    alignItems: 'flex-end',
-                                                    flex: 1,
-                                                }}
-                                            >
-                                                <Close_icon
-                                                    onPress={() =>
-                                                        setPreSaveModal(false)
+                                            <View style={s.modal_list}>
+                                                <View
+                                                    style={[
+                                                        s.list_row,
+                                                        {
+                                                            backgroundColor:
+                                                                AppStyles.color
+                                                                    .accent_dark,
+                                                        },
+                                                    ]}
+                                                >
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 1 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Step #
+                                                        </Txt>
+                                                    </View>
+
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 2 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Type
+                                                        </Txt>
+                                                    </View>
+
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 2 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Reagent
+                                                        </Txt>
+                                                    </View>
+
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 1 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Temperature (°C)
+                                                        </Txt>
+                                                    </View>
+
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 1 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Inc. time (
+                                                            {settings.timeUnits}
+                                                            )
+                                                        </Txt>
+                                                    </View>
+
+                                                    <View
+                                                        style={[
+                                                            s.list_cell,
+                                                            { flex: 1 },
+                                                        ]}
+                                                    >
+                                                        <Txt
+                                                            style={
+                                                                s.list_header_txt
+                                                            }
+                                                        >
+                                                            Iterations
+                                                        </Txt>
+                                                    </View>
+                                                </View>
+                                                <ScrollView
+                                                    style={{ maxHeight: 500 }}
+                                                    showsVerticalScrollIndicator={
+                                                        true
                                                     }
-                                                    width={40}
-                                                    height={40}
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View style={s.modal_list}>
-                                            <View
-                                                style={[
-                                                    s.list_row,
-                                                    {
-                                                        backgroundColor:
-                                                            AppStyles.color
-                                                                .accent_dark,
-                                                    },
-                                                ]}
-                                            >
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 1 },
-                                                    ]}
                                                 >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Step #
-                                                    </Txt>
-                                                </View>
-
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 2 },
-                                                    ]}
-                                                >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Type
-                                                    </Txt>
-                                                </View>
-
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 2 },
-                                                    ]}
-                                                >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Reagent
-                                                    </Txt>
-                                                </View>
-
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 1 },
-                                                    ]}
-                                                >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Temperature (°C)
-                                                    </Txt>
-                                                </View>
-
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 1 },
-                                                    ]}
-                                                >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Inc. time (
-                                                        {settings.timeUnits})
-                                                    </Txt>
-                                                </View>
-
-                                                <View
-                                                    style={[
-                                                        s.list_cell,
-                                                        { flex: 1 },
-                                                    ]}
-                                                >
-                                                    <Txt
-                                                        style={
-                                                            s.list_header_txt
-                                                        }
-                                                    >
-                                                        Iterations
-                                                    </Txt>
-                                                </View>
-                                            </View>
-                                            <ScrollView
-                                                style={{ maxHeight: 500 }}
-                                                showsVerticalScrollIndicator={
-                                                    true
-                                                }
-                                            >
-                                                {blocks.map((block, index) => {
-                                                    return (
-                                                        <View key={index}>
-                                                            <View
-                                                                key={index}
-                                                                style={[
-                                                                    s.list_row,
-                                                                    {
-                                                                        backgroundColor:
-                                                                            index %
-                                                                                2 !=
-                                                                            0
-                                                                                ? AppStyles
-                                                                                      .color
-                                                                                      .background
-                                                                                : AppStyles
-                                                                                      .color
-                                                                                      .elem_back,
-                                                                    },
-                                                                ]}
-                                                            >
+                                                    {blocks.map(
+                                                        (block, index) => {
+                                                            return (
                                                                 <View
-                                                                    style={[
-                                                                        s.list_cell_id,
-                                                                        {
-                                                                            flex: 1,
-                                                                        },
-                                                                    ]}
+                                                                    key={index}
                                                                 >
-                                                                    <View
-                                                                        style={{
-                                                                            flex: 1,
-                                                                            backgroundColor:
-                                                                                block.type ==
-                                                                                StepType.LIQUID_APPL
-                                                                                    ? AppStyles
-                                                                                          .color
-                                                                                          .block
-                                                                                          .main_reagent
-                                                                                    : block.type ==
-                                                                                        StepType.TEMP_CHANGE
-                                                                                      ? AppStyles
-                                                                                            .color
-                                                                                            .block
-                                                                                            .main_temperature
-                                                                                      : AppStyles
-                                                                                            .color
-                                                                                            .block
-                                                                                            .main_washing,
-                                                                        }}
-                                                                    ></View>
-                                                                    <View
-                                                                        style={{
-                                                                            flex: 11,
-                                                                            alignItems:
-                                                                                'center',
-                                                                            justifyContent:
-                                                                                'center',
-                                                                        }}
-                                                                    >
-                                                                        <Txt
-                                                                            style={[
-                                                                                s.list_cell_txt,
-                                                                            ]}
-                                                                        >
-                                                                            {index +
-                                                                                1}
-                                                                        </Txt>
-                                                                    </View>
-                                                                </View>
-                                                                <View
-                                                                    style={[
-                                                                        s.list_cell,
-                                                                        {
-                                                                            flex: 2,
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Txt
-                                                                        style={
-                                                                            s.list_cell_txt
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            block.type
-                                                                        }
-                                                                    </Txt>
-                                                                </View>
-                                                                <View
-                                                                    style={[
-                                                                        s.list_cell,
-                                                                        {
-                                                                            flex: 2,
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Txt
-                                                                        style={
-                                                                            s.list_cell_txt
-                                                                        }
-                                                                    >
-                                                                        {block.type !=
-                                                                        StepType.TEMP_CHANGE
-                                                                            ? (
-                                                                                  block.params as
-                                                                                      | ReagentStep
-                                                                                      | WashStep
-                                                                              )
-                                                                                  .liquid
-                                                                                  .name
-                                                                            : '-'}
-                                                                    </Txt>
-                                                                </View>
-                                                                <View
-                                                                    style={[
-                                                                        s.list_cell,
-                                                                        {
-                                                                            flex: 1,
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Txt
-                                                                        style={
-                                                                            s.list_cell_txt
-                                                                        }
-                                                                    >
-                                                                        {block.type !=
-                                                                        StepType.TEMP_CHANGE
-                                                                            ? (
-                                                                                  block.params as Partial<WashStep>
-                                                                              )
-                                                                                  .temperature
-                                                                            : (
-                                                                                  block.params as TemperatureStep
-                                                                              )
-                                                                                  .target}
-                                                                        °C
-                                                                    </Txt>
-                                                                </View>
-                                                                <View
-                                                                    style={[
-                                                                        s.list_cell,
-                                                                        {
-                                                                            flex: 1,
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Txt
-                                                                        style={
-                                                                            s.list_cell_txt
-                                                                        }
-                                                                    >
-                                                                        {block.type !=
-                                                                        StepType.TEMP_CHANGE
-                                                                            ? settings.timeUnits ==
-                                                                              'sec'
-                                                                                ? (
-                                                                                      block.params as
-                                                                                          | ReagentStep
-                                                                                          | WashStep
-                                                                                  )
-                                                                                      .incubation
-                                                                                : Math.round(
-                                                                                      ((
-                                                                                          block.params as
-                                                                                              | WashStep
-                                                                                              | WashStep
-                                                                                      )
-                                                                                          .incubation /
-                                                                                          60) *
-                                                                                          100,
-                                                                                  ) /
-                                                                                  100
-                                                                            : '-'}
-                                                                    </Txt>
-                                                                </View>
-
-                                                                <View
-                                                                    style={[
-                                                                        s.list_cell,
-                                                                        {
-                                                                            flex: 1,
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Txt
-                                                                        style={
-                                                                            s.list_cell_txt
-                                                                        }
-                                                                    >
-                                                                        {block.type ==
-                                                                        StepType.WASHING
-                                                                            ? (
-                                                                                  block.params as WashStep
-                                                                              )
-                                                                                  .iters
-                                                                            : '-'}
-                                                                    </Txt>
-                                                                </View>
-                                                            </View>
-                                                            {block.type ==
-                                                                StepType.LIQUID_APPL &&
-                                                                (
-                                                                    block.params as ReagentStep
-                                                                ).autoWash ==
-                                                                    true && (
                                                                     <View
                                                                         key={
-                                                                            index +
-                                                                            200
+                                                                            index
                                                                         }
                                                                         style={[
                                                                             s.list_row,
                                                                             {
                                                                                 backgroundColor:
-                                                                                    AppStyles
-                                                                                        .color
-                                                                                        .block
-                                                                                        .faded_washing,
+                                                                                    index %
+                                                                                        2 !=
+                                                                                    0
+                                                                                        ? AppStyles
+                                                                                              .color
+                                                                                              .background
+                                                                                        : AppStyles
+                                                                                              .color
+                                                                                              .elem_back,
                                                                             },
                                                                         ]}
                                                                     >
@@ -943,10 +755,22 @@ export default function Constructor({
                                                                                 style={{
                                                                                     flex: 1,
                                                                                     backgroundColor:
-                                                                                        AppStyles
-                                                                                            .color
-                                                                                            .block
-                                                                                            .main_washing,
+                                                                                        block.type ==
+                                                                                        StepType.LIQUID_APPL
+                                                                                            ? AppStyles
+                                                                                                  .color
+                                                                                                  .block
+                                                                                                  .main_reagent
+                                                                                            : block.type ==
+                                                                                                StepType.TEMP_CHANGE
+                                                                                              ? AppStyles
+                                                                                                    .color
+                                                                                                    .block
+                                                                                                    .main_temperature
+                                                                                              : AppStyles
+                                                                                                    .color
+                                                                                                    .block
+                                                                                                    .main_washing,
                                                                                 }}
                                                                             ></View>
                                                                             <View
@@ -963,7 +787,8 @@ export default function Constructor({
                                                                                         s.list_cell_txt,
                                                                                     ]}
                                                                                 >
-                                                                                    *
+                                                                                    {index +
+                                                                                        1}
                                                                                 </Txt>
                                                                             </View>
                                                                         </View>
@@ -980,7 +805,9 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                Auto-washing
+                                                                                {
+                                                                                    block.type
+                                                                                }
                                                                             </Txt>
                                                                         </View>
                                                                         <View
@@ -996,12 +823,16 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {' '}
-                                                                                {
-                                                                                    defaultWashStep
-                                                                                        .liquid
-                                                                                        .name
-                                                                                }
+                                                                                {block.type !=
+                                                                                StepType.TEMP_CHANGE
+                                                                                    ? (
+                                                                                          block.params as
+                                                                                              | ReagentStep
+                                                                                              | WashStep
+                                                                                      )
+                                                                                          .liquid
+                                                                                          .name
+                                                                                    : '-'}
                                                                             </Txt>
                                                                         </View>
                                                                         <View
@@ -1017,12 +848,17 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {
-                                                                                    (
-                                                                                        block.params as ReagentStep
-                                                                                    )
-                                                                                        .temperature
-                                                                                }
+                                                                                {block.type !=
+                                                                                StepType.TEMP_CHANGE
+                                                                                    ? (
+                                                                                          block.params as Partial<WashStep>
+                                                                                      )
+                                                                                          .temperature
+                                                                                    : (
+                                                                                          block.params as TemperatureStep
+                                                                                      )
+                                                                                          .target}
+                                                                                °C
                                                                             </Txt>
                                                                         </View>
                                                                         <View
@@ -1038,11 +874,31 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {
-                                                                                    defaultWashStep.incubation
-                                                                                }
+                                                                                {block.type !=
+                                                                                StepType.TEMP_CHANGE
+                                                                                    ? settings.timeUnits ==
+                                                                                      'sec'
+                                                                                        ? (
+                                                                                              block.params as
+                                                                                                  | ReagentStep
+                                                                                                  | WashStep
+                                                                                          )
+                                                                                              .incubation
+                                                                                        : Math.round(
+                                                                                              ((
+                                                                                                  block.params as
+                                                                                                      | WashStep
+                                                                                                      | WashStep
+                                                                                              )
+                                                                                                  .incubation /
+                                                                                                  60) *
+                                                                                                  100,
+                                                                                          ) /
+                                                                                          100
+                                                                                    : '-'}
                                                                             </Txt>
                                                                         </View>
+
                                                                         <View
                                                                             style={[
                                                                                 s.list_cell,
@@ -1056,19 +912,474 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {
-                                                                                    defaultWashStep.iters
-                                                                                }
+                                                                                {block.type ==
+                                                                                StepType.WASHING
+                                                                                    ? (
+                                                                                          block.params as WashStep
+                                                                                      )
+                                                                                          .iters
+                                                                                    : '-'}
                                                                             </Txt>
                                                                         </View>
                                                                     </View>
-                                                                )}
-                                                        </View>
-                                                    );
-                                                })}
-                                            </ScrollView>
+                                                                    {block.type ==
+                                                                        StepType.LIQUID_APPL &&
+                                                                        (
+                                                                            block.params as ReagentStep
+                                                                        )
+                                                                            .autoWash ==
+                                                                            true && (
+                                                                            <View
+                                                                                key={
+                                                                                    index +
+                                                                                    200
+                                                                                }
+                                                                                style={[
+                                                                                    s.list_row,
+                                                                                    {
+                                                                                        backgroundColor:
+                                                                                            AppStyles
+                                                                                                .color
+                                                                                                .block
+                                                                                                .faded_washing,
+                                                                                    },
+                                                                                ]}
+                                                                            >
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell_id,
+                                                                                        {
+                                                                                            flex: 1,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <View
+                                                                                        style={{
+                                                                                            flex: 1,
+                                                                                            backgroundColor:
+                                                                                                AppStyles
+                                                                                                    .color
+                                                                                                    .block
+                                                                                                    .main_washing,
+                                                                                        }}
+                                                                                    ></View>
+                                                                                    <View
+                                                                                        style={{
+                                                                                            flex: 11,
+                                                                                            alignItems:
+                                                                                                'center',
+                                                                                            justifyContent:
+                                                                                                'center',
+                                                                                        }}
+                                                                                    >
+                                                                                        <Txt
+                                                                                            style={[
+                                                                                                s.list_cell_txt,
+                                                                                            ]}
+                                                                                        >
+                                                                                            *
+                                                                                        </Txt>
+                                                                                    </View>
+                                                                                </View>
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell,
+                                                                                        {
+                                                                                            flex: 2,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Txt
+                                                                                        style={
+                                                                                            s.list_cell_txt
+                                                                                        }
+                                                                                    >
+                                                                                        Auto-washing
+                                                                                    </Txt>
+                                                                                </View>
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell,
+                                                                                        {
+                                                                                            flex: 2,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Txt
+                                                                                        style={
+                                                                                            s.list_cell_txt
+                                                                                        }
+                                                                                    >
+                                                                                        {' '}
+                                                                                        {
+                                                                                            defaultWashStep
+                                                                                                .liquid
+                                                                                                .name
+                                                                                        }
+                                                                                    </Txt>
+                                                                                </View>
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell,
+                                                                                        {
+                                                                                            flex: 1,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Txt
+                                                                                        style={
+                                                                                            s.list_cell_txt
+                                                                                        }
+                                                                                    >
+                                                                                        {
+                                                                                            (
+                                                                                                block.params as ReagentStep
+                                                                                            )
+                                                                                                .temperature
+                                                                                        }
+                                                                                    </Txt>
+                                                                                </View>
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell,
+                                                                                        {
+                                                                                            flex: 1,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Txt
+                                                                                        style={
+                                                                                            s.list_cell_txt
+                                                                                        }
+                                                                                    >
+                                                                                        {
+                                                                                            defaultWashStep.incubation
+                                                                                        }
+                                                                                    </Txt>
+                                                                                </View>
+                                                                                <View
+                                                                                    style={[
+                                                                                        s.list_cell,
+                                                                                        {
+                                                                                            flex: 1,
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Txt
+                                                                                        style={
+                                                                                            s.list_cell_txt
+                                                                                        }
+                                                                                    >
+                                                                                        {
+                                                                                            defaultWashStep.iters
+                                                                                        }
+                                                                                    </Txt>
+                                                                                </View>
+                                                                            </View>
+                                                                        )}
+                                                                </View>
+                                                            );
+                                                        },
+                                                    )}
+                                                </ScrollView>
+                                            </View>
+                                            <View style={s.modal_footer}>
+                                                <TouchableOpacity
+                                                    style={[
+                                                        s.modal_btn,
+                                                        {
+                                                            backgroundColor:
+                                                                AppStyles.color
+                                                                    .text_faded,
+                                                        },
+                                                    ]}
+                                                    onPress={() => {
+                                                        setPreSaveModal(false);
+                                                    }}
+                                                >
+                                                    <Txt
+                                                        style={s.modal_btn_text}
+                                                    >
+                                                        Cancel
+                                                    </Txt>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    style={[
+                                                        s.modal_btn,
+                                                        {
+                                                            backgroundColor:
+                                                                AppStyles.color
+                                                                    .primary,
+                                                        },
+                                                    ]}
+                                                    onPress={() => {
+                                                        if (
+                                                            blocks.length != 0
+                                                        ) {
+                                                            setPreSaveModal(
+                                                                false,
+                                                            );
+                                                            save();
+                                                        }
+                                                    }}
+                                                >
+                                                    <Txt
+                                                        style={s.modal_btn_text}
+                                                    >
+                                                        {protocol_ID
+                                                            ? `Update`
+                                                            : `Save`}
+                                                    </Txt>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
-                                        <View style={s.modal_footer}>
+                                    </ScrollView>
+                                </View>
+                            </Modal>
+                        </View>
+                        <View>
+                            <Modal
+                                animationType="fade"
+                                transparent={true}
+                                visible={settingsModal}
+                                onRequestClose={() => {
+                                    setPreSaveModal(!settingsModal);
+                                }}
+                            >
+                                <View style={stng.modal_container}>
+                                    <View style={stng.modal_body}>
+                                        <ScrollView
+                                            scrollEnabled={true}
+                                            persistentScrollbar={true}
+                                        >
+                                            <View style={stng.section}>
+                                                <View style={stng.topic_header}>
+                                                    <Point_icon
+                                                        height={15}
+                                                        width={15}
+                                                        stroke={
+                                                            AppStyles.color
+                                                                .primary
+                                                        }
+                                                    />
+                                                    <Txt style={stng.topic}>
+                                                        {' '}
+                                                        Edit automatic washing
+                                                        step:
+                                                    </Txt>
+                                                </View>
+                                                <View
+                                                    style={{ marginRight: 10 }}
+                                                >
+                                                    <CustomSelect
+                                                        list={washLiquids}
+                                                        label="Reagent: "
+                                                        selected={
+                                                            tempSettings
+                                                                .autoWashConfig
+                                                                .liquid
+                                                        }
+                                                        canAdd={false}
+                                                        onChangeSelect={(
+                                                            liq,
+                                                        ) => {
+                                                            setTempSettings({
+                                                                ...tempSettings,
+                                                                autoWashConfig:
+                                                                    {
+                                                                        liquid: liq as LiquidDTO,
+                                                                        iters: tempSettings
+                                                                            .autoWashConfig
+                                                                            .iters,
+                                                                        incubation:
+                                                                            tempSettings
+                                                                                .autoWashConfig
+                                                                                .incubation,
+                                                                        temperature:
+                                                                            null,
+                                                                    } as WashStep,
+                                                            } as ProtocolSettings);
+                                                        }}
+                                                    />
+
+                                                    <View
+                                                        style={{
+                                                            flexDirection:
+                                                                'row',
+                                                            marginTop: 25,
+                                                        }}
+                                                    >
+                                                        <InputField
+                                                            placeholder="|"
+                                                            containerStyle={{
+                                                                marginRight: 100,
+                                                            }}
+                                                            label="Iterations:"
+                                                            type={
+                                                                'numeric' as InputModeOptions
+                                                            }
+                                                            value={
+                                                                tempSettings
+                                                                    .autoWashConfig
+                                                                    .iters
+                                                            }
+                                                            onInputChange={(
+                                                                iters,
+                                                            ) => {
+                                                                setTempSettings(
+                                                                    {
+                                                                        ...tempSettings,
+                                                                        autoWashConfig:
+                                                                            {
+                                                                                liquid: tempSettings
+                                                                                    .autoWashConfig
+                                                                                    .liquid,
+                                                                                iters: Number(
+                                                                                    iters,
+                                                                                ),
+                                                                                incubation:
+                                                                                    tempSettings
+                                                                                        .autoWashConfig
+                                                                                        .incubation,
+                                                                                temperature:
+                                                                                    null,
+                                                                            } as WashStep,
+                                                                    } as ProtocolSettings,
+                                                                );
+                                                            }}
+                                                        />
+                                                        <InputField
+                                                            placeholder="|"
+                                                            label="Incubarion time:"
+                                                            type={
+                                                                'numeric' as InputModeOptions
+                                                            }
+                                                            value={
+                                                                tempSettings
+                                                                    .autoWashConfig
+                                                                    .incubation
+                                                            }
+                                                            onInputChange={(
+                                                                incub,
+                                                            ) => {
+                                                                setTempSettings(
+                                                                    {
+                                                                        ...tempSettings,
+                                                                        autoWashConfig:
+                                                                            {
+                                                                                liquid: tempSettings
+                                                                                    .autoWashConfig
+                                                                                    .liquid,
+                                                                                iters: tempSettings
+                                                                                    .autoWashConfig
+                                                                                    .iters,
+                                                                                incubation:
+                                                                                    Number(
+                                                                                        incub,
+                                                                                    ),
+                                                                                temperature:
+                                                                                    null,
+                                                                            } as WashStep,
+                                                                    } as ProtocolSettings,
+                                                                );
+                                                            }}
+                                                        />
+                                                    </View>
+                                                </View>
+                                            </View>
+                                            <View style={stng.section}>
+                                                <View style={stng.topic_header}>
+                                                    <Point_icon
+                                                        height={15}
+                                                        width={15}
+                                                        stroke={
+                                                            AppStyles.color
+                                                                .primary
+                                                        }
+                                                    />
+                                                    <Txt style={stng.topic}>
+                                                        {' '}
+                                                        Default time units:
+                                                    </Txt>
+                                                </View>
+                                                <View
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                    }}
+                                                >
+                                                    <RadioButton
+                                                        isChecked={
+                                                            tempSettings.timeUnits ==
+                                                            'sec'
+                                                        }
+                                                        label="Seconds"
+                                                        onPress={() => {
+                                                            setTempSettings({
+                                                                ...tempSettings,
+                                                                timeUnits:
+                                                                    'sec',
+                                                            });
+                                                        }}
+                                                    />
+                                                    <RadioButton
+                                                        isChecked={
+                                                            tempSettings.timeUnits ==
+                                                            'min'
+                                                        }
+                                                        label="Minutes"
+                                                        onPress={() => {
+                                                            setTempSettings({
+                                                                ...tempSettings,
+                                                                timeUnits:
+                                                                    'min',
+                                                            });
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
+                                            <View style={stng.section}>
+                                                <View style={stng.topic_header}>
+                                                    <Point_icon
+                                                        height={15}
+                                                        width={15}
+                                                        stroke={
+                                                            AppStyles.color
+                                                                .primary
+                                                        }
+                                                    />
+                                                    <Txt style={stng.topic}>
+                                                        {' '}
+                                                        Add protocol
+                                                        description:
+                                                    </Txt>
+                                                </View>
+                                                <View
+                                                    style={{ marginRight: 10 }}
+                                                >
+                                                    <InputField
+                                                        multiline={true}
+                                                        placeholder="Description..."
+                                                        value={
+                                                            tempSettings.description
+                                                        }
+                                                        onInputChange={(e) => {
+                                                            setTempSettings({
+                                                                ...tempSettings,
+                                                                description: e,
+                                                            });
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
+                                        </ScrollView>
+
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                paddingTop: 40,
+                                                justifyContent: 'space-between',
+                                            }}
+                                        >
                                             <TouchableOpacity
                                                 style={[
                                                     s.modal_btn,
@@ -1079,7 +1390,8 @@ export default function Constructor({
                                                     },
                                                 ]}
                                                 onPress={() => {
-                                                    setPreSaveModal(false);
+                                                    setSettingsModal(false);
+                                                    setTempSettings(settings); //Drop all changes
                                                 }}
                                             >
                                                 <Txt style={s.modal_btn_text}>
@@ -1096,285 +1408,19 @@ export default function Constructor({
                                                     },
                                                 ]}
                                                 onPress={() => {
-                                                    if (blocks.length != 0) {
-                                                        setPreSaveModal(false);
-                                                        save();
-                                                    }
+                                                    setSettingsModal(false);
+                                                    setSettings(tempSettings); //Update settings
                                                 }}
                                             >
                                                 <Txt style={s.modal_btn_text}>
-                                                    {protocol_ID
-                                                        ? `Update`
-                                                        : `Save`}
+                                                    Confirm
                                                 </Txt>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                </ScrollView>
-                            </View>
-                        </Modal>
-
-                        <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={settingsModal}
-                            onRequestClose={() => {
-                                setPreSaveModal(!settingsModal);
-                            }}
-                        >
-                            <View style={stng.modal_container}>
-                                <View style={stng.modal_body}>
-                                    <ScrollView
-                                        scrollEnabled={true}
-                                        persistentScrollbar={true}
-                                    >
-                                        <View style={stng.section}>
-                                            <View style={stng.topic_header}>
-                                                <Point_icon
-                                                    height={15}
-                                                    width={15}
-                                                    stroke={
-                                                        AppStyles.color.primary
-                                                    }
-                                                />
-                                                <Txt style={stng.topic}>
-                                                    {' '}
-                                                    Edit automatic washing step:
-                                                </Txt>
-                                            </View>
-                                            <View style={{ marginRight: 10 }}>
-                                                <CustomSelect
-                                                    list={washLiquids}
-                                                    label="Reagent: "
-                                                    selected={
-                                                        tempSettings
-                                                            .autoWashConfig
-                                                            .liquid
-                                                    }
-                                                    canAdd={false}
-                                                    onChangeSelect={(liq) => {
-                                                        setTempSettings({
-                                                            ...tempSettings,
-                                                            autoWashConfig: {
-                                                                liquid: liq as LiquidDTO,
-                                                                iters: tempSettings
-                                                                    .autoWashConfig
-                                                                    .iters,
-                                                                incubation:
-                                                                    tempSettings
-                                                                        .autoWashConfig
-                                                                        .incubation,
-                                                                temperature:
-                                                                    null,
-                                                            } as WashStep,
-                                                        } as ProtocolSettings);
-                                                    }}
-                                                />
-
-                                                <View
-                                                    style={{
-                                                        flexDirection: 'row',
-                                                        marginTop: 25,
-                                                    }}
-                                                >
-                                                    <InputField
-                                                        placeholder="|"
-                                                        containerStyle={{
-                                                            marginRight: 100,
-                                                        }}
-                                                        label="Iterations:"
-                                                        type={
-                                                            'numeric' as InputModeOptions
-                                                        }
-                                                        value={
-                                                            tempSettings
-                                                                .autoWashConfig
-                                                                .iters
-                                                        }
-                                                        onInputChange={(
-                                                            iters,
-                                                        ) => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                autoWashConfig:
-                                                                    {
-                                                                        liquid: tempSettings
-                                                                            .autoWashConfig
-                                                                            .liquid,
-                                                                        iters: Number(
-                                                                            iters,
-                                                                        ),
-                                                                        incubation:
-                                                                            tempSettings
-                                                                                .autoWashConfig
-                                                                                .incubation,
-                                                                        temperature:
-                                                                            null,
-                                                                    } as WashStep,
-                                                            } as ProtocolSettings);
-                                                        }}
-                                                    />
-                                                    <InputField
-                                                        placeholder="|"
-                                                        label="Incubarion time:"
-                                                        type={
-                                                            'numeric' as InputModeOptions
-                                                        }
-                                                        value={
-                                                            tempSettings
-                                                                .autoWashConfig
-                                                                .incubation
-                                                        }
-                                                        onInputChange={(
-                                                            incub,
-                                                        ) => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                autoWashConfig:
-                                                                    {
-                                                                        liquid: tempSettings
-                                                                            .autoWashConfig
-                                                                            .liquid,
-                                                                        iters: tempSettings
-                                                                            .autoWashConfig
-                                                                            .iters,
-                                                                        incubation:
-                                                                            Number(
-                                                                                incub,
-                                                                            ),
-                                                                        temperature:
-                                                                            null,
-                                                                    } as WashStep,
-                                                            } as ProtocolSettings);
-                                                        }}
-                                                    />
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <View style={stng.section}>
-                                            <View style={stng.topic_header}>
-                                                <Point_icon
-                                                    height={15}
-                                                    width={15}
-                                                    stroke={
-                                                        AppStyles.color.primary
-                                                    }
-                                                />
-                                                <Txt style={stng.topic}>
-                                                    {' '}
-                                                    Default time units:
-                                                </Txt>
-                                            </View>
-                                            <View
-                                                style={{ flexDirection: 'row' }}
-                                            >
-                                                <RadioButton
-                                                    isChecked={
-                                                        tempSettings.timeUnits ==
-                                                        'sec'
-                                                    }
-                                                    label="Seconds"
-                                                    onPress={() => {
-                                                        setTempSettings({
-                                                            ...tempSettings,
-                                                            timeUnits: 'sec',
-                                                        });
-                                                    }}
-                                                />
-                                                <RadioButton
-                                                    isChecked={
-                                                        tempSettings.timeUnits ==
-                                                        'min'
-                                                    }
-                                                    label="Minutes"
-                                                    onPress={() => {
-                                                        setTempSettings({
-                                                            ...tempSettings,
-                                                            timeUnits: 'min',
-                                                        });
-                                                    }}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={stng.section}>
-                                            <View style={stng.topic_header}>
-                                                <Point_icon
-                                                    height={15}
-                                                    width={15}
-                                                    stroke={
-                                                        AppStyles.color.primary
-                                                    }
-                                                />
-                                                <Txt style={stng.topic}>
-                                                    {' '}
-                                                    Add protocol description:
-                                                </Txt>
-                                            </View>
-                                            <View style={{ marginRight: 10 }}>
-                                                <InputField
-                                                    multiline={true}
-                                                    placeholder="Description..."
-                                                    value={
-                                                        tempSettings.description
-                                                    }
-                                                    onInputChange={(e) => {
-                                                        setTempSettings({
-                                                            ...tempSettings,
-                                                            description: e,
-                                                        });
-                                                    }}
-                                                />
-                                            </View>
-                                        </View>
-                                    </ScrollView>
-
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            paddingTop: 40,
-                                            justifyContent: 'space-between',
-                                        }}
-                                    >
-                                        <TouchableOpacity
-                                            style={[
-                                                s.modal_btn,
-                                                {
-                                                    backgroundColor:
-                                                        AppStyles.color
-                                                            .text_faded,
-                                                },
-                                            ]}
-                                            onPress={() => {
-                                                setSettingsModal(false);
-                                                setTempSettings(settings); //Drop all changes
-                                            }}
-                                        >
-                                            <Txt style={s.modal_btn_text}>
-                                                Cancel
-                                            </Txt>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[
-                                                s.modal_btn,
-                                                {
-                                                    backgroundColor:
-                                                        AppStyles.color.primary,
-                                                },
-                                            ]}
-                                            onPress={() => {
-                                                setSettingsModal(false);
-                                                setSettings(tempSettings); //Update settings
-                                            }}
-                                        >
-                                            <Txt style={s.modal_btn_text}>
-                                                Confirm
-                                            </Txt>
-                                        </TouchableOpacity>
-                                    </View>
                                 </View>
-                            </View>
-                        </Modal>
-
+                            </Modal>
+                        </View>
                         {successSaving != undefined && (
                             <InfoModal
                                 type={
