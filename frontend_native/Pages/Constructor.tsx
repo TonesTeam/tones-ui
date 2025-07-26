@@ -184,6 +184,13 @@ export default function Constructor({
     const flatListRef: MutableRefObject<any> = useRef(null);
 
     function initialization() {
+        // By default set the reagent block as active
+        revealWorkBlock({
+            type: StepType.LIQUID_APPL,
+            id: -1,
+            params: {} as ReagentStep,
+        } as StepDTO);
+
         if (reference_ID) {
             getRequest<ProtocolWithStepsDTO>(
                 `/protocol/${reference_ID.toString()}`,
