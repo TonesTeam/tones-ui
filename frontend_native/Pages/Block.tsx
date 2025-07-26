@@ -115,7 +115,7 @@ function WashInputs(props: BlockInputsProps) {
                     </View>
                     <View style={[bs.row]}>
                         <InputField
-                            placeholder="|"
+                            placeholder=""
                             containerStyle={{ marginRight: 100 }}
                             label="Iterations:"
                             decimals={false}
@@ -131,7 +131,7 @@ function WashInputs(props: BlockInputsProps) {
                             }
                         />
                         <InputField
-                            placeholder="|"
+                            placeholder=""
                             label={`Incubation time (${props.timeUnits || 'seconds'}):`}
                             decimals={false}
                             limit_min={
@@ -296,7 +296,7 @@ function ReagentInputs(props: BlockInputsProps) {
                     <View style={[bs.row]}>
                         <InputField
                             value={reagParams.incubation}
-                            placeholder="|"
+                            placeholder=""
                             decimals={false}
                             limit_max={INCUBATION_MAX}
                             limit_min={INCUBATION_MIN}
@@ -381,7 +381,7 @@ function TemperatureInputs(props: BlockInputsProps) {
         <KeyboardAvoidingView style={bs.inputs} behavior="padding">
             <View style={[bs.row]}>
                 <InputField
-                    placeholder="|"
+                    placeholder=""
                     value={temperParams.source}
                     containerStyle={{ marginRight: 100 }}
                     label="From (°C):"
@@ -390,7 +390,7 @@ function TemperatureInputs(props: BlockInputsProps) {
                 />
                 <InputField
                     value={temperParams.target}
-                    placeholder="|"
+                    placeholder=""
                     limit_max={TEMPERATURE_MAX}
                     limit_min={TEMPERATURE_MIN}
                     label="Target (°C):"
