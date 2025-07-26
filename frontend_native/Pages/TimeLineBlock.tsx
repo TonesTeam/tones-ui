@@ -236,8 +236,16 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                     <ParamItem
                                         label={'Incubate for'}
                                         value={
-                                            (block.params as ReagentStep)
-                                                .incubation
+                                            props.settings.timeUnits == 'sec'
+                                                ? (block.params as WashStep)
+                                                      .incubation
+                                                : Math.round(
+                                                      ((
+                                                          block.params as WashStep
+                                                      ).incubation /
+                                                          60) *
+                                                          100,
+                                                  ) / 100
                                         }
                                         measurement={props.settings.timeUnits}
                                     />

@@ -200,18 +200,18 @@ export default function Constructor({
                 setProtocolName(r.data.name);
                 handleBlocksChange(r.data.steps);
             });
-        } else {
-            getRequest<LiquidDTO[]>(`/liquids`).then((r) => {
-                setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
-                let defaultWashing = {
-                    iters: 1,
-                    incubation: 10,
-                    liquid: r.data.filter((liq) => liq.type.id == 2)[0],
-                    temperature: null,
-                } as WashStep;
-                setDefaultWashStep(defaultWashing);
-            });
         }
+
+        getRequest<LiquidDTO[]>(`/liquids`).then((r) => {
+            setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
+            let defaultWashing = {
+                iters: 1,
+                incubation: 10,
+                liquid: r.data.filter((liq) => liq.type.id == 2)[0],
+                temperature: null,
+            } as WashStep;
+            setDefaultWashStep(defaultWashing);
+        });
     }
 
     useEffect(() => {
