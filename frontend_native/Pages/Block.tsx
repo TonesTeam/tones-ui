@@ -13,15 +13,15 @@ import {
     StepDTO,
     TemperatureStep,
     WashStep,
-} from 'sharedlib/dto/step.dto';
-import { LiquidDTO, LiquidTypeDTO } from 'sharedlib/dto/liquid.dto';
+} from 'common/dto/step.dto';
+import { LiquidDTO, LiquidTypeDTO } from 'common/dto/liquid.dto';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import Txt from '../components/Txt';
 import { getRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import InputField from '../components/InputField';
 import Info_icon from '../assets/icons/info.svg';
-import { StepType } from 'sharedlib/enum/DBEnums';
+import { StepType } from 'common/enum/DBEnums';
 import Setting_icon from '../assets/icons/setting.svg';
 import { Switch } from 'react-native-switch';
 import { ProtocolSettings } from '../common/constructorUtils';

@@ -11,9 +11,9 @@ import {
     UsePipes,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { ParseDatePipe } from './parse-date.pipe';
-import { PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { Request as ExpressRequest, Router } from 'express';
 import { Request } from '@nestjs/common';
 import { ProtocolDeploymentService } from './protocol-deployment.service';

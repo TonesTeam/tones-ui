@@ -1,5 +1,5 @@
-import { LiquidDTO } from 'sharedlib/dto/liquid.dto';
-import { WashStep } from 'sharedlib/dto/step.dto';
+import { LiquidDTO } from 'common/dto/liquid.dto';
+import { WashStep } from 'common/dto/step.dto';
 
 export const DEFAULT_TEMEPRATURE = 25; //default tempretaure for the system
 export const LIQUID_INJECT_TIME: number = 10; //default time to inject liduid into slot chip

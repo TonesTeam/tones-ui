@@ -29,7 +29,7 @@
         "@prisma/client": "^6.6.0",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.2.0",
-        "sharedlib": "file:../sharedlib"
+        "common": "file:../common"
     },
     "devDependencies": {
         "@mermaid-js/mermaid-cli": "^10.1.0",

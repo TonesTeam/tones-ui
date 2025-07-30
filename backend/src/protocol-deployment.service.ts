@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { countMap, MaxFold, SumFold, toKVMap } from 'sharedlib/collection.util';
-import { LiquidDeploymentDTO } from 'sharedlib/dto/liquid-deployment.dto';
-import { StepType } from 'sharedlib/enum/DBEnums';
-import tonesConfig from 'sharedlib/new-tones-config.json';
+import { countMap, MaxFold, SumFold, toKVMap } from 'common/collection.util';
+import { LiquidDeploymentDTO } from 'common/dto/liquid-deployment.dto';
+import { StepType } from 'common/enum/DBEnums';
+import tonesConfig from 'common/new-tones-config.json';
 import { DatabaseService } from './db.service';
 
 @Injectable()

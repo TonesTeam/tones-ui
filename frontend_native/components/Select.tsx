@@ -1,6 +1,6 @@
 import { Dimensions, View, StyleSheet } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-import { LiquidDTO, LiquidTypeDTO } from 'sharedlib/dto/liquid.dto';
+import { LiquidDTO, LiquidTypeDTO } from 'common/dto/liquid.dto';
 import { AppStyles } from '../constants/styles';
 import { useEffect, useState } from 'react';
 import Arrow_icon from '../assets/icons/arrow_down_2.svg';

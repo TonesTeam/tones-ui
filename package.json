@@ -3,7 +3,7 @@
   "workspaces": [
     "backend",
     "frontend_native",
-    "sharedlib"
+    "common"
   ],
   "version": "1.0.0",
   "description": "tones ui",

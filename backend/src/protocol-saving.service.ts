@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Prisma, Protocol, TemperatureChange } from '@prisma/client';
-import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
-import { LiquidDTO } from 'sharedlib/dto/liquid.dto';
-import { StepType } from 'sharedlib/enum/DBEnums';
+import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
+import { LiquidDTO } from 'common/dto/liquid.dto';
+import { StepType } from 'common/enum/DBEnums';
 import {
     ReagentStep,
     StepDTO,
     TemperatureStep,
     WashStep,
-} from 'sharedlib/dto/step.dto';
+} from 'common/dto/step.dto';
 
 @Injectable()
 export class ProtocolSavingService {

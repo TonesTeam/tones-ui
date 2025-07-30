@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { SumFold } from 'sharedlib/collection.util';
-import { LiquidDeploymentDTO } from 'sharedlib/dto/liquid-deployment.dto';
-import { StepType } from 'sharedlib/enum/DBEnums';
+import { SumFold } from 'common/collection.util';
+import { LiquidDeploymentDTO } from 'common/dto/liquid-deployment.dto';
+import { StepType } from 'common/enum/DBEnums';
 import { DatabaseService, SteppedProtocol } from './db.service';
 import {
     liquidConfigToMap,
     ProtocolDeploymentService,
 } from './protocol-deployment.service';
-import tonesConfig from 'sharedlib/new-tones-config.json';
+import tonesConfig from 'common/new-tones-config.json';
 
 @Injectable()
 export class ProtocolStepsResolver {

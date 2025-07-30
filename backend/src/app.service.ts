@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService, FullProtocols, ProtocolStep } from './db.service';
-import { ProtocolDto, ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { ProtocolDto, ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import {
     StepDTO,
     ReagentStep,
     StepParams,
     TemperatureStep,
     WashStep,
-} from 'sharedlib/dto/step.dto';
+} from 'common/dto/step.dto';
 import {
     PermanentLiquidDTO,
     LiquidDTO,
     LiquidTypeDTO,
-} from 'sharedlib/dto/liquid.dto';
-import { StepType } from 'sharedlib/enum/DBEnums';
+} from 'common/dto/liquid.dto';
+import { StepType } from 'common/enum/DBEnums';
 import { ProtocolSavingService } from './protocol-saving.service';
 
 @Injectable()

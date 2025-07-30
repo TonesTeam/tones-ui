@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PermanentLiquidDTO } from 'sharedlib/dto/liquid.dto';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { PrismaService } from './prisma.service';
 
 @Injectable()

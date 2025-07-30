@@ -29,7 +29,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { LiquidDTO } from 'sharedlib/dto/liquid.dto';
+import { LiquidDTO } from 'common/dto/liquid.dto';
 import DraggableFlatList, {
     DraggableFlatListProps,
 } from 'react-native-draggable-flatlist';
@@ -38,8 +38,8 @@ import {
     StepDTO,
     TemperatureStep,
     WashStep,
-} from 'sharedlib/dto/step.dto';
-import { StepType } from 'sharedlib/enum/DBEnums';
+} from 'common/dto/step.dto';
+import { StepType } from 'common/enum/DBEnums';
 import { SvgProps } from 'react-native-svg';
 import WorkBlock from './Block';
 import { renderTimelineBlock } from './TimeLineBlock';
@@ -54,7 +54,7 @@ import {
     DEFAULT_TEMEPRATURE,
     DEFAULT_WASH_STEP,
 } from '../constants/protocol_constants';
-import { ProtocolWithStepsDTO } from 'sharedlib/dto/protocol.dto';
+import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { getRequest, makeRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import RadioButton from '../components/RadioButton';

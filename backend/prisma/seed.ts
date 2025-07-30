@@ -1,5 +1,5 @@
 import { LiquidType, Prisma, PrismaClient, Protocol } from '@prisma/client';
-import { StepType, UserRole } from 'sharedlib/enum/DBEnums';
+import { StepType, UserRole } from 'common/enum/DBEnums';
 const prisma = new PrismaClient();
 
 async function main() {

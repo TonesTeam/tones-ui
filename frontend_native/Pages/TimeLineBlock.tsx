@@ -5,9 +5,9 @@ import {
     StepDTO,
     TemperatureStep,
     WashStep,
-} from 'sharedlib/dto/step.dto';
+} from 'common/dto/step.dto';
 import Txt from '../components/Txt';
-import { StepType } from 'sharedlib/enum/DBEnums';
+import { StepType } from 'common/enum/DBEnums';
 import { AppStyles } from '../constants/styles';
 import Washing_icon from '../assets/icons/washing_icon.svg';
 import Reagent_icon from '../assets/icons/reagent_icon.svg';

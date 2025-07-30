@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { ProtocolDto } from 'sharedlib/dto/protocol.dto';
+import { ProtocolDto } from 'common/dto/protocol.dto';
 
 export interface ProtocolState {
     protocol: ProtocolDto;

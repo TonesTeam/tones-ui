@@ -7,7 +7,7 @@ module.exports = async function (env, argv) {
     config.module.rules.push({
         test: /\.tsx?$/,
         use: 'ts-loader',
-        include: [path.resolve(__dirname, 'node_modules/sharedlib')],
+        include: [path.resolve(__dirname, 'node_modules/common')],
     });
     config.module.rules.forEach((rule) => {
         if (rule.oneOf) {

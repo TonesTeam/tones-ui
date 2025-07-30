@@ -20,7 +20,7 @@ import {
     LiquidDTO,
     LiquidTypeDTO,
     PermanentLiquidDTO,
-} from 'sharedlib/dto/liquid.dto';
+} from 'common/dto/liquid.dto';
 import { getRequest, makeRequest } from '../common/util';
 import Txt from '../components/Txt';
 import Search_Icon from '../assets/icons/search.svg';

@@ -1,5 +1,5 @@
 {
-    "name": "sharedlib",
+    "name": "common",
     "version": "1.0.0",
     "description": "Common libs and interfaces for FE and BE",
     "main": "index.ts",

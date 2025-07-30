@@ -15,7 +15,7 @@ import {
     globalElementStyle,
 } from '../constants/styles';
 import NavBar from '../navigation/CustomNavigator';
-import { ProtocolDto } from 'sharedlib/dto/protocol.dto';
+import { ProtocolDto } from 'common/dto/protocol.dto';
 import { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { getRequest, makeRequest } from '../common/util';
