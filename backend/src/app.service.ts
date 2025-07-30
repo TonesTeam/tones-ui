@@ -13,7 +13,7 @@ import {
     LiquidDTO,
     LiquidTypeDTO,
 } from 'common/dto/liquid.dto';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import { ProtocolSavingService } from './protocol-saving.service';
 
 @Injectable()

@@ -3,7 +3,7 @@ import { PrismaService } from './prisma.service';
 import { Prisma, Protocol, TemperatureChange } from '@prisma/client';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { LiquidDTO } from 'common/dto/liquid.dto';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import {
     ReagentStep,
     StepDTO,

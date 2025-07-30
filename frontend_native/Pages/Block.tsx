@@ -21,7 +21,7 @@ import { getRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import InputField from '../components/InputField';
 import Info_icon from '../assets/icons/info.svg';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import Setting_icon from '../assets/icons/setting.svg';
 import { Switch } from 'react-native-switch';
 import { ProtocolSettings } from '../common/constructorUtils';

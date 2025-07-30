@@ -39,7 +39,7 @@ import {
     TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import { SvgProps } from 'react-native-svg';
 import WorkBlock from './Block';
 import { renderTimelineBlock } from './TimeLineBlock';

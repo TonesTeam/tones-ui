@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SumFold } from 'common/collection.util';
 import { LiquidDeploymentDTO } from 'common/dto/liquid-deployment.dto';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import { DatabaseService, SteppedProtocol } from './db.service';
 import {
     liquidConfigToMap,

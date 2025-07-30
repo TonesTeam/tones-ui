@@ -4,7 +4,7 @@ import {
     TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import {
     DEFAULT_TEMEPRATURE,
     LIQUID_INJECT_TIME,

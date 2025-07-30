@@ -1,4 +1,4 @@
-import { StepType } from 'common/enum/DBEnums';
+import { StepType } from 'common/enums';
 import { LiquidDTO } from './liquid.dto';
 
 export interface StepDTO {
