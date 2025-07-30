@@ -8,7 +8,6 @@ import {
     Easing,
     Image,
     TouchableOpacity,
-    Modal,
 } from 'react-native';
 import {
     AppStyles,
@@ -38,12 +37,27 @@ import InfoModal from '../components/InfoModal';
 import { useIsFocused } from '@react-navigation/native';
 import { InfoType } from '../common/types';
 import { LinearGradient } from 'expo-linear-gradient';
+import {
+    Modal,
+    ModalBackdrop,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Heading,
+    Icon,
+    TrashIcon,
+    Button,
+    ButtonText,
+    Box,
+} from '@gluestack-ui/themed';
 
 function ProtocolItem(props: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
     toggleDeletionModal: (val: boolean) => void;
 }) {
+    const [deleteModal, setDeleteModal] = useState(false);
     const [expanded, setExpanded] = useState(false);
     //const dispatch = useAppDispatch();
     let disableLaunch = useAppSelector((state) => state.isRunning);
@@ -311,7 +325,7 @@ function ProtocolItem(props: {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={ps.button}
-                            onPress={() => deleteProtocol(props.protocol.id)}
+                            onPress={() => setDeleteModal(true)}
                         >
                             <Delete_btn_Icon
                                 width={20}
@@ -320,6 +334,12 @@ function ProtocolItem(props: {
                             />
                             <Txt style={{ marginLeft: 8 }}>Delete</Txt>
                         </TouchableOpacity>
+                        <DeleteProtocolModal
+                            isOpen={deleteModal}
+                            onClose={() => setDeleteModal(false)}
+                            protocolName={props.protocol.name}
+                            action={() => deleteProtocol(props.protocol.id)}
+                        />
                     </View>
                 </View>
             </Animated.View>
@@ -595,6 +615,103 @@ export default function ProtocolList({
         </MainContainer>
     );
 }
+
+type DeleteProtocolModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    protocolName: string;
+    action: () => void;
+};
+
+const DeleteProtocolModal = ({
+    isOpen,
+    onClose,
+    protocolName,
+    action,
+}: DeleteProtocolModalProps) => {
+    const s = StyleSheet.create({
+        modal_container: {
+            alignItems: 'center',
+            maxWidth: '25%',
+        },
+        icon_container: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '100%',
+            width: 56,
+            height: 56,
+            backgroundColor: '#fef0f0',
+        },
+        text_center: {
+            textAlign: 'center',
+        },
+        flex_grow: {
+            display: 'flex',
+            flexGrow: 1,
+        },
+        margin_left: {
+            marginLeft: '10',
+        },
+    });
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalBackdrop />
+            <ModalContent style={s.modal_container}>
+                <ModalHeader>
+                    <Box style={s.icon_container}>
+                        <Icon
+                            as={TrashIcon}
+                            style={{ color: '#dc2828' }}
+                            size="xl"
+                        />
+                    </Box>
+                </ModalHeader>
+                <ModalBody className="mt-0 mb-4">
+                    <Heading size="md" style={s.text_center}>
+                        Delete protocol "{protocolName}"
+                    </Heading>
+                    <Text
+                        style={[
+                            s.text_center,
+                            { color: AppStyles.color.text_faded },
+                        ]}
+                    >
+                        Are you sure you want to delete this protocol? This
+                        action cannot be undone.
+                    </Text>
+                </ModalBody>
+                <ModalFooter className="w-full">
+                    <Button
+                        variant="outline"
+                        action="secondary"
+                        size="sm"
+                        onPress={onClose}
+                        style={s.flex_grow}
+                    >
+                        <ButtonText>Cancel</ButtonText>
+                    </Button>
+                    <Button
+                        onPress={() => {
+                            action();
+                            onClose();
+                        }}
+                        size="sm"
+                        style={[
+                            s.flex_grow,
+                            s.margin_left,
+
+                            { backgroundColor: '#dc2828' },
+                        ]}
+                    >
+                        <ButtonText>Delete</ButtonText>
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+};
 
 const s = StyleSheet.create({
     section_search: {
