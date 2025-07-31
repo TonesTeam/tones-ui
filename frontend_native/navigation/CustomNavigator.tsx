@@ -14,6 +14,8 @@ import Txt from '../components/Txt';
 import Arrow from '../assets/icons/arrow_menu.svg';
 import Logo from '../assets/pics/tones_logo.svg';
 import { OpacityText } from '../components/AnimatedTxt';
+import ConfirmationModal from '../common/TonesModal';
+import { ChevronsLeftIcon } from '@gluestack-ui/themed';
 
 export default function NavBar() {
     //Navigation stuff
@@ -28,6 +30,7 @@ export default function NavBar() {
 
     //Animation stuff
     const [open, setOpen] = useState(false);
+    const [logoutConfirmModal, setLogoutConfirmModal] = useState(false);
     const translation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -55,6 +58,19 @@ export default function NavBar() {
                 s.container,
             ]}
         >
+            <ConfirmationModal
+                isOpen={logoutConfirmModal}
+                onClose={() => setLogoutConfirmModal(false)}
+                action={() => {
+                    setOpen(false);
+                    navigation.navigate('Logout');
+                }}
+                headline="Are you sure you want to log out?"
+                text="You’ll need to sign in again to access your account."
+                icon={ChevronsLeftIcon}
+                type="warning"
+                actionButtonText="Log out"
+            />
             <TouchableOpacity
                 style={s.section_header}
                 activeOpacity={0.2}
@@ -109,8 +125,12 @@ export default function NavBar() {
                                 ]}
                                 key={index}
                                 onPress={() => {
-                                    setOpen(false);
-                                    navigation.navigate(page.name);
+                                    if (page.isLogout) {
+                                        setLogoutConfirmModal(true);
+                                    } else {
+                                        setOpen(false);
+                                        navigation.navigate(page.name);
+                                    }
                                 }}
                             >
                                 <View>

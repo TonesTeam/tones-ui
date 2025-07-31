@@ -36,7 +36,11 @@ export default function ConfirmationModal({
     actionButtonText,
     type,
 }: TonesModalProps) {
-    const accentColors = { error: '#dc2828', warning: '', info: '' };
+    const accentColors = {
+        error: '#dc2828',
+        warning: '#f5a623',
+        info: '#0076e6',
+    };
     const accent = accentColors[type];
 
     const iconBgColor = tinycolor.mix(accent, '#ffffff', 90).toHexString();

@@ -20,6 +20,7 @@ export type Page = {
         navigation,
     }: NativeStackScreenProps<any>) => React.JSX.Element;
     icon?: React.FC<SvgProps>;
+    isLogout?: boolean;
 };
 
 export const Pages: Page[] = [
@@ -47,6 +48,7 @@ export const Pages: Page[] = [
         name: 'Logout',
         component: Login,
         icon: Logout_icon,
+        isLogout: true,
     },
     {
         name: 'Launch',
