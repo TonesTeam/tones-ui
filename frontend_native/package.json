@@ -27,12 +27,15 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@svgr/webpack": "^8.1.0",
     "@types/react-redux": "^7.1.26",
+    "@types/tinycolor2": "^1.4.6",
     "axios": "^1.5.0",
+    "common": "file:../common",
     "date-fns": "^2.30.0",
     "eas-cli": "^12.6.2",
     "expo": "^53.0.0",
     "expo-font": "~13.3.1",
     "expo-haptics": "~14.1.4",
+    "expo-image": "~2.3.0",
     "expo-linear-gradient": "~14.1.4",
     "expo-network": "~7.1.5",
     "expo-screen-orientation": "~8.1.6",
@@ -65,8 +68,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.2",
     "rnpm": "^1.9.0",
-    "common": "file:../common",
-    "expo-image": "~2.3.0"
+    "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
