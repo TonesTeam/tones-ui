@@ -13,6 +13,7 @@ import Search_Icon from '../assets/icons/search.svg';
 import NotFound_Icon from '../assets/icons/question.svg';
 import { useIsFocused } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
+import { Heading, Box } from '@gluestack-ui/themed';
 
 export default function History(props: any) {
     const scrollViewRef = useRef<ScrollView>(null);
@@ -120,269 +121,280 @@ export default function History(props: any) {
     return (
         <MainContainer>
             <NavBar />
-            <View
-                style={[
-                    globalElementStyle.page_container,
-                    { padding: 10, flexDirection: 'row' },
-                ]}
-            >
-                <View style={{ flex: 1 }}>
-                    <View style={s.section_calendar}>
-                        <Calendar
-                            onDayPress={(day) => {
-                                setSelectedDate(day.dateString);
-                            }}
-                            markedDates={
-                                protocols &&
-                                protocols.reduce(
-                                    (acc, record) => {
-                                        const date = new Date(
-                                            record.creationDate,
-                                        )
-                                            .toISOString()
-                                            .split('T')[0];
-                                        if (!acc[date]) {
-                                            acc[date] = {
-                                                marked: true,
-                                                dotColor:
-                                                    AppStyles.color.primary,
-                                            };
-                                        }
-                                        if (selectedDate === date) {
-                                            acc[date].selected = true;
-                                            acc[date].selectedColor =
-                                                AppStyles.color.primary;
-                                        }
-                                        return acc;
-                                    },
-                                    selectedDate
-                                        ? {
-                                              [selectedDate]: {
-                                                  selected: true,
-                                                  selectedColor:
-                                                      AppStyles.color.primary,
-                                              },
-                                          }
-                                        : {},
-                                )
-                            }
-                            style={{ borderRadius: 15 }}
-                        />
-                    </View>
-                    <View style={s.sort_container}>
-                        <Txt
-                            style={{
-                                fontFamily: 'Roboto-bold',
-                                fontSize: 16,
-                                marginBottom: 5,
-                            }}
-                        >
-                            Sort By:
-                        </Txt>
-                        <Picker
-                            selectedValue={sortField}
-                            style={s.picker}
-                            onValueChange={(itemValue) =>
-                                setSortField(itemValue)
-                            }
-                        >
-                            <Picker.Item label="Name" value="name" />
-                            <Picker.Item
-                                label="Creation Date"
-                                value="creationDate"
-                            />
-                            <Picker.Item label="Author" value="author" />
-                        </Picker>
-                    </View>
-                </View>
-
-                <View style={{ flex: 3 }}>
-                    <View style={s.section_search}>
-                        <Txt
-                            style={{ fontFamily: 'Roboto-bold', fontSize: 24 }}
-                        >
-                            History
-                        </Txt>
-                        <View
-                            style={[
-                                s.search_bar,
-                                active && {
-                                    borderWidth: 2,
-                                    borderColor: AppStyles.color.primary,
-                                },
-                            ]}
-                        >
-                            <Search_Icon
-                                height={30}
-                                width={60}
-                                stroke={AppStyles.color.text_faded}
-                            />
-                            <TextInput
-                                placeholder="Search history"
-                                value={filterInput}
-                                style={{
-                                    width: '80%',
-                                    fontFamily: 'Roboto-regular',
+            <Box style={s.wrapper}>
+                <Heading size="2xl">History</Heading>
+                <View
+                    style={[
+                        globalElementStyle.page_container,
+                        { padding: 10, flexDirection: 'row' },
+                    ]}
+                >
+                    <View style={{ flex: 1 }}>
+                        <View style={s.section_calendar}>
+                            <Calendar
+                                onDayPress={(day) => {
+                                    setSelectedDate(day.dateString);
                                 }}
-                                onFocus={() => setActive(true)}
-                                onBlur={() => setActive(false)}
-                                onChangeText={(e) => inputHandler(e)}
+                                markedDates={
+                                    protocols &&
+                                    protocols.reduce(
+                                        (acc, record) => {
+                                            const date = new Date(
+                                                record.creationDate,
+                                            )
+                                                .toISOString()
+                                                .split('T')[0];
+                                            if (!acc[date]) {
+                                                acc[date] = {
+                                                    marked: true,
+                                                    dotColor:
+                                                        AppStyles.color.primary,
+                                                };
+                                            }
+                                            if (selectedDate === date) {
+                                                acc[date].selected = true;
+                                                acc[date].selectedColor =
+                                                    AppStyles.color.primary;
+                                            }
+                                            return acc;
+                                        },
+                                        selectedDate
+                                            ? {
+                                                  [selectedDate]: {
+                                                      selected: true,
+                                                      selectedColor:
+                                                          AppStyles.color
+                                                              .primary,
+                                                  },
+                                              }
+                                            : {},
+                                    )
+                                }
+                                style={{ borderRadius: 15 }}
                             />
+                        </View>
+                        <View style={s.sort_container}>
+                            <Txt
+                                style={{
+                                    fontFamily: 'Roboto-bold',
+                                    fontSize: 16,
+                                    marginBottom: 5,
+                                }}
+                            >
+                                Sort By:
+                            </Txt>
+                            <Picker
+                                selectedValue={sortField}
+                                style={s.picker}
+                                onValueChange={(itemValue) =>
+                                    setSortField(itemValue)
+                                }
+                            >
+                                <Picker.Item label="Name" value="name" />
+                                <Picker.Item
+                                    label="Creation Date"
+                                    value="creationDate"
+                                />
+                                <Picker.Item label="Author" value="author" />
+                            </Picker>
                         </View>
                     </View>
 
-                    <View style={s.section_list}>
-                        {(protocols == undefined || liquids == undefined) && (
+                    <View style={{ flex: 3 }}>
+                        <View style={s.section_search}>
                             <View
-                                style={{
-                                    flex: 1,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
+                                style={[
+                                    s.search_bar,
+                                    active && {
+                                        borderWidth: 2,
+                                        borderColor: AppStyles.color.primary,
+                                    },
+                                ]}
                             >
-                                <Image
-                                    source={require('../assets/pics/loading.gif')}
+                                <Search_Icon
+                                    height={30}
+                                    width={60}
+                                    stroke={AppStyles.color.text_faded}
                                 />
-                                <Txt
+                                <TextInput
+                                    placeholder="Search history"
+                                    value={filterInput}
                                     style={{
-                                        fontFamily: 'Roboto-thin',
-                                        fontSize: 24,
+                                        width: '80%',
+                                        fontFamily: 'Roboto-regular',
+                                    }}
+                                    onFocus={() => setActive(true)}
+                                    onBlur={() => setActive(false)}
+                                    onChangeText={(e) => inputHandler(e)}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={s.section_list}>
+                            {(protocols == undefined ||
+                                liquids == undefined) && (
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    Loading...
-                                </Txt>
-                            </View>
-                        )}
+                                    <Image
+                                        source={require('../assets/pics/loading.gif')}
+                                    />
+                                    <Txt
+                                        style={{
+                                            fontFamily: 'Roboto-thin',
+                                            fontSize: 24,
+                                        }}
+                                    >
+                                        Loading...
+                                    </Txt>
+                                </View>
+                            )}
 
-                        {protocols != undefined && liquids != undefined && (
-                            <>
-                                <View style={{ flex: 1 }}>
-                                    {filterAndSort().length == 0 && (
-                                        <View style={{ flex: 1 }}>
-                                            {networkError && (
-                                                <View
-                                                    style={{
-                                                        flex: 1,
-                                                        alignItems: 'center',
-                                                        justifyContent:
-                                                            'center',
-                                                    }}
-                                                >
-                                                    <Txt
-                                                        style={{
-                                                            color: AppStyles
-                                                                .color
-                                                                .text_faded,
-                                                            fontSize: 30,
-                                                            marginTop: 30,
-                                                        }}
-                                                    >
-                                                        Cannot connect to
-                                                        server. Please contact
-                                                        tech support.
-                                                    </Txt>
+                            {protocols != undefined && liquids != undefined && (
+                                <>
+                                    <View style={{ flex: 1 }}>
+                                        {filterAndSort().length == 0 && (
+                                            <View style={{ flex: 1 }}>
+                                                {networkError && (
                                                     <View
                                                         style={{
                                                             flex: 1,
-                                                            marginBottom: '5%',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
                                                         }}
                                                     >
-                                                        <Image
-                                                            source={require('../assets/pics/tech_support.jpg')}
+                                                        <Txt
+                                                            style={{
+                                                                color: AppStyles
+                                                                    .color
+                                                                    .text_faded,
+                                                                fontSize: 30,
+                                                                marginTop: 30,
+                                                            }}
+                                                        >
+                                                            Cannot connect to
+                                                            server. Please
+                                                            contact tech
+                                                            support.
+                                                        </Txt>
+                                                        <View
                                                             style={{
                                                                 flex: 1,
-                                                                height: '100%',
-                                                                resizeMode:
-                                                                    'contain',
+                                                                marginBottom:
+                                                                    '5%',
                                                             }}
-                                                        ></Image>
+                                                        >
+                                                            <Image
+                                                                source={require('../assets/pics/tech_support.jpg')}
+                                                                style={{
+                                                                    flex: 1,
+                                                                    height: '100%',
+                                                                    resizeMode:
+                                                                        'contain',
+                                                                }}
+                                                            ></Image>
+                                                        </View>
                                                     </View>
-                                                </View>
-                                            )}
-                                            {!networkError && (
-                                                <View
-                                                    style={{
-                                                        flex: 1,
-                                                        alignItems: 'center',
-                                                        justifyContent:
-                                                            'center',
-                                                    }}
-                                                >
-                                                    <NotFound_Icon
-                                                        height={100}
-                                                        width={100}
-                                                        stroke={
-                                                            AppStyles.color
-                                                                .text_faded
-                                                        }
-                                                    />
-                                                    <Txt
+                                                )}
+                                                {!networkError && (
+                                                    <View
                                                         style={{
-                                                            color: AppStyles
-                                                                .color
-                                                                .text_faded,
-                                                            fontSize: 30,
-                                                            marginTop: 30,
+                                                            flex: 1,
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
                                                         }}
                                                     >
-                                                        No records found
-                                                    </Txt>
-                                                </View>
-                                            )}
-                                        </View>
-                                    )}
-                                    {filterAndSort().length != 0 && (
-                                        <ScrollView
-                                            contentContainerStyle={{
-                                                flexGrow: 1,
-                                            }}
-                                            scrollEnabled={true}
-                                            ref={scrollViewRef}
-                                            showsVerticalScrollIndicator={true}
-                                        >
-                                            {filterAndSort().map(
-                                                function (record, index) {
-                                                    return (
-                                                        <View
-                                                            key={index}
-                                                            style={
-                                                                s.history_item
+                                                        <NotFound_Icon
+                                                            height={100}
+                                                            width={100}
+                                                            stroke={
+                                                                AppStyles.color
+                                                                    .text_faded
                                                             }
+                                                        />
+                                                        <Txt
+                                                            style={{
+                                                                color: AppStyles
+                                                                    .color
+                                                                    .text_faded,
+                                                                fontSize: 30,
+                                                                marginTop: 30,
+                                                            }}
                                                         >
-                                                            <Txt
+                                                            No records found
+                                                        </Txt>
+                                                    </View>
+                                                )}
+                                            </View>
+                                        )}
+                                        {filterAndSort().length != 0 && (
+                                            <ScrollView
+                                                contentContainerStyle={{
+                                                    flexGrow: 1,
+                                                }}
+                                                scrollEnabled={true}
+                                                ref={scrollViewRef}
+                                                showsVerticalScrollIndicator={
+                                                    true
+                                                }
+                                            >
+                                                {filterAndSort().map(
+                                                    function (record, index) {
+                                                        return (
+                                                            <View
+                                                                key={index}
                                                                 style={
-                                                                    s.history_item_text
+                                                                    s.history_item
                                                                 }
                                                             >
-                                                                ID: {record.id}
-                                                            </Txt>
-                                                            <Txt
-                                                                style={
-                                                                    s.history_item_text
-                                                                }
-                                                            >
-                                                                {record.name}
-                                                            </Txt>
-                                                            <Txt
-                                                                style={
-                                                                    s.history_item_author
-                                                                }
-                                                            >
-                                                                Author:{' '}
-                                                                {record.author}
-                                                            </Txt>
-                                                        </View>
-                                                    );
-                                                },
-                                            )}
-                                        </ScrollView>
-                                    )}
-                                </View>
-                            </>
-                        )}
+                                                                <Txt
+                                                                    style={
+                                                                        s.history_item_text
+                                                                    }
+                                                                >
+                                                                    ID:{' '}
+                                                                    {record.id}
+                                                                </Txt>
+                                                                <Txt
+                                                                    style={
+                                                                        s.history_item_text
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        record.name
+                                                                    }
+                                                                </Txt>
+                                                                <Txt
+                                                                    style={
+                                                                        s.history_item_author
+                                                                    }
+                                                                >
+                                                                    Author:{' '}
+                                                                    {
+                                                                        record.author
+                                                                    }
+                                                                </Txt>
+                                                            </View>
+                                                        );
+                                                    },
+                                                )}
+                                            </ScrollView>
+                                        )}
+                                    </View>
+                                </>
+                            )}
+                        </View>
                     </View>
                 </View>
-            </View>
+            </Box>
         </MainContainer>
     );
 }
@@ -440,5 +452,10 @@ const s = StyleSheet.create({
         backgroundColor: '#888888',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    wrapper: {
+        flex: 1,
+        padding: 24,
+        backgroundColor: '#fff',
     },
 });

@@ -64,6 +64,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InfoType } from '../common/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import App from '../App';
+import { Heading } from '@gluestack-ui/themed';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -339,23 +340,7 @@ export default function Constructor({
                     <>
                         <View style={[globalElementStyle.page_container]}>
                             <View style={[s.header_section]}>
-                                <Txt
-                                    style={{
-                                        fontSize: 24,
-                                        fontFamily: 'Roboto-bold',
-                                        alignSelf: 'center',
-                                    }}
-                                >
-                                    Protocol Constructor
-                                </Txt>
-                                {/* <View style={{ flex: 1, paddingHorizontal: 20, alignContent: "center" }}>
-                  <InputField
-                    background={"#ffffff"}
-                    value={protocolName}
-                    placeholder="Type protocol name .."
-                    onInputChange={(text) => setProtocolName(text)}
-                  />
-                </View> */}
+                                <Heading size="xl">Protocol Contructor</Heading>
                                 <View
                                     style={{
                                         flexDirection: 'row',
