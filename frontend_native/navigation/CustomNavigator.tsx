@@ -211,14 +211,15 @@ export default function NavBar() {
                         </OpacityText>
                     )}
                 </View>
-                <View style={s.profile}>
-                    <Pressable onPress={() => navigation.navigate('Profile')}>
-                        <Image
-                            source={require('../assets/pics/user.png')}
-                            resizeMode="cover"
-                            style={s.profile_img}
-                        />
-                    </Pressable>
+                <Pressable
+                    style={s.profile}
+                    onPress={() => navigation.navigate('Profile')}
+                >
+                    <Image
+                        source={require('../assets/pics/user.png')}
+                        resizeMode="cover"
+                        style={s.profile_img}
+                    />
                     {open && (
                         <View>
                             <OpacityText opacityFunc={translation}>
@@ -235,7 +236,7 @@ export default function NavBar() {
                             </OpacityText>
                         </View>
                     )}
-                </View>
+                </Pressable>
             </View>
         </Animated.View>
     );
