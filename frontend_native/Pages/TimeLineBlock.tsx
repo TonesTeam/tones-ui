@@ -1,5 +1,6 @@
 import { StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
+import ConfirmationModal from '../common/TonesModal';
 import {
     ReagentStep,
     StepDTO,
@@ -18,6 +19,7 @@ import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
+import { TrashIcon } from '@gluestack-ui/themed';
 
 const iconSize = 18;
 
@@ -367,59 +369,18 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                     )}
             </TouchableOpacity>
             <View>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={deleteModal}
-                    onRequestClose={() => {
-                        setDeleteModal(!deleteModal);
-                    }}
-                >
-                    <View style={s.modal_container}>
-                        <View style={s.modal_body}>
-                            <Txt style={s.modal_comment}>
-                                Are you sure you want to delete this step?
-                            </Txt>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    paddingTop: 40,
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={[
-                                        s.modal_btn,
-                                        {
-                                            backgroundColor:
-                                                AppStyles.color.primary,
-                                        },
-                                    ]}
-                                    onPress={() => {
-                                        setDeleteModal(false);
-                                    }}
-                                >
-                                    <Txt style={s.modal_btn_text}>Cancel</Txt>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        s.modal_btn,
-                                        {
-                                            backgroundColor:
-                                                AppStyles.color.warning,
-                                        },
-                                    ]}
-                                    onPress={() => {
-                                        props.deleteStep(item);
-                                        setDeleteModal(false);
-                                    }}
-                                >
-                                    <Txt style={s.modal_btn_text}>Delete</Txt>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
+                <ConfirmationModal
+                    isOpen={deleteModal}
+                    onClose={() => setDeleteModal(false)}
+                    action={() => props.deleteStep(item)}
+                    icon={TrashIcon}
+                    headline={`Delete ${item.type.toLowerCase()} step`}
+                    text={
+                        'Are you sure you want to delete this step? This action cannot be undone.'
+                    }
+                    actionButtonText="Delete"
+                    type="error"
+                />
             </View>
         </>
     );
