@@ -12,6 +12,7 @@ import {
     Animated,
     Easing,
 } from 'react-native';
+import { HStack, Text, Input, InputField } from '@gluestack-ui/themed';
 import {
     AppStyles,
     MainContainer,
@@ -47,7 +48,6 @@ import {
     ProtocolSettings,
     updateTemperature,
 } from '../common/constructorUtils';
-import InputField from '../components/InputField';
 import Close_icon from '../assets/icons/close.svg';
 import Point_icon from '../assets/icons/point.svg';
 import {
@@ -538,70 +538,64 @@ export default function Constructor({
                                             <View style={s.modal_header}>
                                                 <View
                                                     style={{
-                                                        display: 'flex',
-                                                        direction: 'column',
-                                                        flex: '5',
+                                                        flex: 1,
+                                                        flexDirection: 'column',
+                                                        paddingRight: '5%',
                                                     }}
                                                 >
-                                                    <View
-                                                        style={{
-                                                            flex: 5,
-                                                            flexDirection:
-                                                                'row',
-                                                            alignItems:
-                                                                'center',
-                                                        }}
-                                                    >
-                                                        <Txt
-                                                            style={{
-                                                                fontFamily:
-                                                                    'Roboto-bold',
-                                                                marginRight: 20,
-                                                            }}
+                                                    <HStack alignItems="center">
+                                                        <Text
+                                                            fontFamily="Roboto-bold"
+                                                            mr="$5"
                                                         >
                                                             Protocol Name:
-                                                        </Txt>
-                                                        <InputField
-                                                            value={protocolName}
-                                                            onInputChange={
-                                                                setProtocolName
-                                                            }
-                                                            placeholder=""
-                                                        />
-                                                    </View>
-                                                    <View
-                                                        style={{
-                                                            flex: 5,
-                                                            flexDirection:
-                                                                'row',
-                                                            alignItems:
-                                                                'center',
-                                                        }}
+                                                        </Text>
+                                                        <Input
+                                                            flex={1}
+                                                            size="sm"
+                                                        >
+                                                            <InputField
+                                                                value={
+                                                                    protocolName
+                                                                }
+                                                                onChangeText={
+                                                                    setProtocolName
+                                                                }
+                                                                placeholder=""
+                                                            />
+                                                        </Input>
+                                                    </HStack>
+
+                                                    <HStack
+                                                        alignItems="center"
+                                                        space="md"
+                                                        mt="$1"
                                                     >
-                                                        <Txt
-                                                            style={{
-                                                                fontFamily:
-                                                                    'Roboto-bold',
-                                                                marginRight: 20,
-                                                            }}
+                                                        <Text
+                                                            fontFamily="Roboto-bold"
+                                                            mr="$5"
                                                         >
                                                             Description:
-                                                        </Txt>
-                                                        <InputField
-                                                            value={
-                                                                protocolDescription
-                                                            }
-                                                            onInputChange={
-                                                                setProtocolDescription
-                                                            }
-                                                            placeholder=""
-                                                        />
-                                                    </View>
+                                                        </Text>
+                                                        <Input
+                                                            flex={1}
+                                                            size="sm"
+                                                        >
+                                                            <InputField
+                                                                value={
+                                                                    protocolDescription
+                                                                }
+                                                                onChangeText={
+                                                                    setProtocolDescription
+                                                                }
+                                                                placeholder=""
+                                                            />
+                                                        </Input>
+                                                    </HStack>
                                                 </View>
                                                 <TouchableOpacity
                                                     style={{
                                                         alignItems: 'flex-end',
-                                                        flex: 1,
                                                     }}
                                                 >
                                                     <Close_icon
@@ -1563,7 +1557,7 @@ const s = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '2%',
+        padding: 20,
     },
 
     modal_list: {
