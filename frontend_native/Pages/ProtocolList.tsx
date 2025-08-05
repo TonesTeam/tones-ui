@@ -37,21 +37,7 @@ import { Method } from 'axios';
 import InfoModal from '../components/InfoModal';
 import { useIsFocused } from '@react-navigation/native';
 import { InfoType } from '../common/types';
-import { LinearGradient } from 'expo-linear-gradient';
-import {
-    Modal,
-    ModalBackdrop,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Heading,
-    Icon,
-    TrashIcon,
-    Button,
-    ButtonText,
-    Box,
-} from '@gluestack-ui/themed';
+import { TrashIcon } from '@gluestack-ui/themed';
 
 function ProtocolItem(props: {
     protocol: ProtocolDto;

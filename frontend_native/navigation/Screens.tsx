@@ -4,6 +4,7 @@ import Constructor from '../Pages/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Settings from '../Pages/Settings';
 import History from '../Pages/History';
+import Profile from '../Pages/UserProfile';
 import { SvgProps } from 'react-native-svg';
 
 import List_icon from '../assets/icons/list.svg';
@@ -53,5 +54,9 @@ export const Pages: Page[] = [
     {
         name: 'Launch',
         component: Launch,
+    },
+    {
+        name: 'Profile',
+        component: Profile,
     },
 ];

@@ -1,4 +1,11 @@
-import { Text, View, TouchableOpacity, Animated, Image } from 'react-native';
+import {
+    Text,
+    View,
+    TouchableOpacity,
+    Animated,
+    Image,
+    Pressable,
+} from 'react-native';
 import { AppStyles } from '../constants/styles';
 import { Pages } from './Screens';
 import { useState, useRef, useEffect } from 'react';
@@ -205,11 +212,13 @@ export default function NavBar() {
                     )}
                 </View>
                 <View style={s.profile}>
-                    <Image
-                        source={require('../assets/pics/user.png')}
-                        resizeMode="cover"
-                        style={s.profile_img}
-                    />
+                    <Pressable onPress={() => navigation.navigate('Profile')}>
+                        <Image
+                            source={require('../assets/pics/user.png')}
+                            resizeMode="cover"
+                            style={s.profile_img}
+                        />
+                    </Pressable>
                     {open && (
                         <View>
                             <OpacityText opacityFunc={translation}>

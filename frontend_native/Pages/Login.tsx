@@ -1,8 +1,6 @@
 import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Logo from '../assets/pics/tones_logo.svg';
-import Txt from '../components/Txt';
 import {
     Button,
     ButtonText,
