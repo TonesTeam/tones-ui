@@ -22,7 +22,8 @@ import Arrow from '../assets/icons/arrow_menu.svg';
 import Logo from '../assets/pics/tones_logo.svg';
 import { OpacityText } from '../components/AnimatedTxt';
 import ConfirmationModal from '../common/TonesModal';
-import { ChevronsLeftIcon } from '@gluestack-ui/themed';
+import { LogOutIcon } from 'lucide-react-native';
+import GeneratedAvatar from '../components/GeneratedAvatar';
 
 export default function NavBar() {
     //Navigation stuff
@@ -74,7 +75,7 @@ export default function NavBar() {
                 }}
                 headline="Are you sure you want to log out?"
                 text="You’ll need to sign in again to access your account."
-                icon={ChevronsLeftIcon}
+                icon={LogOutIcon}
                 type="warning"
                 actionButtonText="Log out"
             />
@@ -215,15 +216,11 @@ export default function NavBar() {
                     style={s.profile}
                     onPress={() => navigation.navigate('Profile')}
                 >
-                    <Image
-                        source={require('../assets/pics/user.png')}
-                        resizeMode="cover"
-                        style={s.profile_img}
-                    />
+                    <GeneratedAvatar name="Jacob Goldberg" size={50} />
                     {open && (
                         <View>
                             <OpacityText opacityFunc={translation}>
-                                Lab Worker 1
+                                Jacob Goldberg
                             </OpacityText>
                             <OpacityText
                                 style={{
