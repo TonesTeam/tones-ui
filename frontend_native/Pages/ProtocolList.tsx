@@ -38,6 +38,15 @@ import InfoModal from '../components/InfoModal';
 import { useIsFocused } from '@react-navigation/native';
 import { InfoType } from '../common/types';
 import { TrashIcon } from '@gluestack-ui/themed';
+import {
+    Input,
+    InputField,
+    InputSlot,
+    InputIcon,
+    Pressable,
+} from '@gluestack-ui/themed';
+
+import { X, SearchIcon } from 'lucide-react-native';
 
 function ProtocolItem(props: {
     protocol: ProtocolDto;
@@ -438,33 +447,10 @@ export default function ProtocolList({
                     >
                         Protocol List
                     </Txt>
-                    <View
-                        style={[
-                            s.search_bar,
-                            active && {
-                                borderWidth: 2,
-                                borderColor: AppStyles.color.primary,
-                            },
-                            { flex: 5 },
-                        ]}
-                    >
-                        <Search_Icon
-                            height={30}
-                            width={60}
-                            stroke={AppStyles.color.text_faded}
-                        />
-                        <TextInput
-                            placeholder="Search by protocol name"
-                            value={filterInput}
-                            style={{
-                                width: '80%',
-                                fontFamily: 'Roboto-regular',
-                            }}
-                            onFocus={() => setActive(true)}
-                            onBlur={() => setActive(false)}
-                            onChangeText={(e) => inputHandler(e)}
-                        />
-                    </View>
+                    <SearchBar
+                        onChangeText={(e) => inputHandler(e)}
+                        value={filterInput}
+                    />
                 </View>
                 <View style={s.section_list}>
                     {protocols == undefined && (
@@ -608,6 +594,53 @@ export default function ProtocolList({
         </MainContainer>
     );
 }
+
+interface SearchBarProps {
+    value: string;
+    onChangeText: (text: string) => void;
+}
+
+const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
+    const styles = StyleSheet.create({
+        search_bar: {
+            paddingLeft: 10,
+        },
+        clear_button: {
+            paddingRight: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 6,
+        },
+    });
+
+    return (
+        <Input style={{ flex: 5 }}>
+            <InputSlot style={styles.search_bar}>
+                <InputIcon as={SearchIcon} />
+            </InputSlot>
+
+            <InputField
+                onChangeText={onChangeText}
+                value={value}
+                type="text"
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="Search..."
+            />
+
+            {value.length > 0 && (
+                <Pressable
+                    style={styles.clear_button}
+                    onPress={() => onChangeText('')}
+                >
+                    <InputSlot>
+                        <InputIcon color="#ef4444" as={X} />
+                    </InputSlot>
+                </Pressable>
+            )}
+        </Input>
+    );
+};
 
 const s = StyleSheet.create({
     section_search: {
