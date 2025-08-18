@@ -32,6 +32,13 @@ const firstLetter = (name: string) => {
     return name?.charAt(0).toUpperCase() || '?';
 };
 
+// TODO: Currently the hash only depends on the name
+// so the results might be a little to predictable
+// and simple. Potentially this could also take
+// into account the user's other static info like
+// when the profile was created. Note that the user
+// role could change so it would be odd to use a
+// different color after a role change.
 const hashStringToColor = (str: string): string => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
