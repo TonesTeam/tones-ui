@@ -52,9 +52,9 @@ const FormColumn = () => {
 
     return (
         <View style={s.form_container}>
-            <Heading bold={false} size="5xl" style={s.welcome_text}>
+            <Text bold={false} size="5xl" style={s.welcome_text}>
                 Welcome Back
-            </Heading>
+            </Text>
 
             <View style={s.form}>
                 <FormControl size="lg" style={s.formChild}>
@@ -165,8 +165,9 @@ const s = StyleSheet.create({
 
     welcome_text: {
         fontFamily: 'Newsreader',
+        fontSize: 64,
         color: '#000',
-        marginTop: '10%',
+        marginTop: '12%',
     },
 
     form: {
