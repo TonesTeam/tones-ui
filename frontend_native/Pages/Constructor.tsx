@@ -199,6 +199,7 @@ export default function Constructor({
                 setCustomLiquids(r.data.customLiquids);
                 setDefaultWashStep(r.data.defaultWash);
                 setProtocolName(r.data.name);
+                setProtocolDescription(r.data.description);
                 handleBlocksChange(r.data.steps);
             });
         }
