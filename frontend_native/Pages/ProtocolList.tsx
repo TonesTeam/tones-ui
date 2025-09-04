@@ -1,13 +1,4 @@
-import {
-    StyleSheet,
-    View,
-    TouchableWithoutFeedback,
-    TextInput,
-    Animated,
-    Easing,
-    Image,
-    TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { getRequest, makeRequest } from '../common/util';
 import { useIsFocused } from '@react-navigation/native';
 import {
@@ -35,13 +26,12 @@ import {
     InputIcon,
     Pressable,
     Button,
-    ButtonText,
     Icon,
     Box,
     VStack,
     HStack,
     Text,
-    Divider,
+    Spinner,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import { X, SearchIcon, Trash, ArrowRight } from 'lucide-react-native';
@@ -49,7 +39,6 @@ import { X, SearchIcon, Trash, ArrowRight } from 'lucide-react-native';
 function ProtocolItem({
     protocol,
     navigation,
-    toggleDeletionModal,
 }: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
@@ -86,7 +75,6 @@ function ProtocolItem({
                     </VStack>
                 </HStack>
 
-                {/* Body */}
                 {protocol.description && (
                     <Text size="sm" color="$textLight600" mt="$3">
                         {protocol.description}
@@ -216,25 +204,13 @@ export default function ProtocolList({
                 </View>
                 <View style={s.section_list}>
                     {protocols == undefined && (
-                        <View
-                            style={{
-                                flex: 1,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
+                        <Box
+                            alignItems="center"
+                            justifyContent="center"
+                            flex={1}
                         >
-                            <Image
-                                source={require('../assets/pics/loading.gif')}
-                            />
-                            <Txt
-                                style={{
-                                    fontFamily: 'Roboto-thin',
-                                    fontSize: 24,
-                                }}
-                            >
-                                SEARCHING ...
-                            </Txt>
-                        </View>
+                            <Spinner size="large" color="grey" />
+                        </Box>
                     )}
                     {protocols != undefined && (
                         <>
