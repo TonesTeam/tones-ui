@@ -8,6 +8,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
+import { getRequest, makeRequest } from '../common/util';
 import { useIsFocused } from '@react-navigation/native';
 import {
     AppStyles,
@@ -17,9 +18,7 @@ import {
 import NavBar from '../navigation/CustomNavigator';
 import { ProtocolDto } from 'common/dto/protocol.dto';
 import { useEffect, useState, useRef } from 'react';
-import { getRequest, makeRequest } from '../common/util';
 import Txt from '../components/Txt';
-import ConfirmationModal from '../common/TonesModal';
 import NotFound_Icon from '../assets/icons/question.svg';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
@@ -45,15 +44,7 @@ import {
     Divider,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../components/GeneratedAvatar';
-import {
-    X,
-    SearchIcon,
-    Rocket,
-    File,
-    Edit3,
-    Trash,
-    ArrowDown,
-} from 'lucide-react-native';
+import { X, SearchIcon, Trash, ArrowRight } from 'lucide-react-native';
 
 function ProtocolItem({
     protocol,
@@ -64,23 +55,6 @@ function ProtocolItem({
     navigation: NativeStackNavigationProp<any>;
     toggleDeletionModal: (val: boolean) => void;
 }) {
-    const [deleteModal, setDeleteModal] = useState(false);
-
-    const deleteProtocol = (id: number) => {
-        makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
-            .then((r) => {
-                if (r.status >= 200 && r.status <= 299) {
-                    toggleDeletionModal(true);
-                } else {
-                    toggleDeletionModal(false);
-                }
-            })
-            .catch((err) => {
-                console.log(err.message);
-                toggleDeletionModal(false);
-            });
-    };
-
     return (
         <Box
             borderWidth={1}
@@ -93,99 +67,62 @@ function ProtocolItem({
             shadowOffset={{ width: 0, height: 1 }}
             shadowOpacity={0.05}
             shadowRadius={2}
+            flexDirection="row"
         >
-            {/* Header */}
-            <HStack alignItems="center" space="md">
-                <GeneratedAvatar name={protocol.name} size={40} />
-                <VStack flex={1} space="xs">
-                    <Text bold size="md">
-                        {protocol.name}
+            <VStack space="md" mb="$2" flex={1}>
+                {/* Header */}
+                <HStack alignItems="center" space="md">
+                    <GeneratedAvatar name={protocol.name} size={40} />
+                    <VStack flex={1} space="xs">
+                        <Text bold size="md">
+                            {protocol.name}
+                        </Text>
+                        <Text size="xs" color="$textLight500">
+                            by {protocol.author} ·{' '}
+                            {new Date(
+                                protocol.creationDate,
+                            ).toLocaleDateString()}
+                        </Text>
+                    </VStack>
+                </HStack>
+
+                {/* Body */}
+                {protocol.description && (
+                    <Text size="sm" color="$textLight600" mt="$3">
+                        {protocol.description}
                     </Text>
-                    <Text size="xs" color="$textLight500">
-                        by {protocol.author} ·{' '}
-                        {new Date(protocol.creationDate).toLocaleDateString()}
+                )}
+                {!protocol.description && (
+                    <Text size="sm" color="$textLight400" mt="$3" italic>
+                        No description provided
                     </Text>
-                </VStack>
-                <Box px="$2.5" py="$1" rounded="$full" bg="$primary100">
+                )}
+            </VStack>
+            <HStack space="sm" alignItems="center" ml="$2">
+                <Box
+                    px="$2.5"
+                    py="$1"
+                    rounded="$full"
+                    bg="$primary100"
+                    justifyContent="center"
+                >
                     <Text size="xs" bold color="$primary600">
                         Ready to launch
                     </Text>
                 </Box>
-            </HStack>
-
-            {/* Body */}
-            {protocol.description && (
-                <Text size="sm" color="$textLight600" mt="$3">
-                    {protocol.description}
-                </Text>
-            )}
-            {!protocol.description && (
-                <Text size="sm" color="$textLight400" mt="$3" italic>
-                    No description provided
-                </Text>
-            )}
-
-            {/* Actions */}
-            <HStack justifyContent="flex-end" space="sm">
                 <Button
-                    size="sm"
-                    bg="$primary500"
                     onPress={() =>
-                        navigation.navigate('Launch', {
+                        navigation.navigate('ProtocolView', {
                             protocol_ID: protocol.id,
                         })
                     }
+                    rounded="$full"
+                    px="$2.5"
+                    py="$1"
                 >
-                    <Icon as={Rocket} mr="$2" color="white" />
-                    <ButtonText color="white">Launch</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onPress={() =>
-                        navigation.navigate('Create protocol', {
-                            protocol_ID: protocol.id,
-                            preserveID: false,
-                        })
-                    }
-                >
-                    <Icon as={File} mr="$2" />
-                    <ButtonText>Template</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onPress={() =>
-                        navigation.navigate('Create protocol', {
-                            protocol_ID: protocol.id,
-                            preserveID: true,
-                        })
-                    }
-                >
-                    <Icon as={Edit3} mr="$2" />
-                    <ButtonText>Edit</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    borderColor="$error500"
-                    onPress={() => setDeleteModal(true)}
-                >
-                    <Icon as={Trash} mr="$2" color="$error500" />
-                    <ButtonText color="$error500">Delete</ButtonText>
+                    <Icon as={ArrowRight} color="white" />
                 </Button>
             </HStack>
-
-            <ConfirmationModal
-                isOpen={deleteModal}
-                onClose={() => setDeleteModal(false)}
-                action={() => deleteProtocol(protocol.id)}
-                icon={Trash}
-                headline={`Delete protocol "${protocol.name}"`}
-                text="Are you sure you want to delete this protocol? This action cannot be undone."
-                actionButtonText="Delete"
-                type="error"
-            />
         </Box>
     );
 }
