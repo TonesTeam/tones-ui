@@ -371,9 +371,13 @@ export default function Launch({
                     <TouchableOpacity
                         style={s.footer_btn_back}
                         onPress={() => {
-                            if (stage == 1)
-                                navigation.navigate('Protocol List');
-                            else setStage(stage - 1);
+                            if (stage == 1) {
+                                navigation.navigate('ProtocolView', {
+                                    protocol_ID: protocol_ID,
+                                });
+                            } else {
+                                setStage(stage - 1);
+                            }
                         }}
                     >
                         <Txt style={{ fontFamily: 'Roboto-bold' }}>
