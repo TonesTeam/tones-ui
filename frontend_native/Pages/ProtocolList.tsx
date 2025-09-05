@@ -161,24 +161,30 @@ export default function ProtocolList({
         }
     }, [isFocused, deletionModal]);
 
-    //Search bar input
-    const [filterInput, setfilterInput] = useState('');
+    const [searchPrompt, setSearchPrompt] = useState('');
     const [active, setActive] = useState(false);
+
     let inputHandler = (e: string) => {
         var lowerCase = e.toLowerCase();
-        setfilterInput(lowerCase);
+        setSearchPrompt(lowerCase);
     };
 
     function filterAndSort() {
-        if (protocols) {
-            let filteredList = protocols.filter((e) =>
-                filterInput === ''
-                    ? e
-                    : e.name.toLowerCase().includes(filterInput.toLowerCase()),
+        if (!protocols) return [] as ProtocolDto[];
+
+        const query = searchPrompt.trim().toLowerCase();
+        const filteredList = protocols.filter((e) => {
+            return (
+                e.name.toLowerCase().includes(query) ||
+                e.description?.toLowerCase().includes(query) ||
+                e.author?.toLowerCase().includes(query)
             );
-            let sortedList = filteredList;
-            return sortedList;
-        } else return [] as ProtocolDto[];
+        });
+
+        // TODO: Implement protocol sorting options
+        let sortedList = filteredList;
+
+        return sortedList;
     }
 
     return (
@@ -199,7 +205,7 @@ export default function ProtocolList({
                     </Txt>
                     <SearchBar
                         onChangeText={(e) => inputHandler(e)}
-                        value={filterInput}
+                        value={searchPrompt}
                     />
                 </View>
                 <View style={s.section_list}>
