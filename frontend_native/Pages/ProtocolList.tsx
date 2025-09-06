@@ -160,11 +160,6 @@ export default function ProtocolList({
     const [searchPrompt, setSearchPrompt] = useState('');
     const [active, setActive] = useState(false);
 
-    let inputHandler = (e: string) => {
-        var lowerCase = e.toLowerCase();
-        setSearchPrompt(lowerCase);
-    };
-
     function filterAndSort() {
         if (!protocols) return [] as ProtocolDto[];
 
@@ -200,7 +195,7 @@ export default function ProtocolList({
                         Protocol List
                     </Txt>
                     <SearchBar
-                        onChangeText={(e) => inputHandler(e)}
+                        onChangeText={(e) => setSearchPrompt(e)}
                         value={searchPrompt}
                     />
                 </View>
