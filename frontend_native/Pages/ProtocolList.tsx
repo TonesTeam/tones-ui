@@ -32,9 +32,12 @@ import {
     HStack,
     Text,
     Spinner,
+    Badge,
+    BadgeText,
+    BadgeIcon,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../components/GeneratedAvatar';
-import { X, SearchIcon, Trash, ArrowRight } from 'lucide-react-native';
+import { X, SearchIcon, Trash, ArrowRight, Rocket } from 'lucide-react-native';
 
 function ProtocolItem({
     protocol,
@@ -87,17 +90,10 @@ function ProtocolItem({
                 )}
             </VStack>
             <HStack space="sm" alignItems="center" ml="$2">
-                <Box
-                    px="$2.5"
-                    py="$1"
-                    rounded="$full"
-                    bg="$primary100"
-                    justifyContent="center"
-                >
-                    <Text size="xs" bold color="$primary600">
-                        Ready to launch
-                    </Text>
-                </Box>
+                <Badge variant="outline" action="info" rounded="$md" mr="$1">
+                    <BadgeText>Ready to launch</BadgeText>
+                    <BadgeIcon as={Rocket} ml="$2" />
+                </Badge>
                 <Button
                     onPress={() =>
                         navigation.navigate('ProtocolView', {
