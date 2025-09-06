@@ -35,9 +35,26 @@ import {
     Badge,
     BadgeText,
     BadgeIcon,
+    Select,
+    SelectTrigger,
+    SelectInput,
+    SelectIcon,
+    SelectPortal,
+    SelectBackdrop,
+    SelectContent,
+    SelectDragIndicator,
+    SelectDragIndicatorWrapper,
+    SelectItem,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../components/GeneratedAvatar';
-import { X, SearchIcon, Trash, ArrowRight, Rocket } from 'lucide-react-native';
+import {
+    X,
+    SearchIcon,
+    Trash,
+    ArrowRight,
+    Rocket,
+    ChevronDown,
+} from 'lucide-react-native';
 
 function ProtocolItem({
     protocol,
@@ -158,18 +175,37 @@ export default function ProtocolList({
     }, [isFocused, deletionModal]);
 
     const [searchPrompt, setSearchPrompt] = useState('');
+
+    const [authorFilter, setAuthorFilter] = useState('all');
+    const [authorList, setAuthorList] = useState<string[]>([]);
+
     const [active, setActive] = useState(false);
+    useEffect(() => {
+        if (!protocols) return;
+
+        let authors = Array.from(
+            new Set(protocols.map((protocol) => protocol.author as string)),
+        ).sort();
+
+        setAuthorList(authors);
+    }, [protocols]);
 
     function filterAndSort() {
         if (!protocols) return [] as ProtocolDto[];
 
         const query = searchPrompt.trim().toLowerCase();
-        const filteredList = protocols.filter((e) => {
+        let filteredList = protocols.filter((e) => {
             return (
                 e.name.toLowerCase().includes(query) ||
                 e.description?.toLowerCase().includes(query) ||
                 e.author?.toLowerCase().includes(query)
             );
+        });
+
+        filteredList = filteredList.filter((e) => {
+            if (authorFilter === 'all') return true;
+
+            return e.author == authorFilter;
         });
 
         // TODO: Implement protocol sorting options
@@ -187,7 +223,7 @@ export default function ProtocolList({
                         style={{
                             fontFamily: 'Roboto-bold',
                             fontSize: 24,
-                            flex: 1,
+                            flex: 2,
                         }}
                         adjustsFontSizeToFit={true}
                         numberOfLines={1}
@@ -197,6 +233,11 @@ export default function ProtocolList({
                     <SearchBar
                         onChangeText={(e) => setSearchPrompt(e)}
                         value={searchPrompt}
+                    />
+                    <AuthorSelector
+                        value={authorFilter}
+                        onChange={(e) => setAuthorFilter(e)}
+                        authors={authorList}
                     />
                 </View>
                 <View style={s.section_list}>
@@ -330,6 +371,41 @@ export default function ProtocolList({
     );
 }
 
+interface AuthorSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+    authors: string[];
+}
+
+const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
+    return (
+        <Select flex={2} ml="$5" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger>
+                <SelectInput placeholder="Author" />
+                <SelectIcon mr="$3" as={ChevronDown} />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent maxHeight={300}>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem value="all" label="All Authors" />
+                    <SelectItem value="me" label="My Protocols" />
+                    {authors.map((author) => (
+                        <SelectItem
+                            key={author}
+                            value={author}
+                            label={author}
+                        />
+                    ))}
+                    <SelectItem value="me" label="Test" />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
+
 interface SearchBarProps {
     value: string;
     onChangeText: (text: string) => void;
@@ -349,7 +425,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
     });
 
     return (
-        <Input style={{ flex: 5 }}>
+        <Input style={{ flex: 9 }}>
             <InputSlot style={styles.search_bar}>
                 <InputIcon as={SearchIcon} />
             </InputSlot>
