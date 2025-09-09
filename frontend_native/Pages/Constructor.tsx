@@ -939,7 +939,7 @@ export default function Constructor({
                                                                                             (
                                                                                                 block.params as ReagentStep
                                                                                             )
-                                                                                                .temperature
+                                                                                                .targetTemperature
                                                                                         }
                                                                                     </Txt>
                                                                                 </View>

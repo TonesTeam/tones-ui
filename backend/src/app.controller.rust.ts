@@ -23,7 +23,7 @@ interface ReagentStep {
             toxic: boolean;
         };
         incubation: number;
-        temperature: number;
+        targetTemperature: number;
     };
 }
 
@@ -38,19 +38,10 @@ interface WashingStep {
         };
         iters: number;
         incubation: number;
-        temperature: number;
     };
 }
 
-interface TemperatureChangeStep {
-    id: number;
-    type: 'TemperatureChange';
-    params: {
-        target: number;
-    };
-}
-
-type ProtocolStep = ReagentStep | WashingStep | TemperatureChangeStep;
+type ProtocolStep = ReagentStep | WashingStep;
 
 class RustProtocolManager {
     private id: number;
@@ -139,16 +130,6 @@ class RustProtocolManager {
         this.steps = prot.steps
             .map((s: any) => {
                 switch (s.type) {
-                    case 'TemperatureChange':
-                        return {
-                            step_type: {
-                                TemperatureChange: {
-                                    target: s.params.temperature,
-                                },
-                            },
-                            id: 666,
-                        };
-
                     case 'Reagent':
                         const liquid_params = {
                             reagent_type:
@@ -173,7 +154,7 @@ class RustProtocolManager {
                                 Reagent: {
                                     liquid_params,
                                     incubation: s.params.incubation ?? 0,
-                                    temperature: 0,
+                                    temperature: s.params.targetTemperature ?? 0,
                                 },
                             },
                             id: 666,
@@ -196,7 +177,6 @@ class RustProtocolManager {
                                     },
                                     iters: s.params.iters ?? 0,
                                     incubation: s.params.incubation ?? 0,
-                                    temperature: 0,
                                 },
                             },
                             id: 666,

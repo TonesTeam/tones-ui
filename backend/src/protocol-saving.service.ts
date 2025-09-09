@@ -113,18 +113,9 @@ export class ProtocolSavingService {
             step.liquidApplication = {
                 create: {
                     liquidIncubationTime: params.incubation,
-                    incubationTemperature: params.temperature,
+                    incubationTemperature: params.targetTemperature,
                     autoWash: params.autoWash,
                     liquidInfo: this.getLiquidInfo(params.liquid),
-                },
-            };
-        }
-        if (s.type == StepType.TEMP_CHANGE) {
-            let params = s.params as TemperatureStep;
-            step.temperatureChange = {
-                create: {
-                    sourceTemperature: params.source,
-                    targetTemperature: params.target,
                 },
             };
         }
