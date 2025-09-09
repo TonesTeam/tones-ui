@@ -71,14 +71,6 @@ export class ProtocolStepsResolver {
                 });
                 //Add wash step if auto_wash
             }
-            if (s.stepType === StepType.TEMP_CHANGE) {
-                steps.push({
-                    type: StepType.TEMP_CHANGE,
-                    params: {
-                        target: s.temperatureChange.targetTemperature,
-                    },
-                });
-            }
         });
         return steps;
     }

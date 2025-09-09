@@ -21,7 +21,6 @@ import NavBar from '../navigation/CustomNavigator';
 import Txt from '../components/Txt';
 import Washing_icon from '../assets/icons/washing_icon.svg';
 import Reagent_icon from '../assets/icons/reagent_icon.svg';
-import Temperature_icon from '../assets/icons/temperature_icon.svg';
 import React, {
     ForwardedRef,
     MutableRefObject,
@@ -36,7 +35,6 @@ import DraggableFlatList, {
 import {
     ReagentStep,
     StepDTO,
-    TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
@@ -45,7 +43,6 @@ import WorkBlock from './Block';
 import StepBlock from '../components/StepBlock';
 import {
     ProtocolSettings,
-    updateTemperature,
 } from '../common/constructorUtils';
 import Close_icon from '../assets/icons/close.svg';
 import Point_icon from '../assets/icons/point.svg';
@@ -80,7 +77,6 @@ import { Save } from 'lucide-react-native';
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
     [StepType.LIQUID_APPL, 'reagent'],
-    [StepType.TEMP_CHANGE, 'temperature'],
 ]);
 
 function StepTab(props: {
@@ -108,11 +104,6 @@ function StepTab(props: {
         case StepType.LIQUID_APPL:
             {
                 params.icon = Reagent_icon;
-            }
-            break;
-        case StepType.TEMP_CHANGE:
-            {
-                params.icon = Temperature_icon;
             }
             break;
     }
@@ -177,7 +168,6 @@ export default function Constructor({
         reference_ID = route.params.protocol_ID;
     const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
     const [workBlock, setWorkBlock] = useState<StepDTO>(); //Currently edited block
-    const [currentTemp, setCurrentTemp] = useState(DEFAULT_TEMEPRATURE); //Last temperature used in steps
     const [preSaveModal, setPreSaveModal] = useState(false);
     const [settingsModal, setSettingsModal] = useState(false);
     const [duration, setDuration] = useState<number>(0);
@@ -211,7 +201,7 @@ export default function Constructor({
                 setDefaultWashStep(r.data.defaultWash);
                 setProtocolName(r.data.name);
                 setProtocolDescription(r.data.description);
-                handleBlocksChange(r.data.steps);
+                setBlocks(r.data.steps);
             });
         }
 
@@ -221,7 +211,6 @@ export default function Constructor({
                 iters: 1,
                 incubation: 10,
                 liquid: r.data.filter((liq) => liq.type.id == 2)[0],
-                temperature: null,
             } as WashStep;
             setDefaultWashStep(defaultWashing);
         });
@@ -264,14 +253,11 @@ export default function Constructor({
             {
                 type: newBlock.type,
                 id: newBlock.id == -1 ? newID : newBlock.id,
-                params:
-                    newBlock.type == StepType.TEMP_CHANGE
-                        ? newBlock.params
-                        : { ...newBlock.params, temperature: currentTemp },
+                params: newBlock.params,
             } as StepDTO,
         ];
 
-        handleBlocksChange(finalBlocks);
+        setBlocks(finalBlocks);
         setWorkBlock(undefined);
     }
 
@@ -279,18 +265,12 @@ export default function Constructor({
         let index = blocks.findIndex((x) => x.id == editedBlock.id);
         let newBlocks = [...blocks];
 
-        if (editedBlock.type == StepType.TEMP_CHANGE) {
-            let newTemp = (editedBlock.params as TemperatureStep)
-                .target as number;
-            setCurrentTemp(newTemp);
-        }
-
         let newEdited = { ...newBlocks[index] };
         newEdited.params = editedBlock.params;
         newEdited.type = editedBlock.type;
 
         newBlocks[index] = newEdited;
-        handleBlocksChange(newBlocks);
+        setBlocks(newBlocks);
         setWorkBlock(undefined);
     }
 
@@ -302,14 +282,10 @@ export default function Constructor({
         const newBlocks = blocks.filter(
             (block) => block.id !== blockToRemove.id,
         );
-        handleBlocksChange(newBlocks);
+        setBlocks(newBlocks);
     }
 
-    function handleBlocksChange(blocks: StepDTO[]) {
-        let [newBlocks, newCurrentTemperature] = updateTemperature(blocks);
-        setBlocks(newBlocks);
-        setCurrentTemp(newCurrentTemperature);
-    }
+
 
     function save() {
         let new_protocol = {
@@ -399,22 +375,6 @@ export default function Constructor({
                                                     type: StepType.LIQUID_APPL,
                                                     id: -1,
                                                     params: {} as ReagentStep,
-                                                } as StepDTO)
-                                            }
-                                        />
-                                        <StepTab
-                                            type={StepType.TEMP_CHANGE}
-                                            active={
-                                                workBlock?.type ==
-                                                StepType.TEMP_CHANGE
-                                            }
-                                            onPress={() =>
-                                                setWorkBlock({
-                                                    type: StepType.TEMP_CHANGE,
-                                                    id: -1,
-                                                    params: {
-                                                        source: currentTemp,
-                                                    } as TemperatureStep,
                                                 } as StepDTO)
                                             }
                                         />
@@ -730,16 +690,10 @@ export default function Constructor({
                                                                                                   .color
                                                                                                   .block
                                                                                                   .main_reagent
-                                                                                            : block.type ==
-                                                                                                StepType.TEMP_CHANGE
-                                                                                              ? AppStyles
-                                                                                                    .color
-                                                                                                    .block
-                                                                                                    .main_temperature
-                                                                                              : AppStyles
-                                                                                                    .color
-                                                                                                    .block
-                                                                                                    .main_washing,
+                                                                                            : AppStyles
+                                                                                                  .color
+                                                                                                  .block
+                                                                                                  .main_washing,
                                                                                 }}
                                                                             ></View>
                                                                             <View
@@ -792,79 +746,60 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {block.type !=
-                                                                                StepType.TEMP_CHANGE
+                                                                                {(
+                                                                                    block.params as
+                                                                                        | ReagentStep
+                                                                                        | WashStep
+                                                                                ).liquid.name}
+                                                                            </Txt>
+                                                                        </View>
+                                                                        <View
+                                                                            style={[
+                                                                                s.list_cell,
+                                                                                {
+                                                                                    flex: 1,
+                                                                                },
+                                                                            ]}
+                                                                        >
+                                                                            <Txt
+                                                                                style={
+                                                                                    s.list_cell_txt
+                                                                                }
+                                                                            >
+                                                                                {block.type === StepType.LIQUID_APPL 
+                                                                                    ? (block.params as ReagentStep).targetTemperature
+                                                                                    : '-'}
+                                                                                {block.type === StepType.LIQUID_APPL ? '°C' : ''}
+                                                                            </Txt>
+                                                                        </View>
+                                                                        <View
+                                                                            style={[
+                                                                                s.list_cell,
+                                                                                {
+                                                                                    flex: 1,
+                                                                                },
+                                                                            ]}
+                                                                        >
+                                                                            <Txt
+                                                                                style={
+                                                                                    s.list_cell_txt
+                                                                                }
+                                                                            >
+                                                                                {settings.timeUnits == 'sec'
                                                                                     ? (
                                                                                           block.params as
                                                                                               | ReagentStep
                                                                                               | WashStep
-                                                                                      )
-                                                                                          .liquid
-                                                                                          .name
-                                                                                    : '-'}
-                                                                            </Txt>
-                                                                        </View>
-                                                                        <View
-                                                                            style={[
-                                                                                s.list_cell,
-                                                                                {
-                                                                                    flex: 1,
-                                                                                },
-                                                                            ]}
-                                                                        >
-                                                                            <Txt
-                                                                                style={
-                                                                                    s.list_cell_txt
-                                                                                }
-                                                                            >
-                                                                                {block.type !=
-                                                                                StepType.TEMP_CHANGE
-                                                                                    ? (
-                                                                                          block.params as Partial<WashStep>
-                                                                                      )
-                                                                                          .temperature
-                                                                                    : (
-                                                                                          block.params as TemperatureStep
-                                                                                      )
-                                                                                          .target}
-                                                                                °C
-                                                                            </Txt>
-                                                                        </View>
-                                                                        <View
-                                                                            style={[
-                                                                                s.list_cell,
-                                                                                {
-                                                                                    flex: 1,
-                                                                                },
-                                                                            ]}
-                                                                        >
-                                                                            <Txt
-                                                                                style={
-                                                                                    s.list_cell_txt
-                                                                                }
-                                                                            >
-                                                                                {block.type !=
-                                                                                StepType.TEMP_CHANGE
-                                                                                    ? settings.timeUnits ==
-                                                                                      'sec'
-                                                                                        ? (
+                                                                                      ).incubation
+                                                                                    : Math.round(
+                                                                                          ((
                                                                                               block.params as
-                                                                                                  | ReagentStep
                                                                                                   | WashStep
-                                                                                          )
-                                                                                              .incubation
-                                                                                        : Math.round(
-                                                                                              ((
-                                                                                                  block.params as
-                                                                                                      | WashStep
-                                                                                                      | WashStep
-                                                                                              )
-                                                                                                  .incubation /
-                                                                                                  60) *
-                                                                                                  100,
-                                                                                          ) /
-                                                                                          100
-                                                                                    : '-'}
+                                                                                                  | ReagentStep
+                                                                                          ).incubation /
+                                                                                              60) *
+                                                                                              100,
+                                                                                      ) / 100}
                                                                             </Txt>
                                                                         </View>
 
@@ -1004,7 +939,7 @@ export default function Constructor({
                                                                                             (
                                                                                                 block.params as ReagentStep
                                                                                             )
-                                                                                                .temperature
+                                                                                                .targetTemperature
                                                                                         }
                                                                                     </Txt>
                                                                                 </View>

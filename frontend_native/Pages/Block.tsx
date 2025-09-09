@@ -11,7 +11,6 @@ import { AppStyles } from '../constants/styles';
 import {
     ReagentStep,
     StepDTO,
-    TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
 import { LiquidDTO, LiquidTypeDTO } from 'common/dto/liquid.dto';
@@ -32,6 +31,7 @@ import {
     ITERATIONS_MIN,
     TEMPERATURE_MAX,
     TEMPERATURE_MIN,
+    DEFAULT_TEMEPRATURE,
 } from '../constants/protocol_constants';
 
 export interface WorkBlockProps {
@@ -45,7 +45,7 @@ export interface WorkBlockProps {
 
 interface BlockInputsProps {
     stepData: StepDTO;
-    change: (arg0: WashStep | ReagentStep | TemperatureStep) => void;
+    change: (arg0: WashStep | ReagentStep) => void;
     addNewLiquid?: (liquid: LiquidDTO) => void;
     existingCustomLiquids?: LiquidDTO[];
     timeUnits?: 'sec' | 'min';
@@ -167,6 +167,10 @@ function ReagentInputs(props: BlockInputsProps) {
             (props.stepData.params as ReagentStep).autoWash == undefined
                 ? false
                 : (props.stepData.params as ReagentStep).autoWash,
+        targetTemperature:
+            (props.stepData.params as ReagentStep).targetTemperature == undefined
+                ? DEFAULT_TEMEPRATURE
+                : (props.stepData.params as ReagentStep).targetTemperature,
     } as ReagentStep);
 
     const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
@@ -300,6 +304,7 @@ function ReagentInputs(props: BlockInputsProps) {
                             decimals={false}
                             limit_max={INCUBATION_MAX}
                             limit_min={INCUBATION_MIN}
+                            containerStyle={{ marginRight: 100 }}
                             label={`INCUBATION TIME (${props.timeUnits || 'seconds'}):`}
                             type={'numeric' as InputModeOptions}
                             onInputChange={(incub) =>
@@ -309,9 +314,25 @@ function ReagentInputs(props: BlockInputsProps) {
                                 )
                             }
                         />
-
+                        <InputField
+                            value={reagParams.targetTemperature}
+                            placeholder=""
+                            decimals={true}
+                            limit_max={TEMPERATURE_MAX}
+                            limit_min={TEMPERATURE_MIN}
+                            label="TARGET TEMPERATURE (°C):"
+                            type={'numeric' as InputModeOptions}
+                            onInputChange={(temp) =>
+                                handleParamChange(
+                                    'targetTemperature',
+                                    temp == '' ? DEFAULT_TEMEPRATURE : Number(temp),
+                                )
+                            }
+                        />
+                    </View>
+                    <View style={[bs.row]}>
                         <View
-                            style={{ flexDirection: 'column', paddingLeft: 30 }}
+                            style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}
                         >
                             <Txt
                                 style={{
@@ -361,53 +382,6 @@ function ReagentInputs(props: BlockInputsProps) {
     );
 }
 
-function TemperatureInputs(props: BlockInputsProps) {
-    const [temperParams, setTemperParams] = useState(
-        props.stepData.params as TemperatureStep,
-    );
-
-    function handleParamChange(key: string, value: any) {
-        setTemperParams((prevState) => ({
-            ...prevState,
-            [key]: value,
-        }));
-    }
-
-    useEffect(() => {
-        props.change(temperParams);
-    }, [temperParams]);
-
-    return (
-        <KeyboardAvoidingView style={bs.inputs} behavior="padding">
-            <View style={[bs.row]}>
-                <InputField
-                    placeholder=""
-                    value={temperParams.source}
-                    containerStyle={{ marginRight: 100 }}
-                    label="From (°C):"
-                    type={'numeric' as InputModeOptions}
-                    disabled={true}
-                />
-                <InputField
-                    value={temperParams.target}
-                    placeholder=""
-                    limit_max={TEMPERATURE_MAX}
-                    limit_min={TEMPERATURE_MIN}
-                    label="Target (°C):"
-                    decimals={true}
-                    type={'numeric' as InputModeOptions}
-                    onInputChange={(target) =>
-                        handleParamChange(
-                            'target',
-                            target == '' ? null : Number(target),
-                        )
-                    }
-                />
-            </View>
-        </KeyboardAvoidingView>
-    );
-}
-
 export default function WorkBlock(props: WorkBlockProps) {
     const [params, setParams] = useState<{ [key: string]: any }>({});
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(
@@ -451,7 +425,10 @@ export default function WorkBlock(props: WorkBlockProps) {
                         reag_params.incubation == undefined ||
                         reag_params.incubation < 0 ||
                         reag_params.liquid == undefined ||
-                        reag_params.liquid.id < 0
+                        reag_params.liquid.id < 0 ||
+                        reag_params.targetTemperature == undefined ||
+                        reag_params.targetTemperature < TEMPERATURE_MIN ||
+                        reag_params.targetTemperature > TEMPERATURE_MAX
                     ) {
                         valid = false;
                     }
@@ -470,19 +447,6 @@ export default function WorkBlock(props: WorkBlockProps) {
                     }
                 }
                 break;
-            case StepType.TEMP_CHANGE:
-                {
-                    let temp_params = params as TemperatureStep;
-                    if (
-                        temp_params.source == undefined ||
-                        temp_params.source <= 0 ||
-                        temp_params.target == undefined ||
-                        temp_params.target <= 0
-                    ) {
-                        valid = false;
-                    }
-                }
-                break;
         }
         setAllowSave(valid);
     }
@@ -492,9 +456,7 @@ export default function WorkBlock(props: WorkBlockProps) {
     const block_color =
         props.block.type == StepType.WASHING
             ? AppStyles.color.block.main_washing
-            : props.block.type == StepType.LIQUID_APPL
-              ? AppStyles.color.block.main_reagent
-              : AppStyles.color.block.main_temperature;
+            : AppStyles.color.block.main_reagent;
 
     return (
         <>
@@ -514,12 +476,6 @@ export default function WorkBlock(props: WorkBlockProps) {
                             addNewLiquid={updateCustomLiquids}
                             existingCustomLiquids={customLiquids}
                             timeUnits={props.settings.timeUnits}
-                        />
-                    )}
-                    {props.block.type == StepType.TEMP_CHANGE && (
-                        <TemperatureInputs
-                            stepData={props.block}
-                            change={memorizedParamUpdate}
                         />
                     )}
                 </View>
