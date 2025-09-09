@@ -75,15 +75,15 @@ const ParamItem = (props: {
     measurement?: string;
 }) => {
     return (
-        <VStack space="xs" flex={1}>
-            <Text 
-                size="xs" 
-                color="$white" 
+        <HStack flex={1}>
+            <Text
+                size="xs"
+                color="$white"
                 opacity={0.8}
                 textTransform="uppercase"
                 fontWeight="$medium"
             >
-                {props.label}
+                {props.label}:{' '}
             </Text>
             <Text
                 size="sm"
@@ -94,22 +94,28 @@ const ParamItem = (props: {
             >
                 {props.value} {props.measurement ?? ''}
             </Text>
-        </VStack>
+        </HStack>
     );
 };
 
 // Component for washing step parameters
-const WashingStepParams = ({ block, settings }: { block: StepDTO; settings: ProtocolSettings }) => {
+const WashingStepParams = ({
+    block,
+    settings,
+}: {
+    block: StepDTO;
+    settings: ProtocolSettings;
+}) => {
     const params = block.params as WashStep;
-    const incubationValue = formatTimeValue(params.incubation, settings.timeUnits);
-    
+    const incubationValue = formatTimeValue(
+        params.incubation,
+        settings.timeUnits,
+    );
+
     return (
-        <HStack space="md" flex={1}>
+        <HStack flex={1}>
             <VStack space="sm" flex={1}>
-                <ParamItem
-                    label="Reagent"
-                    value={params.liquid.name}
-                />
+                <ParamItem label="Reagent" value={params.liquid.name} />
                 <ParamItem
                     label="Incubation time"
                     value={incubationValue}
@@ -133,17 +139,24 @@ const WashingStepParams = ({ block, settings }: { block: StepDTO; settings: Prot
 };
 
 // Component for reagent step parameters
-const ReagentStepParams = ({ block, settings }: { block: StepDTO; settings: ProtocolSettings }) => {
+const ReagentStepParams = ({
+    block,
+    settings,
+}: {
+    block: StepDTO;
+    settings: ProtocolSettings;
+}) => {
     const params = block.params as ReagentStep;
-    const incubationValue = formatTimeValue(params.incubation, settings.timeUnits);
-    
+    const incubationValue = formatTimeValue(
+        params.incubation,
+        settings.timeUnits,
+    );
+    console.log('ReagentStepParams params:', params);
+
     return (
-        <HStack space="md" flex={1}>
+        <HStack space="md" flex={1} height="60">
             <VStack space="sm" flex={1}>
-                <ParamItem
-                    label="Reagent"
-                    value={params.liquid.name}
-                />
+                <ParamItem label="Reagent" value={params.liquid.name} />
                 <ParamItem
                     label="Incubation time"
                     value={incubationValue}
@@ -164,7 +177,7 @@ const ReagentStepParams = ({ block, settings }: { block: StepDTO; settings: Prot
 // Component for temperature step parameters
 const TemperatureStepParams = ({ block }: { block: StepDTO }) => {
     const params = block.params as TemperatureStep;
-    
+
     return (
         <HStack space="md" flex={1}>
             <VStack space="sm" flex={1}>
@@ -173,11 +186,7 @@ const TemperatureStepParams = ({ block }: { block: StepDTO }) => {
                     value={params.source}
                     measurement="°C"
                 />
-                <ParamItem
-                    label="To"
-                    value={params.target}
-                    measurement="°C"
-                />
+                <ParamItem label="To" value={params.target} measurement="°C" />
             </VStack>
         </HStack>
     );
@@ -198,15 +207,27 @@ const StepBlock = (props: StepBlockProps) => {
 
     const block = item;
     const stepConfig = getStepConfig(block.type);
-    const blockColor = isActive ? stepConfig.colors.transparent : stepConfig.colors.main;
+    const blockColor = isActive
+        ? stepConfig.colors.transparent
+        : stepConfig.colors.main;
     const IconComponent = stepConfig.icon;
 
     const renderStepParams = () => {
         switch (block.type) {
             case StepType.WASHING:
-                return <WashingStepParams block={block} settings={props.settings} />;
+                return (
+                    <WashingStepParams
+                        block={block}
+                        settings={props.settings}
+                    />
+                );
             case StepType.LIQUID_APPL:
-                return <ReagentStepParams block={block} settings={props.settings} />;
+                return (
+                    <ReagentStepParams
+                        block={block}
+                        settings={props.settings}
+                    />
+                );
             case StepType.TEMP_CHANGE:
                 return <TemperatureStepParams block={block} />;
             default:
@@ -214,7 +235,8 @@ const StepBlock = (props: StepBlockProps) => {
         }
     };
 
-    const hasAutoWash = block.type === StepType.LIQUID_APPL && 
+    const hasAutoWash =
+        block.type === StepType.LIQUID_APPL &&
         (block.params as ReagentStep).autoWash === true;
 
     return (
@@ -260,15 +282,11 @@ const StepBlock = (props: StepBlockProps) => {
                                     fill={AppStyles.color.elem_back}
                                 />
                             </Box>
-                            <Text
-                                color="$white"
-                                size="lg"
-                                fontWeight="$bold"
-                            >
+                            <Text color="$white" size="lg" fontWeight="$bold">
                                 {stepConfig.name}
                             </Text>
                         </HStack>
-                        
+
                         {props.edit && (
                             <Button
                                 size="sm"
@@ -278,7 +296,11 @@ const StepBlock = (props: StepBlockProps) => {
                                 onPress={() => setDeleteModal(true)}
                             >
                                 <Icon as={Trash} color="$white" size="sm" />
-                                <ButtonText color="$white" marginLeft="$1" size="sm">
+                                <ButtonText
+                                    color="$white"
+                                    marginLeft="$1"
+                                    size="sm"
+                                >
                                     Delete
                                 </ButtonText>
                             </Button>
@@ -288,9 +310,12 @@ const StepBlock = (props: StepBlockProps) => {
                     {/* Content */}
                     <HStack alignItems="flex-start" paddingTop="$3" space="md">
                         {renderStepParams()}
-                        
+
                         {props.edit && (
-                            <VStack alignItems="flex-end" justifyContent="center">
+                            <VStack
+                                alignItems="flex-end"
+                                justifyContent="center"
+                            >
                                 <Button
                                     size="sm"
                                     variant="outline"
@@ -298,8 +323,16 @@ const StepBlock = (props: StepBlockProps) => {
                                     backgroundColor="rgba(255, 255, 255, 0.1)"
                                     onPress={() => props.editStep?.(item)}
                                 >
-                                    <Icon as={Pencil} color="$white" size="sm" />
-                                    <ButtonText color="$white" marginLeft="$1" size="sm">
+                                    <Icon
+                                        as={Pencil}
+                                        color="$white"
+                                        size="sm"
+                                    />
+                                    <ButtonText
+                                        color="$white"
+                                        marginLeft="$1"
+                                        size="sm"
+                                    >
                                         Edit
                                     </ButtonText>
                                 </Button>
@@ -317,7 +350,11 @@ const StepBlock = (props: StepBlockProps) => {
                             flexDirection="row"
                             alignItems="center"
                         >
-                            <AW_icon height={20} width={20} style={{ marginRight: 8 }} />
+                            <AW_icon
+                                height={20}
+                                width={20}
+                                style={{ marginRight: 8 }}
+                            />
                             <Text flex={1} size="sm" color="$textLight900">
                                 Auto Washing:{' '}
                                 {props.settings.autoWashConfig.iters} x{' '}
@@ -344,7 +381,7 @@ const StepBlock = (props: StepBlockProps) => {
                     )}
                 </Box>
             </TouchableOpacity>
-            
+
             <ConfirmationModal
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}

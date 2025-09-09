@@ -3,7 +3,13 @@ import { MainContainer } from '../constants/styles';
 import { StyleSheet } from 'react-native';
 import { Box, Heading, Text, VStack, HStack } from '@gluestack-ui/themed';
 import NavBar from '../navigation/CustomNavigator';
-import { Button, ButtonText, Icon, Spinner } from '@gluestack-ui/themed';
+import {
+    Button,
+    ButtonText,
+    Icon,
+    Spinner,
+    ScrollView,
+} from '@gluestack-ui/themed';
 import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { getRequest, makeRequest } from '../common/util';
@@ -65,98 +71,105 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 justifyContent="space-between"
                 style={styles.wrapper}
             >
-                <VStack>
-                    <Heading size="2xl">
-                        {protocol?.name ?? 'Loading...'}
-                    </Heading>
+                <ScrollView>
+                    <VStack>
+                        <Heading size="2xl">
+                            {protocol?.name ?? 'Loading...'}
+                        </Heading>
 
-                    <HStack justifyContent="flex-end" space="sm">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() =>
-                                navigation.navigate('Create protocol', {
-                                    protocol_ID: protocol.id,
-                                    preserveID: false,
-                                })
-                            }
-                        >
-                            <Icon as={File} mr="$2" />
-                            <ButtonText>Template</ButtonText>
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() =>
-                                navigation.navigate('Create protocol', {
-                                    protocol_ID: protocol.id,
-                                    preserveID: true,
-                                })
-                            }
-                        >
-                            <Icon as={Edit3} mr="$2" />
-                            <ButtonText>Edit</ButtonText>
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            borderColor="$error500"
-                            onPress={() => setDeleteModal(true)}
-                        >
-                            <Icon as={Trash} mr="$2" color="$error500" />
-                            <ButtonText color="$error500">Delete</ButtonText>
-                        </Button>
-                    </HStack>
+                        <HStack justifyContent="flex-end" space="sm">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onPress={() =>
+                                    navigation.navigate('Create protocol', {
+                                        protocol_ID: protocol.id,
+                                        preserveID: false,
+                                    })
+                                }
+                            >
+                                <Icon as={File} mr="$2" />
+                                <ButtonText>Template</ButtonText>
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onPress={() =>
+                                    navigation.navigate('Create protocol', {
+                                        protocol_ID: protocol.id,
+                                        preserveID: true,
+                                    })
+                                }
+                            >
+                                <Icon as={Edit3} mr="$2" />
+                                <ButtonText>Edit</ButtonText>
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                borderColor="$error500"
+                                onPress={() => setDeleteModal(true)}
+                            >
+                                <Icon as={Trash} mr="$2" color="$error500" />
+                                <ButtonText color="$error500">
+                                    Delete
+                                </ButtonText>
+                            </Button>
+                        </HStack>
 
-                    <HStack>
-                        <VStack flex={1} mr="$2">
-                            {protocol.steps.map((step, index) => (
-                                <StepBlock
-                                    key={step.id}
-                                    renderParams={{
-                                        item: step,
-                                        drag: () => {},
-                                        isActive: false,
-                                        getIndex: () => index,
-                                    }}
-                                    settings={{
-                                        timeUnits: 'sec',
-                                        autoWashConfig: protocol.defaultWash,
-                                        description: protocol.description,
-                                    }}
-                                    edit={false}
-                                />
-                            ))}
-                        </VStack>
+                        <HStack>
+                            <VStack flex={1} mr="$2">
+                                {protocol.steps.map((step, index) => (
+                                    <StepBlock
+                                        key={step.id}
+                                        renderParams={{
+                                            item: step,
+                                            drag: () => {},
+                                            isActive: false,
+                                            getIndex: () => index,
+                                        }}
+                                        settings={{
+                                            timeUnits: 'sec',
+                                            autoWashConfig:
+                                                protocol.defaultWash,
+                                            description: protocol.description,
+                                        }}
+                                        edit={false}
+                                    />
+                                ))}
+                            </VStack>
 
-                        <VStack flex={1} ml="$2">
-                            <HStack>
-                                <Text fontWeight="bold">Author:</Text>
-                                <Text ml="$2">{protocol?.author ?? ''}</Text>
-                            </HStack>
-                            <Text>
-                                <Text fontWeight="bold">Description: </Text>
-                                <Text fontWeight="normal" ml="$2">
-                                    {protocol?.description ?? ''}
+                            <VStack flex={1} ml="$2">
+                                <HStack>
+                                    <Text fontWeight="bold">Author:</Text>
+                                    <Text ml="$2">
+                                        {protocol?.author ?? ''}
+                                    </Text>
+                                </HStack>
+                                <Text>
+                                    <Text fontWeight="bold">Description: </Text>
+                                    <Text fontWeight="normal" ml="$2">
+                                        {protocol?.description ?? ''}
+                                    </Text>
                                 </Text>
-                            </Text>
-                        </VStack>
-                    </HStack>
-                </VStack>
+                            </VStack>
+                        </HStack>
+                    </VStack>
 
-                <Button
-                    size="sm"
-                    bg="$primary500"
-                    alignSelf="center"
-                    onPress={() =>
-                        navigation.navigate('Launch', {
-                            protocol_ID: protocol.id,
-                        })
-                    }
-                >
-                    <Icon as={Rocket} mr="$2" color="white" />
-                    <ButtonText color="white">Launch</ButtonText>
-                </Button>
+                    <Button
+                        size="sm"
+                        bg="$primary500"
+                        alignSelf="center"
+                        onPress={() =>
+                            navigation.navigate('Launch', {
+                                protocol_ID: protocol.id,
+                            })
+                        }
+                    >
+                        <Icon as={Rocket} mr="$2" color="white" />
+                        <ButtonText color="white">Launch</ButtonText>
+                    </Button>
+                </ScrollView>
             </Box>
 
             <ConfirmationModal
