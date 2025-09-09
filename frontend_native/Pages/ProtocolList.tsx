@@ -16,9 +16,6 @@ import {
     NativeStackNavigationProp,
     NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { Method } from 'axios';
-import InfoModal from '../components/InfoModal';
-import { InfoType } from '../common/types';
 import {
     Input,
     InputField,
@@ -50,7 +47,6 @@ import GeneratedAvatar from '../components/GeneratedAvatar';
 import {
     X,
     SearchIcon,
-    Trash,
     ArrowRight,
     Rocket,
     ChevronDown,
@@ -134,18 +130,12 @@ export default function ProtocolList({
 }: NativeStackScreenProps<any>) {
     const scrollViewRef = useRef<ScrollView>(null);
     const isFocused = useIsFocused();
-    //Error state
     const [networkError, setNetworkError] = useState(false);
 
-    //Deletion modal
-    const [deletionModal, setDeletionModal] = useState<boolean | undefined>(
-        undefined,
-    );
-
-    //Protocol data
     const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(
         undefined,
     );
+
     const listInitilizer = () => {
         setNetworkError(false);
         setTimeout(() => {
@@ -172,8 +162,7 @@ export default function ProtocolList({
         } else {
             setProtocols(undefined);
         }
-    }, [isFocused, deletionModal]);
-
+    }, [isFocused]);
     const [searchPrompt, setSearchPrompt] = useState('');
     const [authorFilter, setAuthorFilter] = useState('all');
     const [authorList, setAuthorList] = useState<string[]>([]);
@@ -208,7 +197,6 @@ export default function ProtocolList({
             return e.author == authorFilter;
         });
 
-        // TODO: Implement protocol sorting options
         let sortedList = filteredList.sort((a, b) => {
             if (sortingStrategy === 'oldest') {
                 return (
@@ -373,18 +361,6 @@ export default function ProtocolList({
                     )}
                 </View>
             </View>
-            {deletionModal != undefined && (
-                <InfoModal
-                    type={InfoType.DELETE}
-                    result={deletionModal}
-                    text={'Protocol'}
-                    unsetVisible={() => {
-                        setDeletionModal(undefined);
-                        //listInitilizer();
-                    }}
-                    actionDuring={() => listInitilizer()}
-                />
-            )}
         </MainContainer>
     );
 }
@@ -510,17 +486,5 @@ const s = StyleSheet.create({
         marginTop: 20,
         flex: 9,
         width: '95%',
-    },
-    search_bar: {
-        flexDirection: 'row',
-        backgroundColor: AppStyles.color.elem_back,
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        borderRadius: 10,
-        marginLeft: 20,
-    },
-    no_description: {
-        fontStyle: 'italic',
-        color: AppStyles.color.text_faded,
     },
 });
