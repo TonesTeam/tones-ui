@@ -164,9 +164,9 @@ export default function ProtocolList({
         }
     }, [isFocused]);
     const [searchPrompt, setSearchPrompt] = useState('');
-    const [authorFilter, setAuthorFilter] = useState('all');
+    const [authorFilter, setAuthorFilter] = useState('All authors');
     const [authorList, setAuthorList] = useState<string[]>([]);
-    const [sortingStrategy, setSortingStrategy] = useState('oldest');
+    const [sortingStrategy, setSortingStrategy] = useState('Oldest first');
 
     const [active, setActive] = useState(false);
     useEffect(() => {
@@ -192,18 +192,18 @@ export default function ProtocolList({
         });
 
         filteredList = filteredList.filter((e) => {
-            if (authorFilter === 'all') return true;
+            if (authorFilter === 'All authors') return true;
 
             return e.author == authorFilter;
         });
 
         let sortedList = filteredList.sort((a, b) => {
-            if (sortingStrategy === 'oldest') {
+            if (sortingStrategy === 'Oldest first') {
                 return (
                     new Date(a.creationDate).getTime() -
                     new Date(b.creationDate).getTime()
                 );
-            } else if (sortingStrategy === 'newest') {
+            } else if (sortingStrategy === 'Newest first') {
                 return (
                     new Date(b.creationDate).getTime() -
                     new Date(a.creationDate).getTime()
@@ -384,7 +384,7 @@ const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
                     <SelectDragIndicatorWrapper>
                         <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
-                    <SelectItem value="all" label="All Authors" />
+                    <SelectItem value="All authors" label="All Authors" />
                     {authors.map((author) => (
                         <SelectItem
                             key={author}
@@ -417,8 +417,8 @@ const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
                     <SelectDragIndicatorWrapper>
                         <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
-                    <SelectItem value="oldest" label="Oldest first" />
-                    <SelectItem value="newest" label="Newest first" />
+                    <SelectItem value="Oldest first" label="Oldest first" />
+                    <SelectItem value="Newest first" label="Newest first" />
                     <SelectItem value="me" label="Test" />
                 </SelectContent>
             </SelectPortal>
