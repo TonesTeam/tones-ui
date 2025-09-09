@@ -114,3 +114,17 @@ export async function makeRequest<R>(
         validateStatus: null,
     });
 }
+
+export const formatDuration = (seconds: number): string => {
+    if (seconds < 60) {
+        return `${seconds} sec`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const extra_seconds = seconds % 60;
+    if (extra_seconds === 0) {
+        return `${minutes} min`;
+    }
+
+    return `${minutes} min ${extra_seconds} sec`;
+};

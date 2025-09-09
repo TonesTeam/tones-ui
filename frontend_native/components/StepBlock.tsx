@@ -27,6 +27,7 @@ import {
     Pressable,
 } from '@gluestack-ui/themed';
 import { Trash, Pencil } from 'lucide-react-native';
+import { formatDuration } from '../common/util';
 
 const iconSize = 18;
 
@@ -61,12 +62,6 @@ const STEP_CONFIG = {
 // Utility function to get step configuration
 const getStepConfig = (stepType: StepType) => {
     return STEP_CONFIG[stepType];
-};
-
-// Utility function to format time values
-const formatTimeValue = (value: number, timeUnits: string) => {
-    if (timeUnits === 'sec') return value;
-    return Math.round((value / 60) * 100) / 100;
 };
 
 const ParamItem = (props: {
@@ -107,20 +102,13 @@ const WashingStepParams = ({
     settings: ProtocolSettings;
 }) => {
     const params = block.params as WashStep;
-    const incubationValue = formatTimeValue(
-        params.incubation,
-        settings.timeUnits,
-    );
+    const incubationValue = formatDuration(params.incubation);
 
     return (
         <HStack flex={1}>
             <VStack space="sm" flex={1}>
                 <ParamItem label="Reagent" value={params.liquid.name} />
-                <ParamItem
-                    label="Incubation time"
-                    value={incubationValue}
-                    measurement={settings.timeUnits}
-                />
+                <ParamItem label="Incubation time" value={incubationValue} />
             </VStack>
             <VStack space="sm" flex={1}>
                 <ParamItem
@@ -147,21 +135,14 @@ const ReagentStepParams = ({
     settings: ProtocolSettings;
 }) => {
     const params = block.params as ReagentStep;
-    const incubationValue = formatTimeValue(
-        params.incubation,
-        settings.timeUnits,
-    );
+    const incubationValue = formatDuration(params.incubation);
     console.log('ReagentStepParams params:', params);
 
     return (
         <HStack space="md" flex={1} height="60">
             <VStack space="sm" flex={1}>
                 <ParamItem label="Reagent" value={params.liquid.name} />
-                <ParamItem
-                    label="Incubation time"
-                    value={incubationValue}
-                    measurement={settings.timeUnits}
-                />
+                <ParamItem label="Incubation time" value={incubationValue} />
             </VStack>
             <VStack space="sm" flex={1}>
                 <ParamItem
