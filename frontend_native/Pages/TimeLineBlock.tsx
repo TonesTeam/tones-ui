@@ -7,7 +7,6 @@ import {
     TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
-import Txt from '../components/Txt';
 import { StepType } from 'common/enums';
 import { AppStyles } from '../constants/styles';
 import Washing_icon from '../assets/icons/washing_icon.svg';
@@ -19,7 +18,8 @@ import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
-import { TrashIcon } from '@gluestack-ui/themed';
+import { Icon, Button, Text, ButtonText } from '@gluestack-ui/themed';
+import { Trash, Pencil } from 'lucide-react-native';
 
 const iconSize = 18;
 
@@ -45,13 +45,13 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     });
     return (
         <View style={st.container}>
-            <Txt style={[st.supplementary, { textTransform: 'uppercase' }]}>
+            <Text style={[st.supplementary, { textTransform: 'uppercase' }]}>
                 {props.label}:{' '}
-            </Txt>
-            <Txt style={st.text} numberOfLines={1} ellipsizeMode={'tail'}>
+            </Text>
+            <Text style={st.text} numberOfLines={1} ellipsizeMode={'tail'}>
                 {props.value} {props.measurement}
-            </Txt>
-            {/* <Txt style={st.supplementary}> {props.measurement}</Txt> */}
+            </Text>
+            {/* <Text style={st.supplementary}> {props.measurement}</Text> */}
         </View>
     );
 }
@@ -142,7 +142,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                         style={{ flexDirection: 'row', alignItems: 'center' }}
                     >
                         <View style={s.icon}>{blockIcon}</View>
-                        <Txt
+                        <Text
                             style={{
                                 color: AppStyles.color.elem_back,
                                 fontSize: 16,
@@ -150,33 +150,20 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                             }}
                         >
                             {blockName}
-                        </Txt>
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity
-                            style={[
-                                s.btn,
-                                {
-                                    borderColor: AppStyles.color.text_primary,
-                                    borderWidth: 1,
-                                },
-                            ]}
+                        <Button
+                            size="md"
+                            variant="outline"
                             onPress={() => setDeleteModal(true)}
+                            borderColor="white"
                         >
-                            <Delete_icon
-                                height={iconSize * 0.8}
-                                width={iconSize * 0.8}
-                                stroke={AppStyles.color.elem_back}
-                            />
-                            <Txt
-                                style={{
-                                    color: AppStyles.color.elem_back,
-                                    marginLeft: 8,
-                                }}
-                            >
+                            <Icon as={Trash} color="white" />
+                            <ButtonText ml="$2" color="white">
                                 Delete
-                            </Txt>
-                        </TouchableOpacity>
+                            </ButtonText>
+                        </Button>
                     </View>
                 </View>
                 <View style={s.lower_part}>
@@ -307,30 +294,17 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                 },
                             ]}
                         >
-                            <TouchableOpacity
-                                style={[
-                                    s.btn,
-                                    {
-                                        borderColor: AppStyles.color.elem_back,
-                                        borderWidth: 1,
-                                    },
-                                ]}
+                            <Button
+                                size="md"
+                                variant="outline"
                                 onPress={() => props.editStep(item)}
+                                borderColor="white"
                             >
-                                <Edit_icon
-                                    height={iconSize * 0.8}
-                                    width={iconSize * 0.8}
-                                    stroke={AppStyles.color.elem_back}
-                                />
-                                <Txt
-                                    style={{
-                                        color: AppStyles.color.elem_back,
-                                        marginLeft: 8,
-                                    }}
-                                >
+                                <Icon as={Pencil} color="white" />
+                                <ButtonText ml="$2" color="white">
                                     Edit
-                                </Txt>
-                            </TouchableOpacity>
+                                </ButtonText>
+                            </Button>
                         </View>
                     </View>
                 </View>
@@ -342,12 +316,12 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                                 width={20}
                                 style={{ marginRight: 5 }}
                             />
-                            <Txt>
+                            <Text>
                                 Auto Washing:{' '}
                                 {props.settings.autoWashConfig.iters} x{' '}
                                 {props.settings.autoWashConfig.incubation}{' '}
                                 {props.settings.timeUnits}
-                            </Txt>
+                            </Text>
                             <TouchableOpacity
                                 onPress={() =>
                                     props.deleteAutoWash({
@@ -373,7 +347,7 @@ export const renderTimelineBlock = (props: timelineBlockProps) => {
                     isOpen={deleteModal}
                     onClose={() => setDeleteModal(false)}
                     action={() => props.deleteStep(item)}
-                    icon={TrashIcon}
+                    icon={Trash}
                     headline={`Delete ${item.type.toLowerCase()} step`}
                     text={
                         'Are you sure you want to delete this step? This action cannot be undone.'
