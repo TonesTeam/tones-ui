@@ -318,7 +318,7 @@ const StepBlock = (props: StepBlockProps) => {
                             alignItems="center"
                         >
                             <AW_icon height={20} width={20} style={{ marginRight: 8 }} />
-                            <Text flex={1} size="sm" color="$textDark900">
+                            <Text flex={1} size="sm" color="$textLight900">
                                 Auto Washing:{' '}
                                 {props.settings.autoWashConfig.iters} x{' '}
                                 {props.settings.autoWashConfig.incubation}{' '}
