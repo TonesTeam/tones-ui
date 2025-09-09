@@ -43,7 +43,7 @@ import {
 import { StepType } from 'common/enums';
 import { SvgProps } from 'react-native-svg';
 import WorkBlock from './Block';
-import { renderTimelineBlock } from './TimeLineBlock';
+import StepBlock from './StepBlock';
 import {
     ProtocolSettings,
     updateTemperature,
@@ -486,7 +486,7 @@ export default function Constructor({
                                             item.id.toString()
                                         }
                                         renderItem={(params) =>
-                                            renderTimelineBlock({
+                                            StepBlock({
                                                 renderParams: params,
                                                 deleteStep: deleteBlock,
                                                 editStep: revealWorkBlock,

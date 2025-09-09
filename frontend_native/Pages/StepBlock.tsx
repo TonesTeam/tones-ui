@@ -12,8 +12,6 @@ import { AppStyles } from '../constants/styles';
 import Washing_icon from '../assets/icons/washing_icon.svg';
 import Reagent_icon from '../assets/icons/reagent_icon.svg';
 import Temperature_icon from '../assets/icons/temperature_icon.svg';
-import Edit_icon from '../assets/icons/edit_btn.svg';
-import Delete_icon from '../assets/icons/delete_btn.svg';
 import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
@@ -56,7 +54,7 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
     );
 }
 
-interface timelineBlockProps {
+interface StepBlockProps {
     renderParams: RenderItemParams<StepDTO>;
     deleteStep: (step: StepDTO) => void;
     editStep: (step: StepDTO) => void;
@@ -64,7 +62,7 @@ interface timelineBlockProps {
     settings: ProtocolSettings;
 }
 
-export const renderTimelineBlock = (props: timelineBlockProps) => {
+const StepBlock = (props: StepBlockProps) => {
     const { item, drag, isActive } = props.renderParams;
     const [deleteModal, setDeleteModal] = useState(false);
 
@@ -475,3 +473,5 @@ const s = StyleSheet.create({
         fontFamily: 'Roboto-bold',
     },
 });
+
+export default StepBlock;
