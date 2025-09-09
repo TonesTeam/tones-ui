@@ -125,7 +125,7 @@ function WashInputs(props: BlockInputsProps) {
                     <View style={[bs.row]}>
                         <InputField
                             placeholder=""
-                            containerStyle={{ marginRight: 100 }}
+                            containerStyle={{ marginRight: 50 }}
                             label="Iterations:"
                             decimals={false}
                             limit_max={ITERATIONS_MAX}
@@ -141,18 +141,11 @@ function WashInputs(props: BlockInputsProps) {
                         />
                         <InputField
                             placeholder=""
-                            label={`Incubation time (${props.timeUnits || 'seconds'}):`}
+                            label={`Incubation time:`}
                             decimals={false}
-                            limit_min={
-                                props.timeUnits && props.timeUnits == 'min'
-                                    ? INCUBATION_MIN / 60
-                                    : INCUBATION_MIN
-                            }
-                            limit_max={
-                                props.timeUnits && props.timeUnits == 'min'
-                                    ? INCUBATION_MAX / 60
-                                    : INCUBATION_MAX
-                            }
+                            limit_min={INCUBATION_MIN}
+                            limit_max={INCUBATION_MAX}
+                            containerStyle={{ marginRight: 10 }}
                             type={'numeric' as InputModeOptions}
                             value={washParams.incubation}
                             onInputChange={(incub) =>
@@ -161,6 +154,10 @@ function WashInputs(props: BlockInputsProps) {
                                     incub == '' ? null : Number(incub),
                                 )
                             }
+                        />
+                        <TimeUnitSelector
+                            value={props.timeUnit}
+                            onChange={(e) => props.setTimeUnit(e)}
                         />
                     </View>
                 </>
@@ -457,8 +454,6 @@ export default function WorkBlock(props: WorkBlockProps) {
             props.updateCustomLiquids(customLiquids);
 
         block.params = params as typeof block.params;
-        console.log(block.params);
-        console.log(timeUnit);
         if ('incubation' in block.params && timeUnit == 'Minutes')
             (block.params as WashStep).incubation *= 60;
 
@@ -516,7 +511,8 @@ export default function WorkBlock(props: WorkBlockProps) {
                         <WashInputs
                             stepData={props.block}
                             change={memorizedParamUpdate}
-                            timeUnits={props.settings.timeUnits}
+                            timeUnit={timeUnit}
+                            setTimeUnit={setTimeUnit}
                         />
                     )}
                     {props.block.type == StepType.LIQUID_APPL && (
