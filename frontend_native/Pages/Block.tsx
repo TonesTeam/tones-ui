@@ -8,11 +8,7 @@ import {
     ScrollView,
 } from 'react-native';
 import { AppStyles } from '../constants/styles';
-import {
-    ReagentStep,
-    StepDTO,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { LiquidDTO, LiquidTypeDTO } from 'common/dto/liquid.dto';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import Txt from '../components/Txt';
@@ -33,6 +29,20 @@ import {
     TEMPERATURE_MIN,
     DEFAULT_TEMEPRATURE,
 } from '../constants/protocol_constants';
+import {
+    Text,
+    Select,
+    SelectTrigger,
+    SelectInput,
+    SelectIcon,
+    SelectPortal,
+    SelectBackdrop,
+    SelectContent,
+    SelectDragIndicator,
+    SelectDragIndicatorWrapper,
+    SelectItem,
+} from '@gluestack-ui/themed';
+import { ChevronDown } from 'lucide-react-native';
 
 export interface WorkBlockProps {
     block: StepDTO;
@@ -48,7 +58,8 @@ interface BlockInputsProps {
     change: (arg0: WashStep | ReagentStep) => void;
     addNewLiquid?: (liquid: LiquidDTO) => void;
     existingCustomLiquids?: LiquidDTO[];
-    timeUnits?: 'sec' | 'min';
+    timeUnit: 'Seconds' | 'Minutes';
+    setTimeUnit: (text: 'Seconds' | 'Minutes') => void;
 }
 
 const bs = StyleSheet.create({
@@ -60,8 +71,6 @@ const bs = StyleSheet.create({
     row: {
         flexDirection: 'row',
         height: 'auto',
-        borderBottomColor: AppStyles.color.background,
-        borderBottomWidth: 1,
         paddingBottom: 30,
     },
 });
@@ -168,7 +177,8 @@ function ReagentInputs(props: BlockInputsProps) {
                 ? false
                 : (props.stepData.params as ReagentStep).autoWash,
         targetTemperature:
-            (props.stepData.params as ReagentStep).targetTemperature == undefined
+            (props.stepData.params as ReagentStep).targetTemperature ==
+            undefined
                 ? DEFAULT_TEMEPRATURE
                 : (props.stepData.params as ReagentStep).targetTemperature,
     } as ReagentStep);
@@ -304,8 +314,8 @@ function ReagentInputs(props: BlockInputsProps) {
                             decimals={false}
                             limit_max={INCUBATION_MAX}
                             limit_min={INCUBATION_MIN}
-                            containerStyle={{ marginRight: 100 }}
-                            label={`INCUBATION TIME (${props.timeUnits || 'seconds'}):`}
+                            containerStyle={{ marginRight: 10 }}
+                            label={`Incubation time:`}
                             type={'numeric' as InputModeOptions}
                             onInputChange={(incub) =>
                                 handleParamChange(
@@ -314,35 +324,40 @@ function ReagentInputs(props: BlockInputsProps) {
                                 )
                             }
                         />
+                        <TimeUnitSelector
+                            value={props.timeUnit}
+                            onChange={(e) => props.setTimeUnit(e)}
+                        />
                         <InputField
                             value={reagParams.targetTemperature}
                             placeholder=""
                             decimals={true}
                             limit_max={TEMPERATURE_MAX}
                             limit_min={TEMPERATURE_MIN}
-                            label="TARGET TEMPERATURE (°C):"
+                            label="Target temperature (°C):"
+                            containerStyle={{ marginLeft: 20 }}
                             type={'numeric' as InputModeOptions}
                             onInputChange={(temp) =>
                                 handleParamChange(
                                     'targetTemperature',
-                                    temp == '' ? DEFAULT_TEMEPRATURE : Number(temp),
+                                    temp == ''
+                                        ? DEFAULT_TEMEPRATURE
+                                        : Number(temp),
                                 )
                             }
                         />
                     </View>
                     <View style={[bs.row]}>
                         <View
-                            style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}
+                            style={{
+                                flexDirection: 'column',
+                                flex: 1,
+                                justifyContent: 'center',
+                            }}
                         >
-                            <Txt
-                                style={{
-                                    color: AppStyles.color.text_faded,
-                                    paddingBottom:
-                                        AppStyles.layout.elem_padding,
-                                }}
-                            >
+                            <Text color="$grey" mb="$2" size="sm">
                                 Automatic washing (after step):
-                            </Txt>
+                            </Text>
                             <Switch
                                 value={reagParams.autoWash}
                                 onValueChange={(val) => {
@@ -382,12 +397,45 @@ function ReagentInputs(props: BlockInputsProps) {
     );
 }
 
+interface TimeUnitSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+}
+
+const TimeUnitSelector = ({ value, onChange }: TimeUnitSelectorProps) => {
+    return (
+        <Select
+            mt="$8"
+            onValueChange={onChange}
+            defaultValue={value}
+            flex={0.8}
+        >
+            <SelectTrigger variant="outline" size="md">
+                <SelectInput placeholder="Select option" />
+                <SelectIcon as={ChevronDown} />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem label="Minutes" value="Minutes" />
+                    <SelectItem label="Seconds" value="Seconds" />
+                    <SelectItem label="Test" value="Test" isDisabled={true} />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
+
 export default function WorkBlock(props: WorkBlockProps) {
     const [params, setParams] = useState<{ [key: string]: any }>({});
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(
         props.customLiquids,
     );
     const [allowSave, setAllowSave] = useState(false);
+    const [timeUnit, setTimeUnit] = useState('Seconds');
 
     let block = props.block;
 
@@ -409,7 +457,9 @@ export default function WorkBlock(props: WorkBlockProps) {
             props.updateCustomLiquids(customLiquids);
 
         block.params = params as typeof block.params;
-        if ('incubation' in block.params && props.settings.timeUnits == 'min')
+        console.log(block.params);
+        console.log(timeUnit);
+        if ('incubation' in block.params && timeUnit == 'Minutes')
             (block.params as WashStep).incubation *= 60;
 
         block.id == -1 ? props.addBlock(block) : props.editBlock(block);
@@ -475,7 +525,8 @@ export default function WorkBlock(props: WorkBlockProps) {
                             change={memorizedParamUpdate}
                             addNewLiquid={updateCustomLiquids}
                             existingCustomLiquids={customLiquids}
-                            timeUnits={props.settings.timeUnits}
+                            timeUnit={timeUnit}
+                            setTimeUnit={setTimeUnit}
                         />
                     )}
                 </View>

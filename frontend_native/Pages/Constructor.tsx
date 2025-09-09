@@ -32,18 +32,12 @@ import { LiquidDTO } from 'common/dto/liquid.dto';
 import DraggableFlatList, {
     DraggableFlatListProps,
 } from 'react-native-draggable-flatlist';
-import {
-    ReagentStep,
-    StepDTO,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { SvgProps } from 'react-native-svg';
 import WorkBlock from './Block';
 import StepBlock from '../components/StepBlock';
-import {
-    ProtocolSettings,
-} from '../common/constructorUtils';
+import { ProtocolSettings } from '../common/constructorUtils';
 import Close_icon from '../assets/icons/close.svg';
 import Point_icon from '../assets/icons/point.svg';
 import {
@@ -184,6 +178,7 @@ export default function Constructor({
         undefined,
     );
     const flatListRef: MutableRefObject<any> = useRef(null);
+    console.log(`settings: ${JSON.stringify(settings)}`);
 
     function initialization() {
         // By default set the reagent block as active
@@ -284,8 +279,6 @@ export default function Constructor({
         );
         setBlocks(newBlocks);
     }
-
-
 
     function save() {
         let new_protocol = {
@@ -746,11 +739,15 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {(
-                                                                                    block.params as
-                                                                                        | ReagentStep
-                                                                                        | WashStep
-                                                                                ).liquid.name}
+                                                                                {
+                                                                                    (
+                                                                                        block.params as
+                                                                                            | ReagentStep
+                                                                                            | WashStep
+                                                                                    )
+                                                                                        .liquid
+                                                                                        .name
+                                                                                }
                                                                             </Txt>
                                                                         </View>
                                                                         <View
@@ -766,10 +763,17 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {block.type === StepType.LIQUID_APPL 
-                                                                                    ? (block.params as ReagentStep).targetTemperature
+                                                                                {block.type ===
+                                                                                StepType.LIQUID_APPL
+                                                                                    ? (
+                                                                                          block.params as ReagentStep
+                                                                                      )
+                                                                                          .targetTemperature
                                                                                     : '-'}
-                                                                                {block.type === StepType.LIQUID_APPL ? '°C' : ''}
+                                                                                {block.type ===
+                                                                                StepType.LIQUID_APPL
+                                                                                    ? '°C'
+                                                                                    : ''}
                                                                             </Txt>
                                                                         </View>
                                                                         <View
@@ -785,21 +789,25 @@ export default function Constructor({
                                                                                     s.list_cell_txt
                                                                                 }
                                                                             >
-                                                                                {settings.timeUnits == 'sec'
+                                                                                {settings.timeUnits ==
+                                                                                'sec'
                                                                                     ? (
                                                                                           block.params as
                                                                                               | ReagentStep
                                                                                               | WashStep
-                                                                                      ).incubation
+                                                                                      )
+                                                                                          .incubation
                                                                                     : Math.round(
                                                                                           ((
                                                                                               block.params as
                                                                                                   | WashStep
                                                                                                   | ReagentStep
-                                                                                          ).incubation /
+                                                                                          )
+                                                                                              .incubation /
                                                                                               60) *
                                                                                               100,
-                                                                                      ) / 100}
+                                                                                      ) /
+                                                                                      100}
                                                                             </Txt>
                                                                         </View>
 
