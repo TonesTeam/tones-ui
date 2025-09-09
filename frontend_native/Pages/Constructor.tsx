@@ -12,7 +12,6 @@ import {
     Animated,
     Easing,
 } from 'react-native';
-import { HStack, Text, Input, InputField } from '@gluestack-ui/themed';
 import {
     AppStyles,
     MainContainer,
@@ -64,7 +63,19 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InfoType } from '../common/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import App from '../App';
-import { Heading } from '@gluestack-ui/themed';
+import {
+    Heading,
+    Box,
+    VStack,
+    Button,
+    HStack,
+    Text,
+    Input,
+    InputField,
+    ButtonText,
+    Icon,
+} from '@gluestack-ui/themed';
+import { Save } from 'lucide-react-native';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -348,46 +359,16 @@ export default function Constructor({
                                         alignItems: 'center',
                                     }}
                                 >
-                                    <TouchableOpacity
-                                        style={[
-                                            s.save_proto_btn,
-                                            {
-                                                backgroundColor:
-                                                    AppStyles.color.block
-                                                        .faded_washing,
-                                                borderColor:
-                                                    AppStyles.color.background,
-                                                borderWidth: 1,
-                                                marginRight: 50,
-                                            },
-                                        ]}
-                                        onPress={() => setSettingsModal(true)}
-                                    >
-                                        <Txt
-                                            style={{
-                                                fontFamily: 'Roboto-bold',
-                                            }}
-                                        >
-                                            Workspace Settings
-                                        </Txt>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[
-                                            s.save_proto_btn,
-                                            { backgroundColor: '#000' },
-                                        ]}
+                                    <Button
+                                        bg="$black"
                                         onPress={() => setPreSaveModal(true)}
+                                        rounded="$md"
                                     >
-                                        <Txt
-                                            style={{
-                                                fontFamily: 'Roboto-bold',
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                            }}
-                                        >
-                                            Save Protocol
-                                        </Txt>
-                                    </TouchableOpacity>
+                                        <Icon as={Save} color="white" />
+                                        <ButtonText color="white" ml="$2">
+                                            Save
+                                        </ButtonText>
+                                    </Button>
                                 </View>
                             </View>
                             <View style={s.body_section}>
@@ -1125,290 +1106,7 @@ export default function Constructor({
                                 </View>
                             </Modal>
                         </View>
-                        <View>
-                            <Modal
-                                animationType="fade"
-                                transparent={true}
-                                visible={settingsModal}
-                                onRequestClose={() => {
-                                    setPreSaveModal(!settingsModal);
-                                }}
-                            >
-                                <View style={stng.modal_container}>
-                                    <View style={stng.modal_body}>
-                                        <ScrollView
-                                            scrollEnabled={true}
-                                            persistentScrollbar={true}
-                                        >
-                                            <View style={stng.section}>
-                                                <View style={stng.topic_header}>
-                                                    <Point_icon
-                                                        height={15}
-                                                        width={15}
-                                                        stroke={
-                                                            AppStyles.color
-                                                                .primary
-                                                        }
-                                                    />
-                                                    <Txt style={stng.topic}>
-                                                        {' '}
-                                                        Edit automatic washing
-                                                        step:
-                                                    </Txt>
-                                                </View>
-                                                <View
-                                                    style={{ marginRight: 10 }}
-                                                >
-                                                    <CustomSelect
-                                                        list={washLiquids}
-                                                        label="Reagent: "
-                                                        selected={
-                                                            tempSettings
-                                                                .autoWashConfig
-                                                                .liquid
-                                                        }
-                                                        canAdd={false}
-                                                        onChangeSelect={(
-                                                            liq,
-                                                        ) => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                autoWashConfig:
-                                                                    {
-                                                                        liquid: liq as LiquidDTO,
-                                                                        iters: tempSettings
-                                                                            .autoWashConfig
-                                                                            .iters,
-                                                                        incubation:
-                                                                            tempSettings
-                                                                                .autoWashConfig
-                                                                                .incubation,
-                                                                        temperature:
-                                                                            null,
-                                                                    } as WashStep,
-                                                            } as ProtocolSettings);
-                                                        }}
-                                                    />
-
-                                                    <View
-                                                        style={{
-                                                            flexDirection:
-                                                                'row',
-                                                            marginTop: 25,
-                                                        }}
-                                                    >
-                                                        <InputField
-                                                            placeholder="|"
-                                                            containerStyle={{
-                                                                marginRight: 100,
-                                                            }}
-                                                            label="Iterations:"
-                                                            type={
-                                                                'numeric' as InputModeOptions
-                                                            }
-                                                            value={
-                                                                tempSettings
-                                                                    .autoWashConfig
-                                                                    .iters
-                                                            }
-                                                            onInputChange={(
-                                                                iters,
-                                                            ) => {
-                                                                setTempSettings(
-                                                                    {
-                                                                        ...tempSettings,
-                                                                        autoWashConfig:
-                                                                            {
-                                                                                liquid: tempSettings
-                                                                                    .autoWashConfig
-                                                                                    .liquid,
-                                                                                iters: Number(
-                                                                                    iters,
-                                                                                ),
-                                                                                incubation:
-                                                                                    tempSettings
-                                                                                        .autoWashConfig
-                                                                                        .incubation,
-                                                                                temperature:
-                                                                                    null,
-                                                                            } as WashStep,
-                                                                    } as ProtocolSettings,
-                                                                );
-                                                            }}
-                                                        />
-                                                        <InputField
-                                                            placeholder="|"
-                                                            label="Incubarion time:"
-                                                            type={
-                                                                'numeric' as InputModeOptions
-                                                            }
-                                                            value={
-                                                                tempSettings
-                                                                    .autoWashConfig
-                                                                    .incubation
-                                                            }
-                                                            onInputChange={(
-                                                                incub,
-                                                            ) => {
-                                                                setTempSettings(
-                                                                    {
-                                                                        ...tempSettings,
-                                                                        autoWashConfig:
-                                                                            {
-                                                                                liquid: tempSettings
-                                                                                    .autoWashConfig
-                                                                                    .liquid,
-                                                                                iters: tempSettings
-                                                                                    .autoWashConfig
-                                                                                    .iters,
-                                                                                incubation:
-                                                                                    Number(
-                                                                                        incub,
-                                                                                    ),
-                                                                                temperature:
-                                                                                    null,
-                                                                            } as WashStep,
-                                                                    } as ProtocolSettings,
-                                                                );
-                                                            }}
-                                                        />
-                                                    </View>
-                                                </View>
-                                            </View>
-                                            <View style={stng.section}>
-                                                <View style={stng.topic_header}>
-                                                    <Point_icon
-                                                        height={15}
-                                                        width={15}
-                                                        stroke={
-                                                            AppStyles.color
-                                                                .primary
-                                                        }
-                                                    />
-                                                    <Txt style={stng.topic}>
-                                                        {' '}
-                                                        Default time units:
-                                                    </Txt>
-                                                </View>
-                                                <View
-                                                    style={{
-                                                        flexDirection: 'row',
-                                                    }}
-                                                >
-                                                    <RadioButton
-                                                        isChecked={
-                                                            tempSettings.timeUnits ==
-                                                            'sec'
-                                                        }
-                                                        label="Seconds"
-                                                        onPress={() => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                timeUnits:
-                                                                    'sec',
-                                                            });
-                                                        }}
-                                                    />
-                                                    <RadioButton
-                                                        isChecked={
-                                                            tempSettings.timeUnits ==
-                                                            'min'
-                                                        }
-                                                        label="Minutes"
-                                                        onPress={() => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                timeUnits:
-                                                                    'min',
-                                                            });
-                                                        }}
-                                                    />
-                                                </View>
-                                            </View>
-                                            <View style={stng.section}>
-                                                <View style={stng.topic_header}>
-                                                    <Point_icon
-                                                        height={15}
-                                                        width={15}
-                                                        stroke={
-                                                            AppStyles.color
-                                                                .primary
-                                                        }
-                                                    />
-                                                    <Txt style={stng.topic}>
-                                                        {' '}
-                                                        Add protocol
-                                                        description:
-                                                    </Txt>
-                                                </View>
-                                                <View
-                                                    style={{ marginRight: 10 }}
-                                                >
-                                                    <InputField
-                                                        multiline={true}
-                                                        placeholder="Description..."
-                                                        value={
-                                                            tempSettings.description
-                                                        }
-                                                        onInputChange={(e) => {
-                                                            setTempSettings({
-                                                                ...tempSettings,
-                                                                description: e,
-                                                            });
-                                                        }}
-                                                    />
-                                                </View>
-                                            </View>
-                                        </ScrollView>
-
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                paddingTop: 40,
-                                                justifyContent: 'space-between',
-                                            }}
-                                        >
-                                            <TouchableOpacity
-                                                style={[
-                                                    s.modal_btn,
-                                                    {
-                                                        backgroundColor:
-                                                            AppStyles.color
-                                                                .text_faded,
-                                                    },
-                                                ]}
-                                                onPress={() => {
-                                                    setSettingsModal(false);
-                                                    setTempSettings(settings); //Drop all changes
-                                                }}
-                                            >
-                                                <Txt style={s.modal_btn_text}>
-                                                    Cancel
-                                                </Txt>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={[
-                                                    s.modal_btn,
-                                                    {
-                                                        backgroundColor:
-                                                            AppStyles.color
-                                                                .primary,
-                                                    },
-                                                ]}
-                                                onPress={() => {
-                                                    setSettingsModal(false);
-                                                    setSettings(tempSettings); //Update settings
-                                                }}
-                                            >
-                                                <Txt style={s.modal_btn_text}>
-                                                    Confirm
-                                                </Txt>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                </View>
-                            </Modal>
-                        </View>
+                        <View></View>
                         {successSaving != undefined && (
                             <InfoModal
                                 type={
