@@ -16,43 +16,42 @@ import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
-import { Icon, Button, Text, ButtonText, Box } from '@gluestack-ui/themed';
+import {
+    HStack,
+    Icon,
+    Button,
+    Text,
+    ButtonText,
+    Box,
+} from '@gluestack-ui/themed';
 import { Trash, Pencil } from 'lucide-react-native';
 
 const iconSize = 18;
 
-function ParamItem(props: { label: string; value: any; measurement?: string }) {
-    const st = StyleSheet.create({
-        text: {
-            color: AppStyles.color.elem_back,
-            fontFamily: 'Roboto-bold',
-            flex: 1,
-            justifyContent: 'flex-start',
-        },
-        supplementary: {
-            fontSize: 13,
-            color: '#ffffffcc',
-            fontFamily: 'Roboto-thin',
-        },
-        container: {
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            width: 180, //shady workaround for collapsed text
-        },
-    });
+const ParamItem = (props: {
+    label: string;
+    value: any;
+    measurement?: string;
+}) => {
+    console.log(`props: ${props.label}: ${props.value}`);
+
     return (
-        <View style={st.container}>
-            <Text style={[st.supplementary, { textTransform: 'uppercase' }]}>
-                {props.label}:{' '}
+        <HStack w={180} justifyContent="flex-start" alignItems="center">
+            <Text fontSize={13} color="$whiteCC" textTransform="uppercase">
+                {props.label}:
             </Text>
-            <Text style={st.text} numberOfLines={1} ellipsizeMode={'tail'}>
-                {props.value} {props.measurement}
+
+            <Text
+                flex={1}
+                color="$elemBack"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+            >
+                {props.value} {props.measurement ?? ''}
             </Text>
-            {/* <Text style={st.supplementary}> {props.measurement}</Text> */}
-        </View>
+        </HStack>
     );
-}
+};
 
 interface StepBlockProps {
     renderParams: RenderItemParams<StepDTO>;
@@ -66,6 +65,7 @@ interface StepBlockProps {
 const StepBlock = (props: StepBlockProps) => {
     const { item, drag, isActive } = props.renderParams;
     const [deleteModal, setDeleteModal] = useState(false);
+    console.log(item);
 
     let block = item;
 
@@ -249,16 +249,6 @@ const StepBlock = (props: StepBlockProps) => {
                                         }
                                         measurement="°C"
                                     />
-                                    {/* <ParamItem
-                    label={"Autowash"}
-                    value={
-                      (block.params as ReagentStep).autoWash == true
-                        ? "Yes"
-                        : (block.params as ReagentStep).autoWash == undefined
-                        ? "Undf"
-                        : "No"
-                    }
-                  /> */}
                                 </View>
                             </>
                         )}
@@ -325,23 +315,25 @@ const StepBlock = (props: StepBlockProps) => {
                                 {props.settings.autoWashConfig.incubation}{' '}
                                 {props.settings.timeUnits}
                             </Text>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    props.deleteAutoWash({
-                                        ...block,
-                                        params: {
-                                            ...block.params,
-                                            autoWash: false,
-                                        },
-                                    })
-                                }
-                            >
-                                <Close_icon
-                                    height={25}
-                                    width={25}
-                                    style={{ marginLeft: 30 }}
-                                />
-                            </TouchableOpacity>
+                            {props.edit && (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        props.deleteAutoWash({
+                                            ...block,
+                                            params: {
+                                                ...block.params,
+                                                autoWash: false,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <Close_icon
+                                        height={25}
+                                        width={25}
+                                        style={{ marginLeft: 30 }}
+                                    />
+                                </TouchableOpacity>
+                            )}
                         </View>
                     )}
             </TouchableOpacity>
