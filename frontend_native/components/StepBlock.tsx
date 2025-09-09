@@ -4,14 +4,12 @@ import ConfirmationModal from '../common/TonesModal';
 import {
     ReagentStep,
     StepDTO,
-    TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { AppStyles } from '../constants/styles';
 import Washing_icon from '../assets/icons/washing_icon.svg';
 import Reagent_icon from '../assets/icons/reagent_icon.svg';
-import Temperature_icon from '../assets/icons/temperature_icon.svg';
 import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
@@ -48,14 +46,6 @@ const STEP_CONFIG = {
             transparent: AppStyles.color.block.transp_reagent,
         },
         icon: Reagent_icon,
-    },
-    [StepType.TEMP_CHANGE]: {
-        name: 'Temperature',
-        colors: {
-            main: AppStyles.color.block.main_temperature,
-            transparent: AppStyles.color.block.transp_temperature,
-        },
-        icon: Temperature_icon,
     },
 } as const;
 
@@ -116,11 +106,6 @@ const WashingStepParams = ({
                     value={params.iters}
                     measurement="time(s)"
                 />
-                <ParamItem
-                    label="Temperature"
-                    value={params.temperature}
-                    measurement="°C"
-                />
             </VStack>
         </HStack>
     );
@@ -146,28 +131,10 @@ const ReagentStepParams = ({
             </VStack>
             <VStack space="sm" flex={1}>
                 <ParamItem
-                    label="Temperature"
-                    value={params.temperature}
+                    label="Target Temperature"
+                    value={params.targetTemperature}
                     measurement="°C"
                 />
-            </VStack>
-        </HStack>
-    );
-};
-
-// Component for temperature step parameters
-const TemperatureStepParams = ({ block }: { block: StepDTO }) => {
-    const params = block.params as TemperatureStep;
-
-    return (
-        <HStack space="md" flex={1}>
-            <VStack space="sm" flex={1}>
-                <ParamItem
-                    label="From"
-                    value={params.source}
-                    measurement="°C"
-                />
-                <ParamItem label="To" value={params.target} measurement="°C" />
             </VStack>
         </HStack>
     );
@@ -209,8 +176,6 @@ const StepBlock = (props: StepBlockProps) => {
                         settings={props.settings}
                     />
                 );
-            case StepType.TEMP_CHANGE:
-                return <TemperatureStepParams block={block} />;
             default:
                 return null;
         }

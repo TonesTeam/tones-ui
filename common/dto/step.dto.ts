@@ -13,17 +13,13 @@ export interface WashStep extends StepParams {
     iters: number;
     incubation: number; // in seconds
     liquid: LiquidDTO;
-    temperature: number | null; //at which step is applied, calculated
 }
 
 export interface ReagentStep extends StepParams {
     incubation: number;
     liquid: LiquidDTO;
     autoWash: boolean;
-    temperature: number; //at which step is applied, calculated
+    targetTemperature: number; //target temperature for this step
 }
 
-export interface TemperatureStep extends StepParams {
-    source: number;
-    target: number;
-}
+// Remove TemperatureStep interface as it's no longer needed
