@@ -266,38 +266,36 @@ export default function ProtocolList({
                                         {networkError && (
                                             <View
                                                 style={{
+                                                    height: '100%',
+                                                    width: '100%',
                                                     flex: 1,
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                 }}
                                             >
-                                                <Txt
-                                                    style={{
-                                                        color: AppStyles.color
-                                                            .text_faded,
-                                                        fontSize: 30,
-                                                        marginTop: 30,
-                                                    }}
+                                                <VStack
+                                                    space="md"
+                                                    alignItems="center"
                                                 >
-                                                    Cannot connect to server.
-                                                    Please contact tech support.
-                                                </Txt>
-                                                <View
-                                                    style={{
-                                                        flex: 1,
-                                                        marginBottom: '5%',
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={require('../assets/pics/tech_support.jpg')}
-                                                        style={{
-                                                            flex: 1,
-                                                            height: '100%',
-                                                            resizeMode:
-                                                                'contain',
-                                                        }}
-                                                    ></Image>
-                                                </View>
+                                                    <Box
+                                                        rounded="$full"
+                                                        p="$3"
+                                                        bg="$red100"
+                                                    >
+                                                        <Icon
+                                                            as={X}
+                                                            color="red"
+                                                            size="xl"
+                                                        />
+                                                    </Box>
+                                                    <Text>
+                                                        Network error, cannot
+                                                        find Tones device.
+                                                        Please contact technical
+                                                        support at
+                                                        support@example.org.
+                                                    </Text>
+                                                </VStack>
                                             </View>
                                         )}
                                         {!networkError && (
