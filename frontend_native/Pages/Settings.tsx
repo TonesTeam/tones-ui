@@ -1,6 +1,5 @@
 import {
     StyleSheet,
-    Text,
     View,
     TextInput,
     Image,
@@ -36,7 +35,9 @@ import { Method } from 'axios';
 import InfoModal from '../components/InfoModal';
 import { InfoType } from '../common/types';
 import { useIsFocused } from '@react-navigation/native';
-import { Box, Heading } from '@gluestack-ui/themed';
+import { Box, Heading, Icon, Text } from '@gluestack-ui/themed';
+import { Trash, Pencil } from 'lucide-react-native';
+import ConfirmationModal from '../common/TonesModal';
 
 enum SettingTabs {
     USER = 'User Settings',
@@ -309,7 +310,7 @@ function Library(props: {
     const [filterInput, setFilterInput] = useState('');
     const [active, setActive] = useState(false);
     const [editModal, setEditModal] = useState(false);
-    const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(-1);
     const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(
         null,
     );
@@ -322,6 +323,14 @@ function Library(props: {
             setLiquids([]);
         }
     }, [isFocused]);
+
+    const idToName = (id: number) => {
+        console.log(id);
+        for (const liquid of liquids) {
+            if (liquid.id === id) return liquid.name;
+        }
+        return '';
+    };
 
     const listInitilizer = () => {
         getRequest<PermanentLiquidDTO[]>('/liquids').then((r) => {
@@ -650,26 +659,16 @@ function Library(props: {
                                                             setEditModal(true);
                                                         }}
                                                     >
-                                                        <Edit_Icon
-                                                            height={15}
-                                                            width={15}
-                                                            stroke={
-                                                                AppStyles.color
-                                                                    .primary
-                                                            }
+                                                        <Icon
+                                                            as={Pencil}
+                                                            color="$primary500"
                                                         />
-                                                        <Txt
-                                                            style={{
-                                                                marginLeft: 10,
-                                                                color: AppStyles
-                                                                    .color
-                                                                    .primary,
-                                                                letterSpacing: 1.1,
-                                                                fontSize: 12,
-                                                            }}
+                                                        <Text
+                                                            color="$primary500"
+                                                            ml="$2"
                                                         >
-                                                            EDIT
-                                                        </Txt>
+                                                            Edit
+                                                        </Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity
                                                         style={[
@@ -683,29 +682,21 @@ function Library(props: {
                                                             },
                                                         ]}
                                                         onPress={() =>
-                                                            deleteLiquid(liq.id)
+                                                            setDeleteModal(
+                                                                liq.id,
+                                                            )
                                                         }
                                                     >
-                                                        <Delete_Icon
-                                                            height={15}
-                                                            width={15}
-                                                            stroke={
-                                                                AppStyles.color
-                                                                    .warning
-                                                            }
+                                                        <Icon
+                                                            as={Trash}
+                                                            color="$error500"
                                                         />
-                                                        <Txt
-                                                            style={{
-                                                                marginLeft: 10,
-                                                                color: AppStyles
-                                                                    .color
-                                                                    .warning,
-                                                                letterSpacing: 1.1,
-                                                                fontSize: 12,
-                                                            }}
+                                                        <Text
+                                                            ml="$2"
+                                                            color="$error500"
                                                         >
-                                                            DELETE
-                                                        </Txt>
+                                                            Delete
+                                                        </Text>
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>
@@ -735,6 +726,16 @@ function Library(props: {
                     </View>
                 </>
             )}
+            <ConfirmationModal
+                isOpen={deleteModal != -1}
+                onClose={() => setDeleteModal(-1)}
+                action={() => deleteLiquid(deleteModal)}
+                icon={Trash}
+                headline={`Delete reagent "${idToName(deleteModal)}"`}
+                text="Are you sure you want to delete this reagent? This action cannot be undone."
+                actionButtonText="Delete"
+                type="error"
+            />
         </>
     );
 }
