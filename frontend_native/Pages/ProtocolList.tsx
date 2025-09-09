@@ -175,9 +175,9 @@ export default function ProtocolList({
     }, [isFocused, deletionModal]);
 
     const [searchPrompt, setSearchPrompt] = useState('');
-
     const [authorFilter, setAuthorFilter] = useState('all');
     const [authorList, setAuthorList] = useState<string[]>([]);
+    const [sortingStrategy, setSortingStrategy] = useState('oldest');
 
     const [active, setActive] = useState(false);
     useEffect(() => {
@@ -209,7 +209,21 @@ export default function ProtocolList({
         });
 
         // TODO: Implement protocol sorting options
-        let sortedList = filteredList;
+        let sortedList = filteredList.sort((a, b) => {
+            if (sortingStrategy === 'oldest') {
+                return (
+                    new Date(a.creationDate).getTime() -
+                    new Date(b.creationDate).getTime()
+                );
+            } else if (sortingStrategy === 'newest') {
+                return (
+                    new Date(b.creationDate).getTime() -
+                    new Date(a.creationDate).getTime()
+                );
+            } else {
+                return 0;
+            }
+        });
 
         return sortedList;
     }
@@ -238,6 +252,10 @@ export default function ProtocolList({
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e)}
                         authors={authorList}
+                    />
+                    <SortingSelector
+                        value={sortingStrategy}
+                        onChange={(e) => setSortingStrategy(e)}
                     />
                 </View>
                 <View style={s.section_list}>
@@ -391,7 +409,6 @@ const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
                         <SelectDragIndicator />
                     </SelectDragIndicatorWrapper>
                     <SelectItem value="all" label="All Authors" />
-                    <SelectItem value="me" label="My Protocols" />
                     {authors.map((author) => (
                         <SelectItem
                             key={author}
@@ -399,6 +416,33 @@ const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
                             label={author}
                         />
                     ))}
+                    <SelectItem value="me" label="Test" />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
+
+interface SortingSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+}
+
+const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
+    return (
+        <Select flex={2} ml="$5" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger>
+                <SelectInput placeholder="Oldest first" />
+                <SelectIcon mr="$3" as={ChevronDown} />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent maxHeight={300}>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem value="oldest" label="Oldest first" />
+                    <SelectItem value="newest" label="Newest first" />
                     <SelectItem value="me" label="Test" />
                 </SelectContent>
             </SelectPortal>
@@ -425,7 +469,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
     });
 
     return (
-        <Input style={{ flex: 9 }}>
+        <Input style={{ flex: 8 }}>
             <InputSlot style={styles.search_bar}>
                 <InputIcon as={SearchIcon} />
             </InputSlot>
