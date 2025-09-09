@@ -1,13 +1,5 @@
-import {
-    StyleSheet,
-    View,
-    TouchableWithoutFeedback,
-    TextInput,
-    Animated,
-    Easing,
-    Image,
-    TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
+import { getRequest, makeRequest } from '../common/util';
 import { useIsFocused } from '@react-navigation/native';
 import {
     AppStyles,
@@ -17,9 +9,7 @@ import {
 import NavBar from '../navigation/CustomNavigator';
 import { ProtocolDto } from 'common/dto/protocol.dto';
 import { useEffect, useState, useRef } from 'react';
-import { getRequest, makeRequest } from '../common/util';
 import Txt from '../components/Txt';
-import ConfirmationModal from '../common/TonesModal';
 import NotFound_Icon from '../assets/icons/question.svg';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
@@ -36,51 +26,44 @@ import {
     InputIcon,
     Pressable,
     Button,
-    ButtonText,
     Icon,
     Box,
     VStack,
     HStack,
     Text,
-    Divider,
+    Spinner,
+    Badge,
+    BadgeText,
+    BadgeIcon,
+    Select,
+    SelectTrigger,
+    SelectInput,
+    SelectIcon,
+    SelectPortal,
+    SelectBackdrop,
+    SelectContent,
+    SelectDragIndicator,
+    SelectDragIndicatorWrapper,
+    SelectItem,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import {
     X,
     SearchIcon,
-    Rocket,
-    File,
-    Edit3,
     Trash,
-    ArrowDown,
+    ArrowRight,
+    Rocket,
+    ChevronDown,
 } from 'lucide-react-native';
 
 function ProtocolItem({
     protocol,
     navigation,
-    toggleDeletionModal,
 }: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
     toggleDeletionModal: (val: boolean) => void;
 }) {
-    const [deleteModal, setDeleteModal] = useState(false);
-
-    const deleteProtocol = (id: number) => {
-        makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
-            .then((r) => {
-                if (r.status >= 200 && r.status <= 299) {
-                    toggleDeletionModal(true);
-                } else {
-                    toggleDeletionModal(false);
-                }
-            })
-            .catch((err) => {
-                console.log(err.message);
-                toggleDeletionModal(false);
-            });
-    };
-
     return (
         <Box
             borderWidth={1}
@@ -93,99 +76,54 @@ function ProtocolItem({
             shadowOffset={{ width: 0, height: 1 }}
             shadowOpacity={0.05}
             shadowRadius={2}
+            flexDirection="row"
         >
-            {/* Header */}
-            <HStack alignItems="center" space="md">
-                <GeneratedAvatar name={protocol.name} size={40} />
-                <VStack flex={1} space="xs">
-                    <Text bold size="md">
-                        {protocol.name}
-                    </Text>
-                    <Text size="xs" color="$textLight500">
-                        by {protocol.author} ·{' '}
-                        {new Date(protocol.creationDate).toLocaleDateString()}
-                    </Text>
-                </VStack>
-                <Box px="$2.5" py="$1" rounded="$full" bg="$primary100">
-                    <Text size="xs" bold color="$primary600">
-                        Ready to launch
-                    </Text>
-                </Box>
-            </HStack>
+            <VStack space="md" mb="$2" flex={1}>
+                {/* Header */}
+                <HStack alignItems="center" space="md">
+                    <GeneratedAvatar name={protocol.name} size={40} />
+                    <VStack flex={1} space="xs">
+                        <Text bold size="md">
+                            {protocol.name}
+                        </Text>
+                        <Text size="xs" color="$textLight500">
+                            by {protocol.author} ·{' '}
+                            {new Date(
+                                protocol.creationDate,
+                            ).toLocaleDateString()}
+                        </Text>
+                    </VStack>
+                </HStack>
 
-            {/* Body */}
-            {protocol.description && (
-                <Text size="sm" color="$textLight600" mt="$3">
-                    {protocol.description}
-                </Text>
-            )}
-            {!protocol.description && (
-                <Text size="sm" color="$textLight400" mt="$3" italic>
-                    No description provided
-                </Text>
-            )}
-
-            {/* Actions */}
-            <HStack justifyContent="flex-end" space="sm">
+                {protocol.description && (
+                    <Text size="sm" color="$textLight600" mt="$3">
+                        {protocol.description}
+                    </Text>
+                )}
+                {!protocol.description && (
+                    <Text size="sm" color="$textLight400" mt="$3" italic>
+                        No description provided
+                    </Text>
+                )}
+            </VStack>
+            <HStack space="sm" alignItems="center" ml="$2">
+                <Badge variant="outline" action="info" rounded="$md" mr="$1">
+                    <BadgeText>Ready to launch</BadgeText>
+                    <BadgeIcon as={Rocket} ml="$2" />
+                </Badge>
                 <Button
-                    size="sm"
-                    bg="$primary500"
                     onPress={() =>
-                        navigation.navigate('Launch', {
+                        navigation.navigate('ProtocolView', {
                             protocol_ID: protocol.id,
                         })
                     }
+                    rounded="$full"
+                    px="$2.5"
+                    py="$1"
                 >
-                    <Icon as={Rocket} mr="$2" color="white" />
-                    <ButtonText color="white">Launch</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onPress={() =>
-                        navigation.navigate('Create protocol', {
-                            protocol_ID: protocol.id,
-                            preserveID: false,
-                        })
-                    }
-                >
-                    <Icon as={File} mr="$2" />
-                    <ButtonText>Template</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onPress={() =>
-                        navigation.navigate('Create protocol', {
-                            protocol_ID: protocol.id,
-                            preserveID: true,
-                        })
-                    }
-                >
-                    <Icon as={Edit3} mr="$2" />
-                    <ButtonText>Edit</ButtonText>
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    borderColor="$error500"
-                    onPress={() => setDeleteModal(true)}
-                >
-                    <Icon as={Trash} mr="$2" color="$error500" />
-                    <ButtonText color="$error500">Delete</ButtonText>
+                    <Icon as={ArrowRight} color="white" />
                 </Button>
             </HStack>
-
-            <ConfirmationModal
-                isOpen={deleteModal}
-                onClose={() => setDeleteModal(false)}
-                action={() => deleteProtocol(protocol.id)}
-                icon={Trash}
-                headline={`Delete protocol "${protocol.name}"`}
-                text="Are you sure you want to delete this protocol? This action cannot be undone."
-                actionButtonText="Delete"
-                type="error"
-            />
         </Box>
     );
 }
@@ -236,24 +174,44 @@ export default function ProtocolList({
         }
     }, [isFocused, deletionModal]);
 
-    //Search bar input
-    const [filterInput, setfilterInput] = useState('');
+    const [searchPrompt, setSearchPrompt] = useState('');
+
+    const [authorFilter, setAuthorFilter] = useState('all');
+    const [authorList, setAuthorList] = useState<string[]>([]);
+
     const [active, setActive] = useState(false);
-    let inputHandler = (e: string) => {
-        var lowerCase = e.toLowerCase();
-        setfilterInput(lowerCase);
-    };
+    useEffect(() => {
+        if (!protocols) return;
+
+        let authors = Array.from(
+            new Set(protocols.map((protocol) => protocol.author as string)),
+        ).sort();
+
+        setAuthorList(authors);
+    }, [protocols]);
 
     function filterAndSort() {
-        if (protocols) {
-            let filteredList = protocols.filter((e) =>
-                filterInput === ''
-                    ? e
-                    : e.name.toLowerCase().includes(filterInput.toLowerCase()),
+        if (!protocols) return [] as ProtocolDto[];
+
+        const query = searchPrompt.trim().toLowerCase();
+        let filteredList = protocols.filter((e) => {
+            return (
+                e.name.toLowerCase().includes(query) ||
+                e.description?.toLowerCase().includes(query) ||
+                e.author?.toLowerCase().includes(query)
             );
-            let sortedList = filteredList;
-            return sortedList;
-        } else return [] as ProtocolDto[];
+        });
+
+        filteredList = filteredList.filter((e) => {
+            if (authorFilter === 'all') return true;
+
+            return e.author == authorFilter;
+        });
+
+        // TODO: Implement protocol sorting options
+        let sortedList = filteredList;
+
+        return sortedList;
     }
 
     return (
@@ -265,7 +223,7 @@ export default function ProtocolList({
                         style={{
                             fontFamily: 'Roboto-bold',
                             fontSize: 24,
-                            flex: 1,
+                            flex: 2,
                         }}
                         adjustsFontSizeToFit={true}
                         numberOfLines={1}
@@ -273,31 +231,24 @@ export default function ProtocolList({
                         Protocol List
                     </Txt>
                     <SearchBar
-                        onChangeText={(e) => inputHandler(e)}
-                        value={filterInput}
+                        onChangeText={(e) => setSearchPrompt(e)}
+                        value={searchPrompt}
+                    />
+                    <AuthorSelector
+                        value={authorFilter}
+                        onChange={(e) => setAuthorFilter(e)}
+                        authors={authorList}
                     />
                 </View>
                 <View style={s.section_list}>
                     {protocols == undefined && (
-                        <View
-                            style={{
-                                flex: 1,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
+                        <Box
+                            alignItems="center"
+                            justifyContent="center"
+                            flex={1}
                         >
-                            <Image
-                                source={require('../assets/pics/loading.gif')}
-                            />
-                            <Txt
-                                style={{
-                                    fontFamily: 'Roboto-thin',
-                                    fontSize: 24,
-                                }}
-                            >
-                                SEARCHING ...
-                            </Txt>
-                        </View>
+                            <Spinner size="large" color="grey" />
+                        </Box>
                     )}
                     {protocols != undefined && (
                         <>
@@ -420,6 +371,41 @@ export default function ProtocolList({
     );
 }
 
+interface AuthorSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+    authors: string[];
+}
+
+const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
+    return (
+        <Select flex={2} ml="$5" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger>
+                <SelectInput placeholder="Author" />
+                <SelectIcon mr="$3" as={ChevronDown} />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent maxHeight={300}>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem value="all" label="All Authors" />
+                    <SelectItem value="me" label="My Protocols" />
+                    {authors.map((author) => (
+                        <SelectItem
+                            key={author}
+                            value={author}
+                            label={author}
+                        />
+                    ))}
+                    <SelectItem value="me" label="Test" />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
+
 interface SearchBarProps {
     value: string;
     onChangeText: (text: string) => void;
@@ -439,7 +425,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
     });
 
     return (
-        <Input style={{ flex: 5 }}>
+        <Input style={{ flex: 9 }}>
             <InputSlot style={styles.search_bar}>
                 <InputIcon as={SearchIcon} />
             </InputSlot>

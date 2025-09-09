@@ -13,6 +13,7 @@ import Clock_icon from '../assets/icons/clock.svg';
 import Setting_icon from '../assets/icons/setting.svg';
 import Logout_icon from '../assets/icons/logout.svg';
 import Launch from '../Pages/LaunchPage/Launch';
+import ProtocolView from '../Pages/ProtocolView';
 
 export type Page = {
     name: string;
@@ -58,5 +59,9 @@ export const Pages: Page[] = [
     {
         name: 'Profile',
         component: Profile,
+    },
+    {
+        name: 'ProtocolView',
+        component: ProtocolView,
     },
 ];

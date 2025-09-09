@@ -138,12 +138,12 @@ const PictureColumn = () => {
         <View style={s.image_container}>
             <Image
                 source={require('../assets/pics/login-art.jpg')}
-                alt="Blue clouds"
+                alt="Riga old town"
                 style={s.image}
                 size="full"
             />
             <Text style={s.credits_text}>
-                Photo by Matthew McBrayer on Unsplash
+                Photo by Sabīne Jaunzeme on Unsplash
             </Text>
         </View>
     );

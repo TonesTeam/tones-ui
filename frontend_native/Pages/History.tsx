@@ -13,7 +13,7 @@ import Search_Icon from '../assets/icons/search.svg';
 import NotFound_Icon from '../assets/icons/question.svg';
 import { useIsFocused } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
-import { Heading, Box } from '@gluestack-ui/themed';
+import { Heading, Box, Spinner } from '@gluestack-ui/themed';
 
 export default function History(props: any) {
     const scrollViewRef = useRef<ScrollView>(null);
@@ -233,25 +233,13 @@ export default function History(props: any) {
                         <View style={s.section_list}>
                             {(protocols == undefined ||
                                 liquids == undefined) && (
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
+                                <Box
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    flex={1}
                                 >
-                                    <Image
-                                        source={require('../assets/pics/loading.gif')}
-                                    />
-                                    <Txt
-                                        style={{
-                                            fontFamily: 'Roboto-thin',
-                                            fontSize: 24,
-                                        }}
-                                    >
-                                        Loading...
-                                    </Txt>
-                                </View>
+                                    <Spinner size="large" color="grey" />
+                                </Box>
                             )}
 
                             {protocols != undefined && liquids != undefined && (
