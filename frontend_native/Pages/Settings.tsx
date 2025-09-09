@@ -4,7 +4,6 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
-    ScrollView,
     Modal,
     Dimensions,
 } from 'react-native';
@@ -21,10 +20,6 @@ import {
     PermanentLiquidDTO,
 } from 'common/dto/liquid.dto';
 import { getRequest, makeRequest } from '../common/util';
-import Txt from '../components/Txt';
-import Search_Icon from '../assets/icons/search.svg';
-import Edit_Icon from '../assets/icons/edit_btn.svg';
-import Delete_Icon from '../assets/icons/delete_btn.svg';
 import User_s_Icon from '../assets/icons/user_settings.svg';
 import System_s_Icon from '../assets/icons/system_settings.svg';
 import Lib_s_Icon from '../assets/icons/reag_lib_settings.svg';
@@ -35,9 +30,19 @@ import { Method } from 'axios';
 import InfoModal from '../components/InfoModal';
 import { InfoType } from '../common/types';
 import { useIsFocused } from '@react-navigation/native';
-import { Box, Heading, Icon, Text } from '@gluestack-ui/themed';
-import { Trash, Pencil } from 'lucide-react-native';
+import {
+    Box,
+    Heading,
+    Icon,
+    Text,
+    Spinner,
+    ScrollView,
+    Button,
+    ButtonText,
+} from '@gluestack-ui/themed';
+import { Trash, Pencil, CirclePlus } from 'lucide-react-native';
 import ConfirmationModal from '../common/TonesModal';
+import SearchBar from '../components/SearchBar';
 
 enum SettingTabs {
     USER = 'User Settings',
@@ -138,19 +143,19 @@ function LiquidsModal(props: {
             >
                 <View style={ms.modal_body}>
                     <View style={ms.header}>
-                        <Txt
+                        <Text
                             style={{ fontFamily: 'Roboto-bold', fontSize: 20 }}
                         >
                             {props.liquid != null
                                 ? 'Updating reagent data'
                                 : 'Adding new reagent'}
-                        </Txt>
+                        </Text>
                     </View>
                     {props.categories && (
                         <View style={ms.form}>
                             <ScrollView>
                                 <View style={ms.field}>
-                                    <Txt style={ms.label}>REAGENT NAME:</Txt>
+                                    <Text style={ms.label}>REAGENT NAME:</Text>
                                     <InputField
                                         value={newLiquid.name}
                                         onInputChange={(text) =>
@@ -162,7 +167,7 @@ function LiquidsModal(props: {
                                     />
                                 </View>
                                 <View style={ms.field}>
-                                    <Txt style={ms.label}>CATEGORY:</Txt>
+                                    <Text style={ms.label}>CATEGORY:</Text>
                                     <CustomSelect
                                         list={props.categories}
                                         selected={newLiquid.type}
@@ -177,7 +182,7 @@ function LiquidsModal(props: {
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row' }}>
                                     <View style={ms.field}>
-                                        <Txt style={ms.label}>USED COLD:</Txt>
+                                        <Text style={ms.label}>USED COLD:</Text>
                                         <Switch
                                             value={newLiquid.usedCold}
                                             onValueChange={(val) => {
@@ -219,7 +224,7 @@ function LiquidsModal(props: {
                                         />
                                     </View>
                                     <View style={ms.field}>
-                                        <Txt style={ms.label}>TOXIC:</Txt>
+                                        <Text style={ms.label}>TOXIC:</Text>
                                         <Switch
                                             value={newLiquid.toxic}
                                             onValueChange={(val) => {
@@ -276,7 +281,7 @@ function LiquidsModal(props: {
                             ]}
                             onPress={() => props.closeModal()}
                         >
-                            <Txt>Cancel</Txt>
+                            <Text>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -290,9 +295,9 @@ function LiquidsModal(props: {
                                 }
                             }}
                         >
-                            <Txt style={{ color: AppStyles.color.elem_back }}>
+                            <Text style={{ color: AppStyles.color.elem_back }}>
                                 {props.liquid != null ? 'Update' : 'Save'}
-                            </Txt>
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -307,7 +312,7 @@ function Library(props: {
 }) {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
-    const [filterInput, setFilterInput] = useState('');
+    const [searchPrompt, setSearchPrompt] = useState('');
     const [active, setActive] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(-1);
@@ -379,9 +384,9 @@ function Library(props: {
     function filterAndSort() {
         if (liquids) {
             let filteredList = liquids.filter((e) =>
-                filterInput === ''
+                searchPrompt === ''
                     ? e
-                    : e.name.toLowerCase().includes(filterInput.toLowerCase()),
+                    : e.name.toLowerCase().includes(searchPrompt.toLowerCase()),
             );
             let sortedList = filteredList;
             return sortedList;
@@ -447,60 +452,39 @@ function Library(props: {
         },
     });
 
+    if (liquids.length === 0 || categories.length === 0) {
+        return (
+            <Box flex={1} justifyContent="center" alignItems="center">
+                <Spinner size="large" color="grey" />
+            </Box>
+        );
+    }
+
     return (
         <>
             {liquids.length != 0 && categories.length != 0 && (
                 <>
                     <View>
                         <View style={lib_s.header}>
-                            <View
-                                style={[
-                                    lib_s.search_bar,
-                                    {
-                                        borderWidth: 1,
-                                        borderColor: active
-                                            ? AppStyles.color.primary
-                                            : AppStyles.color.elem_back,
-                                    },
-                                ]}
-                            >
-                                <Search_Icon
-                                    height={30}
-                                    width={50}
-                                    stroke={AppStyles.color.text_faded}
-                                />
-                                <TextInput
-                                    placeholder="Search by reagent name ..."
-                                    value={filterInput}
-                                    style={{
-                                        fontFamily: 'Roboto-regular',
-                                        fontSize: 18,
-                                        width: '90%',
-                                    }}
-                                    onFocus={() => setActive(true)}
-                                    onBlur={() => setActive(false)}
-                                    onChangeText={(e) =>
-                                        setFilterInput(e.toLowerCase())
-                                    }
-                                />
-                            </View>
-                            <TouchableOpacity
-                                style={lib_s.btn}
+                            <SearchBar
+                                value={searchPrompt}
+                                onChangeText={(e) => setSearchPrompt(e)}
+                            />
+                            <Button
+                                ml="$2"
                                 onPress={() => setEditModal(true)}
+                                action="primary"
+                                variant="solid"
                             >
-                                <Txt
-                                    style={{
-                                        color: AppStyles.color.elem_back,
-                                        fontFamily: 'Roboto-bold',
-                                    }}
-                                >
-                                    Add New Reagent
-                                </Txt>
-                            </TouchableOpacity>
+                                <Icon as={CirclePlus} color="white" />
+                                <ButtonText ml="$2" color="white">
+                                    Add new reagent
+                                </ButtonText>
+                            </Button>
                         </View>
                         {filterAndSort().length == 0 && (
                             <View style={[lib_s.list, { borderWidth: 0 }]}>
-                                <Txt>No liquids found!</Txt>
+                                <Text>No liquids found!</Text>
                             </View>
                         )}
                         {filterAndSort().length != 0 && (
@@ -516,7 +500,7 @@ function Library(props: {
                                     ]}
                                 >
                                     <View style={[lib_s.cell, { flex: 3 }]}>
-                                        <Txt
+                                        <Text
                                             style={{
                                                 color: AppStyles.color
                                                     .elem_back,
@@ -524,10 +508,10 @@ function Library(props: {
                                             }}
                                         >
                                             Reagent name
-                                        </Txt>
+                                        </Text>
                                     </View>
                                     <View style={[lib_s.cell, { flex: 2 }]}>
-                                        <Txt
+                                        <Text
                                             style={{
                                                 color: AppStyles.color
                                                     .elem_back,
@@ -535,10 +519,10 @@ function Library(props: {
                                             }}
                                         >
                                             Categoty
-                                        </Txt>
+                                        </Text>
                                     </View>
                                     <View style={[lib_s.cell, { flex: 1 }]}>
-                                        <Txt
+                                        <Text
                                             style={{
                                                 color: AppStyles.color
                                                     .elem_back,
@@ -546,10 +530,10 @@ function Library(props: {
                                             }}
                                         >
                                             Toxicity
-                                        </Txt>
+                                        </Text>
                                     </View>
                                     <View style={[lib_s.cell, { flex: 1 }]}>
-                                        <Txt
+                                        <Text
                                             style={{
                                                 color: AppStyles.color
                                                     .elem_back,
@@ -557,10 +541,10 @@ function Library(props: {
                                             }}
                                         >
                                             Used cold
-                                        </Txt>
+                                        </Text>
                                     </View>
                                     <View style={[lib_s.cell, { flex: 3 }]}>
-                                        <Txt
+                                        <Text
                                             style={{
                                                 color: AppStyles.color
                                                     .elem_back,
@@ -568,7 +552,7 @@ function Library(props: {
                                             }}
                                         >
                                             Options
-                                        </Txt>
+                                        </Text>
                                     </View>
                                 </View>
                                 <ScrollView>
@@ -601,7 +585,7 @@ function Library(props: {
                                                         { flex: 3 },
                                                     ]}
                                                 >
-                                                    <Txt>{liq.name}</Txt>
+                                                    <Text>{liq.name}</Text>
                                                 </View>
                                                 <View
                                                     style={[
@@ -609,7 +593,7 @@ function Library(props: {
                                                         { flex: 2 },
                                                     ]}
                                                 >
-                                                    <Txt>{liq.type.name}</Txt>
+                                                    <Text>{liq.type.name}</Text>
                                                 </View>
                                                 <View
                                                     style={[
@@ -617,9 +601,9 @@ function Library(props: {
                                                         { flex: 1 },
                                                     ]}
                                                 >
-                                                    <Txt>
+                                                    <Text>
                                                         {liq.toxic && 'X'}
-                                                    </Txt>
+                                                    </Text>
                                                 </View>
                                                 <View
                                                     style={[
@@ -627,9 +611,9 @@ function Library(props: {
                                                         { flex: 1 },
                                                     ]}
                                                 >
-                                                    <Txt>
+                                                    <Text>
                                                         {liq.usedCold && 'X'}
-                                                    </Txt>
+                                                    </Text>
                                                 </View>
                                                 <View
                                                     style={[
@@ -785,7 +769,7 @@ export default function Settings(props: any) {
                                         fill={AppStyles.color.accent_dark}
                                     />
                                 </View>
-                                <Txt
+                                <Text
                                     style={[
                                         s.tab_text,
                                         currentTab == SettingTabs.USER && {
@@ -795,7 +779,7 @@ export default function Settings(props: any) {
                                     ]}
                                 >
                                     User Settings
-                                </Txt>
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[
@@ -824,7 +808,7 @@ export default function Settings(props: any) {
                                         fill={AppStyles.color.accent_dark}
                                     />
                                 </View>
-                                <Txt
+                                <Text
                                     style={[
                                         s.tab_text,
                                         currentTab == SettingTabs.SYSTEM && {
@@ -834,7 +818,7 @@ export default function Settings(props: any) {
                                     ]}
                                 >
                                     System Settings
-                                </Txt>
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[
@@ -863,7 +847,7 @@ export default function Settings(props: any) {
                                         fill={AppStyles.color.accent_dark}
                                     />
                                 </View>
-                                <Txt
+                                <Text
                                     style={[
                                         s.tab_text,
                                         currentTab == SettingTabs.LIBRARY && {
@@ -873,7 +857,7 @@ export default function Settings(props: any) {
                                     ]}
                                 >
                                     Reagent Library
-                                </Txt>
+                                </Text>
                             </TouchableOpacity>
                         </View>
                         <View style={s.body}>
@@ -888,7 +872,7 @@ export default function Settings(props: any) {
                                 />
                             )}
                             {currentTab != SettingTabs.LIBRARY && (
-                                <Txt>Page under development</Txt>
+                                <Text>Page under development</Text>
                             )}
                         </View>
                         {liquidUpdateModal != undefined && (
