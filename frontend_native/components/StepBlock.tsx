@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
 import ConfirmationModal from '../common/TonesModal';
 import {
@@ -18,37 +18,167 @@ import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
 import {
     HStack,
+    VStack,
     Icon,
     Button,
     Text,
     ButtonText,
     Box,
+    Pressable,
 } from '@gluestack-ui/themed';
 import { Trash, Pencil } from 'lucide-react-native';
 
 const iconSize = 18;
+
+// Step type configuration for cleaner conditional logic
+const STEP_CONFIG = {
+    [StepType.WASHING]: {
+        name: 'Washing',
+        colors: {
+            main: AppStyles.color.block.main_washing,
+            transparent: AppStyles.color.block.transp_washing,
+        },
+        icon: Washing_icon,
+    },
+    [StepType.LIQUID_APPL]: {
+        name: 'Reagent',
+        colors: {
+            main: AppStyles.color.block.main_reagent,
+            transparent: AppStyles.color.block.transp_reagent,
+        },
+        icon: Reagent_icon,
+    },
+    [StepType.TEMP_CHANGE]: {
+        name: 'Temperature',
+        colors: {
+            main: AppStyles.color.block.main_temperature,
+            transparent: AppStyles.color.block.transp_temperature,
+        },
+        icon: Temperature_icon,
+    },
+} as const;
+
+// Utility function to get step configuration
+const getStepConfig = (stepType: StepType) => {
+    return STEP_CONFIG[stepType];
+};
+
+// Utility function to format time values
+const formatTimeValue = (value: number, timeUnits: string) => {
+    if (timeUnits === 'sec') return value;
+    return Math.round((value / 60) * 100) / 100;
+};
 
 const ParamItem = (props: {
     label: string;
     value: any;
     measurement?: string;
 }) => {
-    console.log(`props: ${props.label}: ${props.value}`);
-
     return (
-        <HStack w={180} justifyContent="flex-start" alignItems="center">
-            <Text fontSize={13} color="$whiteCC" textTransform="uppercase">
-                {props.label}:
+        <VStack space="xs" flex={1}>
+            <Text 
+                size="xs" 
+                color="$white" 
+                opacity={0.8}
+                textTransform="uppercase"
+                fontWeight="$medium"
+            >
+                {props.label}
             </Text>
-
             <Text
-                flex={1}
-                color="$elemBack"
+                size="sm"
+                color="$white"
+                fontWeight="$semibold"
                 numberOfLines={1}
                 ellipsizeMode="tail"
             >
                 {props.value} {props.measurement ?? ''}
             </Text>
+        </VStack>
+    );
+};
+
+// Component for washing step parameters
+const WashingStepParams = ({ block, settings }: { block: StepDTO; settings: ProtocolSettings }) => {
+    const params = block.params as WashStep;
+    const incubationValue = formatTimeValue(params.incubation, settings.timeUnits);
+    
+    return (
+        <HStack space="md" flex={1}>
+            <VStack space="sm" flex={1}>
+                <ParamItem
+                    label="Reagent"
+                    value={params.liquid.name}
+                />
+                <ParamItem
+                    label="Incubation time"
+                    value={incubationValue}
+                    measurement={settings.timeUnits}
+                />
+            </VStack>
+            <VStack space="sm" flex={1}>
+                <ParamItem
+                    label="Iterate for"
+                    value={params.iters}
+                    measurement="time(s)"
+                />
+                <ParamItem
+                    label="Temperature"
+                    value={params.temperature}
+                    measurement="°C"
+                />
+            </VStack>
+        </HStack>
+    );
+};
+
+// Component for reagent step parameters
+const ReagentStepParams = ({ block, settings }: { block: StepDTO; settings: ProtocolSettings }) => {
+    const params = block.params as ReagentStep;
+    const incubationValue = formatTimeValue(params.incubation, settings.timeUnits);
+    
+    return (
+        <HStack space="md" flex={1}>
+            <VStack space="sm" flex={1}>
+                <ParamItem
+                    label="Reagent"
+                    value={params.liquid.name}
+                />
+                <ParamItem
+                    label="Incubation time"
+                    value={incubationValue}
+                    measurement={settings.timeUnits}
+                />
+            </VStack>
+            <VStack space="sm" flex={1}>
+                <ParamItem
+                    label="Temperature"
+                    value={params.temperature}
+                    measurement="°C"
+                />
+            </VStack>
+        </HStack>
+    );
+};
+
+// Component for temperature step parameters
+const TemperatureStepParams = ({ block }: { block: StepDTO }) => {
+    const params = block.params as TemperatureStep;
+    
+    return (
+        <HStack space="md" flex={1}>
+            <VStack space="sm" flex={1}>
+                <ParamItem
+                    label="From"
+                    value={params.source}
+                    measurement="°C"
+                />
+                <ParamItem
+                    label="To"
+                    value={params.target}
+                    measurement="°C"
+                />
+            </VStack>
         </HStack>
     );
 };
@@ -65,62 +195,27 @@ interface StepBlockProps {
 const StepBlock = (props: StepBlockProps) => {
     const { item, drag, isActive } = props.renderParams;
     const [deleteModal, setDeleteModal] = useState(false);
-    console.log(item);
 
-    let block = item;
+    const block = item;
+    const stepConfig = getStepConfig(block.type);
+    const blockColor = isActive ? stepConfig.colors.transparent : stepConfig.colors.main;
+    const IconComponent = stepConfig.icon;
 
-    let blockColor = '';
-    switch (block.type) {
-        case StepType.WASHING:
-            {
-                blockColor = isActive
-                    ? AppStyles.color.block.transp_washing
-                    : AppStyles.color.block.main_washing;
-            }
-            break;
-        case StepType.LIQUID_APPL:
-            {
-                blockColor = isActive
-                    ? AppStyles.color.block.transp_reagent
-                    : AppStyles.color.block.main_reagent;
-            }
-            break;
-        case StepType.TEMP_CHANGE:
-            {
-                blockColor = isActive
-                    ? AppStyles.color.block.transp_temperature
-                    : AppStyles.color.block.main_temperature;
-            }
-            break;
-    }
+    const renderStepParams = () => {
+        switch (block.type) {
+            case StepType.WASHING:
+                return <WashingStepParams block={block} settings={props.settings} />;
+            case StepType.LIQUID_APPL:
+                return <ReagentStepParams block={block} settings={props.settings} />;
+            case StepType.TEMP_CHANGE:
+                return <TemperatureStepParams block={block} />;
+            default:
+                return null;
+        }
+    };
 
-    let blockName =
-        block.type == StepType.WASHING
-            ? 'Washing'
-            : block.type == StepType.LIQUID_APPL
-              ? 'Reagent'
-              : 'Temperature';
-
-    let blockIcon =
-        block.type == StepType.WASHING ? (
-            <Washing_icon
-                height={iconSize}
-                width={iconSize}
-                fill={AppStyles.color.elem_back}
-            />
-        ) : block.type == StepType.LIQUID_APPL ? (
-            <Reagent_icon
-                height={iconSize}
-                width={iconSize}
-                fill={AppStyles.color.elem_back}
-            />
-        ) : (
-            <Temperature_icon
-                height={iconSize}
-                width={iconSize}
-                fill={AppStyles.color.elem_back}
-            />
-        );
+    const hasAutoWash = block.type === StepType.LIQUID_APPL && 
+        (block.params as ReagentStep).autoWash === true;
 
     return (
         <>
@@ -129,196 +224,110 @@ const StepBlock = (props: StepBlockProps) => {
                 onLongPress={drag}
                 delayLongPress={220}
                 disabled={isActive}
-                style={[
-                    s.block,
-                    {
-                        backgroundColor: blockColor,
-                    },
-                ]}
             >
-                <View style={s.upper_part}>
-                    <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                <Box
+                    backgroundColor={blockColor}
+                    borderRadius="$lg"
+                    marginVertical="$1.5"
+                    paddingHorizontal="$4"
+                    paddingVertical="$3"
+                    shadowColor="$black"
+                    shadowOffset={{ width: 0, height: 2 }}
+                    shadowOpacity={0.1}
+                    shadowRadius={8}
+                    elevation={3}
+                >
+                    {/* Header */}
+                    <HStack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        paddingBottom="$2"
+                        borderBottomWidth={1}
+                        borderBottomColor="rgba(255, 255, 255, 0.2)"
                     >
-                        <View style={s.icon}>{blockIcon}</View>
-                        <Text
-                            style={{
-                                color: AppStyles.color.elem_back,
-                                fontSize: 16,
-                                fontFamily: 'Roboto-bold',
-                            }}
-                        >
-                            {blockName}
-                        </Text>
-                    </View>
-                    {props.edit && (
-                        <Box flexDirection="row">
-                            <Button
-                                size="md"
-                                variant="outline"
-                                onPress={() => setDeleteModal(true)}
-                                borderColor="white"
+                        <HStack alignItems="center" space="md">
+                            <Box
+                                width={iconSize * 2}
+                                height={iconSize * 2}
+                                borderRadius="$full"
+                                backgroundColor="rgba(0, 0, 0, 0.2)"
+                                alignItems="center"
+                                justifyContent="center"
                             >
-                                <Icon as={Trash} color="white" />
-                                <ButtonText ml="$2" color="white">
+                                <IconComponent
+                                    height={iconSize}
+                                    width={iconSize}
+                                    fill={AppStyles.color.elem_back}
+                                />
+                            </Box>
+                            <Text
+                                color="$white"
+                                size="lg"
+                                fontWeight="$bold"
+                            >
+                                {stepConfig.name}
+                            </Text>
+                        </HStack>
+                        
+                        {props.edit && (
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                borderColor="rgba(255, 255, 255, 0.3)"
+                                backgroundColor="rgba(255, 255, 255, 0.1)"
+                                onPress={() => setDeleteModal(true)}
+                            >
+                                <Icon as={Trash} color="$white" size="sm" />
+                                <ButtonText color="$white" marginLeft="$1" size="sm">
                                     Delete
                                 </ButtonText>
                             </Button>
-                        </Box>
-                    )}
-                </View>
-                <View style={s.lower_part}>
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                        {block.type == StepType.WASHING && (
-                            <>
-                                <View style={s.col}>
-                                    <ParamItem
-                                        label={'Reagent'}
-                                        value={
-                                            (block.params as WashStep).liquid
-                                                .name
-                                        }
-                                    />
-                                    <ParamItem
-                                        label={'Incubation time'}
-                                        value={
-                                            props.settings.timeUnits == 'sec'
-                                                ? (block.params as WashStep)
-                                                      .incubation
-                                                : Math.round(
-                                                      ((
-                                                          block.params as WashStep
-                                                      ).incubation /
-                                                          60) *
-                                                          100,
-                                                  ) / 100
-                                        }
-                                        measurement={props.settings.timeUnits}
-                                    />
-                                </View>
-                                <View style={s.col}>
-                                    <ParamItem
-                                        label={'Iterate for'}
-                                        value={(block.params as WashStep).iters}
-                                        measurement="time(s)"
-                                    />
-                                    <ParamItem
-                                        label={'Temperature'}
-                                        value={
-                                            (block.params as WashStep)
-                                                .temperature
-                                        }
-                                        measurement="°C"
-                                    />
-                                </View>
-                            </>
                         )}
-                        {block.type == StepType.LIQUID_APPL && (
-                            <>
-                                <View style={s.col}>
-                                    <ParamItem
-                                        label={'Reagent'}
-                                        value={
-                                            (block.params as ReagentStep).liquid
-                                                .name
-                                        }
-                                    />
-                                    <ParamItem
-                                        label={'Incubation time'}
-                                        value={
-                                            props.settings.timeUnits == 'sec'
-                                                ? (block.params as WashStep)
-                                                      .incubation
-                                                : Math.round(
-                                                      ((
-                                                          block.params as WashStep
-                                                      ).incubation /
-                                                          60) *
-                                                          100,
-                                                  ) / 100
-                                        }
-                                        measurement={props.settings.timeUnits}
-                                    />
-                                </View>
-                                <View style={s.col}>
-                                    <ParamItem
-                                        label={'Temperature'}
-                                        value={
-                                            (block.params as ReagentStep)
-                                                .temperature
-                                        }
-                                        measurement="°C"
-                                    />
-                                </View>
-                            </>
-                        )}
-                        {block.type == StepType.TEMP_CHANGE && (
-                            <>
-                                <View style={s.col}>
-                                    <ParamItem
-                                        label={'From'}
-                                        value={
-                                            (block.params as TemperatureStep)
-                                                .source
-                                        }
-                                        measurement="°C"
-                                    />
-                                    <ParamItem
-                                        label={'To'}
-                                        value={
-                                            (block.params as TemperatureStep)
-                                                .target
-                                        }
-                                        measurement="°C"
-                                    />
-                                </View>
-                            </>
-                        )}
-                        <View
-                            style={[
-                                s.col,
-                                {
-                                    alignItems: 'flex-end',
-                                    paddingRight: 0,
-                                    justifyContent: 'center',
-                                    marginRight: 0,
-                                },
-                            ]}
-                        >
-                            {props.edit && (
+                    </HStack>
+
+                    {/* Content */}
+                    <HStack alignItems="flex-start" paddingTop="$3" space="md">
+                        {renderStepParams()}
+                        
+                        {props.edit && (
+                            <VStack alignItems="flex-end" justifyContent="center">
                                 <Button
-                                    size="md"
+                                    size="sm"
                                     variant="outline"
-                                    onPress={() => props.editStep(item)}
-                                    borderColor="white"
+                                    borderColor="rgba(255, 255, 255, 0.3)"
+                                    backgroundColor="rgba(255, 255, 255, 0.1)"
+                                    onPress={() => props.editStep?.(item)}
                                 >
-                                    <Icon as={Pencil} color="white" />
-                                    <ButtonText ml="$2" color="white">
+                                    <Icon as={Pencil} color="$white" size="sm" />
+                                    <ButtonText color="$white" marginLeft="$1" size="sm">
                                         Edit
                                     </ButtonText>
                                 </Button>
-                            )}
-                        </View>
-                    </View>
-                </View>
-                {block.type == StepType.LIQUID_APPL &&
-                    (block.params as ReagentStep).autoWash == true && (
-                        <View style={s.autoWash}>
-                            <AW_icon
-                                height={20}
-                                width={20}
-                                style={{ marginRight: 5 }}
-                            />
-                            <Text>
+                            </VStack>
+                        )}
+                    </HStack>
+
+                    {/* Auto Wash Section */}
+                    {hasAutoWash && (
+                        <Box
+                            backgroundColor="$white"
+                            borderRadius="$md"
+                            padding="$2.5"
+                            marginTop="$2"
+                            flexDirection="row"
+                            alignItems="center"
+                        >
+                            <AW_icon height={20} width={20} style={{ marginRight: 8 }} />
+                            <Text flex={1} size="sm" color="$textDark900">
                                 Auto Washing:{' '}
                                 {props.settings.autoWashConfig.iters} x{' '}
                                 {props.settings.autoWashConfig.incubation}{' '}
                                 {props.settings.timeUnits}
                             </Text>
                             {props.edit && (
-                                <TouchableOpacity
+                                <Pressable
                                     onPress={() =>
-                                        props.deleteAutoWash({
+                                        props.deleteAutoWash?.({
                                             ...block,
                                             params: {
                                                 ...block.params,
@@ -326,149 +335,28 @@ const StepBlock = (props: StepBlockProps) => {
                                             },
                                         })
                                     }
+                                    padding="$1"
                                 >
-                                    <Close_icon
-                                        height={25}
-                                        width={25}
-                                        style={{ marginLeft: 30 }}
-                                    />
-                                </TouchableOpacity>
+                                    <Close_icon height={20} width={20} />
+                                </Pressable>
                             )}
-                        </View>
+                        </Box>
                     )}
+                </Box>
             </TouchableOpacity>
-            <View>
-                <ConfirmationModal
-                    isOpen={deleteModal}
-                    onClose={() => setDeleteModal(false)}
-                    action={() => props.deleteStep(item)}
-                    icon={Trash}
-                    headline={`Delete ${item.type.toLowerCase()} step`}
-                    text={
-                        'Are you sure you want to delete this step? This action cannot be undone.'
-                    }
-                    actionButtonText="Delete"
-                    type="error"
-                />
-            </View>
+            
+            <ConfirmationModal
+                isOpen={deleteModal}
+                onClose={() => setDeleteModal(false)}
+                action={() => props.deleteStep?.(item)}
+                icon={Trash}
+                headline={`Delete ${item.type.toLowerCase()} step`}
+                text="Are you sure you want to delete this step? This action cannot be undone."
+                actionButtonText="Delete"
+                type="error"
+            />
         </>
     );
 };
-
-const s = StyleSheet.create({
-    block: {
-        height: 'auto',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 5,
-        borderRadius: 8,
-        paddingHorizontal: '2%',
-        paddingVertical: '1%',
-    },
-    text: {
-        color: AppStyles.color.elem_back,
-    },
-    icon: {
-        height: iconSize * 2,
-        width: iconSize * 2,
-        borderRadius: iconSize * 2,
-        backgroundColor: '#0000002b',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: '10%',
-    },
-
-    upper_part: {
-        flex: 2,
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottomColor: '#ffffff2d',
-        borderBottomWidth: 1,
-        paddingVertical: '1%',
-    },
-
-    lower_part: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: '2%',
-    },
-
-    btn: {
-        width: 120,
-        height: 40,
-        borderRadius: 8,
-        backgroundColor: '#0000003a', // transparent darker on top of block color
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        marginLeft: 20,
-    },
-
-    col: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingHorizontal: 10,
-        marginRight: 10,
-    },
-
-    autoWash: {
-        alignSelf: 'flex-start',
-        flex: 1,
-        backgroundColor: AppStyles.color.elem_back,
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderRadius: 8,
-        marginHorizontal: 10,
-        marginBottom: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-    },
-
-    modal_container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#001f6d42',
-    },
-
-    modal_body: {
-        backgroundColor: AppStyles.color.elem_back,
-        borderRadius: 8,
-        padding: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 10,
-        elevation: 15,
-    },
-
-    modal_comment: {
-        color: AppStyles.color.text_primary,
-        fontFamily: 'Roboto-bold',
-    },
-
-    modal_btn: {
-        width: 150,
-        height: 50,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        marginHorizontal: 20,
-    },
-
-    modal_btn_text: {
-        color: AppStyles.color.elem_back,
-        fontFamily: 'Roboto-bold',
-    },
-});
 
 export default StepBlock;
