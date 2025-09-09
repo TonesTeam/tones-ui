@@ -17,11 +17,7 @@ import {
     NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {
-    Input,
-    InputField,
-    InputSlot,
-    InputIcon,
-    Pressable,
+    Heading,
     Button,
     Icon,
     Box,
@@ -223,17 +219,9 @@ export default function ProtocolList({
             <NavBar />
             <View style={[globalElementStyle.page_container]}>
                 <View style={s.section_search}>
-                    <Txt
-                        style={{
-                            fontFamily: 'Roboto-bold',
-                            fontSize: 24,
-                            flex: 2,
-                        }}
-                        adjustsFontSizeToFit={true}
-                        numberOfLines={1}
-                    >
-                        Protocol List
-                    </Txt>
+                    <Heading size="xl" flex={2}>
+                        Protocols
+                    </Heading>
                     <SearchBar
                         onChangeText={(e) => setSearchPrompt(e)}
                         value={searchPrompt}
