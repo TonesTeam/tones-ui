@@ -325,23 +325,25 @@ const StepBlock = (props: StepBlockProps) => {
                                 {props.settings.autoWashConfig.incubation}{' '}
                                 {props.settings.timeUnits}
                             </Text>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    props.deleteAutoWash({
-                                        ...block,
-                                        params: {
-                                            ...block.params,
-                                            autoWash: false,
-                                        },
-                                    })
-                                }
-                            >
-                                <Close_icon
-                                    height={25}
-                                    width={25}
-                                    style={{ marginLeft: 30 }}
-                                />
-                            </TouchableOpacity>
+                            {props.edit && (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        props.deleteAutoWash({
+                                            ...block,
+                                            params: {
+                                                ...block.params,
+                                                autoWash: false,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <Close_icon
+                                        height={25}
+                                        width={25}
+                                        style={{ marginLeft: 30 }}
+                                    />
+                                </TouchableOpacity>
+                            )}
                         </View>
                     )}
             </TouchableOpacity>
