@@ -43,7 +43,7 @@ import {
 import { StepType } from 'common/enums';
 import { SvgProps } from 'react-native-svg';
 import WorkBlock from './Block';
-import StepBlock from './StepBlock';
+import StepBlock from '../components/StepBlock';
 import {
     ProtocolSettings,
     updateTemperature,
@@ -492,6 +492,7 @@ export default function Constructor({
                                                 editStep: revealWorkBlock,
                                                 deleteAutoWash: editBlock,
                                                 settings: settings,
+                                                edit: true,
                                             })
                                         }
                                         onDragBegin={() =>

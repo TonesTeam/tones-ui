@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { getRequest, makeRequest } from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../common/TonesModal';
+import StepBlock from '../components/StepBlock';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const protocol_ID = route.params?.protocol_ID;
@@ -58,63 +59,106 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         <MainContainer>
             <NavBar />
             <Box
+                flex={1}
+                minHeight="100%"
                 alignItems="stretch"
-                justifyContent="flex-start"
+                justifyContent="space-between"
                 style={styles.wrapper}
             >
-                <Heading size="2xl">
-                    {protocol ? protocol.name : 'Loading...'}
-                </Heading>
-                <HStack justifyContent="flex-end" space="sm">
-                    <Button
-                        size="sm"
-                        bg="$primary500"
-                        onPress={() =>
-                            navigation.navigate('Launch', {
-                                protocol_ID: protocol.id,
-                            })
-                        }
-                    >
-                        <Icon as={Rocket} mr="$2" color="white" />
-                        <ButtonText color="white">Launch</ButtonText>
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onPress={() =>
-                            navigation.navigate('Create protocol', {
-                                protocol_ID: protocol.id,
-                                preserveID: false,
-                            })
-                        }
-                    >
-                        <Icon as={File} mr="$2" />
-                        <ButtonText>Template</ButtonText>
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onPress={() =>
-                            navigation.navigate('Create protocol', {
-                                protocol_ID: protocol.id,
-                                preserveID: true,
-                            })
-                        }
-                    >
-                        <Icon as={Edit3} mr="$2" />
-                        <ButtonText>Edit</ButtonText>
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        borderColor="$error500"
-                        onPress={() => setDeleteModal(true)}
-                    >
-                        <Icon as={Trash} mr="$2" color="$error500" />
-                        <ButtonText color="$error500">Delete</ButtonText>
-                    </Button>
-                </HStack>
+                <VStack>
+                    <Heading size="2xl">
+                        {protocol?.name ?? 'Loading...'}
+                    </Heading>
+
+                    <HStack justifyContent="flex-end" space="sm">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() =>
+                                navigation.navigate('Create protocol', {
+                                    protocol_ID: protocol.id,
+                                    preserveID: false,
+                                })
+                            }
+                        >
+                            <Icon as={File} mr="$2" />
+                            <ButtonText>Template</ButtonText>
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() =>
+                                navigation.navigate('Create protocol', {
+                                    protocol_ID: protocol.id,
+                                    preserveID: true,
+                                })
+                            }
+                        >
+                            <Icon as={Edit3} mr="$2" />
+                            <ButtonText>Edit</ButtonText>
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            borderColor="$error500"
+                            onPress={() => setDeleteModal(true)}
+                        >
+                            <Icon as={Trash} mr="$2" color="$error500" />
+                            <ButtonText color="$error500">Delete</ButtonText>
+                        </Button>
+                    </HStack>
+
+                    <HStack>
+                        <VStack flex={1} mr="$2">
+                            {protocol.steps.map((step, index) => (
+                                <StepBlock
+                                    key={step.id}
+                                    renderParams={{
+                                        item: step,
+                                        drag: () => {},
+                                        isActive: false,
+                                        getIndex: () => index,
+                                    }}
+                                    settings={{
+                                        timeUnits: 'sec',
+                                        autoWashConfig: protocol.defaultWash,
+                                        description: protocol.description,
+                                    }}
+                                    edit={false}
+                                />
+                            ))}
+                        </VStack>
+
+                        <VStack flex={1} ml="$2">
+                            <HStack>
+                                <Text fontWeight="bold">Author:</Text>
+                                <Text ml="$2">{protocol?.author ?? ''}</Text>
+                            </HStack>
+                            <Text>
+                                <Text fontWeight="bold">Description: </Text>
+                                <Text fontWeight="normal" ml="$2">
+                                    {protocol?.description ?? ''}
+                                </Text>
+                            </Text>
+                        </VStack>
+                    </HStack>
+                </VStack>
+
+                <Button
+                    size="sm"
+                    bg="$primary500"
+                    alignSelf="center"
+                    onPress={() =>
+                        navigation.navigate('Launch', {
+                            protocol_ID: protocol.id,
+                        })
+                    }
+                >
+                    <Icon as={Rocket} mr="$2" color="white" />
+                    <ButtonText color="white">Launch</ButtonText>
+                </Button>
             </Box>
+
             <ConfirmationModal
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}

@@ -16,7 +16,7 @@ import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
-import { Icon, Button, Text, ButtonText } from '@gluestack-ui/themed';
+import { Icon, Button, Text, ButtonText, Box } from '@gluestack-ui/themed';
 import { Trash, Pencil } from 'lucide-react-native';
 
 const iconSize = 18;
@@ -56,10 +56,11 @@ function ParamItem(props: { label: string; value: any; measurement?: string }) {
 
 interface StepBlockProps {
     renderParams: RenderItemParams<StepDTO>;
-    deleteStep: (step: StepDTO) => void;
-    editStep: (step: StepDTO) => void;
-    deleteAutoWash: (step: StepDTO) => void;
+    deleteStep?: (step: StepDTO) => void;
+    editStep?: (step: StepDTO) => void;
+    deleteAutoWash?: (step: StepDTO) => void;
     settings: ProtocolSettings;
+    edit: boolean;
 }
 
 const StepBlock = (props: StepBlockProps) => {
@@ -150,19 +151,21 @@ const StepBlock = (props: StepBlockProps) => {
                             {blockName}
                         </Text>
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button
-                            size="md"
-                            variant="outline"
-                            onPress={() => setDeleteModal(true)}
-                            borderColor="white"
-                        >
-                            <Icon as={Trash} color="white" />
-                            <ButtonText ml="$2" color="white">
-                                Delete
-                            </ButtonText>
-                        </Button>
-                    </View>
+                    {props.edit && (
+                        <Box flexDirection="row">
+                            <Button
+                                size="md"
+                                variant="outline"
+                                onPress={() => setDeleteModal(true)}
+                                borderColor="white"
+                            >
+                                <Icon as={Trash} color="white" />
+                                <ButtonText ml="$2" color="white">
+                                    Delete
+                                </ButtonText>
+                            </Button>
+                        </Box>
+                    )}
                 </View>
                 <View style={s.lower_part}>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -170,14 +173,14 @@ const StepBlock = (props: StepBlockProps) => {
                             <>
                                 <View style={s.col}>
                                     <ParamItem
-                                        label={'With'}
+                                        label={'Reagent'}
                                         value={
                                             (block.params as WashStep).liquid
                                                 .name
                                         }
                                     />
                                     <ParamItem
-                                        label={'Incubate for'}
+                                        label={'Incubation time'}
                                         value={
                                             props.settings.timeUnits == 'sec'
                                                 ? (block.params as WashStep)
@@ -200,7 +203,7 @@ const StepBlock = (props: StepBlockProps) => {
                                         measurement="time(s)"
                                     />
                                     <ParamItem
-                                        label={'At'}
+                                        label={'Temperature'}
                                         value={
                                             (block.params as WashStep)
                                                 .temperature
@@ -214,14 +217,14 @@ const StepBlock = (props: StepBlockProps) => {
                             <>
                                 <View style={s.col}>
                                     <ParamItem
-                                        label={'With'}
+                                        label={'Reagent'}
                                         value={
                                             (block.params as ReagentStep).liquid
                                                 .name
                                         }
                                     />
                                     <ParamItem
-                                        label={'Incubate for'}
+                                        label={'Incubation time'}
                                         value={
                                             props.settings.timeUnits == 'sec'
                                                 ? (block.params as WashStep)
@@ -239,7 +242,7 @@ const StepBlock = (props: StepBlockProps) => {
                                 </View>
                                 <View style={s.col}>
                                     <ParamItem
-                                        label={'At'}
+                                        label={'Temperature'}
                                         value={
                                             (block.params as ReagentStep)
                                                 .temperature
@@ -292,17 +295,19 @@ const StepBlock = (props: StepBlockProps) => {
                                 },
                             ]}
                         >
-                            <Button
-                                size="md"
-                                variant="outline"
-                                onPress={() => props.editStep(item)}
-                                borderColor="white"
-                            >
-                                <Icon as={Pencil} color="white" />
-                                <ButtonText ml="$2" color="white">
-                                    Edit
-                                </ButtonText>
-                            </Button>
+                            {props.edit && (
+                                <Button
+                                    size="md"
+                                    variant="outline"
+                                    onPress={() => props.editStep(item)}
+                                    borderColor="white"
+                                >
+                                    <Icon as={Pencil} color="white" />
+                                    <ButtonText ml="$2" color="white">
+                                        Edit
+                                    </ButtonText>
+                                </Button>
+                            )}
                         </View>
                     </View>
                 </View>
