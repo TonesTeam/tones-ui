@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@babel/core": "^7.28.0",
+    "@babel/plugin-transform-export-namespace-from": "^7.24.0",
     "@babel/runtime": "^7.28.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo/ngrok": "^4.1.3",
     "@gluestack-style/react": "^1.0.57",
     "@gluestack-ui/config": "^1.1.20",
@@ -34,7 +34,6 @@
     "axios": "^1.5.0",
     "common": "file:../common",
     "date-fns": "^2.30.0",
-    "eas-cli": "^12.6.2",
     "expo": "^54.0.7",
     "expo-font": "~14.0.8",
     "expo-haptics": "~15.0.7",
@@ -46,6 +45,7 @@
     "expo-status-bar": "~3.0.8",
     "lodash": "^4.17.21",
     "lucide-react-native": "^0.536.0",
+    "metro-react-native-babel-transformer": "^0.77.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
@@ -72,13 +72,11 @@
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.2",
-    "rnpm": "^1.9.0",
     "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.10",
     "@types/react": "~19.1.10",
-    "@types/react-native": "^0.72.2",
     "@types/react-native-zeroconf": "^0.13.0",
     "typescript": "~5.9.2"
   },
