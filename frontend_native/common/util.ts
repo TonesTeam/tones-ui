@@ -57,9 +57,9 @@ async function findBE(): Promise<string> {
     const ipAddress = await Network.getIpAddressAsync();
     const subnetMask = '255.255.254.0';
     console.log(`subnet mask - ${subnetMask}`);
-    const ipList = generateIPRange(ipAddress, subnetMask);
-    let foundIP = await scanNetwork(ipList);
-    foundIP = 'eriksmuhins.com';
+    // const ipList = generateIPRange(ipAddress, subnetMask);
+    // let foundIP = await scanNetwork(ipList);
+    let foundIP = 'eriksmuhins.com';
     return 'http://' + foundIP;
 }
 

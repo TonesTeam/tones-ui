@@ -144,7 +144,8 @@ export default function ProtocolList({
                         console.log(r.data);
                     } else {
                         console.log(
-                            `No data field in response, message: ${r.toJSON()}`,
+                            'No data field in response, error:',
+                            r.toJSON(),
                         );
                         setNetworkError(true);
                         setProtocols([]);
