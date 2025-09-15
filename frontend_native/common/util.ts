@@ -60,7 +60,7 @@ async function findBE(): Promise<string> {
     // const ipList = generateIPRange(ipAddress, subnetMask);
     // let foundIP = await scanNetwork(ipList);
     let foundIP = 'eriksmuhins.com';
-    return 'http://' + foundIP;
+    return 'https://' + foundIP;
 }
 
 let domainPromise: Promise<string> | null = null;
