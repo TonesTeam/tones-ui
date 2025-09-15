@@ -143,13 +143,15 @@ export default function ProtocolList({
                         setProtocols(r.data);
                         console.log(r.data);
                     } else {
-                        console.log(r);
+                        console.log(
+                            `No data field in response, message: ${r.message}`,
+                        );
                         setNetworkError(true);
                         setProtocols([]);
                     }
                 })
                 .catch((err) => {
-                    console.log(err.message);
+                    console.log(`Error fetching protocols: ${err.message}`);
                     setNetworkError(true);
                 });
         }, 100);
