@@ -88,7 +88,7 @@ export async function getRequest<T>(
         return await client.get(fullpath);
     } catch (error) {
         if (axios.isAxiosError(error) && !error.response) {
-            //console.error("Network Error:", error.message);
+            console.error('Network Error:', error.message);
             return error;
         } else {
             console.error('Other Error:', error);

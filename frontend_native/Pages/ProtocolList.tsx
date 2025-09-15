@@ -143,6 +143,7 @@ export default function ProtocolList({
                         setProtocols(r.data);
                         console.log(r.data);
                     } else {
+                        console.log(r);
                         setNetworkError(true);
                         setProtocols([]);
                     }
