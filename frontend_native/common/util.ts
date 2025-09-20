@@ -128,3 +128,31 @@ export const formatDuration = (seconds: number): string => {
 
     return `${minutes} min ${extra_seconds} sec`;
 };
+
+export const formatSocialMediaTime = (
+    dateInput: string | number | Date,
+): string => {
+    const now = new Date();
+    const date = new Date(dateInput);
+    const diffMs = now.getTime() - date.getTime();
+
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const week = 7 * day;
+
+    if (diffMs < minute) {
+        return 'just now';
+    } else if (diffMs < hour) {
+        const mins = Math.floor(diffMs / minute);
+        return `${mins} minute${mins === 1 ? '' : 's'} ago`;
+    } else if (diffMs < day) {
+        const hrs = Math.floor(diffMs / hour);
+        return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+    } else if (diffMs < week) {
+        const days = Math.floor(diffMs / day);
+        return `${days} day${days === 1 ? '' : 's'} ago`;
+    } else {
+        return date.toLocaleDateString();
+    }
+};

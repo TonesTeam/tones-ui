@@ -1,5 +1,5 @@
 import { StyleSheet, View, Image } from 'react-native';
-import { getRequest, makeRequest } from '../common/util';
+import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
 import { useIsFocused } from '@react-navigation/native';
 import {
     AppStyles,
@@ -82,9 +82,7 @@ function ProtocolItem({
                         </Text>
                         <Text size="xs" color="$textLight500">
                             by {protocol.author} ·{' '}
-                            {new Date(
-                                protocol.creationDate,
-                            ).toLocaleDateString()}
+                            {formatSocialMediaTime(protocol.creationDate)}
                         </Text>
                     </VStack>
                 </HStack>
