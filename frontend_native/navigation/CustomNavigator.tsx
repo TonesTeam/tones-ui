@@ -1,5 +1,4 @@
 import {
-    Text,
     View,
     TouchableOpacity,
     Animated,
@@ -24,6 +23,7 @@ import { OpacityText } from '../components/AnimatedTxt';
 import ConfirmationModal from '../common/TonesModal';
 import { LogOutIcon } from 'lucide-react-native';
 import GeneratedAvatar from '../components/GeneratedAvatar';
+import { Icon, Text } from '@gluestack-ui/themed';
 
 export default function NavBar() {
     //Navigation stuff
@@ -37,19 +37,8 @@ export default function NavBar() {
     const progressRef = useRef<ProgressRef>(null);
 
     //Animation stuff
-    const [open, setOpen] = useState(false);
     const [logoutConfirmModal, setLogoutConfirmModal] = useState(false);
     const translation = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        Animated.timing(translation, {
-            toValue: open ? 100 : 0,
-            duration: 250,
-            useNativeDriver: false,
-        }).start();
-        //if (open && count != 0) progressRef?.current?.reAnimate();
-        if (open) progressRef?.current?.reAnimate();
-    }, [open]);
 
     return (
         <Animated.View
@@ -70,7 +59,6 @@ export default function NavBar() {
                 isOpen={logoutConfirmModal}
                 onClose={() => setLogoutConfirmModal(false)}
                 action={() => {
-                    setOpen(false);
                     navigation.navigate('Logout');
                 }}
                 headline="Are you sure you want to log out?"
@@ -79,42 +67,12 @@ export default function NavBar() {
                 type="warning"
                 actionButtonText="Log out"
             />
-            <TouchableOpacity
-                style={s.section_header}
-                activeOpacity={0.2}
-                delayPressIn={0} //TODO: edit prop config or make component? + test
-                onPress={() => setOpen(!open)}
-            >
-                {open && (
-                    <Logo
-                        width={100}
-                        height={80}
-                        style={{ marginRight: 20 }}
-                    ></Logo>
-                )}
 
-                <Animated.View
-                    style={[
-                        s.btn_toggleMenu,
-                        {
-                            transform: [
-                                {
-                                    rotate: translation.interpolate({
-                                        inputRange: [0, 100],
-                                        outputRange: ['0deg', '180deg'],
-                                    }),
-                                },
-                            ],
-                        },
-                    ]}
-                >
-                    <Arrow
-                        width={50}
-                        height={50}
-                        stroke={AppStyles.color.primary}
-                    ></Arrow>
-                </Animated.View>
-            </TouchableOpacity>
+            <Logo
+                width={70}
+                height={70}
+                style={{ alignSelf: 'center', marginTop: 20, marginBottom: 10 }}
+            ></Logo>
 
             <View style={s.section_links}>
                 {Pages.filter((page) => page.icon != undefined).map(
@@ -125,10 +83,8 @@ export default function NavBar() {
                                     s.link,
                                     activePage == page && s.link_active,
                                     {
-                                        justifyContent: open
-                                            ? 'flex-start'
-                                            : 'center',
-                                        paddingLeft: open ? '5%' : 0,
+                                        justifyContent: 'center',
+                                        paddingLeft: 0,
                                     },
                                 ]}
                                 key={index}
@@ -136,49 +92,15 @@ export default function NavBar() {
                                     if (page.isLogout) {
                                         setLogoutConfirmModal(true);
                                     } else {
-                                        setOpen(false);
                                         navigation.navigate(page.name);
                                     }
                                 }}
                             >
                                 <View>
                                     {page.icon && (
-                                        <page.icon
-                                            height={30}
-                                            stroke={
-                                                activePage == page
-                                                    ? AppStyles.color.primary
-                                                    : AppStyles.color
-                                                          .text_primary
-                                            }
-                                        />
+                                        <Icon size="xl" as={page.icon} />
                                     )}
                                 </View>
-                                {open && (
-                                    <View style={s.link_label}>
-                                        <OpacityText
-                                            numberOfLines={1}
-                                            style={[
-                                                s.link_label_text,
-                                                activePage?.name ==
-                                                    page.name && {
-                                                    fontWeight: 'bold',
-                                                },
-                                                {
-                                                    color:
-                                                        activePage == page
-                                                            ? AppStyles.color
-                                                                  .primary
-                                                            : AppStyles.color
-                                                                  .text_primary,
-                                                },
-                                            ]}
-                                            opacityFunc={translation}
-                                        >
-                                            {page.name}
-                                        </OpacityText>
-                                    </View>
-                                )}
                             </TouchableOpacity>
                         );
                     },
@@ -186,53 +108,27 @@ export default function NavBar() {
             </View>
 
             <View style={s.section_footer}>
-                <View style={[s.progress, { borderWidth: open ? 1 : 0 }]}>
+                <View style={[s.progress, { borderWidth: 0 }]}>
                     <CircularProgress
                         ref={progressRef}
                         value={90} //count == 0 ? 0 : 90
                         valueSuffix={'%'}
                         allowFontScaling={false}
-                        radius={open ? 50 : 40}
-                        duration={open ? 800 : 0}
+                        radius={40}
+                        duration={0}
                         progressValueColor={AppStyles.color.text_primary}
                         activeStrokeColor={AppStyles.color.secondary}
                         inActiveStrokeColor={AppStyles.color.background}
                         inActiveStrokeOpacity={0.5}
-                        inActiveStrokeWidth={open ? 15 : 10}
-                        activeStrokeWidth={open ? 8 : 6}
+                        inActiveStrokeWidth={10}
+                        activeStrokeWidth={6}
                     />
-                    {open && (
-                        <OpacityText
-                            numberOfLines={1}
-                            opacityFunc={translation}
-                        >
-                            {count == 0
-                                ? 'No active protocols'
-                                : activeProtocols[0].protocol.name}
-                        </OpacityText>
-                    )}
                 </View>
                 <Pressable
                     style={s.profile}
                     onPress={() => navigation.navigate('Profile')}
                 >
                     <GeneratedAvatar name="Jacob Goldberg" size={50} />
-                    {open && (
-                        <View>
-                            <OpacityText opacityFunc={translation}>
-                                Jacob Goldberg
-                            </OpacityText>
-                            <OpacityText
-                                style={{
-                                    fontSize: 12,
-                                    color: AppStyles.color.text_faded,
-                                }}
-                                opacityFunc={translation}
-                            >
-                                @UppsalaLab
-                            </OpacityText>
-                        </View>
-                    )}
                 </Pressable>
             </View>
         </Animated.View>
@@ -279,7 +175,6 @@ const s = StyleSheet.create({
         marginLeft: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        overflowX: 'hidden',
     },
 
     link_active: {
@@ -313,7 +208,8 @@ const s = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         justifyContent: 'space-evenly',
-        backgroundColor: AppStyles.color.background,
+        borderTopWidth: 2,
+        borderTopColor: '#eee',
     },
 
     profile_img: {
