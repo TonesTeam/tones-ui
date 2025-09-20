@@ -19,8 +19,6 @@ import {
 } from '../constants/styles';
 import NavBar from '../navigation/CustomNavigator';
 import Txt from '../components/Txt';
-import Washing_icon from '../assets/icons/washing_icon.svg';
-import Reagent_icon from '../assets/icons/reagent_icon.svg';
 import React, {
     ForwardedRef,
     MutableRefObject,
@@ -67,6 +65,7 @@ import {
     Icon,
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
+import { FlaskConical, Waves } from 'lucide-react-native';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -92,12 +91,12 @@ function StepTab(props: {
     switch (props.type) {
         case StepType.WASHING:
             {
-                params.icon = Washing_icon;
+                params.icon = Waves;
             }
             break;
         case StepType.LIQUID_APPL:
             {
-                params.icon = Reagent_icon;
+                params.icon = FlaskConical;
             }
             break;
     }
@@ -124,13 +123,9 @@ function StepTab(props: {
                 ]}
             >
                 <params.icon
+                    color={props.active ? 'white' : 'grey'}
                     height={25}
                     width={25}
-                    fill={
-                        props.active
-                            ? AppStyles.color.elem_back
-                            : AppStyles.color.text_faded
-                    }
                 />
             </View>
             <Txt

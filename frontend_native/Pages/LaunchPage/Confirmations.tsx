@@ -2,15 +2,19 @@ import { View, StyleSheet, AppState } from 'react-native';
 import Txt from '../../components/Txt';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import { SvgProps } from 'react-native-svg';
-import Slots_Icon from '../../assets/icons/confirm_slots.svg';
-import Liquids_Icon from '../../assets/icons/confirm_liquids.svg';
-import Washing_Icon from '../../assets/icons/confirm_washing.svg';
-import Box_Icon from '../../assets/icons/confirm_box.svg';
 import { AppStyles } from '../../constants/styles';
 import { useState } from 'react';
+import {
+    LucideIcon,
+    FlaskRound,
+    LockKeyhole,
+    Table,
+    VectorSquare,
+} from 'lucide-react-native';
+import { Icon } from '@gluestack-ui/themed';
 
 function ConfirmBox(props: {
-    icon: React.FC<SvgProps>;
+    icon: LucideIcon;
     text: string;
     title: string;
     toggleConfirm: (state: boolean) => void;
@@ -54,7 +58,7 @@ function ConfirmBox(props: {
                 >
                     <View style={{ flex: 5 }}>
                         <View style={st.icon_circle}>
-                            <props.icon height={25} fill={'#ffffff'} />
+                            <Icon as={props.icon} color="white" size="xl" />
                         </View>
                     </View>
                     <View style={{ flex: 3 }}>
@@ -100,7 +104,7 @@ export function Confirmations(props: {
                     <ConfirmBox
                         title="Slots are in place."
                         text="Make sure that slides are placed in earlier chosen slots and properly fixated."
-                        icon={Slots_Icon}
+                        icon={VectorSquare}
                         toggleConfirm={(state: boolean) =>
                             props.updateConfirmations(state)
                         }
@@ -108,7 +112,7 @@ export function Confirmations(props: {
                     <ConfirmBox
                         title="Reagents are in place."
                         text="Make sure that reagents are filled in tubes according to the configuration table at Step 1."
-                        icon={Liquids_Icon}
+                        icon={Table}
                         toggleConfirm={(state: boolean) =>
                             props.updateConfirmations(state)
                         }
@@ -118,7 +122,7 @@ export function Confirmations(props: {
                     <ConfirmBox
                         title="Washing buffer is filled."
                         text="Ensure that washing buffer canister is filled with according washing liquid."
-                        icon={Washing_Icon}
+                        icon={FlaskRound}
                         toggleConfirm={(state: boolean) =>
                             props.updateConfirmations(state)
                         }
@@ -126,7 +130,7 @@ export function Confirmations(props: {
                     <ConfirmBox
                         title="Doors are closed."
                         text="Double-check that slot module cover and reagent module door are closed."
-                        icon={Box_Icon}
+                        icon={LockKeyhole}
                         toggleConfirm={(state: boolean) =>
                             props.updateConfirmations(state)
                         }

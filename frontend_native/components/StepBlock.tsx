@@ -1,15 +1,9 @@
 import { TouchableOpacity } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
 import ConfirmationModal from '../common/TonesModal';
-import {
-    ReagentStep,
-    StepDTO,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { AppStyles } from '../constants/styles';
-import Washing_icon from '../assets/icons/washing_icon.svg';
-import Reagent_icon from '../assets/icons/reagent_icon.svg';
 import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
@@ -24,6 +18,7 @@ import {
     Box,
     Pressable,
 } from '@gluestack-ui/themed';
+import { FlaskConical, Waves } from 'lucide-react-native';
 import { Trash, Pencil } from 'lucide-react-native';
 import { formatDuration } from '../common/util';
 
@@ -37,7 +32,7 @@ const STEP_CONFIG = {
             main: AppStyles.color.block.main_washing,
             transparent: AppStyles.color.block.transp_washing,
         },
-        icon: Washing_icon,
+        icon: Waves,
     },
     [StepType.LIQUID_APPL]: {
         name: 'Reagent',
@@ -45,7 +40,7 @@ const STEP_CONFIG = {
             main: AppStyles.color.block.main_reagent,
             transparent: AppStyles.color.block.transp_reagent,
         },
-        icon: Reagent_icon,
+        icon: FlaskConical,
     },
 } as const;
 
@@ -222,10 +217,12 @@ const StepBlock = (props: StepBlockProps) => {
                                 alignItems="center"
                                 justifyContent="center"
                             >
-                                <IconComponent
+                                <Icon
+                                    as={IconComponent}
+                                    color="$white"
+                                    size="lg"
                                     height={iconSize}
                                     width={iconSize}
-                                    fill={AppStyles.color.elem_back}
                                 />
                             </Box>
                             <Text color="$white" size="lg" fontWeight="$bold">
