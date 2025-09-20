@@ -150,6 +150,61 @@ function StepTab(props: {
     );
 }
 
+const Timeline = ({
+    blocks,
+    flatListRef,
+    handleBlocksChange,
+    settings,
+    revealWorkBlock,
+    deleteBlock,
+    editBlock,
+}: any) => {
+    return (
+        <View style={s.timeline}>
+            <Txt style={s.timelineHeader}>Protocol timeline</Txt>
+            {blocks.length == 0 && (
+                <Box alignItems="center" justifyContent="center" flex={1}>
+                    <Text fontSize="$6xl">😇</Text>
+                    <Text color="$grey" mt="$4" italic>
+                        No steps added yet
+                    </Text>
+                </Box>
+            )}
+            <DraggableFlatList
+                style={{ marginHorizontal: 20 }}
+                containerStyle={{ paddingBottom: 60 }}
+                data={blocks}
+                ref={flatListRef}
+                onScrollToIndexFailed={(info) => {
+                    console.log('Failed to scroll to index: ', info.index);
+                }}
+                onContentSizeChange={() => {
+                    if (flatListRef.current && blocks.length > 1) {
+                        let index = blocks.length - 1;
+                        flatListRef.current.scrollToIndex({
+                            animated: true,
+                            index,
+                        });
+                    }
+                }}
+                onDragEnd={({ data }) => handleBlocksChange(data)}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={(params) =>
+                    StepBlock({
+                        renderParams: params,
+                        deleteStep: deleteBlock,
+                        editStep: revealWorkBlock,
+                        deleteAutoWash: editBlock,
+                        settings: settings,
+                        edit: true,
+                    })
+                }
+                onDragBegin={() => Vibration.vibrate([100])}
+            />
+        </View>
+    );
+};
+
 export default function Constructor({
     route,
     navigation,
@@ -387,53 +442,15 @@ export default function Constructor({
                                         )}
                                     </View>
                                 </View>
-                                <View style={s.timeline}>
-                                    <Txt style={s.timelineHeader}>
-                                        Protocol timeline
-                                    </Txt>
-                                    <DraggableFlatList
-                                        style={{ marginHorizontal: 20 }}
-                                        containerStyle={{ paddingBottom: 60 }}
-                                        data={blocks}
-                                        ref={flatListRef}
-                                        onScrollToIndexFailed={(info) => {
-                                            console.log(
-                                                'Failed to scroll to index: ',
-                                                info.index,
-                                            );
-                                        }}
-                                        onContentSizeChange={() => {
-                                            if (
-                                                flatListRef.current &&
-                                                blocks.length > 1
-                                            ) {
-                                                let index = blocks.length - 1;
-                                                flatListRef.current.scrollToIndex(
-                                                    { animated: true, index },
-                                                );
-                                            }
-                                        }}
-                                        onDragEnd={({ data }) =>
-                                            handleBlocksChange(data)
-                                        }
-                                        keyExtractor={(item) =>
-                                            item.id.toString()
-                                        }
-                                        renderItem={(params) =>
-                                            StepBlock({
-                                                renderParams: params,
-                                                deleteStep: deleteBlock,
-                                                editStep: revealWorkBlock,
-                                                deleteAutoWash: editBlock,
-                                                settings: settings,
-                                                edit: true,
-                                            })
-                                        }
-                                        onDragBegin={() =>
-                                            Vibration.vibrate([100])
-                                        }
-                                    />
-                                </View>
+                                <Timeline
+                                    blocks={blocks}
+                                    flatListRef={flatListRef}
+                                    handleBlocksChange={setBlocks}
+                                    settings={settings}
+                                    revealWorkBlock={revealWorkBlock}
+                                    deleteBlock={deleteBlock}
+                                    editBlock={editBlock}
+                                />
                             </View>
                         </View>
 
