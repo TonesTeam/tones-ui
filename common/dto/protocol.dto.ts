@@ -6,6 +6,7 @@ export interface ProtocolDto {
     name: string;
     author: string | null; //UserDTO | null
     creationDate: Date;
+    lastUpdate?: Date;
     description: string;
 }
 

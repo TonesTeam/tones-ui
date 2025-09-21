@@ -32,6 +32,7 @@ export class AppService {
                     id: p.id,
                     author: p.creator.username,
                     creationDate: p.creationDate,
+                    lastUpdate: p.lastUpdate,
                     description: p.description,
                     name: p.name,
                 }) as ProtocolDto,
@@ -53,6 +54,7 @@ export class AppService {
             description: pr.description,
             steps: steps,
             creationDate: pr.creationDate,
+            lastUpdate: pr.lastUpdate,
             customLiquids: await this.getCustomProtocolLiquids(id),
             defaultWash: {
                 incubation: pr.defaultWashing.incubationTime,
@@ -132,7 +134,8 @@ export class AppService {
                         step.liquidApplication.liquidInfo.id,
                     ),
                     autoWash: step.liquidApplication.autoWash,
-                    targetTemperature: step.liquidApplication.incubationTemperature,
+                    targetTemperature:
+                        step.liquidApplication.incubationTemperature,
                     custom:
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,

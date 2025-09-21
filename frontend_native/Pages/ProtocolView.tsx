@@ -12,10 +12,11 @@ import {
 } from '@gluestack-ui/themed';
 import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
-import { getRequest, makeRequest } from '../common/util';
+import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../common/TonesModal';
 import StepBlock from '../components/StepBlock';
+import { Method } from 'axios';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const protocol_ID = route.params?.protocol_ID;
@@ -26,7 +27,11 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         if (protocol_ID) {
             console.log('Fetching protocol data...');
             getRequest<ProtocolWithStepsDTO>(`/protocol/${protocol_ID}`)
-                .then((r) => setProtocol(r.data))
+                .then((r) => {
+                    if ('data' in r) {
+                        setProtocol(r.data);
+                    }
+                })
                 .catch((err) => console.error(err));
         }
     }, [protocol_ID]);
@@ -35,14 +40,15 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
-                    toggleDeletionModal(true);
+                    setDeleteModal(false);
+                    navigation.goBack();
                 } else {
-                    toggleDeletionModal(false);
+                    setDeleteModal(false);
                 }
             })
             .catch((err) => {
                 console.log(err.message);
-                toggleDeletionModal(false);
+                setDeleteModal(false);
             });
     };
 
@@ -145,6 +151,20 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                         {protocol?.author ?? ''}
                                     </Text>
                                 </HStack>
+                                <HStack>
+                                    <Text fontWeight="bold">Created:</Text>
+                                    <Text ml="$2">
+                                        {protocol?.creationDate ? formatSocialMediaTime(protocol.creationDate) : ''}
+                                    </Text>
+                                </HStack>
+                                {protocol?.lastUpdate && (
+                                    <HStack>
+                                        <Text fontWeight="bold">Last Updated:</Text>
+                                        <Text ml="$2">
+                                            {formatSocialMediaTime(protocol.lastUpdate)}
+                                        </Text>
+                                    </HStack>
+                                )}
                                 <Text>
                                     <Text fontWeight="bold">Description: </Text>
                                     <Text fontWeight="normal" ml="$2">

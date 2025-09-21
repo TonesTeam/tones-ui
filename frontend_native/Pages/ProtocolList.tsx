@@ -56,7 +56,6 @@ function ProtocolItem({
 }: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
-    toggleDeletionModal: (val: boolean) => void;
 }) {
     return (
         <Box
@@ -208,6 +207,11 @@ export default function ProtocolList({
                     new Date(b.creationDate).getTime() -
                     new Date(a.creationDate).getTime()
                 );
+            } else if (sortingStrategy === 'Last updated') {
+                // Sort by lastUpdate if available, otherwise by creationDate
+                const aDate = a.lastUpdate ? new Date(a.lastUpdate).getTime() : new Date(a.creationDate).getTime();
+                const bDate = b.lastUpdate ? new Date(b.lastUpdate).getTime() : new Date(b.creationDate).getTime();
+                return bDate - aDate; // Most recently updated first
             } else {
                 return 0;
             }
@@ -333,13 +337,6 @@ export default function ProtocolList({
                                                         key={protocol.id}
                                                         protocol={protocol}
                                                         navigation={navigation}
-                                                        toggleDeletionModal={(
-                                                            val,
-                                                        ) =>
-                                                            setDeletionModal(
-                                                                val,
-                                                            )
-                                                        }
                                                     />
                                                 );
                                             },
@@ -409,7 +406,7 @@ const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
                     </SelectDragIndicatorWrapper>
                     <SelectItem value="Oldest first" label="Oldest first" />
                     <SelectItem value="Newest first" label="Newest first" />
-                    <SelectItem value="me" label="Test" />
+                    <SelectItem value="Last updated" label="Last updated" />
                 </SelectContent>
             </SelectPortal>
         </Select>

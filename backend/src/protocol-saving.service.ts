@@ -4,11 +4,7 @@ import { Prisma, Protocol } from '@prisma/client';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { LiquidDTO } from 'common/dto/liquid.dto';
 import { StepType } from 'common/enums';
-import {
-    ReagentStep,
-    StepDTO,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 
 @Injectable()
 export class ProtocolSavingService {
@@ -28,6 +24,7 @@ export class ProtocolSavingService {
             create: {
                 name: protocol.name,
                 creationDate: protocol.creationDate,
+                lastUpdate: new Date(),
                 description: protocol.description,
                 deleted: false,
                 defaultWashing: {
@@ -79,6 +76,7 @@ export class ProtocolSavingService {
             data: {
                 name: protocol.name,
                 description: protocol.description,
+                lastUpdate: new Date(),
                 defaultWashing: {
                     update: {
                         incubationTime: protocol.defaultWash.incubation,
