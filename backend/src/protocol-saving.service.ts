@@ -79,6 +79,7 @@ export class ProtocolSavingService {
             data: {
                 name: protocol.name,
                 description: protocol.description,
+                lastUpdate: new Date(),
                 defaultWashing: {
                     update: {
                         incubationTime: protocol.defaultWash.incubation,
