@@ -56,7 +56,6 @@ function ProtocolItem({
 }: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
-    toggleDeletionModal: (val: boolean) => void;
 }) {
     return (
         <Box
@@ -338,13 +337,6 @@ export default function ProtocolList({
                                                         key={protocol.id}
                                                         protocol={protocol}
                                                         navigation={navigation}
-                                                        toggleDeletionModal={(
-                                                            val,
-                                                        ) =>
-                                                            setDeletionModal(
-                                                                val,
-                                                            )
-                                                        }
                                                     />
                                                 );
                                             },

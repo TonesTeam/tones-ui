@@ -16,6 +16,7 @@ import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../common/TonesModal';
 import StepBlock from '../components/StepBlock';
+import { Method } from 'axios';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const protocol_ID = route.params?.protocol_ID;
@@ -26,7 +27,11 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         if (protocol_ID) {
             console.log('Fetching protocol data...');
             getRequest<ProtocolWithStepsDTO>(`/protocol/${protocol_ID}`)
-                .then((r) => setProtocol(r.data))
+                .then((r) => {
+                    if ('data' in r) {
+                        setProtocol(r.data);
+                    }
+                })
                 .catch((err) => console.error(err));
         }
     }, [protocol_ID]);
@@ -35,14 +40,15 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
-                    toggleDeletionModal(true);
+                    setDeleteModal(false);
+                    navigation.goBack();
                 } else {
-                    toggleDeletionModal(false);
+                    setDeleteModal(false);
                 }
             })
             .catch((err) => {
                 console.log(err.message);
-                toggleDeletionModal(false);
+                setDeleteModal(false);
             });
     };
 
