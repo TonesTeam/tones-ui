@@ -46,8 +46,16 @@ import {
     Alert,
     AlertIcon,
     AlertText,
+    Button,
+    ButtonText,
+    Toast,
+    ToastTitle,
+    ToastDescription,
+    useToast,
+    Icon,
 } from '@gluestack-ui/themed';
-import { ChevronDown, Info } from 'lucide-react-native';
+import { ChevronDown, Check, Info } from 'lucide-react-native';
+import { HStack } from '@gluestack-ui/themed';
 
 export interface WorkBlockProps {
     block: StepDTO;
@@ -56,6 +64,7 @@ export interface WorkBlockProps {
     updateCustomLiquids: (liquids: LiquidDTO[]) => void;
     customLiquids: LiquidDTO[];
     settings: ProtocolSettings;
+    setSettings: (settings: ProtocolSettings) => void;
 }
 
 interface BlockInputsProps {
@@ -65,6 +74,7 @@ interface BlockInputsProps {
     existingCustomLiquids?: LiquidDTO[];
     timeUnit: 'Seconds' | 'Minutes';
     setTimeUnit: (text: 'Seconds' | 'Minutes') => void;
+    setSettings: (settings: ProtocolSettings) => void;
 }
 
 const bs = StyleSheet.create({
@@ -487,6 +497,8 @@ export default function WorkBlock(props: WorkBlockProps) {
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(
         props.customLiquids,
     );
+    const toast = useToast();
+    const [toastId, setToastId] = useState(0);
     const [allowSave, setAllowSave] = useState(false);
     const [timeUnit, setTimeUnit] = useState('Seconds');
     const [saveBlockError, setSaveBlockError] = useState('');
@@ -495,6 +507,48 @@ export default function WorkBlock(props: WorkBlockProps) {
     useEffect(() => {
         setSaveBlockError('');
     }, [props.block.type]);
+
+    const handleToast = () => {
+        if (!areParamsValid(props.block.type, params)) return;
+        if (!toast.isActive(String(toastId))) {
+            showNewToast();
+        }
+    };
+    const showNewToast = () => {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+            id: String(newId),
+            placement: 'top',
+            duration: 3000,
+            render: ({ id }) => {
+                const uniqueToastId = 'toast-' + id;
+                return (
+                    <Toast
+                        nativeID={uniqueToastId}
+                        duration={8000}
+                        placement="top"
+                        action="success"
+                        variant="outline"
+                    >
+                        <HStack space="md">
+                            <Icon as={Check} mt="$1" mr="$2" size="xl" />
+                            <VStack space="md">
+                                <ToastTitle>
+                                    Default washing step updated
+                                </ToastTitle>
+                                <ToastDescription>
+                                    The current washing step has been set as the
+                                    default for all future and present washing
+                                    steps.
+                                </ToastDescription>
+                            </VStack>
+                        </HStack>
+                    </Toast>
+                );
+            },
+        });
+    };
 
     let block = props.block;
 
@@ -612,6 +666,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                             change={memorizedParamUpdate}
                             timeUnit={timeUnit}
                             setTimeUnit={setTimeUnit}
+                            setSettings={props.setSettings}
                         />
                     )}
                     {props.block.type == StepType.LIQUID_APPL && (
@@ -622,6 +677,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                             existingCustomLiquids={customLiquids}
                             timeUnit={timeUnit}
                             setTimeUnit={setTimeUnit}
+                            setSettings={props.setSettings}
                         />
                     )}
                 </View>
@@ -642,28 +698,31 @@ export default function WorkBlock(props: WorkBlockProps) {
                 )}
 
                 <View style={s.section_footer}>
-                    <View
-                        style={{
-                            borderRadius: 10,
-                            width: '85%',
-                            backgroundColor: AppStyles.color.warning,
-                        }}
-                    >
-                        <TouchableOpacity
-                            style={[s.btn, { backgroundColor: block_color }]}
-                            onPressIn={() => saveBlockToParent()}
+                    {props.block.type == StepType.WASHING && (
+                        <Button
+                            variant="outline"
+                            action="primary"
+                            mr="$3"
+                            onPress={() => {
+                                handleToast();
+                                props.setSettings({
+                                    ...props.settings,
+                                    autoWashConfig: params as WashStep,
+                                });
+                            }}
                         >
-                            <Txt
-                                style={{
-                                    color: AppStyles.color.elem_back,
-                                    alignSelf: 'center',
-                                    fontFamily: 'Roboto-bold',
-                                }}
-                            >
-                                {props.block.id == -1 ? 'Add' : 'Update'} Step
-                            </Txt>
-                        </TouchableOpacity>
-                    </View>
+                            <ButtonText>Set as default</ButtonText>
+                        </Button>
+                    )}
+                    <Button
+                        action="primary"
+                        variant="solid"
+                        onPress={() => saveBlockToParent()}
+                    >
+                        <ButtonText>
+                            {props.block.id == -1 ? 'Add' : 'Update'} Step
+                        </ButtonText>
+                    </Button>
                 </View>
             </View>
         </>
@@ -691,7 +750,7 @@ const s = StyleSheet.create({
         width: '100%',
         paddingHorizontal: '10%',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         borderTopColor: AppStyles.color.background,
         borderTopWidth: 1,

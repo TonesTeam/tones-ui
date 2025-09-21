@@ -1,16 +1,9 @@
-import {
-    ReagentStep,
-    StepDTO,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
-import {
-    LIQUID_INJECT_TIME,
-} from '../constants/protocol_constants';
+import { LIQUID_INJECT_TIME } from '../constants/protocol_constants';
 
 export interface ProtocolSettings {
     autoWashConfig: WashStep;
-    timeUnits: 'sec' | 'min';
     description: String;
 }
 

@@ -267,13 +267,11 @@ export default function Constructor({
     useEffect(() => {
         setSettings({
             autoWashConfig: defaultWashStep,
-            timeUnits: 'sec',
             description: '',
         } as ProtocolSettings);
 
         setTempSettings({
             autoWashConfig: defaultWashStep,
-            timeUnits: 'sec',
             description: '',
         } as ProtocolSettings);
     }, [defaultWashStep]);
@@ -432,6 +430,7 @@ export default function Constructor({
                                                 customLiquids={customLiquids}
                                                 block={workBlock}
                                                 settings={settings}
+                                                setSettings={setSettings}
                                             />
                                         )}
                                     </View>

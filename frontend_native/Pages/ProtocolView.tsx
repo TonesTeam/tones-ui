@@ -129,7 +129,6 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                             getIndex: () => index,
                                         }}
                                         settings={{
-                                            timeUnits: 'sec',
                                             autoWashConfig:
                                                 protocol.defaultWash,
                                             description: protocol.description,

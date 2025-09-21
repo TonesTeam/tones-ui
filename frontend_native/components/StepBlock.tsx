@@ -4,7 +4,6 @@ import ConfirmationModal from '../common/TonesModal';
 import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { AppStyles } from '../constants/styles';
-import AW_icon from '../assets/icons/auto-wash.svg';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
@@ -293,16 +292,18 @@ const StepBlock = (props: StepBlockProps) => {
                             flexDirection="row"
                             alignItems="center"
                         >
-                            <AW_icon
-                                height={20}
-                                width={20}
-                                style={{ marginRight: 8 }}
+                            <Icon
+                                as={Waves}
+                                color="$textLight900"
+                                size="sm"
+                                mr="$1"
                             />
                             <Text flex={1} size="sm" color="$textLight900">
                                 Auto Washing:{' '}
                                 {props.settings.autoWashConfig.iters} x{' '}
-                                {props.settings.autoWashConfig.incubation}{' '}
-                                {props.settings.timeUnits}
+                                {formatDuration(
+                                    props.settings.autoWashConfig.incubation,
+                                )}{' '}
                             </Text>
                             {props.edit && (
                                 <Pressable

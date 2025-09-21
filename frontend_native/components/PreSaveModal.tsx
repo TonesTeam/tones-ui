@@ -32,6 +32,7 @@ import {
 import { StepDTO, ReagentStep, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { ProtocolSettings } from '../common/constructorUtils';
+import { formatDuration } from '../common/util';
 
 type PreSaveModalProps = {
     isOpen: boolean;
@@ -278,7 +279,7 @@ export default function PreSaveModal({
                                                     size="sm"
                                                     color="$textLight600"
                                                 >
-                                                    Time ({settings.timeUnits})
+                                                    Time
                                                 </Text>
                                             </Box>
                                             <Box flex={1}>
@@ -392,25 +393,14 @@ export default function PreSaveModal({
                                                                     size="sm"
                                                                     color="$textLight900"
                                                                 >
-                                                                    {settings.timeUnits ===
-                                                                    'sec'
-                                                                        ? (
-                                                                              block.params as
-                                                                                  | ReagentStep
-                                                                                  | WashStep
-                                                                          )
-                                                                              .incubation
-                                                                        : Math.round(
-                                                                              ((
-                                                                                  block.params as
-                                                                                      | WashStep
-                                                                                      | ReagentStep
-                                                                              )
-                                                                                  .incubation /
-                                                                                  60) *
-                                                                                  100,
-                                                                          ) /
-                                                                          100}
+                                                                    {formatDuration(
+                                                                        (
+                                                                            block.params as
+                                                                                | ReagentStep
+                                                                                | WashStep
+                                                                        )
+                                                                            .incubation,
+                                                                    )}
                                                                 </Text>
                                                             </Box>
                                                             <Box
@@ -500,7 +490,8 @@ export default function PreSaveModal({
                                                                             color="$blue600"
                                                                         >
                                                                             {
-                                                                                defaultWashStep
+                                                                                settings
+                                                                                    .autoWashConfig
                                                                                     .liquid
                                                                                     .name
                                                                             }
@@ -533,9 +524,11 @@ export default function PreSaveModal({
                                                                             size="sm"
                                                                             color="$blue600"
                                                                         >
-                                                                            {
-                                                                                defaultWashStep.incubation
-                                                                            }
+                                                                            {formatDuration(
+                                                                                settings
+                                                                                    .autoWashConfig
+                                                                                    .incubation,
+                                                                            )}
                                                                         </Text>
                                                                     </Box>
                                                                     <Box
@@ -547,7 +540,9 @@ export default function PreSaveModal({
                                                                             color="$blue600"
                                                                         >
                                                                             {
-                                                                                defaultWashStep.iters
+                                                                                settings
+                                                                                    .autoWashConfig
+                                                                                    .iters
                                                                             }
                                                                         </Text>
                                                                     </Box>
