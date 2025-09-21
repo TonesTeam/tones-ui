@@ -134,7 +134,8 @@ export class AppService {
                         step.liquidApplication.liquidInfo.id,
                     ),
                     autoWash: step.liquidApplication.autoWash,
-                    targetTemperature: step.liquidApplication.incubationTemperature,
+                    targetTemperature:
+                        step.liquidApplication.incubationTemperature,
                     custom:
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,
