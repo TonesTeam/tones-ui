@@ -4,7 +4,6 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
-    Modal,
     Dimensions,
 } from 'react-native';
 import {
@@ -23,9 +22,7 @@ import { getRequest, makeRequest } from '../common/util';
 import User_s_Icon from '../assets/icons/user_settings.svg';
 import System_s_Icon from '../assets/icons/system_settings.svg';
 import Lib_s_Icon from '../assets/icons/reag_lib_settings.svg';
-import InputField from '../components/InputField';
 import { CustomSelect } from '../components/Select';
-import { Switch } from 'react-native-switch';
 import { Method } from 'axios';
 import InfoModal from '../components/InfoModal';
 import { InfoType } from '../common/types';
@@ -39,8 +36,19 @@ import {
     ScrollView,
     Button,
     ButtonText,
+    Modal,
+    ModalBackdrop,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    VStack,
+    HStack,
+    Input,
+    InputField,
+    Switch,
 } from '@gluestack-ui/themed';
-import { Trash, Pencil, CirclePlus } from 'lucide-react-native';
+import { Trash, Pencil, CirclePlus, Save } from 'lucide-react-native';
 import ConfirmationModal from '../common/TonesModal';
 import SearchBar from '../components/SearchBar';
 
@@ -55,6 +63,7 @@ function LiquidsModal(props: {
     categories: LiquidTypeDTO[];
     closeModal: () => void;
     saveLiquid: (liq: PermanentLiquidDTO) => void;
+    isOpen: boolean;
 }) {
     const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>(
         props.liquid
@@ -68,241 +77,105 @@ function LiquidsModal(props: {
               } as PermanentLiquidDTO),
     );
 
-    const ms = StyleSheet.create({
-        modal_container: {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#001f6d42',
-        },
-
-        modal_body: {
-            backgroundColor: AppStyles.color.elem_back,
-            borderRadius: 8,
-            paddingHorizontal: 20,
-            shadowColor: '#000',
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 10,
-            elevation: 15,
-            height: Dimensions.get('window').height * 0.8,
-            width: Dimensions.get('window').width * 0.35,
-        },
-
-        header: {
-            flex: 2,
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-        },
-
-        form: {
-            flex: 15,
-            flexDirection: 'column',
-        },
-        footer: {
-            flex: 3,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-
-        modal_btn: {
-            width: 150,
-            height: 50,
-            borderRadius: 8,
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            marginHorizontal: 20,
-        },
-
-        field: {
-            flexDirection: 'column',
-            marginVertical: 10,
-            flex: 1,
-        },
-        label: {
-            fontFamily: 'Roboto-thin',
-            textTransform: 'uppercase',
-            color: AppStyles.color.accent_dark,
-            marginBottom: 5,
-        },
-    });
     return (
-        <View style={ms.modal_container}>
-            <ScrollView
-                scrollEnabled={false}
-                contentContainerStyle={{
-                    marginTop: 70,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <View style={ms.modal_body}>
-                    <View style={ms.header}>
-                        <Text
-                            style={{ fontFamily: 'Roboto-bold', fontSize: 20 }}
+        <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
+            <ModalBackdrop />
+            <ModalContent padding="$3">
+                <ModalHeader>
+                    <Heading size="xl" color="$textLight900">
+                        {props.liquid != null
+                            ? 'Updating reagent data'
+                            : 'Adding new reagent'}
+                    </Heading>
+                </ModalHeader>
+                <ModalBody padding="$6">
+                    <VStack>
+                        <Text>Name:</Text>
+                        <Input variant="outline">
+                            <InputField
+                                value={newLiquid.name}
+                                onChangeText={(text) =>
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        name: text,
+                                    })
+                                }
+                            />
+                        </Input>
+                    </VStack>
+                    <VStack>
+                        <Text>Category:</Text>
+                        <CustomSelect
+                            list={props.categories}
+                            selected={newLiquid.type}
+                            canAdd={false}
+                            onChangeSelect={(cat) =>
+                                setNewLiquid({
+                                    ...newLiquid,
+                                    type: cat,
+                                })
+                            }
+                        />
+                    </VStack>
+                    <VStack>
+                        <HStack space="md" alignItems="center">
+                            <Text size="lg">Toxic:</Text>
+                            <Switch
+                                size="lg"
+                                value={newLiquid.toxic}
+                                onValueChange={(val) => {
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        toxic: val,
+                                    });
+                                }}
+                            />
+                        </HStack>
+                        <HStack space="md" alignItems="center">
+                            <Text size="lg">Used cold:</Text>
+                            <Switch
+                                size="lg"
+                                value={newLiquid.usedCold}
+                                onValueChange={(val) => {
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        usedCold: val,
+                                    });
+                                }}
+                            />
+                        </HStack>
+                    </VStack>
+                </ModalBody>
+                <ModalFooter borderTopWidth="$1" borderColor="$borderLight200">
+                    <HStack space="md" flex={1} justifyContent="flex-end">
+                        <Button
+                            variant="outline"
+                            action="secondary"
+                            onPress={props.closeModal}
+                            size="md"
                         >
-                            {props.liquid != null
-                                ? 'Updating reagent data'
-                                : 'Adding new reagent'}
-                        </Text>
-                    </View>
-                    {props.categories && (
-                        <View style={ms.form}>
-                            <ScrollView>
-                                <View style={ms.field}>
-                                    <Text style={ms.label}>REAGENT NAME:</Text>
-                                    <InputField
-                                        value={newLiquid.name}
-                                        onInputChange={(text) =>
-                                            setNewLiquid({
-                                                ...newLiquid,
-                                                name: text,
-                                            })
-                                        }
-                                    />
-                                </View>
-                                <View style={ms.field}>
-                                    <Text style={ms.label}>CATEGORY:</Text>
-                                    <CustomSelect
-                                        list={props.categories}
-                                        selected={newLiquid.type}
-                                        canAdd={false}
-                                        onChangeSelect={(cat) =>
-                                            setNewLiquid({
-                                                ...newLiquid,
-                                                type: cat,
-                                            })
-                                        }
-                                    />
-                                </View>
-                                <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    <View style={ms.field}>
-                                        <Text style={ms.label}>USED COLD:</Text>
-                                        <Switch
-                                            value={newLiquid.usedCold}
-                                            onValueChange={(val) => {
-                                                setNewLiquid({
-                                                    ...newLiquid,
-                                                    usedCold: val,
-                                                });
-                                            }}
-                                            containerStyle={{ marginLeft: 10 }}
-                                            activeText={'YES'}
-                                            inActiveText={'NO'}
-                                            circleSize={40}
-                                            barHeight={40}
-                                            circleBorderWidth={1}
-                                            backgroundActive={
-                                                AppStyles.color.primary
-                                            }
-                                            backgroundInactive={
-                                                AppStyles.color.accent_dark
-                                            }
-                                            circleActiveColor={
-                                                AppStyles.color.elem_back
-                                            }
-                                            circleInActiveColor={
-                                                AppStyles.color.elem_back
-                                            }
-                                            changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                                            innerCircleStyle={{
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }} // style for inner animated circle for what you (may) be rendering inside the circle
-                                            outerCircleStyle={{}} // style for outer animated circle
-                                            renderActiveText={true}
-                                            renderInActiveText={true}
-                                            switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                                            switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                                            switchWidthMultiplier={3.1} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                                            switchBorderRadius={10} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
-                                        />
-                                    </View>
-                                    <View style={ms.field}>
-                                        <Text style={ms.label}>TOXIC:</Text>
-                                        <Switch
-                                            value={newLiquid.toxic}
-                                            onValueChange={(val) => {
-                                                setNewLiquid({
-                                                    ...newLiquid,
-                                                    toxic: val,
-                                                });
-                                            }}
-                                            activeText={'YES'}
-                                            inActiveText={'NO'}
-                                            circleSize={40}
-                                            barHeight={40}
-                                            circleBorderWidth={1}
-                                            backgroundActive={
-                                                AppStyles.color.primary
-                                            }
-                                            backgroundInactive={
-                                                AppStyles.color.accent_dark
-                                            }
-                                            circleActiveColor={
-                                                AppStyles.color.elem_back
-                                            }
-                                            circleInActiveColor={
-                                                AppStyles.color.elem_back
-                                            }
-                                            changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                                            innerCircleStyle={{
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }} // style for inner animated circle for what you (may) be rendering inside the circle
-                                            outerCircleStyle={{}} // style for outer animated circle
-                                            renderActiveText={true}
-                                            renderInActiveText={true}
-                                            switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                                            switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                                            switchWidthMultiplier={3.1} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                                            switchBorderRadius={10} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
-                                        />
-                                    </View>
-                                </View>
-                            </ScrollView>
-                        </View>
-                    )}
-
-                    <View style={ms.footer}>
-                        <TouchableOpacity
-                            style={[
-                                ms.modal_btn,
-                                {
-                                    backgroundColor: AppStyles.color.elem_back,
-                                    borderWidth: 1,
-                                    borderColor: AppStyles.color.accent_dark,
-                                },
-                            ]}
-                            onPress={() => props.closeModal()}
-                        >
-                            <Text>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                ms.modal_btn,
-                                { backgroundColor: AppStyles.color.primary },
-                            ]}
+                            <ButtonText>Cancel</ButtonText>
+                        </Button>
+                        <Button
+                            bg="$black"
+                            size="md"
                             onPress={() => {
                                 if (newLiquid.name.trim() != '') {
                                     props.saveLiquid(newLiquid);
                                     props.closeModal();
                                 }
                             }}
+                            isDisabled={newLiquid.name.trim() === ''}
                         >
-                            <Text style={{ color: AppStyles.color.elem_back }}>
+                            <Icon color="white" as={Save} mr="$2" />
+                            <ButtonText>
                                 {props.liquid != null ? 'Update' : 'Save'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </ScrollView>
-        </View>
+                            </ButtonText>
+                        </Button>
+                    </HStack>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 }
 
@@ -518,7 +391,7 @@ function Library(props: {
                                                 fontFamily: 'Roboto-bold',
                                             }}
                                         >
-                                            Categoty
+                                            Category
                                         </Text>
                                     </View>
                                     <View style={[lib_s.cell, { flex: 1 }]}>
@@ -692,21 +565,13 @@ function Library(props: {
                     </View>
 
                     <View>
-                        <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={editModal}
-                            onRequestClose={() => {
-                                setEditModal(!editModal);
-                            }}
-                        >
-                            <LiquidsModal
-                                liquid={editedLiquid}
-                                categories={categories}
-                                closeModal={() => setEditModal(false)}
-                                saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
-                            />
-                        </Modal>
+                        <LiquidsModal
+                            isOpen={editModal}
+                            liquid={editedLiquid}
+                            categories={categories}
+                            closeModal={() => setEditModal(false)}
+                            saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
+                        />
                     </View>
                 </>
             )}
