@@ -59,12 +59,15 @@ import {
     Text,
     Input,
     InputField,
+    InputSlot,
+    InputIcon,
     ButtonText,
     Icon,
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
 import { FlaskConical, Waves } from 'lucide-react-native';
 import PreSaveModal from '../components/PreSaveModal';
+import { Pencil } from 'lucide-react-native';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -215,7 +218,7 @@ export default function Constructor({
     const [settingsModal, setSettingsModal] = useState(false);
     const [duration, setDuration] = useState<number>(0);
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
-    const [protocolName, setProtocolName] = useState('');
+    const [protocolName, setProtocolName] = useState('Untitled protocol');
     const [protocolDescription, setProtocolDescription] = useState('');
     const [defaultWashStep, setDefaultWashStep] = useState<
         WashStep | undefined
@@ -368,7 +371,25 @@ export default function Constructor({
                     <>
                         <View style={[globalElementStyle.page_container]}>
                             <View style={[s.header_section]}>
-                                <Heading size="xl">Protocol Contructor</Heading>
+                                <Input
+                                    variant="underlined"
+                                    size="md"
+                                    width={250}
+                                >
+                                    <InputSlot mr="$2">
+                                        <InputIcon size="lg" as={Pencil} />
+                                    </InputSlot>
+                                    <InputField
+                                        value={protocolName}
+                                        onChangeText={(text: string) =>
+                                            setProtocolName(text)
+                                        }
+                                        color="$black"
+                                        type="text"
+                                        fontWeight="600"
+                                        fontSize="$2xl"
+                                    />
+                                </Input>
                                 <View
                                     style={{
                                         flexDirection: 'row',
@@ -487,6 +508,7 @@ export default function Constructor({
 
 const s = StyleSheet.create({
     header_section: {
+        paddingTop: 10,
         flex: 1,
         width: '100%',
         paddingHorizontal: '2%',
