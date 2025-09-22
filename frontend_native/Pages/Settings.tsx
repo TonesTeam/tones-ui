@@ -48,7 +48,7 @@ import {
     InputField,
     Switch,
 } from '@gluestack-ui/themed';
-import { Trash, Pencil, CirclePlus, Save } from 'lucide-react-native';
+import { Trash, Pencil, CirclePlus, Save, Snowflake } from 'lucide-react-native';
 import ConfirmationModal from '../common/TonesModal';
 import SearchBar from '../components/SearchBar';
 
@@ -94,7 +94,7 @@ function LiquidsModal(props: {
                         <Input variant="outline">
                             <InputField
                                 value={newLiquid.name}
-                                onChangeText={(text) =>
+                                onChangeText={(text: string) =>
                                     setNewLiquid({
                                         ...newLiquid,
                                         name: text,
@@ -123,7 +123,7 @@ function LiquidsModal(props: {
                             <Switch
                                 size="lg"
                                 value={newLiquid.toxic}
-                                onValueChange={(val) => {
+                                onValueChange={(val: boolean) => {
                                     setNewLiquid({
                                         ...newLiquid,
                                         toxic: val,
@@ -136,7 +136,7 @@ function LiquidsModal(props: {
                             <Switch
                                 size="lg"
                                 value={newLiquid.usedCold}
-                                onValueChange={(val) => {
+                                onValueChange={(val: boolean) => {
                                     setNewLiquid({
                                         ...newLiquid,
                                         usedCold: val,
@@ -266,65 +266,6 @@ function Library(props: {
         } else return [] as PermanentLiquidDTO[];
     }
 
-    const lib_s = StyleSheet.create({
-        header: {
-            width: '100%',
-            flex: 1,
-            flexDirection: 'row',
-        },
-        list: {
-            flex: 11,
-            marginTop: 10,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: AppStyles.color.accent_back,
-            overflow: 'hidden',
-            marginBottom: 30,
-        },
-        btn: {
-            flex: 2,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingHorizontal: '2%',
-            backgroundColor: AppStyles.color.secondary,
-            borderRadius: 8,
-        },
-
-        search_bar: {
-            flex: 6,
-            flexDirection: 'row',
-            backgroundColor: AppStyles.color.elem_back,
-            alignItems: 'center',
-            borderRadius: 10,
-            marginRight: 30,
-        },
-
-        row: {
-            flexDirection: 'row',
-            width: '100%',
-            height: 50,
-            borderBottomColor: AppStyles.color.accent_back,
-            borderBottomWidth: 2,
-        },
-
-        cell: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderLeftWidth: 1,
-            borderLeftColor: AppStyles.color.accent_back,
-            borderRightWidth: 1,
-            borderRightColor: AppStyles.color.accent_back,
-        },
-
-        option_cell: {
-            flex: 1,
-            height: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-    });
-
     if (liquids.length === 0 || categories.length === 0) {
         return (
             <Box flex={1} justifyContent="center" alignItems="center">
@@ -337,234 +278,254 @@ function Library(props: {
         <>
             {liquids.length != 0 && categories.length != 0 && (
                 <>
-                    <View>
-                        <View style={lib_s.header}>
+                    <Box>
+                        <HStack space="md" alignItems="center">
                             <SearchBar
                                 value={searchPrompt}
                                 onChangeText={(e) => setSearchPrompt(e)}
                             />
                             <Button
-                                ml="$2"
                                 onPress={() => setEditModal(true)}
                                 action="primary"
                                 variant="solid"
+                                size="md"
                             >
-                                <Icon as={CirclePlus} color="white" />
-                                <ButtonText ml="$2" color="white">
+                                <Icon as={CirclePlus} color="white" mr="$2" />
+                                <ButtonText color="white">
                                     Add new reagent
                                 </ButtonText>
                             </Button>
-                        </View>
-                        {filterAndSort().length == 0 && (
-                            <View style={[lib_s.list, { borderWidth: 0 }]}>
-                                <Text>No liquids found!</Text>
-                            </View>
+                        </HStack>
+                        {filterAndSort().length === 0 && (
+                            <Box
+                                p="$6"
+                                bg="$backgroundLight50"
+                                rounded="$lg"
+                                borderWidth="$1"
+                                borderColor="$borderLight200"
+                                borderStyle="dashed"
+                                mt="$4"
+                            >
+                                <VStack alignItems="center" space="md">
+                                    <Icon
+                                        as={CirclePlus}
+                                        size="xl"
+                                        color="$textLight400"
+                                    />
+                                    <Text
+                                        color="$textLight500"
+                                        textAlign="center"
+                                    >
+                                        No reagents found! Try adjusting your search or add a new reagent.
+                                    </Text>
+                                </VStack>
+                            </Box>
                         )}
                         {filterAndSort().length != 0 && (
-                            <View style={lib_s.list}>
-                                <View
-                                    style={[
-                                        lib_s.row,
-                                        {
-                                            backgroundColor:
-                                                AppStyles.color.accent_dark,
-                                            height: 40,
-                                        },
-                                    ]}
+                            <Box
+                                borderWidth="$1"
+                                borderColor="$borderLight200"
+                                rounded="$lg"
+                                overflow="hidden"
+                                mt="$4"
+                                mb="$6"
+                            >
+                                {/* Table Header */}
+                                <HStack
+                                    bg="$backgroundLight100"
+                                    p="$3"
+                                    borderBottomWidth="$1"
+                                    borderColor="$borderLight200"
                                 >
-                                    <View style={[lib_s.cell, { flex: 3 }]}>
+                                    <Box flex={3}>
                                         <Text
-                                            style={{
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                                fontFamily: 'Roboto-bold',
-                                            }}
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
                                         >
-                                            Reagent name
+                                            Reagent Name
                                         </Text>
-                                    </View>
-                                    <View style={[lib_s.cell, { flex: 2 }]}>
+                                    </Box>
+                                    <Box flex={2}>
                                         <Text
-                                            style={{
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                                fontFamily: 'Roboto-bold',
-                                            }}
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
                                         >
                                             Category
                                         </Text>
-                                    </View>
-                                    <View style={[lib_s.cell, { flex: 1 }]}>
+                                    </Box>
+                                    <Box flex={1}>
                                         <Text
-                                            style={{
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                                fontFamily: 'Roboto-bold',
-                                            }}
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
                                         >
                                             Toxicity
                                         </Text>
-                                    </View>
-                                    <View style={[lib_s.cell, { flex: 1 }]}>
+                                    </Box>
+                                    <Box flex={1}>
                                         <Text
-                                            style={{
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                                fontFamily: 'Roboto-bold',
-                                            }}
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
                                         >
-                                            Used cold
+                                            Used Cold
                                         </Text>
-                                    </View>
-                                    <View style={[lib_s.cell, { flex: 3 }]}>
+                                    </Box>
+                                    <Box flex={2}>
                                         <Text
-                                            style={{
-                                                color: AppStyles.color
-                                                    .elem_back,
-                                                fontFamily: 'Roboto-bold',
-                                            }}
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
                                         >
-                                            Options
+                                            Actions
                                         </Text>
-                                    </View>
-                                </View>
-                                <ScrollView>
+                                    </Box>
+                                </HStack>
+
+                                {/* Table Rows */}
+                                <ScrollView style={{ maxHeight: 400 }}>
                                     {filterAndSort().map((liq, index) => {
+                                        const isOdd = index % 2 === 1;
                                         return (
-                                            <View
+                                            <HStack
                                                 key={index}
-                                                style={[
-                                                    lib_s.row,
-                                                    {
-                                                        backgroundColor:
-                                                            index % 2 != 0
-                                                                ? AppStyles
-                                                                      .color
-                                                                      .background
-                                                                : AppStyles
-                                                                      .color
-                                                                      .elem_back,
-                                                    },
-                                                    index ==
-                                                        liquids.length - 1 && {
-                                                        borderBottomLeftRadius: 10,
-                                                        borderBottomRightRadius: 10,
-                                                    },
-                                                ]}
+                                                p="$3"
+                                                bg={
+                                                    isOdd
+                                                        ? '$backgroundLight50'
+                                                        : 'transparent'
+                                                }
+                                                borderBottomWidth={
+                                                    index <
+                                                    filterAndSort().length - 1
+                                                        ? '$1'
+                                                        : '$0'
+                                                }
+                                                borderColor="$borderLight100"
                                             >
-                                                <View
-                                                    style={[
-                                                        lib_s.cell,
-                                                        { flex: 3 },
-                                                    ]}
+                                                <Box
+                                                    flex={3}
+                                                    justifyContent="center"
                                                 >
-                                                    <Text>{liq.name}</Text>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        lib_s.cell,
-                                                        { flex: 2 },
-                                                    ]}
-                                                >
-                                                    <Text>{liq.type.name}</Text>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        lib_s.cell,
-                                                        { flex: 1 },
-                                                    ]}
-                                                >
-                                                    <Text>
-                                                        {liq.toxic && 'X'}
-                                                    </Text>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        lib_s.cell,
-                                                        { flex: 1 },
-                                                    ]}
-                                                >
-                                                    <Text>
-                                                        {liq.usedCold && 'X'}
-                                                    </Text>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        lib_s.cell,
-                                                        {
-                                                            flex: 3,
-                                                            flexDirection:
-                                                                'row',
-                                                        },
-                                                    ]}
-                                                >
-                                                    <TouchableOpacity
-                                                        style={[
-                                                            lib_s.option_cell,
-                                                            {
-                                                                borderRightColor:
-                                                                    AppStyles
-                                                                        .color
-                                                                        .background,
-                                                                borderRightWidth: 0.5,
-                                                            },
-                                                        ]}
-                                                        onPress={() => {
-                                                            setEditedLiquid(
-                                                                liq,
-                                                            );
-                                                            setEditModal(true);
-                                                        }}
+                                                    <Text
+                                                        size="sm"
+                                                        color="$textLight900"
+                                                        fontWeight="$medium"
                                                     >
-                                                        <Icon
-                                                            as={Pencil}
-                                                            color="$primary500"
-                                                        />
-                                                        <Text
-                                                            color="$primary500"
-                                                            ml="$2"
-                                                        >
-                                                            Edit
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity
-                                                        style={[
-                                                            lib_s.option_cell,
-                                                            {
-                                                                borderLeftColor:
-                                                                    AppStyles
-                                                                        .color
-                                                                        .accent_back,
-                                                                borderLeftWidth: 0.5,
-                                                            },
-                                                        ]}
-                                                        onPress={() =>
-                                                            setDeleteModal(
-                                                                liq.id,
-                                                            )
-                                                        }
+                                                        {liq.name}
+                                                    </Text>
+                                                </Box>
+                                                <Box
+                                                    flex={2}
+                                                    justifyContent="center"
+                                                >
+                                                    <Text
+                                                        size="sm"
+                                                        color="$textLight700"
                                                     >
+                                                        {liq.type.name}
+                                                    </Text>
+                                                </Box>
+                                                <Box
+                                                    flex={1}
+                                                    justifyContent="center"
+                                                >
+                                                    {liq.toxic ? (
                                                         <Icon
                                                             as={Trash}
-                                                            color="$error500"
+                                                            size="sm"
+                                                            color="$red500"
                                                         />
+                                                    ) : (
                                                         <Text
-                                                            ml="$2"
-                                                            color="$error500"
+                                                            size="sm"
+                                                            color="$textLight400"
                                                         >
-                                                            Delete
+                                                            -
                                                         </Text>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
+                                                    )}
+                                                </Box>
+                                                <Box
+                                                    flex={1}
+                                                    justifyContent="center"
+                                                >
+                                                    {liq.usedCold ? (
+                                                        <Icon
+                                                            as={Snowflake}
+                                                            size="sm"
+                                                            color="$blue500"
+                                                        />
+                                                    ) : (
+                                                        <Text
+                                                            size="sm"
+                                                            color="$textLight400"
+                                                        >
+                                                            -
+                                                        </Text>
+                                                    )}
+                                                </Box>
+                                                <Box flex={2}>
+                                                    <HStack space="xs">
+                                                        <Button
+                                                            size="xs"
+                                                            variant="link"
+                                                            onPress={() => {
+                                                                setEditedLiquid(
+                                                                    liq,
+                                                                );
+                                                                setEditModal(
+                                                                    true,
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Icon
+                                                                as={Pencil}
+                                                                color="$primary500"
+                                                                size="xs"
+                                                                mr="$1"
+                                                            />
+                                                            <ButtonText
+                                                                color="$primary500"
+                                                                size="xs"
+                                                            >
+                                                                Edit
+                                                            </ButtonText>
+                                                        </Button>
+                                                        <Button
+                                                            size="xs"
+                                                            variant="link"
+                                                            onPress={() =>
+                                                                setDeleteModal(
+                                                                    liq.id,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Icon
+                                                                as={Trash}
+                                                                color="$error500"
+                                                                size="xs"
+                                                                mr="$1"
+                                                            />
+                                                            <ButtonText
+                                                                color="$error500"
+                                                                size="xs"
+                                                            >
+                                                                Delete
+                                                            </ButtonText>
+                                                        </Button>
+                                                    </HStack>
+                                                </Box>
+                                            </HStack>
                                         );
                                     })}
                                 </ScrollView>
-                            </View>
+                            </Box>
                         )}
-                    </View>
+                    </Box>
 
-                    <View>
+                    <Box>
                         <LiquidsModal
                             isOpen={editModal}
                             liquid={editedLiquid}
@@ -572,7 +533,7 @@ function Library(props: {
                             closeModal={() => setEditModal(false)}
                             saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
                         />
-                    </View>
+                    </Box>
                 </>
             )}
             <ConfirmationModal
