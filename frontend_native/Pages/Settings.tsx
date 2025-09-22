@@ -48,7 +48,14 @@ import {
     InputField,
     Switch,
 } from '@gluestack-ui/themed';
-import { Trash, Pencil, CirclePlus, Save, Snowflake } from 'lucide-react-native';
+import {
+    Trash,
+    Pencil,
+    CirclePlus,
+    Save,
+    Snowflake,
+    Biohazard,
+} from 'lucide-react-native';
 import ConfirmationModal from '../common/TonesModal';
 import SearchBar from '../components/SearchBar';
 
@@ -278,8 +285,8 @@ function Library(props: {
         <>
             {liquids.length != 0 && categories.length != 0 && (
                 <>
-                    <Box>
-                        <HStack space="md" alignItems="center">
+                    <Box width={900}>
+                        <HStack space="xl" alignItems="center">
                             <SearchBar
                                 value={searchPrompt}
                                 onChangeText={(e) => setSearchPrompt(e)}
@@ -304,7 +311,7 @@ function Library(props: {
                                 borderWidth="$1"
                                 borderColor="$borderLight200"
                                 borderStyle="dashed"
-                                mt="$4"
+                                mt="$5"
                             >
                                 <VStack alignItems="center" space="md">
                                     <Icon
@@ -316,7 +323,8 @@ function Library(props: {
                                         color="$textLight500"
                                         textAlign="center"
                                     >
-                                        No reagents found! Try adjusting your search or add a new reagent.
+                                        No reagents found! Try adjusting your
+                                        search or add a new reagent.
                                     </Text>
                                 </VStack>
                             </Box>
@@ -327,7 +335,7 @@ function Library(props: {
                                 borderColor="$borderLight200"
                                 rounded="$lg"
                                 overflow="hidden"
-                                mt="$4"
+                                mt="$5"
                                 mb="$6"
                             >
                                 {/* Table Header */}
@@ -361,7 +369,7 @@ function Library(props: {
                                             size="sm"
                                             color="$textLight600"
                                         >
-                                            Toxicity
+                                            Toxic
                                         </Text>
                                     </Box>
                                     <Box flex={1}>
@@ -434,9 +442,9 @@ function Library(props: {
                                                 >
                                                     {liq.toxic ? (
                                                         <Icon
-                                                            as={Trash}
+                                                            as={Biohazard}
                                                             size="sm"
-                                                            color="$red500"
+                                                            color="$green600"
                                                         />
                                                     ) : (
                                                         <Text
@@ -467,7 +475,7 @@ function Library(props: {
                                                     )}
                                                 </Box>
                                                 <Box flex={2}>
-                                                    <HStack space="xs">
+                                                    <HStack space="lg">
                                                         <Button
                                                             size="xs"
                                                             variant="link"
