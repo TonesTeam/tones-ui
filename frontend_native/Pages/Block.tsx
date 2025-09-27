@@ -6,6 +6,7 @@ import {
     InputModeOptions,
     KeyboardAvoidingView,
     ScrollView,
+    Pressable,
 } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
@@ -17,7 +18,6 @@ import { CustomSelect } from '../components/Select';
 import Info_icon from '../assets/icons/info.svg';
 import { StepType } from 'common/enums';
 import Setting_icon from '../assets/icons/setting.svg';
-import { Switch } from 'react-native-switch';
 import { ProtocolSettings } from '../common/constructorUtils';
 import {
     INCUBATION_MAX,
@@ -53,9 +53,11 @@ import {
     ToastDescription,
     useToast,
     Icon,
+    Switch,
 } from '@gluestack-ui/themed';
 import { ChevronDown, Check, Info } from 'lucide-react-native';
 import { HStack } from '@gluestack-ui/themed';
+import { formatDuration } from '../common/util';
 
 export interface WorkBlockProps {
     block: StepDTO;
@@ -74,6 +76,7 @@ interface BlockInputsProps {
     existingCustomLiquids?: LiquidDTO[];
     timeUnit: 'Seconds' | 'Minutes';
     setTimeUnit: (text: 'Seconds' | 'Minutes') => void;
+    settings: ProtocolSettings;
     setSettings: (settings: ProtocolSettings) => void;
 }
 
@@ -336,15 +339,15 @@ function ReagentInputs(props: BlockInputsProps) {
                         />
                     </View>
                     <View style={[bs.row]}>
-                        <View
-                            style={{
-                                flexDirection: 'column',
-                                flex: 1,
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Text color="$grey" mb="$2" size="sm">
-                                Automatic washing (after step):
+                        <VStack alignItems="flex-start">
+                            <Text color="$grey" size="sm">
+                                Apply default washing step after reagent?
+                                (currently {props.settings.autoWashConfig.iters}{' '}
+                                x{' '}
+                                {formatDuration(
+                                    props.settings.autoWashConfig.incubation,
+                                )}
+                                )
                             </Text>
                             <Switch
                                 value={reagParams.autoWash}
@@ -354,30 +357,9 @@ function ReagentInputs(props: BlockInputsProps) {
                                         !reagParams.autoWash,
                                     );
                                 }}
-                                activeText={'ON'}
-                                inActiveText={'OFF'}
-                                circleSize={40}
-                                barHeight={40}
-                                circleBorderWidth={1}
-                                backgroundActive={AppStyles.color.primary}
-                                backgroundInactive={AppStyles.color.background}
-                                circleActiveColor={AppStyles.color.elem_back}
-                                circleInActiveColor={AppStyles.color.elem_back}
-                                // renderInsideCircle={() => <CustomComponent />} // custom component to render inside the Switch circle (Text, Image, etc.)
-                                changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                                innerCircleStyle={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }} // style for inner animated circle for what you (may) be rendering inside the circle
-                                outerCircleStyle={{}} // style for outer animated circle
-                                renderActiveText={true}
-                                renderInActiveText={true}
-                                switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                                switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                                switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                                switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                                size="lg"
                             />
-                        </View>
+                        </VStack>
                     </View>
                 </ScrollView>
             )}
@@ -667,6 +649,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                             timeUnit={timeUnit}
                             setTimeUnit={setTimeUnit}
                             setSettings={props.setSettings}
+                            settings={props.settings}
                         />
                     )}
                     {props.block.type == StepType.LIQUID_APPL && (
@@ -678,6 +661,7 @@ export default function WorkBlock(props: WorkBlockProps) {
                             timeUnit={timeUnit}
                             setTimeUnit={setTimeUnit}
                             setSettings={props.setSettings}
+                            settings={props.settings}
                         />
                     )}
                 </View>
