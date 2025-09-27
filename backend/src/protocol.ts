@@ -24,6 +24,7 @@ interface ReagentStep {
             used_cold: boolean;
             toxic: boolean;
         };
+        iterations: number;
         incubation: number;
         targetTemperature: number;
     };
@@ -38,7 +39,7 @@ interface WashingStep {
             used_cold: boolean;
             toxic: boolean;
         };
-        iters: number;
+        iterations: number;
         incubation: number;
     };
 }
@@ -63,6 +64,7 @@ class ProtocolManager {
         usedCold: boolean,
         toxic: boolean,
         incubation: number,
+        iterations: number,
         targetTemperature: number,
         id: number = 0,
     ): void {
@@ -76,6 +78,7 @@ class ProtocolManager {
                     toxic,
                 },
                 incubation,
+                iterations,
                 targetTemperature,
             },
         };
@@ -86,7 +89,7 @@ class ProtocolManager {
         washType: WashType,
         usedCold: boolean,
         toxic: boolean,
-        iters: number,
+        iterations: number,
         incubation: number,
         id: number = 1,
     ): void {
@@ -99,7 +102,7 @@ class ProtocolManager {
                     used_cold: usedCold,
                     toxic,
                 },
-                iters,
+                iterations,
                 incubation,
             },
         };

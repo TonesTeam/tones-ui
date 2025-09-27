@@ -184,7 +184,13 @@ function ReagentInputs(props: BlockInputsProps) {
             undefined
                 ? DEFAULT_TEMEPRATURE
                 : (props.stepData.params as ReagentStep).targetTemperature,
+        iters:
+            props.stepData.params.iters == undefined
+                ? 1
+                : props.stepData.params.iters,
     } as ReagentStep);
+    console.log(`Got iterations: ${props.stepData.params.iters}`);
+    console.log(`So reagParams iterations are: ${reagParams.iters}`);
 
     const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
     const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
@@ -338,6 +344,17 @@ function ReagentInputs(props: BlockInputsProps) {
                             }
                         />
                     </View>
+                    <HStack mb="$2" alignItems="center" space="2">
+                        <IterationInput
+                            value={reagParams.iters}
+                            onChange={(iters: string) =>
+                                handleParamChange(
+                                    'iters',
+                                    iters == '' ? null : Number(iters),
+                                )
+                            }
+                        />
+                    </HStack>
                     <View style={[bs.row]}>
                         <VStack alignItems="flex-start">
                             <Text color="$grey" size="sm">

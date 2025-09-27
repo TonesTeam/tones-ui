@@ -105,6 +105,7 @@ export class ProtocolSavingService {
         const step: Prisma.StepCreateWithoutProtocolInput = {
             sequenceOrder: order,
             stepType: s.type,
+            iterations: s.params.iters,
         };
         if (s.type == StepType.LIQUID_APPL) {
             let params = s.params as ReagentStep;
@@ -122,7 +123,6 @@ export class ProtocolSavingService {
             step.washing = {
                 create: {
                     incubationTime: params.incubation,
-                    iter: params.iters,
                     permanentLiquid: {
                         connect: {
                             id: params.liquid.id,

@@ -139,11 +139,12 @@ export class AppService {
                     custom:
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,
+                    iters: step.iterations,
                 } as ReagentStep;
             case StepType.WASHING:
                 return {
                     incubation: step.washing.incubationTime,
-                    iters: step.washing.iter,
+                    iters: step.iterations,
                     liquid: await this.toLiquidDto(
                         step.washing.permanentLiquidId,
                     ),

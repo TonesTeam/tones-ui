@@ -90,17 +90,8 @@ const WashingStepParams = ({
 
     return (
         <HStack flex={1}>
-            <VStack space="sm" flex={1}>
-                <ParamItem label="Reagent" value={params.liquid.name} />
-                <ParamItem label="Incubation time" value={incubationValue} />
-            </VStack>
-            <VStack space="sm" flex={1}>
-                <ParamItem
-                    label="Iterate for"
-                    value={params.iters}
-                    measurement="time(s)"
-                />
-            </VStack>
+            <ParamItem label="Reagent" value={params.liquid.name} />
+            <ParamItem label="Incubation time" value={incubationValue} />
         </HStack>
     );
 };
@@ -118,7 +109,7 @@ const ReagentStepParams = ({
     console.log('ReagentStepParams params:', params);
 
     return (
-        <HStack space="md" flex={1} height="60">
+        <HStack flex={1} height="$full">
             <VStack space="sm" flex={1}>
                 <ParamItem label="Reagent" value={params.liquid.name} />
                 <ParamItem label="Incubation time" value={incubationValue} />
@@ -226,6 +217,9 @@ const StepBlock = (props: StepBlockProps) => {
                             </Box>
                             <Text color="$white" size="lg" fontWeight="$bold">
                                 {stepConfig.name}
+                                {block.params.iters > 1
+                                    ? ` (${block.params.iters} times)`
+                                    : ''}
                             </Text>
                         </HStack>
 

@@ -30,6 +30,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 .then((r) => {
                     if ('data' in r) {
                         setProtocol(r.data);
+                        console.log('Protocol data fetched:', r.data.steps);
                     }
                 })
                 .catch((err) => console.error(err));
