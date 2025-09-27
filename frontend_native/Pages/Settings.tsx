@@ -283,7 +283,12 @@ function Library(props: {
 
     if (liquids.length === 0 || categories.length === 0) {
         return (
-            <Box flex={1} justifyContent="center" alignItems="center">
+            <Box
+                flex={1}
+                justifyContent="center"
+                alignItems="center"
+                width={800}
+            >
                 <Spinner size="large" color="grey" />
             </Box>
         );
