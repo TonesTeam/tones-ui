@@ -112,7 +112,7 @@ export class ProtocolSavingService {
             step.liquidApplication = {
                 create: {
                     liquidIncubationTime: params.incubation,
-                    incubationTemperature: params.targetTemperature,
+                    incubationTemperature: params.targetTemperature ?? 25, // Default to 25°C if undefined
                     autoWash: params.autoWash,
                     liquidInfo: this.getLiquidInfo(params.liquid),
                 },
