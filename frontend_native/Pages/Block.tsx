@@ -484,7 +484,6 @@ const TimeUnitSelector = ({ value, onChange }: TimeUnitSelectorProps) => {
                     </SelectDragIndicatorWrapper>
                     <SelectItem label="Minutes" value="Minutes" />
                     <SelectItem label="Seconds" value="Seconds" />
-                    <SelectItem label="Test" value="Test" isDisabled={true} />
                 </SelectContent>
             </SelectPortal>
         </Select>

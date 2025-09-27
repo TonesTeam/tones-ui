@@ -209,8 +209,12 @@ export default function ProtocolList({
                 );
             } else if (sortingStrategy === 'Last updated') {
                 // Sort by lastUpdate if available, otherwise by creationDate
-                const aDate = a.lastUpdate ? new Date(a.lastUpdate).getTime() : new Date(a.creationDate).getTime();
-                const bDate = b.lastUpdate ? new Date(b.lastUpdate).getTime() : new Date(b.creationDate).getTime();
+                const aDate = a.lastUpdate
+                    ? new Date(a.lastUpdate).getTime()
+                    : new Date(a.creationDate).getTime();
+                const bDate = b.lastUpdate
+                    ? new Date(b.lastUpdate).getTime()
+                    : new Date(b.creationDate).getTime();
                 return bDate - aDate; // Most recently updated first
             } else {
                 return 0;
@@ -379,7 +383,6 @@ const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
                             label={author}
                         />
                     ))}
-                    <SelectItem value="me" label="Test" />
                 </SelectContent>
             </SelectPortal>
         </Select>
