@@ -20,7 +20,7 @@ import Txt from '../components/Txt';
 import Arrow from '../assets/icons/arrow_menu.svg';
 import Logo from '../assets/pics/tones_logo.svg';
 import { OpacityText } from '../components/AnimatedTxt';
-import ConfirmationModal from '../common/TonesModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { LogOutIcon } from 'lucide-react-native';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import { Icon, Text } from '@gluestack-ui/themed';

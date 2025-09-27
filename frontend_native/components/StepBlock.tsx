@@ -1,6 +1,6 @@
 import { TouchableOpacity } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
-import ConfirmationModal from '../common/TonesModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { AppStyles } from '../constants/styles';

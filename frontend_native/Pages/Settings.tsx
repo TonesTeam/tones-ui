@@ -56,7 +56,7 @@ import {
     Snowflake,
     Biohazard,
 } from 'lucide-react-native';
-import ConfirmationModal from '../common/TonesModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
 
 enum SettingTabs {

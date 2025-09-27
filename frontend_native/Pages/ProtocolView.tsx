@@ -14,7 +14,7 @@ import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
-import ConfirmationModal from '../common/TonesModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import StepBlock from '../components/StepBlock';
 import { Method } from 'axios';
 
@@ -154,14 +154,22 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 <HStack>
                                     <Text fontWeight="bold">Created:</Text>
                                     <Text ml="$2">
-                                        {protocol?.creationDate ? formatSocialMediaTime(protocol.creationDate) : ''}
+                                        {protocol?.creationDate
+                                            ? formatSocialMediaTime(
+                                                  protocol.creationDate,
+                                              )
+                                            : ''}
                                     </Text>
                                 </HStack>
                                 {protocol?.lastUpdate && (
                                     <HStack>
-                                        <Text fontWeight="bold">Last Updated:</Text>
+                                        <Text fontWeight="bold">
+                                            Last Updated:
+                                        </Text>
                                         <Text ml="$2">
-                                            {formatSocialMediaTime(protocol.lastUpdate)}
+                                            {formatSocialMediaTime(
+                                                protocol.lastUpdate,
+                                            )}
                                         </Text>
                                     </HStack>
                                 )}
