@@ -72,17 +72,25 @@ function LiquidsModal(props: {
     saveLiquid: (liq: PermanentLiquidDTO) => void;
     isOpen: boolean;
 }) {
-    const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>(
-        props.liquid
-            ? props.liquid
-            : ({
-                  id: 0,
-                  name: '',
-                  type: props.categories[0],
-                  usedCold: false,
-                  toxic: false,
-              } as PermanentLiquidDTO),
-    );
+    const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>({
+        id: 0,
+        name: '',
+        type: props.categories[0],
+        usedCold: false,
+        toxic: false,
+    } as PermanentLiquidDTO);
+
+    useEffect(() => {
+        if (props.liquid) setNewLiquid(props.liquid);
+        else
+            setNewLiquid({
+                id: 0,
+                name: '',
+                type: props.categories[0],
+                usedCold: false,
+                toxic: false,
+            } as PermanentLiquidDTO);
+    }, [props.liquid]);
 
     return (
         <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
@@ -538,7 +546,10 @@ function Library(props: {
                             isOpen={editModal}
                             liquid={editedLiquid}
                             categories={categories}
-                            closeModal={() => setEditModal(false)}
+                            closeModal={() => {
+                                setEditedLiquid(null);
+                                setEditModal(false);
+                            }}
                             saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
                         />
                     </Box>
