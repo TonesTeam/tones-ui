@@ -1,15 +1,11 @@
-# Tones UI
-Project consists of 3 modules:
-* Frontend - Expo React Native app.
-* Backend - NestJS rest api and a database generated with Prisma ORM.
-* Sharedlib - Logic that is used on both the backend and the native app.
+# Tones UI and Backend
 
-<!--To launch all modules, run:
-`> npm install`
-`> npm run start-dev`
-Or to run just FE, cd to frontend module, run npm install and then:
-`> npm run dev
--->
+<img width="675" height="307" alt="Screenshot From 2025-10-05 17-37-34" src="https://github.com/user-attachments/assets/2386e1cc-081c-49e9-8e03-e2c993983d75" />
+
+The project consists of 3 modules:
+* Frontend (`frontend_native`) - Expo React Native app;
+* Backend (`backend`) - NestJS rest api and a database generated with Prisma ORM;
+* Common code (`common`) - Logic that is used on both the backend and the native app.
 
 # Project Setup and Development Guide
 
@@ -89,6 +85,4 @@ This will start a REST API on port 8080 connected to the database.
    npx expo start
    ```
 
-   After the build process begins, the terminal will display a QR code. You can scan this QR code with your Expo Go app (available on both iOS and Android) to load the mobile application on your device.
-
-Now you can test the app in your Expo Go app or through USB debugging if your device allows that.
+   After the build process begins, the terminal will display a QR code. You can scan this QR code with your Expo Go app (available on both iOS and Android) to load the mobile application on your device. Alternativelly you can run the web bundle, that will be accessible by following the link that Expo has provided you with.
