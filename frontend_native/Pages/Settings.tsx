@@ -78,6 +78,7 @@ function LiquidsModal(props: {
         type: props.categories[0],
         usedCold: false,
         toxic: false,
+        position: -1,
     } as PermanentLiquidDTO);
 
     useEffect(() => {
@@ -89,6 +90,7 @@ function LiquidsModal(props: {
                 type: props.categories[0],
                 usedCold: false,
                 toxic: false,
+                position: -1,
             } as PermanentLiquidDTO);
     }, [props.liquid]);
 
@@ -118,20 +120,39 @@ function LiquidsModal(props: {
                             />
                         </Input>
                     </VStack>
-                    <VStack>
-                        <Text>Category:</Text>
-                        <CustomSelect
-                            list={props.categories}
-                            selected={newLiquid.type}
-                            canAdd={false}
-                            onChangeSelect={(cat) =>
-                                setNewLiquid({
-                                    ...newLiquid,
-                                    type: cat,
-                                })
-                            }
-                        />
-                    </VStack>
+                    <HStack>
+                        <VStack flex={3} mr="$3">
+                            <Text>Category:</Text>
+                            <CustomSelect
+                                list={props.categories}
+                                selected={newLiquid.type}
+                                canAdd={false}
+                                onChangeSelect={(cat) =>
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        type: cat,
+                                    })
+                                }
+                            />
+                        </VStack>
+                        <VStack flex={1}>
+                            <Text>Selector position:</Text>
+                            <Input variant="outline">
+                                <InputField
+                                    value={String(newLiquid.position)}
+                                    inputMode="numeric"
+                                    onChangeText={(text: string) => {
+                                        if (!isNaN(Number(text))) {
+                                            setNewLiquid({
+                                                ...newLiquid,
+                                                position: Number(text),
+                                            });
+                                        }
+                                    }}
+                                />
+                            </Input>
+                        </VStack>
+                    </HStack>
                     <VStack>
                         <HStack space="md" alignItems="center">
                             <Text size="lg">Toxic:</Text>
@@ -373,6 +394,15 @@ function Library(props: {
                                             size="sm"
                                             color="$textLight600"
                                         >
+                                            Selector position
+                                        </Text>
+                                    </Box>
+                                    <Box flex={2}>
+                                        <Text
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
+                                        >
                                             Category
                                         </Text>
                                     </Box>
@@ -436,6 +466,18 @@ function Library(props: {
                                                         fontWeight="$medium"
                                                     >
                                                         {liq.name}
+                                                    </Text>
+                                                </Box>
+                                                <Box
+                                                    flex={2}
+                                                    justifyContent="center"
+                                                >
+                                                    <Text
+                                                        size="sm"
+                                                        color="$textLight900"
+                                                        fontWeight="$medium"
+                                                    >
+                                                        {liq.position ?? '-'}
                                                     </Text>
                                                 </Box>
                                                 <Box

@@ -90,6 +90,7 @@ export class AppService {
                     name: pl.liquidInfo.name,
                     usedCold: pl.requiresCooling,
                     toxic: pl.toxic,
+                    position: pl.position,
                 }) as PermanentLiquidDTO,
         );
     }

@@ -187,6 +187,7 @@ model PermanentLiquid {
     liquidInfoId    Int        @unique
     protocols       Protocol[]
     washing         Washing[]
+    position        Int        @default(-1)
 }
 
 model LiquidType {

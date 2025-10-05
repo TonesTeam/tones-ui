@@ -136,13 +136,29 @@ export class AppController {
         console.log('Converted protocol:');
         console.log(JSON.stringify(rust_prot));
         try {
-            const client = new net.Socket();
-            client.connect(8090, '127.0.0.1', () => {
-                client.write(JSON.stringify(rust_prot), () => {
-                    console.log('Sent protocol to Rust');
-                    client.end();
-                });
+            const response = await fetch('http://127.0.0.1:3000/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    command_type: 1, // just go for command_type 1
+                    message: 'Delay 3', // a message for logs
+                    protocol_id: 169, // pohuy
+                    task_id: 269, // pohuy
+                    data: 6069, // pohuy
+                    temperature: 2000, // target_temperature
+                    time: 15, // incubation
+                    wash_reps: 2, //
+                    slot_selector_pos: 4, // slot number
+                    reagent_pos: 3, // the id number of the connector in the selector of the reagent
+                    slot_sensor_id: 1, //
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Server responded with status ${response.status}`,
+                );
+            }
         } catch (e) {}
         return rust_prot;
     }

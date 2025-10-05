@@ -402,10 +402,11 @@ export default function Launch({
                             if (
                                 stage == LaunchStage.STEP_THREE &&
                                 confirmations == 4
-                            )
+                            ) {
                                 getRequest(
                                     `/protocol/${protocol_ID}/test-steps`,
                                 );
+                            }
                         }}
                     >
                         <Txt
