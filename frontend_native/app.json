@@ -1,11 +1,11 @@
 {
   "expo": {
     "jsEngine": "hermes",
-    "name": "tones-frontend",
+    "name": "Tones",
     "slug": "tones-frontend",
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/favicon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png"
