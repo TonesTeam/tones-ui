@@ -17,57 +17,33 @@ export class ProtocolStepsResolver {
     ) {}
 
     async resolveProtocolSteps(id: number): Promise<any> {
-        const prot = await this.dbService.getProtocolById(id);
-        const depl = await this.deploymentService.deployProtocol(id);
+        const protocol = await this.dbService.getProtocolById(id);
         return {
-            id: prot.id,
-            steps: this.getSteps(prot, depl),
+            id: protocol.id,
+            steps: this.getSteps(protocol),
             default_wash: {
-                iters: prot.defaultWashing.iter,
-                incubation: prot.defaultWashing.incubationTime,
+                iters: protocol.defaultWashing.iter,
+                incubation: protocol.defaultWashing.incubationTime,
             },
         };
     }
 
-    private getSteps(
-        prot: SteppedProtocol,
-        depl: LiquidDeploymentDTO[],
-    ): any[] {
+    private getSteps(protocol: SteppedProtocol): any[] {
         const steps: any[] = [];
-        prot.steps.forEach((s) => {
-            if (s.stepType === StepType.WASHING) {
+        protocol.steps.forEach((step) => {
+            if (step.stepType === StepType.WASHING) {
                 steps.push({
                     type: StepType.WASHING,
                 });
             }
-            if (s.stepType === StepType.LIQUID_APPL) {
-                const deplLiquid = depl.filter(
-                    (d) => d.liquidInfoId == s.liquidApplication.liquidInfoId,
-                )[0];
-                const internalSlots = [...liquidConfigToMap().values()].reduce(
-                    SumFold(),
-                    0,
-                );
-                const liquid =
-                    deplLiquid.slotNumber > internalSlots
-                        ? {
-                              External: deplLiquid.slotNumber - internalSlots,
-                          }
-                        : {
-                              slot: deplLiquid.slotNumber,
-                              Internal: {
-                                  x: -1,
-                                  y: -1,
-                              },
-                          };
+            if (step.stepType === StepType.LIQUID_APPL) {
                 steps.push({
                     type: 'Reagent',
-                    params: {
-                        //auto_wash: s.liquidApplication.autoWash,
-                        liquid: liquid,
-                        incubation: s.liquidApplication.liquidIncubationTime,
-                        temperature: s.liquidApplication.incubationTemperature,
-                    },
+                    incubation: step.liquidApplication.liquidIncubationTime,
+                    temperature: step.liquidApplication.incubationTemperature,
+                    position:
+                        step.liquidApplication.liquidInfo.permanentLiquid
+                            .position,
                 });
                 //Add wash step if auto_wash
             }

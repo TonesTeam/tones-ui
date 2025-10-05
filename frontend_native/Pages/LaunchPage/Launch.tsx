@@ -403,9 +403,7 @@ export default function Launch({
                                 stage == LaunchStage.STEP_THREE &&
                                 confirmations == 4
                             ) {
-                                getRequest(
-                                    `/protocol/${protocol_ID}/test-steps`,
-                                );
+                                getRequest(`/protocol/${protocol_ID}/execute`);
                             }
                         }}
                     >
