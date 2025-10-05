@@ -5,7 +5,6 @@ import {
     StepDTO,
     ReagentStep,
     StepParams,
-    TemperatureStep,
     WashStep,
 } from 'common/dto/step.dto';
 import {
@@ -33,6 +32,7 @@ export class AppService {
                     id: p.id,
                     author: p.creator.username,
                     creationDate: p.creationDate,
+                    lastUpdate: p.lastUpdate,
                     description: p.description,
                     name: p.name,
                 }) as ProtocolDto,
@@ -54,9 +54,9 @@ export class AppService {
             description: pr.description,
             steps: steps,
             creationDate: pr.creationDate,
+            lastUpdate: pr.lastUpdate,
             customLiquids: await this.getCustomProtocolLiquids(id),
             defaultWash: {
-                temperature: 0, //FIXME: TEMPERATURE
                 incubation: pr.defaultWashing.incubationTime,
                 iters: pr.defaultWashing.iter,
                 liquid: await this.dbService.getLiquidInfo(
@@ -90,6 +90,7 @@ export class AppService {
                     name: pl.liquidInfo.name,
                     usedCold: pl.requiresCooling,
                     toxic: pl.toxic,
+                    position: pl.position,
                 }) as PermanentLiquidDTO,
         );
     }
@@ -134,20 +135,17 @@ export class AppService {
                         step.liquidApplication.liquidInfo.id,
                     ),
                     autoWash: step.liquidApplication.autoWash,
-                    temperature: step.liquidApplication.incubationTemperature,
+                    targetTemperature:
+                        step.liquidApplication.incubationTemperature,
                     custom:
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,
+                    iters: step.iterations,
                 } as ReagentStep;
-            case StepType.TEMP_CHANGE:
-                return {
-                    source: step.temperatureChange.sourceTemperature,
-                    target: step.temperatureChange.targetTemperature,
-                } as TemperatureStep;
             case StepType.WASHING:
                 return {
                     incubation: step.washing.incubationTime,
-                    iters: step.washing.iter,
+                    iters: step.iterations,
                     liquid: await this.toLiquidDto(
                         step.washing.permanentLiquidId,
                     ),

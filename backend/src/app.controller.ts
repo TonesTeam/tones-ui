@@ -18,9 +18,7 @@ import { Request as ExpressRequest, Router } from 'express';
 import { Request } from '@nestjs/common';
 import { ProtocolDeploymentService } from './protocol-deployment.service';
 import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
-import * as net from 'net';
-
-import RustProtocolManager from './app.controller.rust';
+import convertProtocolStep from './convertProtocol';
 
 @Controller()
 @UsePipes(new ParseDatePipe())
@@ -125,25 +123,41 @@ export class AppController {
         return await this.deploymentService.deployProtocol(id);
     }
 
-    @Get('/protocol/:id/test-steps')
-    async resolveProtocolSteps(@Param('id', new ParseIntPipe()) id: number) {
+    @Get('/protocol/:id/execute')
+    async sendProtocolForExecution(
+        @Param('id', new ParseIntPipe()) id: number,
+    ) {
         this.logger.log(`Figuring out steps for protocol ${id}`);
         const prot = await this.stepsResolver.resolveProtocolSteps(id);
         console.log(JSON.stringify(prot));
 
-        const rust_prot = new RustProtocolManager();
-        rust_prot.convert(prot);
-        console.log('Converted protocol:');
-        console.log(JSON.stringify(rust_prot));
-        try {
-            const client = new net.Socket();
-            client.connect(8090, '127.0.0.1', () => {
-                client.write(JSON.stringify(rust_prot), () => {
-                    console.log('Sent protocol to Rust');
-                    client.end();
+        const steps = prot.steps;
+        for (let i = 0; i < steps.length; i++) {
+            const convertedStep = convertProtocolStep(steps[i]);
+            console.log(
+                `Sending step ${i + 1}: ${JSON.stringify(convertedStep)}`,
+            );
+
+            try {
+                const response = await fetch('http://127.0.0.1:3000/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(convertedStep),
                 });
-            });
-        } catch (e) {}
-        return rust_prot;
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Step ${i + 1} failed with ${response.status}`,
+                    );
+                }
+
+                this.logger.log(`✅ Step ${i + 1} sent successfully`);
+            } catch (e) {
+                this.logger.error(`❌ Failed to send step ${i + 1}: ${e}`);
+                throw e;
+            }
+        }
+
+        return prot;
     }
 }

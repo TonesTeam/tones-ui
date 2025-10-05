@@ -7,13 +7,16 @@ import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
 import { SvgProps } from 'react-native-svg';
 
-import List_icon from '../assets/icons/list.svg';
-import Create_icon from '../assets/icons/create.svg';
-import Clock_icon from '../assets/icons/clock.svg';
-import Setting_icon from '../assets/icons/setting.svg';
-import Logout_icon from '../assets/icons/logout.svg';
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
+import {
+    List,
+    FilePlus,
+    Clock,
+    Settings as SettingsIcon,
+    LogOut,
+    LucideIcon,
+} from 'lucide-react-native';
 
 export type Page = {
     name: string;
@@ -21,7 +24,7 @@ export type Page = {
         route,
         navigation,
     }: NativeStackScreenProps<any>) => React.JSX.Element;
-    icon?: React.FC<SvgProps>;
+    icon?: LucideIcon;
     isLogout?: boolean;
 };
 
@@ -29,27 +32,27 @@ export const Pages: Page[] = [
     {
         name: 'Protocol List',
         component: ProtocolList,
-        icon: List_icon,
+        icon: List,
     },
     {
         name: 'Create protocol',
         component: Constructor,
-        icon: Create_icon,
+        icon: FilePlus,
     },
     {
         name: 'History',
         component: History,
-        icon: Clock_icon,
+        icon: Clock,
     },
     {
         name: 'Settings',
         component: Settings,
-        icon: Setting_icon,
+        icon: SettingsIcon,
     },
     {
         name: 'Logout',
         component: Login,
-        icon: Logout_icon,
+        icon: LogOut,
         isLogout: true,
     },
     {

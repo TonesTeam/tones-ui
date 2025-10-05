@@ -7,23 +7,17 @@ export interface StepDTO {
     params: StepParams;
 }
 
-export interface StepParams {}
-
-export interface WashStep extends StepParams {
+export interface StepParams {
     iters: number;
     incubation: number; // in seconds
     liquid: LiquidDTO;
-    temperature: number | null; //at which step is applied, calculated
 }
+
+export interface WashStep extends StepParams {}
 
 export interface ReagentStep extends StepParams {
-    incubation: number;
-    liquid: LiquidDTO;
     autoWash: boolean;
-    temperature: number; //at which step is applied, calculated
+    targetTemperature: number; //target temperature for this step
 }
 
-export interface TemperatureStep extends StepParams {
-    source: number;
-    target: number;
-}
+// Remove TemperatureStep interface as it's no longer needed

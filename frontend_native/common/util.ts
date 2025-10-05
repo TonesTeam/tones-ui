@@ -58,9 +58,8 @@ async function findBE(): Promise<string> {
     const subnetMask = '255.255.254.0';
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
-    let foundIP = await scanNetwork(ipList);
-    foundIP = '10.42.131.21';
-    return 'http://' + foundIP + ':8080';
+    const foundIP = await scanNetwork(ipList);
+    return `http://${foundIP}:8080`;
 }
 
 let domainPromise: Promise<string> | null = null;
@@ -88,7 +87,7 @@ export async function getRequest<T>(
         return await client.get(fullpath);
     } catch (error) {
         if (axios.isAxiosError(error) && !error.response) {
-            //console.error("Network Error:", error.message);
+            console.error('Network Error:', error.message);
             return error;
         } else {
             console.error('Other Error:', error);
@@ -114,3 +113,45 @@ export async function makeRequest<R>(
         validateStatus: null,
     });
 }
+
+export const formatDuration = (seconds: number): string => {
+    if (seconds < 60) {
+        return `${seconds} sec`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const extra_seconds = seconds % 60;
+    if (extra_seconds === 0) {
+        return `${minutes} min`;
+    }
+
+    return `${minutes} min ${extra_seconds} sec`;
+};
+
+export const formatSocialMediaTime = (
+    dateInput: string | number | Date,
+): string => {
+    const now = new Date();
+    const date = new Date(dateInput);
+    const diffMs = now.getTime() - date.getTime();
+
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const week = 7 * day;
+
+    if (diffMs < minute) {
+        return 'just now';
+    } else if (diffMs < hour) {
+        const mins = Math.floor(diffMs / minute);
+        return `${mins} minute${mins === 1 ? '' : 's'} ago`;
+    } else if (diffMs < day) {
+        const hrs = Math.floor(diffMs / hour);
+        return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+    } else if (diffMs < week) {
+        const days = Math.floor(diffMs / day);
+        return `${days} day${days === 1 ? '' : 's'} ago`;
+    } else {
+        return date.toLocaleDateString();
+    }
+};

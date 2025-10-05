@@ -124,6 +124,7 @@ model Step {
     washing           Washing?           
     temperatureChange TemperatureChange? 
     ExecutedStep      ExecutedStep[]
+    iterations        Int                @default(1)
 }
 
 model ExecutedStep {
@@ -149,13 +150,13 @@ model LiquidApplication {
 
 model Washing {
     id                Int             @id @default(autoincrement())
-    iter              Int
     incubationTime    Int //Seconds
     permanentLiquid   PermanentLiquid @relation(fields: [permanentLiquidId], references: [id])
     permanentLiquidId Int
     Step              Step?           @relation(fields: [stepId], references: [id], onDelete: Cascade) // Optional because washing may be related to default protocol configuration
     stepId            Int?            @unique
     Protocol          Protocol[]
+    iter              Int             @default(1)
 }
 
 model TemperatureChange {
@@ -186,6 +187,7 @@ model PermanentLiquid {
     liquidInfoId    Int        @unique
     protocols       Protocol[]
     washing         Washing[]
+    position        Int        @default(-1)
 }
 
 model LiquidType {

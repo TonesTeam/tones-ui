@@ -6,24 +6,18 @@ import {
     InputModeOptions,
     KeyboardAvoidingView,
     ScrollView,
+    Pressable,
 } from 'react-native';
 import { AppStyles } from '../constants/styles';
-import {
-    ReagentStep,
-    StepDTO,
-    TemperatureStep,
-    WashStep,
-} from 'common/dto/step.dto';
+import { ReagentStep, StepDTO, WashStep } from 'common/dto/step.dto';
 import { LiquidDTO, LiquidTypeDTO } from 'common/dto/liquid.dto';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import Txt from '../components/Txt';
 import { getRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
-import InputField from '../components/InputField';
 import Info_icon from '../assets/icons/info.svg';
 import { StepType } from 'common/enums';
 import Setting_icon from '../assets/icons/setting.svg';
-import { Switch } from 'react-native-switch';
 import { ProtocolSettings } from '../common/constructorUtils';
 import {
     INCUBATION_MAX,
@@ -32,7 +26,38 @@ import {
     ITERATIONS_MIN,
     TEMPERATURE_MAX,
     TEMPERATURE_MIN,
+    DEFAULT_TEMEPRATURE,
 } from '../constants/protocol_constants';
+import {
+    VStack,
+    InputField,
+    Input,
+    Text,
+    Select,
+    SelectTrigger,
+    SelectInput,
+    SelectIcon,
+    SelectPortal,
+    SelectBackdrop,
+    SelectContent,
+    SelectDragIndicator,
+    SelectDragIndicatorWrapper,
+    SelectItem,
+    Alert,
+    AlertIcon,
+    AlertText,
+    Button,
+    ButtonText,
+    Toast,
+    ToastTitle,
+    ToastDescription,
+    useToast,
+    Icon,
+    Switch,
+} from '@gluestack-ui/themed';
+import { ChevronDown, Check, Info } from 'lucide-react-native';
+import { HStack } from '@gluestack-ui/themed';
+import { formatDuration } from '../common/util';
 
 export interface WorkBlockProps {
     block: StepDTO;
@@ -41,14 +66,18 @@ export interface WorkBlockProps {
     updateCustomLiquids: (liquids: LiquidDTO[]) => void;
     customLiquids: LiquidDTO[];
     settings: ProtocolSettings;
+    setSettings: (settings: ProtocolSettings) => void;
 }
 
 interface BlockInputsProps {
     stepData: StepDTO;
-    change: (arg0: WashStep | ReagentStep | TemperatureStep) => void;
+    change: (arg0: WashStep | ReagentStep) => void;
     addNewLiquid?: (liquid: LiquidDTO) => void;
     existingCustomLiquids?: LiquidDTO[];
-    timeUnits?: 'sec' | 'min';
+    timeUnit: 'Seconds' | 'Minutes';
+    setTimeUnit: (text: 'Seconds' | 'Minutes') => void;
+    settings: ProtocolSettings;
+    setSettings: (settings: ProtocolSettings) => void;
 }
 
 const bs = StyleSheet.create({
@@ -60,8 +89,6 @@ const bs = StyleSheet.create({
     row: {
         flexDirection: 'row',
         height: 'auto',
-        borderBottomColor: AppStyles.color.background,
-        borderBottomWidth: 1,
         paddingBottom: 30,
     },
 });
@@ -114,44 +141,29 @@ function WashInputs(props: BlockInputsProps) {
                         />
                     </View>
                     <View style={[bs.row]}>
-                        <InputField
-                            placeholder=""
-                            containerStyle={{ marginRight: 100 }}
-                            label="Iterations:"
-                            decimals={false}
-                            limit_max={ITERATIONS_MAX}
-                            limit_min={ITERATIONS_MIN}
-                            type={'numeric' as InputModeOptions}
+                        <IterationInput
                             value={washParams.iters}
-                            onInputChange={(iters) =>
+                            onChange={(iters: string) =>
                                 handleParamChange(
                                     'iters',
                                     iters == '' ? null : Number(iters),
                                 )
                             }
                         />
-                        <InputField
-                            placeholder=""
-                            label={`Incubation time (${props.timeUnits || 'seconds'}):`}
-                            decimals={false}
-                            limit_min={
-                                props.timeUnits && props.timeUnits == 'min'
-                                    ? INCUBATION_MIN / 60
-                                    : INCUBATION_MIN
-                            }
-                            limit_max={
-                                props.timeUnits && props.timeUnits == 'min'
-                                    ? INCUBATION_MAX / 60
-                                    : INCUBATION_MAX
-                            }
-                            type={'numeric' as InputModeOptions}
+                        <IncubationInput
                             value={washParams.incubation}
-                            onInputChange={(incub) =>
+                            onChange={(incub: string) =>
                                 handleParamChange(
                                     'incubation',
-                                    incub == '' ? null : Number(incub),
+                                    incub == '' || isNaN(Number(incub))
+                                        ? null
+                                        : Number(incub),
                                 )
                             }
+                        />
+                        <TimeUnitSelector
+                            value={props.timeUnit}
+                            onChange={(e) => props.setTimeUnit(e)}
                         />
                     </View>
                 </>
@@ -167,7 +179,18 @@ function ReagentInputs(props: BlockInputsProps) {
             (props.stepData.params as ReagentStep).autoWash == undefined
                 ? false
                 : (props.stepData.params as ReagentStep).autoWash,
+        targetTemperature:
+            (props.stepData.params as ReagentStep).targetTemperature ==
+            undefined
+                ? DEFAULT_TEMEPRATURE
+                : (props.stepData.params as ReagentStep).targetTemperature,
+        iters:
+            props.stepData.params.iters == undefined
+                ? 1
+                : props.stepData.params.iters,
     } as ReagentStep);
+    console.log(`Got iterations: ${props.stepData.params.iters}`);
+    console.log(`So reagParams iterations are: ${reagParams.iters}`);
 
     const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
     const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
@@ -294,34 +317,55 @@ function ReagentInputs(props: BlockInputsProps) {
                         />
                     </View>
                     <View style={[bs.row]}>
-                        <InputField
+                        <IncubationInput
                             value={reagParams.incubation}
-                            placeholder=""
-                            decimals={false}
-                            limit_max={INCUBATION_MAX}
-                            limit_min={INCUBATION_MIN}
-                            label={`INCUBATION TIME (${props.timeUnits || 'seconds'}):`}
-                            type={'numeric' as InputModeOptions}
-                            onInputChange={(incub) =>
+                            onChange={(incub: string) =>
                                 handleParamChange(
                                     'incubation',
-                                    incub == '' ? null : Number(incub),
+                                    incub == '' || isNaN(Number(incub))
+                                        ? null
+                                        : Number(incub),
                                 )
                             }
                         />
-
-                        <View
-                            style={{ flexDirection: 'column', paddingLeft: 30 }}
-                        >
-                            <Txt
-                                style={{
-                                    color: AppStyles.color.text_faded,
-                                    paddingBottom:
-                                        AppStyles.layout.elem_padding,
-                                }}
-                            >
-                                Automatic washing (after step):
-                            </Txt>
+                        <TimeUnitSelector
+                            value={props.timeUnit}
+                            onChange={(e) => props.setTimeUnit(e)}
+                        />
+                        <TemperatureInput
+                            value={reagParams.targetTemperature}
+                            onChange={(temp: string) =>
+                                handleParamChange(
+                                    'targetTemperature',
+                                    temp == '' || isNaN(Number(temp))
+                                        ? ''
+                                        : Number(temp),
+                                )
+                            }
+                        />
+                    </View>
+                    <HStack mb="$2" alignItems="center" space="2">
+                        <IterationInput
+                            value={reagParams.iters}
+                            onChange={(iters: string) =>
+                                handleParamChange(
+                                    'iters',
+                                    iters == '' ? null : Number(iters),
+                                )
+                            }
+                        />
+                    </HStack>
+                    <View style={[bs.row]}>
+                        <VStack alignItems="flex-start">
+                            <Text color="$grey" size="sm">
+                                Apply default washing step after reagent?
+                                (currently {props.settings.autoWashConfig.iters}{' '}
+                                x{' '}
+                                {formatDuration(
+                                    props.settings.autoWashConfig.incubation,
+                                )}
+                                )
+                            </Text>
                             <Switch
                                 value={reagParams.autoWash}
                                 onValueChange={(val) => {
@@ -330,30 +374,9 @@ function ReagentInputs(props: BlockInputsProps) {
                                         !reagParams.autoWash,
                                     );
                                 }}
-                                activeText={'ON'}
-                                inActiveText={'OFF'}
-                                circleSize={40}
-                                barHeight={40}
-                                circleBorderWidth={1}
-                                backgroundActive={AppStyles.color.primary}
-                                backgroundInactive={AppStyles.color.background}
-                                circleActiveColor={AppStyles.color.elem_back}
-                                circleInActiveColor={AppStyles.color.elem_back}
-                                // renderInsideCircle={() => <CustomComponent />} // custom component to render inside the Switch circle (Text, Image, etc.)
-                                changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
-                                innerCircleStyle={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }} // style for inner animated circle for what you (may) be rendering inside the circle
-                                outerCircleStyle={{}} // style for outer animated circle
-                                renderActiveText={true}
-                                renderInActiveText={true}
-                                switchLeftPx={1} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-                                switchRightPx={1} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-                                switchWidthMultiplier={3.3} // multiplied by the `circleSize` prop to calculate total width of the Switch
-                                switchBorderRadius={40} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+                                size="lg"
                             />
-                        </View>
+                        </VStack>
                     </View>
                 </ScrollView>
             )}
@@ -361,59 +384,169 @@ function ReagentInputs(props: BlockInputsProps) {
     );
 }
 
-function TemperatureInputs(props: BlockInputsProps) {
-    const [temperParams, setTemperParams] = useState(
-        props.stepData.params as TemperatureStep,
-    );
+interface IncubationInputProps {
+    value: number;
+    onChange: (text: string) => void;
+}
 
-    function handleParamChange(key: string, value: any) {
-        setTemperParams((prevState) => ({
-            ...prevState,
-            [key]: value,
-        }));
-    }
-
-    useEffect(() => {
-        props.change(temperParams);
-    }, [temperParams]);
+const IncubationInput = (props: IncubationInputProps) => {
+    const value = props.value ?? '';
 
     return (
-        <KeyboardAvoidingView style={bs.inputs} behavior="padding">
-            <View style={[bs.row]}>
+        <VStack mr="$2">
+            <Text color="$grey" mb="$2" size="sm">
+                Incubation time:
+            </Text>
+            <Input>
                 <InputField
                     placeholder=""
-                    value={temperParams.source}
-                    containerStyle={{ marginRight: 100 }}
-                    label="From (°C):"
-                    type={'numeric' as InputModeOptions}
-                    disabled={true}
+                    inputMode={'numeric' as InputModeOptions}
+                    value={value}
+                    onChangeText={props.onChange}
                 />
-                <InputField
-                    value={temperParams.target}
-                    placeholder=""
-                    limit_max={TEMPERATURE_MAX}
-                    limit_min={TEMPERATURE_MIN}
-                    label="Target (°C):"
-                    decimals={true}
-                    type={'numeric' as InputModeOptions}
-                    onInputChange={(target) =>
-                        handleParamChange(
-                            'target',
-                            target == '' ? null : Number(target),
-                        )
-                    }
-                />
-            </View>
-        </KeyboardAvoidingView>
+            </Input>
+        </VStack>
     );
+};
+
+interface IterationInputProps {
+    value: number;
+    onChange: (text: string) => void;
 }
+
+const IterationInput = (props: IterationInputProps) => {
+    const value = props.value ?? '';
+
+    return (
+        <VStack mr="$4">
+            <Text color="$grey" mb="$2" size="sm">
+                Iterations:
+            </Text>
+            <Input>
+                <InputField
+                    placeholder=""
+                    inputMode={'numeric' as InputModeOptions}
+                    value={value}
+                    onChangeText={props.onChange}
+                />
+            </Input>
+        </VStack>
+    );
+};
+
+interface TemperatureInputProps {
+    value: number;
+    onChange: (text: string) => void;
+}
+
+const TemperatureInput = (props: TemperatureInputProps) => {
+    const value = props.value ?? '';
+
+    return (
+        <VStack ml="$4">
+            <Text color="$grey" mb="$2" size="sm">
+                Target temperature (°C):
+            </Text>
+            <Input>
+                <InputField
+                    placeholder=""
+                    inputMode={'decimal' as InputModeOptions}
+                    value={String(value)}
+                    onChangeText={props.onChange}
+                />
+            </Input>
+        </VStack>
+    );
+};
+
+interface TimeUnitSelectorProps {
+    value: number;
+    onChange: (text: string) => void;
+}
+
+const TimeUnitSelector = ({ value, onChange }: TimeUnitSelectorProps) => {
+    return (
+        <Select
+            mt="$7"
+            onValueChange={onChange}
+            defaultValue={value}
+            flex={0.8}
+        >
+            <SelectTrigger variant="outline" size="md">
+                <SelectInput placeholder="Select option" />
+                <SelectIcon as={ChevronDown} />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem label="Minutes" value="Minutes" />
+                    <SelectItem label="Seconds" value="Seconds" />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
 
 export default function WorkBlock(props: WorkBlockProps) {
     const [params, setParams] = useState<{ [key: string]: any }>({});
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>(
         props.customLiquids,
     );
+    const toast = useToast();
+    const [toastId, setToastId] = useState(0);
     const [allowSave, setAllowSave] = useState(false);
+    const [timeUnit, setTimeUnit] = useState('Seconds');
+    const [saveBlockError, setSaveBlockError] = useState('');
+
+    // We don't want to be constantly showing the error message in the user's face
+    useEffect(() => {
+        setSaveBlockError('');
+    }, [props.block.type]);
+
+    const handleToast = () => {
+        if (!areParamsValid(props.block.type, params)) return;
+        if (!toast.isActive(String(toastId))) {
+            showNewToast();
+        }
+    };
+    const showNewToast = () => {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+            id: String(newId),
+            placement: 'top',
+            duration: 3000,
+            render: ({ id }) => {
+                const uniqueToastId = 'toast-' + id;
+                return (
+                    <Toast
+                        nativeID={uniqueToastId}
+                        duration={8000}
+                        placement="top"
+                        action="success"
+                        variant="outline"
+                    >
+                        <HStack space="md">
+                            <Icon as={Check} mt="$1" mr="$2" size="xl" />
+                            <VStack space="md">
+                                <ToastTitle>
+                                    Default washing step updated
+                                </ToastTitle>
+                                <ToastDescription>
+                                    The current washing step has been set as the
+                                    default for all future and present washing
+                                    steps.
+                                </ToastDescription>
+                            </VStack>
+                        </HStack>
+                    </Toast>
+                );
+            },
+        });
+    };
 
     let block = props.block;
 
@@ -422,8 +555,6 @@ export default function WorkBlock(props: WorkBlockProps) {
             ...params,
             ...step_params,
         }));
-
-        validateParams(block.type, step_params);
     }
 
     function updateCustomLiquids(newLiquid: LiquidDTO) {
@@ -431,70 +562,97 @@ export default function WorkBlock(props: WorkBlockProps) {
     }
 
     function saveBlockToParent() {
+        if (!areParamsValid(block.type, params)) return;
+
         customLiquids.length != props.customLiquids.length &&
             props.updateCustomLiquids(customLiquids);
 
         block.params = params as typeof block.params;
-        if ('incubation' in block.params && props.settings.timeUnits == 'min')
+        if ('incubation' in block.params && timeUnit == 'Minutes')
             (block.params as WashStep).incubation *= 60;
 
         block.id == -1 ? props.addBlock(block) : props.editBlock(block);
     }
 
-    function validateParams(type: StepType, params: { [key: string]: any }) {
-        let valid = true;
+    const areParamsValid = (
+        type: StepType,
+        params: { [key: string]: any },
+    ): boolean => {
         switch (type) {
-            case StepType.LIQUID_APPL:
-                {
-                    let reag_params = params as ReagentStep;
-                    if (
-                        reag_params.incubation == undefined ||
-                        reag_params.incubation < 0 ||
-                        reag_params.liquid == undefined ||
-                        reag_params.liquid.id < 0
-                    ) {
-                        valid = false;
-                    }
+            case StepType.LIQUID_APPL: {
+                const p = params as ReagentStep;
+                if (p.incubation == null) {
+                    setSaveBlockError('Incubation time missing');
+                    return false;
                 }
-                break;
-            case StepType.WASHING:
-                {
-                    let wash_params = params as WashStep;
-                    if (
-                        wash_params.incubation == undefined ||
-                        wash_params.incubation < 0 ||
-                        wash_params.iters == undefined ||
-                        wash_params.iters < 0
-                    ) {
-                        valid = false;
-                    }
+                if (p.incubation < 0) {
+                    setSaveBlockError('Incubation time cannot be negative');
+                    return false;
                 }
-                break;
-            case StepType.TEMP_CHANGE:
-                {
-                    let temp_params = params as TemperatureStep;
-                    if (
-                        temp_params.source == undefined ||
-                        temp_params.source <= 0 ||
-                        temp_params.target == undefined ||
-                        temp_params.target <= 0
-                    ) {
-                        valid = false;
-                    }
+                if (p.incubation == 0) {
+                    setSaveBlockError('Incubation time cannot be zero');
+                    return false;
                 }
-                break;
+                if (!p.liquid || p.liquid.id == null || p.liquid.id < 0) {
+                    setSaveBlockError('Reagent liquid is missing or invalid');
+                    return false;
+                }
+                if (
+                    p.targetTemperature == null ||
+                    p.targetTemperature < TEMPERATURE_MIN ||
+                    p.targetTemperature > TEMPERATURE_MAX
+                ) {
+                    setSaveBlockError(
+                        `Target temperature (${p.targetTemperature}) must be between ${TEMPERATURE_MIN} and ${TEMPERATURE_MAX}`,
+                    );
+                    return false;
+                }
+                setSaveBlockError('');
+                return true;
+            }
+
+            case StepType.WASHING: {
+                const p = params as WashStep;
+                if (p.incubation == null) {
+                    setSaveBlockError('Incubation time is missing');
+                    return false;
+                }
+                if (p.incubation < 0) {
+                    setSaveBlockError('Incubation time is negative');
+                    return false;
+                }
+                if (p.incubation == 0) {
+                    setSaveBlockError('Incubation time cannot be zero');
+                    return false;
+                }
+                if (p.iters == null) {
+                    setSaveBlockError('Wash iterations are missing');
+                    return false;
+                }
+                if (p.iters < 0) {
+                    setSaveBlockError('Wash iterations are negative');
+                    return false;
+                }
+                if (p.iters == 0) {
+                    setSaveBlockError('Wash iterations cannot be zero');
+                    return false;
+                }
+                setSaveBlockError('');
+                return true;
+            }
+
+            default:
+                setSaveBlockError(`Unknown step type '${type}'`);
+                return false;
         }
-        setAllowSave(valid);
-    }
+    };
 
     const memorizedParamUpdate = useCallback(updateParams, [params]);
 
     const block_color =
         props.block.type == StepType.WASHING
             ? AppStyles.color.block.main_washing
-            : props.block.type == StepType.LIQUID_APPL
-              ? AppStyles.color.block.main_reagent
-              : AppStyles.color.block.main_temperature;
+            : AppStyles.color.block.main_reagent;
 
     return (
         <>
@@ -504,7 +662,10 @@ export default function WorkBlock(props: WorkBlockProps) {
                         <WashInputs
                             stepData={props.block}
                             change={memorizedParamUpdate}
-                            timeUnits={props.settings.timeUnits}
+                            timeUnit={timeUnit}
+                            setTimeUnit={setTimeUnit}
+                            setSettings={props.setSettings}
+                            settings={props.settings}
                         />
                     )}
                     {props.block.type == StepType.LIQUID_APPL && (
@@ -513,40 +674,55 @@ export default function WorkBlock(props: WorkBlockProps) {
                             change={memorizedParamUpdate}
                             addNewLiquid={updateCustomLiquids}
                             existingCustomLiquids={customLiquids}
-                            timeUnits={props.settings.timeUnits}
-                        />
-                    )}
-                    {props.block.type == StepType.TEMP_CHANGE && (
-                        <TemperatureInputs
-                            stepData={props.block}
-                            change={memorizedParamUpdate}
+                            timeUnit={timeUnit}
+                            setTimeUnit={setTimeUnit}
+                            setSettings={props.setSettings}
+                            settings={props.settings}
                         />
                     )}
                 </View>
 
-                <View style={s.section_footer}>
-                    <View
-                        style={{
-                            borderRadius: 10,
-                            width: '85%',
-                            backgroundColor: AppStyles.color.warning,
-                        }}
+                {saveBlockError != '' && (
+                    <Alert
+                        action="error"
+                        variant="solid"
+                        borderRadius="$xl"
+                        mb="$3"
+                        width="80%"
                     >
-                        <TouchableOpacity
-                            style={[s.btn, { backgroundColor: block_color }]}
-                            onPressIn={() => allowSave && saveBlockToParent()}
+                        <AlertIcon as={Info} />
+                        <AlertText ml="$2">
+                            Failed to add protocol step: {saveBlockError}
+                        </AlertText>
+                    </Alert>
+                )}
+
+                <View style={s.section_footer}>
+                    {props.block.type == StepType.WASHING && (
+                        <Button
+                            variant="outline"
+                            action="primary"
+                            mr="$3"
+                            onPress={() => {
+                                handleToast();
+                                props.setSettings({
+                                    ...props.settings,
+                                    autoWashConfig: params as WashStep,
+                                });
+                            }}
                         >
-                            <Txt
-                                style={{
-                                    color: AppStyles.color.elem_back,
-                                    alignSelf: 'center',
-                                    fontFamily: 'Roboto-bold',
-                                }}
-                            >
-                                {props.block.id == -1 ? 'Add' : 'Update'} Step
-                            </Txt>
-                        </TouchableOpacity>
-                    </View>
+                            <ButtonText>Set as default</ButtonText>
+                        </Button>
+                    )}
+                    <Button
+                        action="primary"
+                        variant="solid"
+                        onPress={() => saveBlockToParent()}
+                    >
+                        <ButtonText>
+                            {props.block.id == -1 ? 'Add' : 'Update'} Step
+                        </ButtonText>
+                    </Button>
                 </View>
             </View>
         </>
@@ -574,7 +750,7 @@ const s = StyleSheet.create({
         width: '100%',
         paddingHorizontal: '10%',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         borderTopColor: AppStyles.color.background,
         borderTopWidth: 1,

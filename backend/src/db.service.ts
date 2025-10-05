@@ -138,6 +138,7 @@ export class DatabaseService {
                         name: liquid.name,
                     },
                 },
+                position: liquid.position,
             },
             create: {
                 toxic: liquid.toxic,
@@ -152,6 +153,7 @@ export class DatabaseService {
                         },
                     },
                 },
+                position: liquid.position,
             },
         });
     }

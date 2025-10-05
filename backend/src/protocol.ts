@@ -24,8 +24,9 @@ interface ReagentStep {
             used_cold: boolean;
             toxic: boolean;
         };
+        iterations: number;
         incubation: number;
-        temperature: number;
+        targetTemperature: number;
     };
 }
 
@@ -38,21 +39,12 @@ interface WashingStep {
             used_cold: boolean;
             toxic: boolean;
         };
-        iters: number;
+        iterations: number;
         incubation: number;
-        temperature: number;
     };
 }
 
-interface TemperatureChangeStep {
-    id: number;
-    type: 'TemperatureChange';
-    params: {
-        target: number;
-    };
-}
-
-type ProtocolStep = ReagentStep | WashingStep | TemperatureChangeStep;
+type ProtocolStep = ReagentStep | WashingStep;
 
 class ProtocolManager {
     private protocol: {
@@ -72,7 +64,8 @@ class ProtocolManager {
         usedCold: boolean,
         toxic: boolean,
         incubation: number,
-        temperature: number,
+        iterations: number,
+        targetTemperature: number,
         id: number = 0,
     ): void {
         const step: ReagentStep = {
@@ -85,7 +78,8 @@ class ProtocolManager {
                     toxic,
                 },
                 incubation,
-                temperature,
+                iterations,
+                targetTemperature,
             },
         };
         this.protocol.steps.push(step);
@@ -95,9 +89,8 @@ class ProtocolManager {
         washType: WashType,
         usedCold: boolean,
         toxic: boolean,
-        iters: number,
+        iterations: number,
         incubation: number,
-        temperature: number,
         id: number = 1,
     ): void {
         const step: WashingStep = {
@@ -109,20 +102,8 @@ class ProtocolManager {
                     used_cold: usedCold,
                     toxic,
                 },
-                iters,
+                iterations,
                 incubation,
-                temperature,
-            },
-        };
-        this.protocol.steps.push(step);
-    }
-
-    addTemperatureChange(target: number, id: number = 10): void {
-        const step: TemperatureChangeStep = {
-            id,
-            type: 'TemperatureChange',
-            params: {
-                target,
             },
         };
         this.protocol.steps.push(step);
