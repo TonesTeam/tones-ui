@@ -86,7 +86,7 @@ export class AppService {
                         id: pl.liquidInfo.liquidTypeId,
                         name: pl.liquidInfo.type.name,
                     },
-                    id: pl.id,
+                    id: pl.liquidInfoId,
                     name: pl.liquidInfo.name,
                     usedCold: pl.requiresCooling,
                     toxic: pl.toxic,
