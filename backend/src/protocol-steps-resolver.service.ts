@@ -11,10 +11,7 @@ import tonesConfig from 'common/new-tones-config.json';
 
 @Injectable()
 export class ProtocolStepsResolver {
-    constructor(
-        private readonly dbService: DatabaseService,
-        private readonly deploymentService: ProtocolDeploymentService,
-    ) {}
+    constructor(private readonly dbService: DatabaseService) {}
 
     async resolveProtocolSteps(id: number): Promise<any> {
         const protocol = await this.dbService.getProtocolById(id);

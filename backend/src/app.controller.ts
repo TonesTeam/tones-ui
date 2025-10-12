@@ -18,7 +18,7 @@ import { Request as ExpressRequest, Router } from 'express';
 import { Request } from '@nestjs/common';
 import { ProtocolDeploymentService } from './protocol-deployment.service';
 import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
-import convertProtocolStep from './convertProtocol';
+import { EmbeddedControllerService } from './embedded-controller.service';
 
 @Controller()
 @UsePipes(new ParseDatePipe())
@@ -29,6 +29,7 @@ export class AppController {
         private readonly appService: AppService,
         private readonly deploymentService: ProtocolDeploymentService,
         private readonly stepsResolver: ProtocolStepsResolver,
+        private readonly embeddedController: EmbeddedControllerService,
     ) {}
 
     @Get('/')
@@ -128,36 +129,6 @@ export class AppController {
         @Param('id', new ParseIntPipe()) id: number,
     ) {
         this.logger.log(`Figuring out steps for protocol ${id}`);
-        const prot = await this.stepsResolver.resolveProtocolSteps(id);
-        console.log(JSON.stringify(prot));
-
-        const steps = prot.steps;
-        for (let i = 0; i < steps.length; i++) {
-            const convertedStep = convertProtocolStep(steps[i]);
-            console.log(
-                `Sending step ${i + 1}: ${JSON.stringify(convertedStep)}`,
-            );
-
-            try {
-                const response = await fetch('http://127.0.0.1:3000/data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(convertedStep),
-                });
-
-                if (!response.ok) {
-                    throw new Error(
-                        `Step ${i + 1} failed with ${response.status}`,
-                    );
-                }
-
-                this.logger.log(`✅ Step ${i + 1} sent successfully`);
-            } catch (e) {
-                this.logger.error(`❌ Failed to send step ${i + 1}: ${e}`);
-                throw e;
-            }
-        }
-
-        return prot;
+        return await this.embeddedController.sendProtocolForExecution(id);
     }
 }

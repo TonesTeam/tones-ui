@@ -5,6 +5,7 @@ import { DatabaseService } from './db.service';
 import { ProtocolDeploymentService } from './protocol-deployment.service';
 import { ProtocolSavingService } from './protocol-saving.service';
 import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
+import { EmbeddedControllerService } from './embedded-controller.service';
 
 @Module({
     imports: [],
@@ -16,6 +17,7 @@ import { ProtocolStepsResolver } from './protocol-steps-resolver.service';
         ProtocolSavingService,
         ProtocolDeploymentService,
         ProtocolStepsResolver,
+        EmbeddedControllerService,
     ],
 })
 export class AppModule {}
