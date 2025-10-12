@@ -40,6 +40,29 @@ export class EmbeddedControllerService {
         }
     }
 
+    async getSlotStatus() {
+        try {
+            const response = await fetch(
+                `${this.controllerAddress}/slot-status`,
+                {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error(`Failed with ${response.status}`);
+            }
+
+            const data = await response.json();
+            this.logger.log(`✅ Slot status retrieved successfully`);
+            return data;
+        } catch (e) {
+            this.logger.error(`❌ Failed to retrieve slot status: ${e}`);
+            throw e;
+        }
+    }
+
     // This is where we convert the JSON that the we get from the database
     // into a format that the controller wants.
     //

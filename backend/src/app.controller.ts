@@ -131,4 +131,10 @@ export class AppController {
         this.logger.log(`Figuring out steps for protocol ${id}`);
         return await this.embeddedController.sendProtocolForExecution(id);
     }
+
+    @Get('/slot-status')
+    async getSlotStatus() {
+        this.logger.log(`Getting slot status`);
+        return await this.embeddedController.getSlotStatus();
+    }
 }
