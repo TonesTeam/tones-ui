@@ -107,9 +107,7 @@ function StepTab(props: {
             style={[
                 s.tab,
                 {
-                    backgroundColor: props.active
-                        ? params.back_color
-                        : AppStyles.color.elem_back,
+                    backgroundColor: AppStyles.color.elem_back,
                 },
             ]}
             onPressIn={props.onPress}
@@ -213,7 +211,11 @@ export default function Constructor({
     else if (route.params && !route.params.preserveID)
         reference_ID = route.params.protocol_ID;
     const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
-    const [workBlock, setWorkBlock] = useState<StepDTO>(); //Currently edited block
+    const [workBlock, setWorkBlock] = useState<StepDTO>({
+        type: StepType.LIQUID_APPL,
+        id: -1,
+        params: {} as ReagentStep,
+    });
     const [preSaveModal, setPreSaveModal] = useState(false);
     const [settingsModal, setSettingsModal] = useState(false);
     const [duration, setDuration] = useState<number>(0);
@@ -233,13 +235,6 @@ export default function Constructor({
     console.log(`settings: ${JSON.stringify(settings)}`);
 
     function initialization() {
-        // By default set the reagent block as active
-        revealWorkBlock({
-            type: StepType.LIQUID_APPL,
-            id: -1,
-            params: {} as ReagentStep,
-        } as StepDTO);
-
         if (reference_ID) {
             getRequest<ProtocolWithStepsDTO>(
                 `/protocol/${reference_ID.toString()}`,
@@ -303,7 +298,11 @@ export default function Constructor({
         ];
 
         setBlocks(finalBlocks);
-        setWorkBlock(undefined);
+        setWorkBlock({
+            type: newBlock.type,
+            id: -1,
+            params: {} as ReagentStep,
+        });
     }
 
     function editBlock(editedBlock: StepDTO) {
@@ -411,6 +410,7 @@ export default function Constructor({
                             <View style={s.body_section}>
                                 <View style={s.workspace_container}>
                                     <View style={s.tabs}>
+                                        {/**
                                         <StepTab
                                             type={StepType.WASHING}
                                             active={
@@ -425,19 +425,11 @@ export default function Constructor({
                                                 } as StepDTO)
                                             }
                                         />
+                                        **/}
                                         <StepTab
                                             type={StepType.LIQUID_APPL}
-                                            active={
-                                                workBlock?.type ==
-                                                StepType.LIQUID_APPL
-                                            }
-                                            onPress={() =>
-                                                revealWorkBlock({
-                                                    type: StepType.LIQUID_APPL,
-                                                    id: -1,
-                                                    params: {} as ReagentStep,
-                                                } as StepDTO)
-                                            }
+                                            active={true}
+                                            onPress={() => 0}
                                         />
                                     </View>
                                     <View style={s.workspace}>
