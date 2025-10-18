@@ -229,9 +229,16 @@ export default function ProtocolList({
             <NavBar />
             <View style={[globalElementStyle.page_container]}>
                 <View style={s.section_search}>
-                    <Heading size="xl" flex={2}>
-                        Protocols
-                    </Heading>
+                    <HStack
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        flex={2}
+                    >
+                        <Heading size="2xl">Protocols</Heading>
+                        <Text size="lg" color="$textLight500" ml="$2" mt="$1">
+                            ({protocols ? protocols.length : 0})
+                        </Text>
+                    </HStack>
                     <SearchBar
                         onChangeText={(e) => setSearchPrompt(e)}
                         value={searchPrompt}
