@@ -65,7 +65,7 @@ enum SettingTabs {
     LIBRARY = 'Reagent Library',
 }
 
-function LiquidsModal(props: {
+function SaveLiquidModal(props: {
     liquid: PermanentLiquidDTO | null;
     categories: LiquidTypeDTO[];
     closeModal: () => void;
@@ -80,6 +80,7 @@ function LiquidsModal(props: {
         toxic: false,
         position: -1,
     } as PermanentLiquidDTO);
+    const [positionText, setPositionText] = useState('0');
 
     useEffect(() => {
         if (props.liquid) setNewLiquid(props.liquid);
@@ -93,6 +94,13 @@ function LiquidsModal(props: {
                 position: -1,
             } as PermanentLiquidDTO);
     }, [props.liquid]);
+
+    const areInputsValid = (): boolean => {
+        const isPositionValid = !isNaN(Number(positionText));
+        const isNameValid = newLiquid.name.trim() !== '';
+
+        return isPositionValid && isNameValid;
+    };
 
     return (
         <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
@@ -139,15 +147,10 @@ function LiquidsModal(props: {
                             <Text>Selector position:</Text>
                             <Input variant="outline">
                                 <InputField
-                                    value={String(newLiquid.position)}
+                                    value={positionText}
                                     inputMode="numeric"
                                     onChangeText={(text: string) => {
-                                        if (!isNaN(Number(text))) {
-                                            setNewLiquid({
-                                                ...newLiquid,
-                                                position: Number(text),
-                                            });
-                                        }
+                                        setPositionText(text);
                                     }}
                                 />
                             </Input>
@@ -201,7 +204,7 @@ function LiquidsModal(props: {
                                     props.closeModal();
                                 }
                             }}
-                            isDisabled={newLiquid.name.trim() === ''}
+                            isDisabled={!areInputsValid()}
                         >
                             <Icon color="white" as={Save} mr="$2" />
                             <ButtonText>
@@ -589,7 +592,7 @@ function Library(props: {
                     </Box>
 
                     <Box>
-                        <LiquidsModal
+                        <SaveLiquidModal
                             isOpen={editModal}
                             liquid={editedLiquid}
                             categories={categories}
