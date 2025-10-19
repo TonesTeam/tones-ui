@@ -246,34 +246,6 @@ const StepBlock = (props: StepBlockProps) => {
                     {/* Content */}
                     <HStack alignItems="flex-start" paddingTop="$3" space="md">
                         {renderStepParams()}
-
-                        {props.edit && (
-                            <VStack
-                                alignItems="flex-end"
-                                justifyContent="center"
-                            >
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    borderColor="rgba(255, 255, 255, 0.3)"
-                                    backgroundColor="rgba(255, 255, 255, 0.1)"
-                                    onPress={() => props.editStep?.(item)}
-                                >
-                                    <Icon
-                                        as={Pencil}
-                                        color="$white"
-                                        size="sm"
-                                    />
-                                    <ButtonText
-                                        color="$white"
-                                        marginLeft="$1"
-                                        size="sm"
-                                    >
-                                        Edit
-                                    </ButtonText>
-                                </Button>
-                            </VStack>
-                        )}
                     </HStack>
 
                     {/* Auto Wash Section */}

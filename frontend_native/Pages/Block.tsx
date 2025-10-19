@@ -62,7 +62,6 @@ import { formatDuration } from '../common/util';
 export interface WorkBlockProps {
     block: StepDTO;
     addBlock: (block: StepDTO) => void;
-    editBlock: (block: StepDTO) => void;
     updateCustomLiquids: (liquids: LiquidDTO[]) => void;
     customLiquids: LiquidDTO[];
     settings: ProtocolSettings;
@@ -571,7 +570,7 @@ export default function WorkBlock(props: WorkBlockProps) {
         if ('incubation' in block.params && timeUnit == 'Minutes')
             (block.params as WashStep).incubation *= 60;
 
-        block.id == -1 ? props.addBlock(block) : props.editBlock(block);
+        props.addBlock(block);
     }
 
     const areParamsValid = (

@@ -152,7 +152,6 @@ const Timeline = ({
     settings,
     revealWorkBlock,
     deleteBlock,
-    editBlock,
 }: any) => {
     return (
         <View style={s.timeline}>
@@ -189,7 +188,6 @@ const Timeline = ({
                         renderParams: params,
                         deleteStep: deleteBlock,
                         editStep: revealWorkBlock,
-                        deleteAutoWash: editBlock,
                         settings: settings,
                         edit: true,
                     })
@@ -303,19 +301,6 @@ export default function Constructor({
             id: -1,
             params: {} as ReagentStep,
         });
-    }
-
-    function editBlock(editedBlock: StepDTO) {
-        let index = blocks.findIndex((x) => x.id == editedBlock.id);
-        let newBlocks = [...blocks];
-
-        let newEdited = { ...newBlocks[index] };
-        newEdited.params = editedBlock.params;
-        newEdited.type = editedBlock.type;
-
-        newBlocks[index] = newEdited;
-        setBlocks(newBlocks);
-        setWorkBlock(undefined);
     }
 
     function revealWorkBlock(step_data: StepDTO) {
@@ -436,7 +421,6 @@ export default function Constructor({
                                         {workBlock != undefined && (
                                             <WorkBlock
                                                 addBlock={addBlock}
-                                                editBlock={editBlock}
                                                 updateCustomLiquids={
                                                     updateCustomLiquids
                                                 }
@@ -455,7 +439,6 @@ export default function Constructor({
                                     settings={settings}
                                     revealWorkBlock={revealWorkBlock}
                                     deleteBlock={deleteBlock}
-                                    editBlock={editBlock}
                                 />
                             </View>
                         </View>
