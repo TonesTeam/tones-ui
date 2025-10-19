@@ -218,10 +218,7 @@ function SaveLiquidModal(props: {
     );
 }
 
-function Library(props: {
-    toggleLiquidUpdateModal: (val: boolean) => void;
-    toggleLiquidDeleteModal: (val: boolean) => void;
-}) {
+function Library(props: {}) {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
     const [searchPrompt, setSearchPrompt] = useState('');
@@ -267,13 +264,11 @@ function Library(props: {
         makeRequest('POST' as Method, '/liquid/save', JSON.stringify(liq))
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
-                    props.toggleLiquidUpdateModal(true);
                     listInitilizer(); //workaround. buggy. TODO: pass rigger from parent (Settings)
-                } else props.toggleLiquidUpdateModal(false);
+                }
             })
             .catch((err) => {
                 console.log(err.message);
-                props.toggleLiquidUpdateModal(false);
             });
     }
 
@@ -281,15 +276,12 @@ function Library(props: {
         makeRequest('DELETE' as Method, `/liquid/delete/${id}`)
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
-                    props.toggleLiquidDeleteModal(true);
                     listInitilizer();
                 } else {
-                    props.toggleLiquidDeleteModal(false);
                 }
             })
             .catch((err) => {
                 console.log(err.message);
-                props.toggleLiquidDeleteModal(false);
             });
     }
 
@@ -633,168 +625,18 @@ export default function Settings(props: any) {
     return (
         <MainContainer>
             <NavBar />
-
-            <Box style={s.wrapper}>
-                <Heading size="2xl">Settings</Heading>
-                <View style={[globalElementStyle.page_container]}>
-                    <View style={{ flex: 1 }}>
-                        <View style={s.tab_bar}>
-                            <TouchableOpacity
-                                style={[
-                                    s.tab,
-                                    currentTab == SettingTabs.USER && {
-                                        backgroundColor:
-                                            AppStyles.color.background,
-                                    },
-                                ]}
-                                onPress={() => setCurrentTab(SettingTabs.USER)}
-                            >
-                                <View
-                                    style={[
-                                        s.tab_icon,
-                                        currentTab == SettingTabs.USER && {
-                                            backgroundColor:
-                                                AppStyles.color.elem_back,
-                                        },
-                                    ]}
-                                >
-                                    <User_s_Icon
-                                        height={20}
-                                        width={20}
-                                        fill={AppStyles.color.accent_dark}
-                                    />
-                                </View>
-                                <Text
-                                    style={[
-                                        s.tab_text,
-                                        currentTab == SettingTabs.USER && {
-                                            color: AppStyles.color.primary,
-                                            fontWeight: '700',
-                                        },
-                                    ]}
-                                >
-                                    User Settings
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    s.tab,
-                                    currentTab == SettingTabs.SYSTEM && {
-                                        backgroundColor:
-                                            AppStyles.color.background,
-                                    },
-                                ]}
-                                onPress={() =>
-                                    setCurrentTab(SettingTabs.SYSTEM)
-                                }
-                            >
-                                <View
-                                    style={[
-                                        s.tab_icon,
-                                        currentTab == SettingTabs.SYSTEM && {
-                                            backgroundColor:
-                                                AppStyles.color.elem_back,
-                                        },
-                                    ]}
-                                >
-                                    <System_s_Icon
-                                        height={22}
-                                        width={22}
-                                        fill={AppStyles.color.accent_dark}
-                                    />
-                                </View>
-                                <Text
-                                    style={[
-                                        s.tab_text,
-                                        currentTab == SettingTabs.SYSTEM && {
-                                            color: AppStyles.color.primary,
-                                            fontWeight: '700',
-                                        },
-                                    ]}
-                                >
-                                    System Settings
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    s.tab,
-                                    currentTab == SettingTabs.LIBRARY && {
-                                        backgroundColor:
-                                            AppStyles.color.background,
-                                    },
-                                ]}
-                                onPress={() =>
-                                    setCurrentTab(SettingTabs.LIBRARY)
-                                }
-                            >
-                                <View
-                                    style={[
-                                        s.tab_icon,
-                                        currentTab == SettingTabs.LIBRARY && {
-                                            backgroundColor:
-                                                AppStyles.color.elem_back,
-                                        },
-                                    ]}
-                                >
-                                    <Lib_s_Icon
-                                        height={20}
-                                        width={20}
-                                        fill={AppStyles.color.accent_dark}
-                                    />
-                                </View>
-                                <Text
-                                    style={[
-                                        s.tab_text,
-                                        currentTab == SettingTabs.LIBRARY && {
-                                            color: AppStyles.color.primary,
-                                            fontWeight: '700',
-                                        },
-                                    ]}
-                                >
-                                    Reagent Library
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={s.body}>
-                            {currentTab == SettingTabs.LIBRARY && (
-                                <Library
-                                    toggleLiquidUpdateModal={(val) =>
-                                        setLiquidUpdateModal(val)
-                                    }
-                                    toggleLiquidDeleteModal={(val) =>
-                                        setLiquidDeleteModal(val)
-                                    }
-                                />
-                            )}
-                            {currentTab != SettingTabs.LIBRARY && (
-                                <Text>Page under development</Text>
-                            )}
-                        </View>
-                        {liquidUpdateModal != undefined && (
-                            <InfoModal
-                                type={InfoType.UPDATE}
-                                result={liquidUpdateModal}
-                                text={'Liquid'}
-                                unsetVisible={() => {
-                                    setLiquidUpdateModal(undefined);
-                                }}
-                                //actionDuring={() => listInitilizer()}
-                            />
-                        )}
-                        {liquidDeleteModal != undefined && (
-                            <InfoModal
-                                type={InfoType.DELETE}
-                                result={liquidDeleteModal}
-                                text={'Liquid'}
-                                unsetVisible={() => {
-                                    setLiquidUpdateModal(undefined);
-                                }}
-                                //actionDuring={() => listInitilizer()}
-                            />
-                        )}
-                    </View>
-                </View>
-            </Box>
+            <View style={[globalElementStyle.page_container]}>
+                <Box
+                    width="100%"
+                    flex={1}
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
+                    padding="$6"
+                >
+                    <Heading size="2xl">Reagent Library</Heading>
+                </Box>
+                <Library />
+            </View>
         </MainContainer>
     );
 }
