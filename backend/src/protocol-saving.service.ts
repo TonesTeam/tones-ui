@@ -108,7 +108,7 @@ export class ProtocolSavingService {
             iterations: s.params.iters,
         };
         if (s.type == StepType.LIQUID_APPL) {
-            let params = s.params as ReagentStep;
+            const params = s.params as ReagentStep;
             step.liquidApplication = {
                 create: {
                     liquidIncubationTime: params.incubation,
@@ -120,7 +120,7 @@ export class ProtocolSavingService {
             };
         }
         if (s.type == StepType.WASHING) {
-            let params = s.params as WashStep;
+            const params = s.params as WashStep;
             step.washing = {
                 create: {
                     incubationTime: params.incubation,

@@ -64,7 +64,7 @@ class ProtocolManager {
         iterations: number,
         washingIterations: number,
         targetTemperature: number,
-        id: number = 0,
+        id = 0,
     ): void {
         const step: ReagentStep = {
             type: 'Reagent',
@@ -90,7 +90,7 @@ class ProtocolManager {
         toxic: boolean,
         iterations: number,
         incubation: number,
-        id: number = 1,
+        id = 1,
     ): void {
         const step: WashingStep = {
             type: 'Washing',
