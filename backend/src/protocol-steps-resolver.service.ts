@@ -41,6 +41,7 @@ export class ProtocolStepsResolver {
                     position:
                         step.liquidApplication.liquidInfo.permanentLiquid
                             .position,
+                    washingIterations: step.liquidApplication.washingIterations,
                 });
                 //Add wash step if auto_wash
             }
