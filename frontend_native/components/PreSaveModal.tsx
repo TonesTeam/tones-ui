@@ -411,13 +411,11 @@ export default function PreSaveModal({
                                                                     size="sm"
                                                                     color="$textLight900"
                                                                 >
-                                                                    {block.type ===
-                                                                    StepType.WASHING
-                                                                        ? (
-                                                                              block.params as WashStep
-                                                                          )
-                                                                              .iters
-                                                                        : '-'}
+                                                                    {
+                                                                        block
+                                                                            .params
+                                                                            .iters
+                                                                    }
                                                                 </Text>
                                                             </Box>
                                                         </HStack>
@@ -427,8 +425,9 @@ export default function PreSaveModal({
                                                             StepType.LIQUID_APPL &&
                                                             (
                                                                 block.params as ReagentStep
-                                                            ).autoWash ===
-                                                                true && (
+                                                            )
+                                                                .washingIterations >
+                                                                0 && (
                                                                 <HStack
                                                                     p="$3"
                                                                     bg="$blue50"
@@ -525,9 +524,7 @@ export default function PreSaveModal({
                                                                             color="$blue600"
                                                                         >
                                                                             {formatDuration(
-                                                                                settings
-                                                                                    .autoWashConfig
-                                                                                    .incubation,
+                                                                                45,
                                                                             )}
                                                                         </Text>
                                                                     </Box>
@@ -540,9 +537,10 @@ export default function PreSaveModal({
                                                                             color="$blue600"
                                                                         >
                                                                             {
-                                                                                settings
-                                                                                    .autoWashConfig
-                                                                                    .iters
+                                                                                (
+                                                                                    block.params as ReagentStep
+                                                                                )
+                                                                                    .washingIterations
                                                                             }
                                                                         </Text>
                                                                     </Box>

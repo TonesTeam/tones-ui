@@ -199,7 +199,9 @@ function SaveLiquidModal(props: {
                             bg="$black"
                             size="md"
                             onPress={() => {
-                                if (newLiquid.name.trim() != '') {
+                                if (areInputsValid()) {
+                                    newLiquid.position = Number(positionText);
+                                    newLiquid.name = newLiquid.name.trim();
                                     props.saveLiquid(newLiquid);
                                     props.closeModal();
                                 }

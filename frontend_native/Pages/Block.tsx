@@ -275,7 +275,9 @@ function ReagentInputs(props: BlockInputsProps) {
                             onChange={(iters: string) =>
                                 handleParamChange(
                                     'iters',
-                                    iters == '' ? null : Number(iters),
+                                    iters == '' || isNaN(Number(iters))
+                                        ? null
+                                        : Number(iters),
                                 )
                             }
                         />
@@ -517,6 +519,22 @@ export default function WorkBlock(props: WorkBlockProps) {
         switch (type) {
             case StepType.LIQUID_APPL: {
                 const p = params as ReagentStep;
+                if (isNaN(Number(p.iters))) {
+                    setSaveBlockError('Invalid number of iterations');
+                    return false;
+                }
+                if (isNaN(Number(p.washingIterations))) {
+                    setSaveBlockError('Invalid number of washing iterations');
+                    return false;
+                }
+                if (p.washingIterations < 0) {
+                    setSaveBlockError('Washing iterations cannot be negative');
+                    return false;
+                }
+                if (p.incubation < 0) {
+                    setSaveBlockError('Incubation time cannot be negative');
+                    return false;
+                }
                 if (p.incubation == null) {
                     setSaveBlockError('Incubation time missing');
                     return false;

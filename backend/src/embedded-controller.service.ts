@@ -100,7 +100,7 @@ export class EmbeddedControllerService {
             data: 6069, // non needed
             temperature: step.temperature,
             time: step.incubation,
-            wash_reps: 2,
+            wash_reps: step.washingIterations,
             slot_selector_pos: 4, // slot number
             reagent_pos: step.position, // the id number of the connector in the selector of the reagent
             slot_sensor_id: 1, // non needed
