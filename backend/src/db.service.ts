@@ -159,7 +159,7 @@ export class DatabaseService {
     }
 }
 
-let a = new DatabaseService();
+const a = new DatabaseService();
 export type FullProtocols = Prisma.PromiseReturnType<typeof a.getProtocols>;
 export type FullProtocol = FullProtocols[0];
 export type SteppedProtocol = Prisma.PromiseReturnType<

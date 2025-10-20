@@ -25,7 +25,7 @@ export class AppService {
     ) {}
 
     async getProtocols() {
-        let protocols: FullProtocols = await this.dbService.getProtocols();
+        const protocols: FullProtocols = await this.dbService.getProtocols();
         return protocols.map(
             (p) =>
                 ({
@@ -35,18 +35,18 @@ export class AppService {
                     lastUpdate: p.lastUpdate,
                     description: p.description,
                     name: p.name,
-                }) as ProtocolDto,
+                } as ProtocolDto),
         );
     }
 
     async getProtocolSteps(id: number): Promise<StepDTO[]> {
-        let p = await this.dbService.getProtocolById(id);
+        const p = await this.dbService.getProtocolById(id);
         return Promise.all(p.steps.map(async (s) => await this.stepToDto(s)));
     }
 
     async getProtocolWithSteps(id: number): Promise<ProtocolWithStepsDTO> {
-        let steps = await this.getProtocolSteps(id);
-        let pr = await this.dbService.getProtocolById(id);
+        const steps = await this.getProtocolSteps(id);
+        const pr = await this.dbService.getProtocolById(id);
         return {
             id: pr.id,
             name: pr.name,
@@ -67,18 +67,18 @@ export class AppService {
     }
 
     async getLiquidTypes() {
-        let types = await this.dbService.getLiquidTypes();
+        const types = await this.dbService.getLiquidTypes();
         return types.map(
             (t) =>
                 ({
                     id: t.id,
                     name: t.name,
-                }) as LiquidTypeDTO,
+                } as LiquidTypeDTO),
         );
     }
 
     async getPermanentLiquids() {
-        let liquids = await this.dbService.getPermanentLiquids();
+        const liquids = await this.dbService.getPermanentLiquids();
         return liquids.map(
             (pl) =>
                 ({
@@ -91,12 +91,12 @@ export class AppService {
                     usedCold: pl.requiresCooling,
                     toxic: pl.toxic,
                     position: pl.position,
-                }) as PermanentLiquidDTO,
+                } as PermanentLiquidDTO),
         );
     }
 
     async getCustomProtocolLiquids(id: number) {
-        let liquids = await this.dbService.getCustomProtocolLiquids(id);
+        const liquids = await this.dbService.getCustomProtocolLiquids(id);
         return Promise.all(
             liquids.map(async (l) => await this.toLiquidDto(l.id)),
         );
@@ -141,7 +141,7 @@ export class AppService {
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,
                     iters: step.iterations,
-                    washingIterations: step.washingIterations,
+                    washingIterations: step.liquidApplication.washingIterations,
                 } as ReagentStep;
             case StepType.WASHING:
                 return {
@@ -157,7 +157,7 @@ export class AppService {
     }
 
     private async toLiquidDto(liquidInfoId: number): Promise<LiquidDTO> {
-        let l = await this.dbService.getLiquidInfo(liquidInfoId);
+        const l = await this.dbService.getLiquidInfo(liquidInfoId);
         return {
             type: {
                 id: l.liquidTypeId,
