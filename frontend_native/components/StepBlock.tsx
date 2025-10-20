@@ -107,6 +107,7 @@ const ReagentStepParams = ({
     const params = block.params as ReagentStep;
     const incubationValue = formatDuration(params.incubation);
     console.log('ReagentStepParams params:', params);
+    console.log('Got washing iterations:', params.washingIterations);
 
     return (
         <HStack flex={1} height="$full">
@@ -119,6 +120,10 @@ const ReagentStepParams = ({
                     label="Target Temperature"
                     value={params.targetTemperature}
                     measurement="°C"
+                />
+                <ParamItem
+                    label="Washing Iterations"
+                    value={params.washingIterations}
                 />
             </VStack>
         </HStack>

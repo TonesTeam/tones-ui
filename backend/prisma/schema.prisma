@@ -146,6 +146,7 @@ model LiquidApplication {
     liquidIncubationTime  Int // Stores seconds
     incubationTemperature Int
     autoWash              Boolean    @default(true) // whether to do auto wash (specified in protocol wash settings) after application
+    washingIterations     Int        @default(0)
 }
 
 model Washing {

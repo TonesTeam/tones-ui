@@ -54,6 +54,7 @@ import {
     useToast,
     Icon,
     Switch,
+    Heading,
 } from '@gluestack-ui/themed';
 import { ChevronDown, Check, Info } from 'lucide-react-native';
 import { HStack } from '@gluestack-ui/themed';
@@ -92,85 +93,6 @@ const bs = StyleSheet.create({
     },
 });
 
-function WashInputs(props: BlockInputsProps) {
-    const [washParams, setWashParams] = useState(
-        props.stepData.params as WashStep,
-    );
-    const [selectedLiquid, setSelectedLiquid] = useState<LiquidDTO>();
-    const [liquidsList, setLiquidList] = useState<LiquidDTO[]>([]);
-
-    const listInitilizer = () => {
-        getRequest<LiquidDTO[]>('/liquids').then((r) => {
-            let filtered = r.data.filter((liq) => liq.type.id == 2);
-            setLiquidList(filtered);
-            let liquid =
-                washParams.liquid != undefined
-                    ? washParams.liquid
-                    : filtered[0];
-            setSelectedLiquid(liquid);
-            handleParamChange('liquid', liquid);
-        });
-    };
-    useEffect(listInitilizer, []);
-
-    function handleParamChange(key: string, value: any) {
-        setWashParams((prevState) => ({
-            ...prevState,
-            [key]: value,
-        }));
-    }
-
-    useEffect(() => {
-        props.change(washParams);
-    }, [washParams]);
-
-    return (
-        <>
-            {liquidsList && selectedLiquid && (
-                <>
-                    <View style={bs.row}>
-                        <CustomSelect
-                            list={liquidsList}
-                            selected={selectedLiquid || liquidsList[0]}
-                            canAdd={false}
-                            label="Reagent:"
-                            onChangeSelect={(liq) => {
-                                handleParamChange('liquid', liq);
-                            }}
-                        />
-                    </View>
-                    <View style={[bs.row]}>
-                        <IterationInput
-                            value={washParams.iters}
-                            onChange={(iters: string) =>
-                                handleParamChange(
-                                    'iters',
-                                    iters == '' ? null : Number(iters),
-                                )
-                            }
-                        />
-                        <IncubationInput
-                            value={washParams.incubation}
-                            onChange={(incub: string) =>
-                                handleParamChange(
-                                    'incubation',
-                                    incub == '' || isNaN(Number(incub))
-                                        ? null
-                                        : Number(incub),
-                                )
-                            }
-                        />
-                        <TimeUnitSelector
-                            value={props.timeUnit}
-                            onChange={(e) => props.setTimeUnit(e)}
-                        />
-                    </View>
-                </>
-            )}
-        </>
-    );
-}
-
 function ReagentInputs(props: BlockInputsProps) {
     const [reagParams, setReagParams] = useState({
         ...props.stepData.params,
@@ -187,6 +109,10 @@ function ReagentInputs(props: BlockInputsProps) {
             props.stepData.params.iters == undefined
                 ? 1
                 : props.stepData.params.iters,
+        washingIterations:
+            props.stepData.params.washingIterations == undefined
+                ? 2
+                : props.stepData.params.washingIterations,
     } as ReagentStep);
     console.log(`Got iterations: ${props.stepData.params.iters}`);
     console.log(`So reagParams iterations are: ${reagParams.iters}`);
@@ -353,30 +279,16 @@ function ReagentInputs(props: BlockInputsProps) {
                                 )
                             }
                         />
-                    </HStack>
-                    <View style={[bs.row]}>
-                        <VStack alignItems="flex-start">
-                            <Text color="$grey" size="sm">
-                                Apply default washing step after reagent?
-                                (currently {props.settings.autoWashConfig.iters}{' '}
-                                x{' '}
-                                {formatDuration(
-                                    props.settings.autoWashConfig.incubation,
-                                )}
+                        <WashingIterationsInput
+                            value={reagParams.washingIterations}
+                            onChange={(iters: string) =>
+                                handleParamChange(
+                                    'washingIterations',
+                                    iters == '' ? null : Number(iters),
                                 )
-                            </Text>
-                            <Switch
-                                value={reagParams.autoWash}
-                                onValueChange={(val) => {
-                                    handleParamChange(
-                                        'autoWash',
-                                        !reagParams.autoWash,
-                                    );
-                                }}
-                                size="lg"
-                            />
-                        </VStack>
-                    </View>
+                            }
+                        />
+                    </HStack>
                 </ScrollView>
             )}
         </>
@@ -420,6 +332,31 @@ const IterationInput = (props: IterationInputProps) => {
         <VStack mr="$4">
             <Text color="$grey" mb="$2" size="sm">
                 Iterations:
+            </Text>
+            <Input>
+                <InputField
+                    placeholder=""
+                    inputMode={'numeric' as InputModeOptions}
+                    value={value}
+                    onChangeText={props.onChange}
+                />
+            </Input>
+        </VStack>
+    );
+};
+
+interface WashingIterationsInputProps {
+    value: number;
+    onChange: (text: string) => void;
+}
+
+const WashingIterationsInput = (props: WashingIterationsInputProps) => {
+    const value = props.value ?? '';
+
+    return (
+        <VStack mr="$4">
+            <Text color="$grey" mb="$2" size="sm">
+                Washing iterations:
             </Text>
             <Input>
                 <InputField
@@ -657,16 +594,6 @@ export default function WorkBlock(props: WorkBlockProps) {
         <>
             <View style={s.block_container}>
                 <View style={s.section_inputs}>
-                    {props.block.type == StepType.WASHING && (
-                        <WashInputs
-                            stepData={props.block}
-                            change={memorizedParamUpdate}
-                            timeUnit={timeUnit}
-                            setTimeUnit={setTimeUnit}
-                            setSettings={props.setSettings}
-                            settings={props.settings}
-                        />
-                    )}
                     {props.block.type == StepType.LIQUID_APPL && (
                         <ReagentInputs
                             stepData={props.block}

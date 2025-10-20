@@ -220,6 +220,7 @@ export default function Constructor({
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
     const [protocolName, setProtocolName] = useState('Untitled protocol');
     const [protocolDescription, setProtocolDescription] = useState('');
+    const [washingIterations, setWashingItertions] = useState(2);
     const [defaultWashStep, setDefaultWashStep] = useState<
         WashStep | undefined
     >(undefined);
@@ -230,7 +231,7 @@ export default function Constructor({
         undefined,
     );
     const flatListRef: MutableRefObject<any> = useRef(null);
-    console.log(`settings: ${JSON.stringify(settings)}`);
+    console.log(`blocks: ${JSON.stringify(blocks)}`);
 
     function initialization() {
         if (reference_ID) {
@@ -325,6 +326,7 @@ export default function Constructor({
             steps: blocks,
             creationDate: new Date(),
             defaultWash: settings?.autoWashConfig,
+            washingIterations: washingIterations,
             author: null,
         } as ProtocolWithStepsDTO;
 
@@ -394,29 +396,6 @@ export default function Constructor({
                             </View>
                             <View style={s.body_section}>
                                 <View style={s.workspace_container}>
-                                    <View style={s.tabs}>
-                                        {/**
-                                        <StepTab
-                                            type={StepType.WASHING}
-                                            active={
-                                                workBlock?.type ==
-                                                StepType.WASHING
-                                            }
-                                            onPress={() =>
-                                                revealWorkBlock({
-                                                    type: StepType.WASHING,
-                                                    id: -1,
-                                                    params: {} as WashStep,
-                                                } as StepDTO)
-                                            }
-                                        />
-                                        **/}
-                                        <StepTab
-                                            type={StepType.LIQUID_APPL}
-                                            active={true}
-                                            onPress={() => 0}
-                                        />
-                                    </View>
                                     <View style={s.workspace}>
                                         {workBlock != undefined && (
                                             <WorkBlock

@@ -141,6 +141,7 @@ export class AppService {
                         step.liquidApplication.liquidInfo.permanentLiquid ===
                         null,
                     iters: step.iterations,
+                    washingIterations: step.washingIterations,
                 } as ReagentStep;
             case StepType.WASHING:
                 return {
