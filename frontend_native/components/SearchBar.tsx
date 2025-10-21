@@ -27,7 +27,11 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
     });
 
     return (
-        <Input style={{ flex: 8 }}>
+        <Input
+            style={{ flex: 8 }}
+            variant="rounded"
+            borderColor="$borderLight400"
+        >
             <InputSlot style={styles.search_bar}>
                 <InputIcon as={SearchIcon} />
             </InputSlot>
@@ -38,7 +42,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
                 type="text"
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Search..."
+                placeholder="Search protocols"
             />
 
             {value.length > 0 && (

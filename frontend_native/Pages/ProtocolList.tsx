@@ -19,6 +19,7 @@ import {
 import {
     Heading,
     Button,
+    ButtonIcon,
     Icon,
     Box,
     VStack,
@@ -38,17 +39,13 @@ import {
     SelectDragIndicator,
     SelectDragIndicatorWrapper,
     SelectItem,
+    Pressable,
 } from '@gluestack-ui/themed';
-import {
-    X,
-    SearchIcon,
-    ArrowRight,
-    Rocket,
-    ChevronDown,
-} from 'lucide-react-native';
+import { X, Ellipsis, ChevronDown, Plus } from 'lucide-react-native';
 
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import SearchBar from '../components/SearchBar';
+import { ButtonText } from '@gluestack-ui/themed';
 
 function ProtocolItem({
     protocol,
@@ -59,10 +56,8 @@ function ProtocolItem({
 }) {
     return (
         <Box
-            borderWidth={1}
-            borderColor="$borderLight200"
-            rounded="$lg"
-            bg="$backgroundLight0"
+            rounded="$xl"
+            bg="$white"
             p="$4"
             mb="$3"
             shadowColor="$borderLight100"
@@ -71,49 +66,54 @@ function ProtocolItem({
             shadowRadius={2}
             flexDirection="row"
         >
-            <VStack space="md" mb="$2" flex={1}>
-                {/* Header */}
-                <HStack alignItems="center" space="md">
-                    <GeneratedAvatar name={protocol.name} size={40} />
-                    <VStack flex={1} space="xs">
-                        <Text bold size="md">
-                            {protocol.name}
-                        </Text>
-                        <Text size="xs" color="$textLight500">
-                            by {protocol.author} ·{' '}
-                            {formatSocialMediaTime(protocol.creationDate)}
-                        </Text>
-                    </VStack>
+            <HStack
+                alignItems="center"
+                justifyContent="space-between"
+                width="100%"
+            >
+                <Text flex={1} textAlign="left" size="lg" color="$black">
+                    # {protocol.id}
+                </Text>
+                <Text flex={6} textAlign="left" size="lg" color="$black">
+                    {protocol.name}
+                </Text>
+
+                <HStack flex={3} alignItems="center" space="sm">
+                    <GeneratedAvatar name={'Jefferey'} size={40} />
+                    <Text color="$black" size="lg">
+                        {protocol.author}
+                    </Text>
                 </HStack>
 
-                {protocol.description && (
-                    <Text size="sm" color="$textLight600" mt="$3">
-                        {protocol.description}
-                    </Text>
-                )}
-                {!protocol.description && (
-                    <Text size="sm" color="$textLight400" mt="$3" italic>
-                        No description provided
-                    </Text>
-                )}
-            </VStack>
-            <HStack space="sm" alignItems="center" ml="$2">
-                <Badge variant="outline" action="info" rounded="$md" mr="$1">
-                    <BadgeText>Ready to launch</BadgeText>
-                    <BadgeIcon as={Rocket} ml="$2" />
-                </Badge>
-                <Button
-                    onPress={() =>
-                        navigation.navigate('ProtocolView', {
-                            protocol_ID: protocol.id,
-                        })
-                    }
-                    rounded="$full"
-                    px="$2.5"
-                    py="$1"
-                >
-                    <Icon as={ArrowRight} color="white" />
-                </Button>
+                <Text size="lg" color="$black" flex={2} textAlign="center">
+                    {formatSocialMediaTime(protocol.creationDate)}
+                </Text>
+
+                <Text color="$black" size="lg" flex={3} textAlign="center">
+                    Ready
+                </Text>
+
+                <Pressable flex={3} alignItems="center" justifyContent="center">
+                    <Icon as={Ellipsis} size={40} color="$black" />
+                </Pressable>
+
+                <HStack flex={2} justifyContent="flex-end" space="sm">
+                    <Button
+                        size="md"
+                        bg="$black"
+                        px="$6"
+                        rounded="$full"
+                        onPress={() =>
+                            navigation.navigate('ProtocolView', {
+                                protocol_ID: protocol.id,
+                            })
+                        }
+                    >
+                        <ButtonText color="$white" fontWeight="500">
+                            Launch
+                        </ButtonText>
+                    </Button>
+                </HStack>
             </HStack>
         </Box>
     );
@@ -228,31 +228,46 @@ export default function ProtocolList({
         <MainContainer>
             <NavBar />
             <View style={[globalElementStyle.page_container]}>
-                <View style={s.section_search}>
-                    <HStack
-                        alignItems="center"
-                        justifyContent="flex-start"
-                        flex={2}
-                    >
-                        <Heading size="2xl">Protocols</Heading>
-                        <Text size="lg" color="$textLight500" ml="$2" mt="$1">
+                <VStack alignItems="start" width="95%" space="lg" mt="$4">
+                    <HStack alignItems="center" justifyContent="flex-start">
+                        <Heading size="3xl">Protocols</Heading>
+                        <Text size="lg" color="$textLight500" ml="$2" mt="$2">
                             ({protocols ? protocols.length : 0})
                         </Text>
                     </HStack>
-                    <SearchBar
-                        onChangeText={(e) => setSearchPrompt(e)}
-                        value={searchPrompt}
-                    />
-                    <AuthorSelector
-                        value={authorFilter}
-                        onChange={(e) => setAuthorFilter(e)}
-                        authors={authorList}
-                    />
-                    <SortingSelector
-                        value={sortingStrategy}
-                        onChange={(e) => setSortingStrategy(e)}
-                    />
-                </View>
+                    <HStack justifyContent="space-between" width="100%">
+                        <HStack>
+                            <SearchBar
+                                onChangeText={(e) => setSearchPrompt(e)}
+                                value={searchPrompt}
+                            />
+                            <AuthorSelector
+                                value={authorFilter}
+                                onChange={(e) => setAuthorFilter(e)}
+                                authors={authorList}
+                            />
+                            <SortingSelector
+                                value={sortingStrategy}
+                                onChange={(e) => setSortingStrategy(e)}
+                            />
+                        </HStack>
+                        <Button
+                            variant="outline"
+                            rounded="$full"
+                            borderColor="$black"
+                            onPress={() =>
+                                navigation.navigate('Create protocol')
+                            }
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            <ButtonIcon color="$black" as={Plus} mr="$1" />
+                            <ButtonText color="$black">
+                                Create New Protocol
+                            </ButtonText>
+                        </Button>
+                    </HStack>
+                </VStack>
                 <View style={s.section_list}>
                     {protocols == undefined && (
                         <Box
@@ -371,8 +386,8 @@ interface AuthorSelectorProps {
 
 const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
     return (
-        <Select flex={2} ml="$5" onValueChange={onChange} selectedValue={value}>
-            <SelectTrigger>
+        <Select flex={3} ml="$5" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Author" />
                 <SelectIcon mr="$3" as={ChevronDown} />
             </SelectTrigger>
@@ -403,8 +418,8 @@ interface SortingSelectorProps {
 
 const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
-        <Select flex={2} ml="$5" onValueChange={onChange} selectedValue={value}>
-            <SelectTrigger>
+        <Select flex={3} ml="$5" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Oldest first" />
                 <SelectIcon mr="$3" as={ChevronDown} />
             </SelectTrigger>
