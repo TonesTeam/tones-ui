@@ -343,6 +343,7 @@ export default function Launch({
                     {stage == LaunchStage.STEP_ONE && (
                         <LiquidTable
                             slots={slotNumber == '' ? 1 : Number(slotNumber)}
+                            protocolId={protocol_ID}
                         />
                     )}
                     {stage == LaunchStage.STEP_TWO && (
