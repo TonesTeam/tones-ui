@@ -62,22 +62,20 @@ import { ButtonText } from '@gluestack-ui/themed';
 function ProtocolItem({
     protocol,
     navigation,
+    removeProtocolFromList,
 }: {
     protocol: ProtocolDto;
     navigation: NativeStackNavigationProp<any>;
+    removeProtocolFromList: (id: number) => void;
 }) {
     const [deleteModal, setDeleteModal] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const deleteProtocol = (id: number) => {
         makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
-            .then((r) => {
-                if (r.status >= 200 && r.status <= 299) {
-                    setDeleteModal(false);
-                    navigation.goBack();
-                } else {
-                    setDeleteModal(false);
-                }
+            .then((_) => {
+                removeProtocolFromList(id);
+                setDeleteModal(false);
             })
             .catch((err) => {
                 console.log(err.message);
@@ -496,6 +494,22 @@ export default function ProtocolList({
                                             function (protocol, index) {
                                                 return (
                                                     <ProtocolItem
+                                                        removeProtocolFromList={(
+                                                            id: number,
+                                                        ) => {
+                                                            setProtocols(
+                                                                (protocols) =>
+                                                                    protocols
+                                                                        ? protocols.filter(
+                                                                              (
+                                                                                  p,
+                                                                              ) =>
+                                                                                  p.id !==
+                                                                                  id,
+                                                                          )
+                                                                        : protocols,
+                                                            );
+                                                        }}
                                                         key={protocol.id}
                                                         protocol={protocol}
                                                         navigation={navigation}
