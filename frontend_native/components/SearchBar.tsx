@@ -14,26 +14,16 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
-    const styles = StyleSheet.create({
-        search_bar: {
-            paddingLeft: 10,
-        },
-        clear_button: {
-            paddingRight: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 6,
-        },
-    });
-
     return (
         <Input
             style={{ flex: 8 }}
             variant="rounded"
-            borderColor="$borderLight400"
+            borderColor="transparent"
+            bg="#f2f3f8"
+            height={48}
         >
-            <InputSlot style={styles.search_bar}>
-                <InputIcon as={SearchIcon} />
+            <InputSlot pl="$8">
+                <InputIcon size="xl" as={SearchIcon} />
             </InputSlot>
 
             <InputField
@@ -44,17 +34,6 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
                 autoCorrect={false}
                 placeholder="Search protocols"
             />
-
-            {value.length > 0 && (
-                <Pressable
-                    style={styles.clear_button}
-                    onPress={() => onChangeText('')}
-                >
-                    <InputSlot>
-                        <InputIcon color="#ef4444" as={X} />
-                    </InputSlot>
-                </Pressable>
-            )}
         </Input>
     );
 };

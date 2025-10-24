@@ -48,9 +48,10 @@ import {
 import {
     X,
     EllipsisVertical,
-    ChevronDown,
     Plus,
     Trash,
+    ArrowDownWideNarrow,
+    ListFilter,
 } from 'lucide-react-native';
 import { Method } from 'axios';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -58,6 +59,421 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import SearchBar from '../components/SearchBar';
 import { ButtonText } from '@gluestack-ui/themed';
+
+export default function ProtocolList({
+    route,
+    navigation,
+}: NativeStackScreenProps<any>) {
+    const scrollViewRef = useRef<ScrollView>(null);
+    const isFocused = useIsFocused();
+    const [networkError, setNetworkError] = useState(false);
+
+    const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(
+        undefined,
+    );
+
+    const listInitilizer = () => {
+        setNetworkError(false);
+        setTimeout(() => {
+            getRequest<ProtocolDto[]>('/protocols')
+                .then((r) => {
+                    if ('data' in r) {
+                        setProtocols(r.data);
+                        console.log(r.data);
+                    } else {
+                        console.log(
+                            'No data field in response, error:',
+                            r.toJSON(),
+                        );
+                        setNetworkError(true);
+                        setProtocols([]);
+                    }
+                })
+                .catch((err) => {
+                    console.log(`Error fetching protocols: ${err.message}`);
+                    setNetworkError(true);
+                });
+        }, 100);
+    };
+    useEffect(listInitilizer, []);
+    useEffect(() => {
+        if (isFocused) {
+            listInitilizer();
+        } else {
+            setProtocols(undefined);
+        }
+    }, [isFocused]);
+    const [searchPrompt, setSearchPrompt] = useState('');
+    const [authorFilter, setAuthorFilter] = useState('All authors');
+    const [authorList, setAuthorList] = useState<string[]>([]);
+    const [sortingStrategy, setSortingStrategy] = useState('Oldest first');
+
+    const [active, setActive] = useState(false);
+    useEffect(() => {
+        if (!protocols) return;
+
+        let authors = Array.from(
+            new Set(protocols.map((protocol) => protocol.author as string)),
+        ).sort();
+
+        setAuthorList(authors);
+    }, [protocols]);
+
+    function filterAndSort() {
+        if (!protocols) return [] as ProtocolDto[];
+
+        const query = searchPrompt.trim().toLowerCase();
+        let filteredList = protocols.filter((e) => {
+            return (
+                e.name.toLowerCase().includes(query) ||
+                e.description?.toLowerCase().includes(query) ||
+                e.author?.toLowerCase().includes(query)
+            );
+        });
+
+        filteredList = filteredList.filter((e) => {
+            if (authorFilter === 'All authors') return true;
+
+            return e.author == authorFilter;
+        });
+
+        let sortedList = filteredList.sort((a, b) => {
+            if (sortingStrategy === 'Oldest first') {
+                return (
+                    new Date(a.creationDate).getTime() -
+                    new Date(b.creationDate).getTime()
+                );
+            } else if (sortingStrategy === 'Newest first') {
+                return (
+                    new Date(b.creationDate).getTime() -
+                    new Date(a.creationDate).getTime()
+                );
+            } else if (sortingStrategy === 'Last updated') {
+                // Sort by lastUpdate if available, otherwise by creationDate
+                const aDate = a.lastUpdate
+                    ? new Date(a.lastUpdate).getTime()
+                    : new Date(a.creationDate).getTime();
+                const bDate = b.lastUpdate
+                    ? new Date(b.lastUpdate).getTime()
+                    : new Date(b.creationDate).getTime();
+                return bDate - aDate; // Most recently updated first
+            } else {
+                return 0;
+            }
+        });
+
+        return sortedList;
+    }
+
+    return (
+        <MainContainer>
+            <NavBar />
+            <View style={[globalElementStyle.page_container]}>
+                <Header
+                    protocolCount={protocols ? protocols.length : 0}
+                    navigation={navigation}
+                    searchPrompt={searchPrompt}
+                    setSearchPrompt={setSearchPrompt}
+                    authorFilter={authorFilter}
+                    setAuthorFilter={setAuthorFilter}
+                    authorList={authorList}
+                    sortingStrategy={sortingStrategy}
+                    setSortingStrategy={setSortingStrategy}
+                />
+                <Box flex={9} width="95%" mt="$4">
+                    {protocols == undefined && (
+                        <Box
+                            alignItems="center"
+                            justifyContent="center"
+                            flex={1}
+                        >
+                            <Spinner size="large" color="grey" />
+                        </Box>
+                    )}
+                    {protocols != undefined && (
+                        <>
+                            <View style={{ flex: 1 }}>
+                                {filterAndSort().length == 0 && (
+                                    <View style={{ flex: 1 }}>
+                                        {networkError && (
+                                            <View
+                                                style={{
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    flex: 1,
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <VStack
+                                                    space="md"
+                                                    alignItems="center"
+                                                >
+                                                    <Box
+                                                        rounded="$full"
+                                                        p="$3"
+                                                        bg="$red100"
+                                                    >
+                                                        <Icon
+                                                            as={X}
+                                                            color="red"
+                                                            size="xl"
+                                                        />
+                                                    </Box>
+                                                    <Text>
+                                                        Network error, cannot
+                                                        find Tones device.
+                                                        Please contact technical
+                                                        support at
+                                                        support@example.org.
+                                                    </Text>
+                                                </VStack>
+                                            </View>
+                                        )}
+                                        {!networkError && (
+                                            <View
+                                                style={{
+                                                    flex: 1,
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <NotFound_Icon
+                                                    height={100}
+                                                    width={100}
+                                                    stroke={
+                                                        AppStyles.color
+                                                            .text_faded
+                                                    }
+                                                />
+
+                                                <Txt
+                                                    style={{
+                                                        color: AppStyles.color
+                                                            .text_faded,
+                                                        fontSize: 30,
+                                                        marginTop: 30,
+                                                    }}
+                                                >
+                                                    No protocols were found
+                                                </Txt>
+                                            </View>
+                                        )}
+                                    </View>
+                                )}
+                                {filterAndSort().length != 0 && (
+                                    <ScrollView
+                                        contentContainerStyle={{ flexGrow: 1 }}
+                                        scrollEnabled={true}
+                                        ref={scrollViewRef}
+                                        showsVerticalScrollIndicator={true}
+                                    >
+                                        {filterAndSort().map(
+                                            function (protocol, index) {
+                                                return (
+                                                    <ProtocolItem
+                                                        removeProtocolFromList={(
+                                                            id: number,
+                                                        ) => {
+                                                            setProtocols(
+                                                                (protocols) =>
+                                                                    protocols
+                                                                        ? protocols.filter(
+                                                                              (
+                                                                                  p,
+                                                                              ) =>
+                                                                                  p.id !==
+                                                                                  id,
+                                                                          )
+                                                                        : protocols,
+                                                            );
+                                                        }}
+                                                        key={protocol.id}
+                                                        protocol={protocol}
+                                                        navigation={navigation}
+                                                    />
+                                                );
+                                            },
+                                        )}
+                                    </ScrollView>
+                                )}
+                            </View>
+                        </>
+                    )}
+                </Box>
+            </View>
+        </MainContainer>
+    );
+}
+
+interface HeaderProps {
+    protocolCount: number;
+    navigation: NativeStackNavigationProp<any>;
+    searchPrompt: string;
+    setSearchPrompt: (text: string) => void;
+    authorFilter: string;
+    setAuthorFilter: (text: string) => void;
+    authorList: string[];
+    sortingStrategy: string;
+    setSortingStrategy: (text: string) => void;
+}
+
+const Header = ({
+    protocolCount,
+    navigation,
+    searchPrompt,
+    setSearchPrompt,
+    authorFilter,
+    setAuthorFilter,
+    authorList,
+    sortingStrategy,
+    setSortingStrategy,
+}: HeaderProps) => {
+    return (
+        <VStack alignItems="start" width="95%" space="lg" mt="$4">
+            {/* Protocol list page title and protocol count */}
+            <HStack alignItems="center" justifyContent="flex-start">
+                <Heading size="4xl">Protocols</Heading>
+                <Text size="xl" color="$textLight500" ml="$2" mt="$4">
+                    ({protocolCount})
+                </Text>
+            </HStack>
+
+            {/* Row with the search bar, sorting selectors and call to action button */}
+            <HStack justifyContent="space-between" width="100%">
+                <HStack>
+                    <SearchBar
+                        onChangeText={(e) => setSearchPrompt(e)}
+                        value={searchPrompt}
+                    />
+                    <AuthorSelector
+                        value={authorFilter}
+                        onChange={(e) => setAuthorFilter(e)}
+                        authors={authorList}
+                    />
+                    <SortingSelector
+                        value={sortingStrategy}
+                        onChange={(e) => setSortingStrategy(e)}
+                    />
+                </HStack>
+                <Button
+                    variant="outline"
+                    rounded="$full"
+                    borderColor="$black"
+                    bg="#1F2832"
+                    ml="$2"
+                    onPress={() => navigation.navigate('Create protocol')}
+                    alignItems="center"
+                    justifyContent="center"
+                    height={48}
+                >
+                    <Box
+                        style={{
+                            filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                        }}
+                    >
+                        <ButtonIcon
+                            bg="transparent"
+                            color="white"
+                            as={Plus}
+                            mr="$1"
+                        />
+                    </Box>
+                    <ButtonText color="white">Create New Protocol</ButtonText>
+                </Button>
+            </HStack>
+
+            {/* List header with names for the item fields */}
+            <HStack
+                width="100%"
+                p="$4"
+                pb="$2"
+                alignItems="center"
+                justifyContent="space-between"
+            >
+                <Text flex={1}># ID</Text>
+                <Text flex={6}>Protocol Name</Text>
+                <Text flex={3}>Author</Text>
+                <Box flex={2} justifyContent="center" alignItems="center">
+                    <Text>Created</Text>
+                </Box>
+                <Box flex={3} justifyContent="center" alignItems="center">
+                    <Text>Status</Text>
+                </Box>
+                <Box flex={3}></Box>
+                <Box flex={2}></Box>
+            </HStack>
+        </VStack>
+    );
+};
+
+interface AuthorSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+    authors: string[];
+}
+
+const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
+    return (
+        <Select flex={2} ml="$1" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger
+                height={48}
+                variant="rounded"
+                borderColor="$borderLight400"
+            >
+                <SelectIcon ml="$3" as={ListFilter} />
+                <SelectInput placeholder="Author" />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent maxHeight={300}>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem value="All authors" label="All Authors" />
+                    {authors.map((author) => (
+                        <SelectItem
+                            key={author}
+                            value={author}
+                            label={author}
+                        />
+                    ))}
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
+
+interface SortingSelectorProps {
+    value: string;
+    onChange: (text: string) => void;
+}
+
+const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
+    return (
+        <Select flex={3} ml="$1" onValueChange={onChange} selectedValue={value}>
+            <SelectTrigger
+                height={48}
+                variant="rounded"
+                borderColor="$borderLight400"
+            >
+                <SelectIcon pl="$5" as={ArrowDownWideNarrow} />
+                <SelectInput placeholder="Oldest first" />
+            </SelectTrigger>
+            <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent maxHeight={300}>
+                    <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    <SelectItem value="Oldest first" label="Oldest first" />
+                    <SelectItem value="Newest first" label="Newest first" />
+                    <SelectItem value="Last updated" label="Last updated" />
+                </SelectContent>
+            </SelectPortal>
+        </Select>
+    );
+};
 
 function ProtocolItem({
     protocol,
@@ -252,355 +668,3 @@ function ProtocolItem({
         </Box>
     );
 }
-
-export default function ProtocolList({
-    route,
-    navigation,
-}: NativeStackScreenProps<any>) {
-    const scrollViewRef = useRef<ScrollView>(null);
-    const isFocused = useIsFocused();
-    const [networkError, setNetworkError] = useState(false);
-
-    const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(
-        undefined,
-    );
-
-    const listInitilizer = () => {
-        setNetworkError(false);
-        setTimeout(() => {
-            getRequest<ProtocolDto[]>('/protocols')
-                .then((r) => {
-                    if ('data' in r) {
-                        setProtocols(r.data);
-                        console.log(r.data);
-                    } else {
-                        console.log(
-                            'No data field in response, error:',
-                            r.toJSON(),
-                        );
-                        setNetworkError(true);
-                        setProtocols([]);
-                    }
-                })
-                .catch((err) => {
-                    console.log(`Error fetching protocols: ${err.message}`);
-                    setNetworkError(true);
-                });
-        }, 100);
-    };
-    useEffect(listInitilizer, []);
-    useEffect(() => {
-        if (isFocused) {
-            listInitilizer();
-        } else {
-            setProtocols(undefined);
-        }
-    }, [isFocused]);
-    const [searchPrompt, setSearchPrompt] = useState('');
-    const [authorFilter, setAuthorFilter] = useState('All authors');
-    const [authorList, setAuthorList] = useState<string[]>([]);
-    const [sortingStrategy, setSortingStrategy] = useState('Oldest first');
-
-    const [active, setActive] = useState(false);
-    useEffect(() => {
-        if (!protocols) return;
-
-        let authors = Array.from(
-            new Set(protocols.map((protocol) => protocol.author as string)),
-        ).sort();
-
-        setAuthorList(authors);
-    }, [protocols]);
-
-    function filterAndSort() {
-        if (!protocols) return [] as ProtocolDto[];
-
-        const query = searchPrompt.trim().toLowerCase();
-        let filteredList = protocols.filter((e) => {
-            return (
-                e.name.toLowerCase().includes(query) ||
-                e.description?.toLowerCase().includes(query) ||
-                e.author?.toLowerCase().includes(query)
-            );
-        });
-
-        filteredList = filteredList.filter((e) => {
-            if (authorFilter === 'All authors') return true;
-
-            return e.author == authorFilter;
-        });
-
-        let sortedList = filteredList.sort((a, b) => {
-            if (sortingStrategy === 'Oldest first') {
-                return (
-                    new Date(a.creationDate).getTime() -
-                    new Date(b.creationDate).getTime()
-                );
-            } else if (sortingStrategy === 'Newest first') {
-                return (
-                    new Date(b.creationDate).getTime() -
-                    new Date(a.creationDate).getTime()
-                );
-            } else if (sortingStrategy === 'Last updated') {
-                // Sort by lastUpdate if available, otherwise by creationDate
-                const aDate = a.lastUpdate
-                    ? new Date(a.lastUpdate).getTime()
-                    : new Date(a.creationDate).getTime();
-                const bDate = b.lastUpdate
-                    ? new Date(b.lastUpdate).getTime()
-                    : new Date(b.creationDate).getTime();
-                return bDate - aDate; // Most recently updated first
-            } else {
-                return 0;
-            }
-        });
-
-        return sortedList;
-    }
-
-    return (
-        <MainContainer>
-            <NavBar />
-            <View style={[globalElementStyle.page_container]}>
-                <VStack alignItems="start" width="95%" space="lg" mt="$4">
-                    <HStack alignItems="center" justifyContent="flex-start">
-                        <Heading size="3xl">Protocols</Heading>
-                        <Text size="lg" color="$textLight500" ml="$2" mt="$2">
-                            ({protocols ? protocols.length : 0})
-                        </Text>
-                    </HStack>
-                    <HStack justifyContent="space-between" width="100%">
-                        <HStack>
-                            <SearchBar
-                                onChangeText={(e) => setSearchPrompt(e)}
-                                value={searchPrompt}
-                            />
-                            <AuthorSelector
-                                value={authorFilter}
-                                onChange={(e) => setAuthorFilter(e)}
-                                authors={authorList}
-                            />
-                            <SortingSelector
-                                value={sortingStrategy}
-                                onChange={(e) => setSortingStrategy(e)}
-                            />
-                        </HStack>
-                        <Button
-                            variant="outline"
-                            rounded="$full"
-                            borderColor="$black"
-                            ml="$2"
-                            onPress={() =>
-                                navigation.navigate('Create protocol')
-                            }
-                            alignItems="center"
-                            justifyContent="center"
-                        >
-                            <ButtonIcon color="$black" as={Plus} mr="$1" />
-                            <ButtonText color="$black">
-                                Create New Protocol
-                            </ButtonText>
-                        </Button>
-                    </HStack>
-                </VStack>
-                <View style={s.section_list}>
-                    {protocols == undefined && (
-                        <Box
-                            alignItems="center"
-                            justifyContent="center"
-                            flex={1}
-                        >
-                            <Spinner size="large" color="grey" />
-                        </Box>
-                    )}
-                    {protocols != undefined && (
-                        <>
-                            <View style={{ flex: 1 }}>
-                                {filterAndSort().length == 0 && (
-                                    <View style={{ flex: 1 }}>
-                                        {networkError && (
-                                            <View
-                                                style={{
-                                                    height: '100%',
-                                                    width: '100%',
-                                                    flex: 1,
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                <VStack
-                                                    space="md"
-                                                    alignItems="center"
-                                                >
-                                                    <Box
-                                                        rounded="$full"
-                                                        p="$3"
-                                                        bg="$red100"
-                                                    >
-                                                        <Icon
-                                                            as={X}
-                                                            color="red"
-                                                            size="xl"
-                                                        />
-                                                    </Box>
-                                                    <Text>
-                                                        Network error, cannot
-                                                        find Tones device.
-                                                        Please contact technical
-                                                        support at
-                                                        support@example.org.
-                                                    </Text>
-                                                </VStack>
-                                            </View>
-                                        )}
-                                        {!networkError && (
-                                            <View
-                                                style={{
-                                                    flex: 1,
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                <NotFound_Icon
-                                                    height={100}
-                                                    width={100}
-                                                    stroke={
-                                                        AppStyles.color
-                                                            .text_faded
-                                                    }
-                                                />
-
-                                                <Txt
-                                                    style={{
-                                                        color: AppStyles.color
-                                                            .text_faded,
-                                                        fontSize: 30,
-                                                        marginTop: 30,
-                                                    }}
-                                                >
-                                                    No protocols were found
-                                                </Txt>
-                                            </View>
-                                        )}
-                                    </View>
-                                )}
-                                {filterAndSort().length != 0 && (
-                                    <ScrollView
-                                        contentContainerStyle={{ flexGrow: 1 }}
-                                        scrollEnabled={true}
-                                        ref={scrollViewRef}
-                                        showsVerticalScrollIndicator={true}
-                                    >
-                                        {filterAndSort().map(
-                                            function (protocol, index) {
-                                                return (
-                                                    <ProtocolItem
-                                                        removeProtocolFromList={(
-                                                            id: number,
-                                                        ) => {
-                                                            setProtocols(
-                                                                (protocols) =>
-                                                                    protocols
-                                                                        ? protocols.filter(
-                                                                              (
-                                                                                  p,
-                                                                              ) =>
-                                                                                  p.id !==
-                                                                                  id,
-                                                                          )
-                                                                        : protocols,
-                                                            );
-                                                        }}
-                                                        key={protocol.id}
-                                                        protocol={protocol}
-                                                        navigation={navigation}
-                                                    />
-                                                );
-                                            },
-                                        )}
-                                    </ScrollView>
-                                )}
-                            </View>
-                        </>
-                    )}
-                </View>
-            </View>
-        </MainContainer>
-    );
-}
-
-interface AuthorSelectorProps {
-    value: string;
-    onChange: (text: string) => void;
-    authors: string[];
-}
-
-const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
-    return (
-        <Select flex={1} ml="$1" onValueChange={onChange} selectedValue={value}>
-            <SelectTrigger variant="rounded" borderColor="$borderLight400">
-                <SelectInput placeholder="Author" />
-                <SelectIcon mr="$3" as={ChevronDown} />
-            </SelectTrigger>
-            <SelectPortal>
-                <SelectBackdrop />
-                <SelectContent maxHeight={300}>
-                    <SelectDragIndicatorWrapper>
-                        <SelectDragIndicator />
-                    </SelectDragIndicatorWrapper>
-                    <SelectItem value="All authors" label="All Authors" />
-                    {authors.map((author) => (
-                        <SelectItem
-                            key={author}
-                            value={author}
-                            label={author}
-                        />
-                    ))}
-                </SelectContent>
-            </SelectPortal>
-        </Select>
-    );
-};
-
-interface SortingSelectorProps {
-    value: string;
-    onChange: (text: string) => void;
-}
-
-const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
-    return (
-        <Select flex={3} ml="$1" onValueChange={onChange} selectedValue={value}>
-            <SelectTrigger variant="rounded" borderColor="$borderLight400">
-                <SelectInput placeholder="Oldest first" />
-                <SelectIcon mr="$3" as={ChevronDown} />
-            </SelectTrigger>
-            <SelectPortal>
-                <SelectBackdrop />
-                <SelectContent maxHeight={300}>
-                    <SelectDragIndicatorWrapper>
-                        <SelectDragIndicator />
-                    </SelectDragIndicatorWrapper>
-                    <SelectItem value="Oldest first" label="Oldest first" />
-                    <SelectItem value="Newest first" label="Newest first" />
-                    <SelectItem value="Last updated" label="Last updated" />
-                </SelectContent>
-            </SelectPortal>
-        </Select>
-    );
-};
-
-const s = StyleSheet.create({
-    section_search: {
-        flex: 1,
-        width: '95%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        top: 10,
-    },
-    section_list: {
-        marginTop: 20,
-        flex: 9,
-        width: '95%',
-    },
-});
