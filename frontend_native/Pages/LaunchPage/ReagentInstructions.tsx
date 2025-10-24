@@ -32,7 +32,7 @@ interface ReagentInstructionsProps {
 export function ReagentInstructions({ instructions, loading, protocolId }: ReagentInstructionsProps) {
     return (
         <Box 
-            width={350} 
+            width={270} 
             backgroundColor="$backgroundLight0" 
             borderRightWidth={2} 
             borderRightColor="$borderLight300"
@@ -77,7 +77,7 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                         1. Select number of slots to use (top right corner)
                                     </Text>
                                     <Text fontSize="$sm" color="$textLight700">
-                                        2. The tables below represent the physical reagent stand
+                                        2. The tables represent the physical reagent tray
                                     </Text>
                                     <Text fontSize="$sm" color="$textLight700">
                                         3. Fill tubes with reagents as shown and place them in corresponding positions
@@ -96,10 +96,9 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                         {instruction.table}
                                     </Heading>
 
-                                    {/* Special note for washing liquid */}
                                     {instruction.table === "Washing liquid" && (
                                         <Text fontSize="$sm" color="$textLight500" fontStyle="italic" marginBottom="$3">
-                                            Ensure that washing liquids are at least half full. Minimal needed amount of water is {instruction.reagents[0]?.volume.toFixed(2)} ml.
+                                            Ensure that washing liquids are at least half full. Minimal needed amount of washing liquid is {instruction.reagents[0]?.volume.toFixed(2)} ml.
                                         </Text>
                                     )}
                                     
@@ -115,7 +114,6 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                                 borderColor="$borderLight200"
                                             >
                                                 <VStack space="xs">
-                                                    {/* Reagent name and volume badge */}
                                                     <HStack justifyContent="space-between" alignItems="center">
                                                         <Text 
                                                             fontWeight="$bold" 
@@ -126,7 +124,7 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                                         >
                                                             {reagent.name}
                                                         </Text>
-                                                        {/* Volume badge with section color */}
+                                                        
                                                         <Badge 
                                                             size="sm" 
                                                             variant="solid" 
@@ -138,7 +136,6 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                                         </Badge>
                                                     </HStack>
                                                     
-                                                    {/* Tube filling instructions */}
                                                     <Text fontSize="$xs" color="$textLight600">
                                                         {reagent.cells && reagent.cells > 1 
                                                             ? `Fill ${reagent.cells} tubes (${(reagent.volume / reagent.cells).toFixed(2)} ml each)`
@@ -150,7 +147,6 @@ export function ReagentInstructions({ instructions, loading, protocolId }: Reage
                                         ))}
                                     </VStack>
                                     
-                                    {/* Divider between sections */}
                                     {tableIndex < instructions.length - 1 && <Divider marginVertical="$4" />}
                                 </Box>
                             ))}
