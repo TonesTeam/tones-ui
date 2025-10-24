@@ -9,7 +9,7 @@ export const AppStyles = {
         warning_faded: 'rgba(209, 69, 51, 0.771)',
         text_primary: '#3b3d44',
         text_faded: '#838488',
-        background: 'rgb(235, 236, 237)',
+        background: '#eaeaea',
         accent_back: '#e4e4e4',
         accent_dark: '#475569',
         elem_back: '#ffffffff',
@@ -55,6 +55,8 @@ export const globalElementStyle = StyleSheet.create({
         top: 0,
         width: AppStyles.layout.main_width,
         height: '100%',
+        paddingLeft: 15,
+        paddingRight: 15,
         //paddingTop: 15,
     },
 });
