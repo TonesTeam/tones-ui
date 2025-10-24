@@ -94,6 +94,7 @@ function ProtocolItem({
                 </Text>
 
                 <Pressable flex={3} alignItems="center" justifyContent="center">
+                   {/* onPress */}
                     <Icon as={Ellipsis} size={40} color="$black" />
                 </Pressable>
 
@@ -101,7 +102,7 @@ function ProtocolItem({
                     <Button
                         size="md"
                         bg="$black"
-                        px="$6"
+                        px="$5" 
                         rounded="$full"
                         onPress={() =>
                             navigation.navigate('ProtocolView', {
@@ -255,6 +256,7 @@ export default function ProtocolList({
                             variant="outline"
                             rounded="$full"
                             borderColor="$black"
+                            ml="$2"
                             onPress={() =>
                                 navigation.navigate('Create protocol')
                             }
@@ -386,7 +388,7 @@ interface AuthorSelectorProps {
 
 const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
     return (
-        <Select flex={3} ml="$5" onValueChange={onChange} selectedValue={value}>
+        <Select flex={1} ml="$1" onValueChange={onChange} selectedValue={value}>
             <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Author" />
                 <SelectIcon mr="$3" as={ChevronDown} />
@@ -418,7 +420,7 @@ interface SortingSelectorProps {
 
 const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
-        <Select flex={3} ml="$5" onValueChange={onChange} selectedValue={value}>
+        <Select flex={3} ml="$1" onValueChange={onChange} selectedValue={value}>
             <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Oldest first" />
                 <SelectIcon mr="$3" as={ChevronDown} />
