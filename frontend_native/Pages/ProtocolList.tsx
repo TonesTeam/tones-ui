@@ -94,7 +94,7 @@ function ProtocolItem({
                 </Text>
 
                 <Pressable flex={3} alignItems="center" justifyContent="center">
-                   {/* onPress */}
+                    {/* onPress */}
                     <Icon as={Ellipsis} size={40} color="$black" />
                 </Pressable>
 
@@ -102,7 +102,7 @@ function ProtocolItem({
                     <Button
                         size="md"
                         bg="$black"
-                        px="$5" 
+                        px="$5"
                         rounded="$full"
                         onPress={() =>
                             navigation.navigate('ProtocolView', {
