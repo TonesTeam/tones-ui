@@ -404,7 +404,9 @@ export default function Launch({
                                 stage == LaunchStage.STEP_THREE &&
                                 confirmations == 4
                             ) {
-                                getRequest(`/protocol/${protocol_ID}/execute`);
+                                navigation.navigate('ProtocolLogs', {
+                                    protocol_ID: protocol_ID,
+                                });
                             }
                         }}
                     >

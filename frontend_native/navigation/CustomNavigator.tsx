@@ -108,10 +108,13 @@ export default function NavBar() {
             </View>
 
             <View style={s.section_footer}>
-                <View style={[s.progress, { borderWidth: 0 }]}>
+                <Pressable 
+                    style={[s.progress, { borderWidth: 0 }]}
+                    onPress={() => navigation.navigate('ProtocolLogs')}
+                >
                     <CircularProgress
                         ref={progressRef}
-                        value={90} //count == 0 ? 0 : 90
+                        value={count === 0 ? 0 : 90} 
                         valueSuffix={'%'}
                         allowFontScaling={false}
                         radius={40}
@@ -123,7 +126,7 @@ export default function NavBar() {
                         inActiveStrokeWidth={10}
                         activeStrokeWidth={6}
                     />
-                </View>
+                </Pressable>
                 <Pressable
                     style={s.profile}
                     onPress={() => navigation.navigate('Profile')}

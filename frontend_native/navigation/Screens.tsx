@@ -9,6 +9,7 @@ import { SvgProps } from 'react-native-svg';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
+import ProtocolLogs from '../Pages/ProtocolLogs';
 import {
     List,
     FilePlus,
@@ -66,5 +67,9 @@ export const Pages: Page[] = [
     {
         name: 'ProtocolView',
         component: ProtocolView,
+    },
+    {
+        name: 'ProtocolLogs',
+        component: ProtocolLogs,
     },
 ];
