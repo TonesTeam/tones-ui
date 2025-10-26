@@ -269,9 +269,9 @@ export default function Launch({
                                                 slotNumber == ''
                                                     ? 1
                                                     : Number(slotNumber) + 1 <=
-                                                        SLOT_QUANTITY
-                                                      ? Number(slotNumber) + 1
-                                                      : Number(slotNumber),
+                                                      SLOT_QUANTITY
+                                                    ? Number(slotNumber) + 1
+                                                    : Number(slotNumber),
                                             )
                                         }
                                     >
@@ -362,8 +362,8 @@ export default function Launch({
                                 state == true
                                     ? setConfirmations(confirmations + 1)
                                     : confirmations > 0
-                                      ? setConfirmations(confirmations - 1)
-                                      : setConfirmations(0)
+                                    ? setConfirmations(confirmations - 1)
+                                    : setConfirmations(0)
                             }
                         />
                     )}

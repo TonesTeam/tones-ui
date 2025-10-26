@@ -12,6 +12,7 @@ import { StyleSheet } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppSelector } from '../state/hooks';
+import { Status } from '../state/progress';
 import CircularProgress, {
     ProgressRef,
 } from 'react-native-circular-progress-indicator';
@@ -35,6 +36,56 @@ export default function NavBar() {
     const count = useAppSelector((state) => state.protocols.length);
     const activeProtocols = useAppSelector((state) => state.protocols);
     const progressRef = useRef<ProgressRef>(null);
+
+    // Progres after active protocols
+    const currentProgress =
+        activeProtocols.length > 0
+            ? activeProtocols[activeProtocols.length - 1].progress
+            : 0;
+
+    // Define if there is an active protocol to change style of progress circle
+    const hasActiveProtocol = activeProtocols.some(
+        (p) =>
+            p.status === Status.Ongoing || (p.progress > 0 && p.progress < 100),
+    );
+
+    //Function for smart navigation to protocol
+    const handleProgressClick = () => {
+        if (activeProtocols.length === 0) {
+            // No active protocols ,navigate to empty page
+            navigation.navigate('ProtocolLogs');
+        } else {
+            // Priority 1: Find running protocol (ONGOING)
+            const runningProtocol = activeProtocols.find(
+                (p) => p.status === Status.Ongoing,
+            );
+
+            if (runningProtocol) {
+                navigation.navigate('ProtocolLogs', {
+                    protocol_ID: runningProtocol.protocol.id,
+                });
+                return;
+            }
+
+            // Priority 2: Find protocol with progress >0 and <100
+            const activeProgressProtocol = activeProtocols.find(
+                (p) => p.progress > 0 && p.progress < 100,
+            );
+
+            if (activeProgressProtocol) {
+                navigation.navigate('ProtocolLogs', {
+                    protocol_ID: activeProgressProtocol.protocol.id,
+                });
+                return;
+            }
+
+            // Priority 3: Find last protocol
+            const lastProtocol = activeProtocols[activeProtocols.length - 1];
+            navigation.navigate('ProtocolLogs', {
+                protocol_ID: lastProtocol.protocol.id,
+            });
+        }
+    };
 
     //Animation stuff
     const [logoutConfirmModal, setLogoutConfirmModal] = useState(false);
@@ -108,19 +159,23 @@ export default function NavBar() {
             </View>
 
             <View style={s.section_footer}>
-                <Pressable 
+                <Pressable
                     style={[s.progress, { borderWidth: 0 }]}
-                    onPress={() => navigation.navigate('ProtocolLogs')}
+                    onPress={handleProgressClick}
                 >
                     <CircularProgress
                         ref={progressRef}
-                        value={count === 0 ? 0 : 90} 
+                        value={currentProgress}
                         valueSuffix={'%'}
                         allowFontScaling={false}
                         radius={40}
                         duration={0}
                         progressValueColor={AppStyles.color.text_primary}
-                        activeStrokeColor={AppStyles.color.secondary}
+                        activeStrokeColor={
+                            hasActiveProtocol
+                                ? AppStyles.color.secondary
+                                : AppStyles.color.background
+                        }
                         inActiveStrokeColor={AppStyles.color.background}
                         inActiveStrokeOpacity={0.5}
                         inActiveStrokeWidth={10}
