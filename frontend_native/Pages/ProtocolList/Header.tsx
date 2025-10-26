@@ -109,7 +109,7 @@ const Header = ({
                 <Box flex={3} justifyContent="center" alignItems="center">
                     <Text>Status</Text>
                 </Box>
-                <Box flex={3}></Box>
+                <Box flex={1}></Box>
                 <Box flex={2}></Box>
             </HStack>
         </VStack>

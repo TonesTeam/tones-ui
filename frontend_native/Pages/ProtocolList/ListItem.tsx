@@ -16,9 +16,11 @@ import {
     Button,
     ButtonText,
     Menu,
+    ButtonIcon,
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../../components/GeneratedAvatar';
 import { Method } from 'axios';
+import { Play } from 'lucide-react-native';
 
 interface ListItemProps {
     protocol: ProtocolDto;
@@ -63,29 +65,29 @@ const ListItem = ({
                 justifyContent="space-between"
                 width="100%"
             >
-                <Text flex={1} textAlign="left" size="lg" color="$black">
+                <Text flex={1} textAlign="left" size="md" color="$black">
                     # {protocol.id}
                 </Text>
-                <Text flex={6} textAlign="left" size="lg" color="$black">
+                <Text flex={6} textAlign="left" size="md" color="$black">
                     {protocol.name}
                 </Text>
 
                 <HStack flex={3} alignItems="center" space="sm">
-                    <GeneratedAvatar name={'Jefferey'} size={40} />
-                    <Text color="$black" size="lg">
+                    <GeneratedAvatar name={'Jefferey'} size={32} />
+                    <Text color="$black" size="md">
                         {protocol.author}
                     </Text>
                 </HStack>
 
-                <Text size="lg" color="$black" flex={2} textAlign="center">
+                <Text size="md" color="$black" flex={2} textAlign="center">
                     {formatSocialMediaTime(protocol.creationDate)}
                 </Text>
 
-                <Text color="$black" size="lg" flex={3} textAlign="center">
+                <Text color="$black" size="md" flex={3} textAlign="center">
                     Ready
                 </Text>
 
-                <Box flex={3}>
+                <Box flex={1}>
                     <Menu
                         minWidth={150}
                         placement="top"
@@ -98,22 +100,18 @@ const ListItem = ({
                             return (
                                 <Pressable
                                     {...triggerProps}
-                                    alignItems="center"
+                                    alignItems="flex-end"
                                     justifyContent="center"
                                     onPress={() => {
-                                        console.log(`menuOpen was ${menuOpen}`);
                                         requestAnimationFrame(() =>
                                             setMenuOpen(!menuOpen),
-                                        );
-                                        console.log(
-                                            `Now menuOpen is ${menuOpen}`,
                                         );
                                     }}
                                 >
                                     <Icon
                                         as={EllipsisVertical}
                                         color="$black"
-                                        size={40}
+                                        size={24}
                                     />
                                 </Pressable>
                             );
@@ -186,17 +184,29 @@ const ListItem = ({
 
                 <HStack flex={2} justifyContent="flex-end" space="sm">
                     <Button
-                        size="md"
-                        bg="$black"
-                        px="$5"
+                        variant="outline"
                         rounded="$full"
+                        borderColor="$black"
+                        bg="#1F2832"
+                        ml="$2"
+                        p="$5"
+                        alignItems="center"
+                        justifyContent="center"
+                        size="md"
                         onPress={() =>
                             navigation.navigate('ProtocolView', {
                                 protocol_ID: protocol.id,
                             })
                         }
                     >
-                        <ButtonText color="$white" fontWeight="500">
+                        <Box
+                            style={{
+                                filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                            }}
+                        >
+                            <ButtonIcon as={Play} mr="$2" color="white" />
+                        </Box>
+                        <ButtonText color="$white" fontWeight={500}>
                             Launch
                         </ButtonText>
                     </Button>
