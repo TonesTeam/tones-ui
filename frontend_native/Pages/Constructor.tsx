@@ -82,11 +82,15 @@ function StepTab(props: {
     let params = {
         main_color:
             AppStyles.color.block[
-                `main_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+                `main_${stepTypeClass.get(
+                    props.type,
+                )}` as keyof typeof AppStyles.color.block
             ],
         back_color:
             AppStyles.color.block[
-                `faded_${stepTypeClass.get(props.type)}` as keyof typeof AppStyles.color.block
+                `faded_${stepTypeClass.get(
+                    props.type,
+                )}` as keyof typeof AppStyles.color.block
             ],
         icon: {} as LucideIcon,
     };
@@ -282,10 +286,10 @@ export default function Constructor({
             blocks.length == 0
                 ? 0
                 : blocks.length == 1
-                  ? 1
-                  : blocks.reduce((prev, current) =>
-                        prev && prev.id > current.id ? prev : current,
-                    ).id + 1;
+                ? 1
+                : blocks.reduce((prev, current) =>
+                      prev && prev.id > current.id ? prev : current,
+                  ).id + 1;
 
         const finalBlocks = [
             ...blocks,

@@ -491,33 +491,32 @@ export default function ProtocolList({
                                         ref={scrollViewRef}
                                         showsVerticalScrollIndicator={true}
                                     >
-                                        {filterAndSort().map(
-                                            function (protocol, index) {
-                                                return (
-                                                    <ProtocolItem
-                                                        removeProtocolFromList={(
-                                                            id: number,
-                                                        ) => {
-                                                            setProtocols(
-                                                                (protocols) =>
-                                                                    protocols
-                                                                        ? protocols.filter(
-                                                                              (
-                                                                                  p,
-                                                                              ) =>
-                                                                                  p.id !==
-                                                                                  id,
-                                                                          )
-                                                                        : protocols,
-                                                            );
-                                                        }}
-                                                        key={protocol.id}
-                                                        protocol={protocol}
-                                                        navigation={navigation}
-                                                    />
-                                                );
-                                            },
-                                        )}
+                                        {filterAndSort().map(function (
+                                            protocol,
+                                            index,
+                                        ) {
+                                            return (
+                                                <ProtocolItem
+                                                    removeProtocolFromList={(
+                                                        id: number,
+                                                    ) => {
+                                                        setProtocols(
+                                                            (protocols) =>
+                                                                protocols
+                                                                    ? protocols.filter(
+                                                                          (p) =>
+                                                                              p.id !==
+                                                                              id,
+                                                                      )
+                                                                    : protocols,
+                                                        );
+                                                    }}
+                                                    key={protocol.id}
+                                                    protocol={protocol}
+                                                    navigation={navigation}
+                                                />
+                                            );
+                                        })}
                                     </ScrollView>
                                 )}
                             </View>
@@ -537,7 +536,13 @@ interface AuthorSelectorProps {
 
 const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
     return (
-        <Select flex={1} ml="$1" onValueChange={onChange} selectedValue={value}>
+        <Select
+            flex={1}
+            ml="$1"
+            minWidth={150}
+            onValueChange={onChange}
+            selectedValue={value}
+        >
             <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Author" />
                 <SelectIcon mr="$3" as={ChevronDown} />
@@ -569,7 +574,13 @@ interface SortingSelectorProps {
 
 const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
-        <Select flex={3} ml="$1" onValueChange={onChange} selectedValue={value}>
+        <Select
+            flex={1}
+            ml="$1"
+            minWidth={150}
+            onValueChange={onChange}
+            selectedValue={value}
+        >
             <SelectTrigger variant="rounded" borderColor="$borderLight400">
                 <SelectInput placeholder="Oldest first" />
                 <SelectIcon mr="$3" as={ChevronDown} />

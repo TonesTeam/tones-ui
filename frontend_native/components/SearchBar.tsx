@@ -29,6 +29,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
     return (
         <Input
             style={{ flex: 8 }}
+            minWidth={200}
             variant="rounded"
             borderColor="$borderLight400"
         >
