@@ -103,7 +103,7 @@ const FormColumn = () => {
                 </View>
 
                 <Button
-                    onPress={() => navigation.navigate('Protocol List')}
+                    onPress={() => navigation.navigate('Protocols')}
                     style={[s.formChild, s.login_btn]}
                 >
                     <ButtonText style={{ color: '#fff' }}>Sign In</ButtonText>

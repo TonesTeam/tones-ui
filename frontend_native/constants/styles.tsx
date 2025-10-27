@@ -42,7 +42,7 @@ export const AppStyles = {
         nav_flex: 1,
         nav_width_closed: '9%' as DimensionValue,
         nav_width_opened: '20%' as DimensionValue,
-        main_width: '91%' as DimensionValue,
+        main_width: '86%' as DimensionValue,
     },
 };
 

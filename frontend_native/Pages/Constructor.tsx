@@ -450,7 +450,7 @@ export default function Constructor({
                                 text={'Protocol'}
                                 unsetVisible={() => {
                                     setSuccessSaving(undefined);
-                                    navigation.navigate('Protocol List');
+                                    navigation.navigate('Protocols');
                                 }}
                             />
                         )}
