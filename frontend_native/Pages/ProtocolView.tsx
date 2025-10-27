@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainContainer } from '../constants/styles';
 import { StyleSheet } from 'react-native';
 import { Box, Heading, Text, VStack, HStack } from '@gluestack-ui/themed';
-import NavBar from '../navigation/CustomNavigator';
+import NavBar from '../navigation/NavBar';
 import {
     Button,
     ButtonText,

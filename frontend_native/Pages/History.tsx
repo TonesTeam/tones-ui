@@ -5,7 +5,7 @@ import {
     MainContainer,
     globalElementStyle,
 } from '../constants/styles';
-import NavBar from '../navigation/CustomNavigator';
+import NavBar from '../navigation/NavBar';
 import { Heading, Box, Text } from '@gluestack-ui/themed';
 
 export default function History(props: any) {

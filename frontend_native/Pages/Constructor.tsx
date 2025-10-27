@@ -16,7 +16,7 @@ import {
     MainContainer,
     globalElementStyle,
 } from '../constants/styles';
-import NavBar from '../navigation/CustomNavigator';
+import NavBar from '../navigation/NavBar';
 import Txt from '../components/Txt';
 import React, {
     ForwardedRef,

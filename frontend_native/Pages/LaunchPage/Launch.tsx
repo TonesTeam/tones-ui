@@ -12,7 +12,7 @@ import {
     MainContainer,
     globalElementStyle,
 } from '../../constants/styles';
-import NavBar from '../../navigation/CustomNavigator';
+import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Txt from '../../components/Txt';
 import Step1 from '../../assets/pics/step1.svg';

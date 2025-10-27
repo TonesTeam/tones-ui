@@ -1,5 +1,5 @@
 import Login from '../Pages/Login';
-import ProtocolList from '../Pages/ProtocolList';
+import ProtocolList from '../Pages/ProtocolList/ProtocolList';
 import Constructor from '../Pages/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Settings from '../Pages/Settings';

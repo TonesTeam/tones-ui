@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import NavBar from '../navigation/CustomNavigator';
+import NavBar from '../navigation/NavBar';
 import { Box, Heading, Text, VStack, HStack } from '@gluestack-ui/themed';
 import {
     AppStyles,
