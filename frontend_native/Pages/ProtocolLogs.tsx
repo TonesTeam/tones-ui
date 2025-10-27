@@ -13,7 +13,7 @@ import {
 } from '@gluestack-ui/themed';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { MainContainer } from '../constants/styles';
-import NavBar from '../navigation/CustomNavigator';
+import NavBar from '../navigation/NavBar';
 import { AppStyles } from '../constants/styles';
 import { getRequest } from '../common/util';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
