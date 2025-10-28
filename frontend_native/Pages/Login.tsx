@@ -2,6 +2,7 @@ import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
+    Modal,
     Button,
     ButtonText,
     Text,
@@ -23,10 +24,21 @@ import {
     EyeOffIcon,
     InputSlot,
     InputIcon,
+    Pressable,
+    ModalFooter,
+    ModalBody,
+    ModalHeader,
+    ModalCloseButton,
+    ModalContent,
+    ModalBackdrop,
+    ButtonIcon,
 } from '@gluestack-ui/themed';
+import { Save } from 'lucide-react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { setBackdoorAddress, getBackdoorAddress } from '../common/util';
+import { HStack } from '@gluestack-ui/themed';
 
 export default function Login({
     route,
@@ -134,6 +146,26 @@ const RememberMeCheckbox = () => {
 };
 
 const PictureColumn = () => {
+    const [imageClicks, setImageClicks] = useState(0);
+    const [backdoorModal, setBackdoorModal] = useState(false);
+
+    useEffect(() => {
+        if (imageClicks === 5) {
+            setBackdoorModal(true);
+        }
+    }, [imageClicks]);
+
+    const handleCancel = () => {
+        setImageClicks(0);
+        setBackdoorModal(false);
+    };
+
+    const handleSet = (address: string) => {
+        setBackdoorAddress(address);
+        setBackdoorModal(false);
+        setImageClicks(0);
+    };
+
     return (
         <View style={s.image_container}>
             <Image
@@ -142,10 +174,114 @@ const PictureColumn = () => {
                 style={s.image}
                 size="full"
             />
-            <Text style={s.credits_text}>
-                Photo by Sabīne Jaunzeme on Unsplash
-            </Text>
+            <Pressable
+                onPress={() => setImageClicks(imageClicks + 1)}
+                style={s.credits_text}
+            >
+                <Text color="white">Photo by Sabīne Jaunzeme on Unsplash</Text>
+            </Pressable>
+            <BackdoorModal
+                isOpen={backdoorModal}
+                onClose={() => setBackdoorModal(false)}
+                onCancel={handleCancel}
+                onSet={handleSet}
+                initialAddress={getBackdoorAddress() ?? ''}
+            />
         </View>
+    );
+};
+
+type BackdoorModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onCancel?: () => void;
+    onSet?: (address: string) => void;
+    initialAddress?: string;
+};
+
+const BackdoorModal: React.FC<BackdoorModalProps> = ({
+    isOpen,
+    onClose,
+    onCancel,
+    onSet,
+    initialAddress = '',
+}) => {
+    const [addressInput, setAddressInput] = useState<string>(initialAddress);
+
+    useEffect(() => {
+        if (isOpen) setAddressInput(initialAddress);
+    }, [isOpen, initialAddress]);
+
+    const handleCancel = () => {
+        setAddressInput('');
+        if (onCancel) onCancel();
+        onClose();
+    };
+
+    const handleSet = () => {
+        const trimmed = addressInput.trim();
+        console.log(`Setting backdoor address to: ${trimmed}`);
+        if (onSet) onSet(trimmed);
+        setAddressInput('');
+        onClose();
+    };
+
+    return (
+        <Modal isOpen={isOpen} onClose={handleCancel} avoidKeyboard>
+            <ModalBackdrop />
+            <ModalContent p="$3" bg="black">
+                <ModalHeader>
+                    <Heading size="xl" color="lightgreen">
+                        Enter backend address 😈
+                    </Heading>
+                </ModalHeader>
+
+                <ModalBody>
+                    <Text mb="$4" color="lightgreen">
+                        Enter the backend host (without protocol or port).
+                        Example: 192.168.1.10
+                    </Text>
+
+                    <HStack alignItems="center">
+                        <Text color="lightgreen" flex={0.7}>
+                            http://
+                        </Text>
+                        <Input
+                            variant="outline"
+                            borderColor="lightgreen"
+                            color="lightgreen"
+                            flex={4}
+                        >
+                            <InputField
+                                value={addressInput}
+                                onChangeText={setAddressInput}
+                                color="lightgreen"
+                                placeholder="e.g. 192.168.1.10 or some domain"
+                            />
+                        </Input>
+                        <Text color="lightgreen" ml="$2" flex={1}>
+                            :8080
+                        </Text>
+                    </HStack>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button
+                        variant="outline"
+                        borderColor="lightgreen"
+                        onPress={handleCancel}
+                        mr="$4"
+                    >
+                        <ButtonText color="lightgreen">Cancel</ButtonText>
+                    </Button>
+
+                    <Button bg="lightgreen" onPress={handleSet}>
+                        <ButtonIcon as={Save} color="black" mr="$2" />
+                        <ButtonText color="black">Set</ButtonText>
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 };
 
