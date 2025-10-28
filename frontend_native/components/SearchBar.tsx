@@ -21,6 +21,7 @@ const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
             borderColor="transparent"
             bg="#f2f3f8"
             height={48}
+            minWidth={350}
         >
             <InputSlot pl="$8">
                 <InputIcon size="xl" as={SearchIcon} />

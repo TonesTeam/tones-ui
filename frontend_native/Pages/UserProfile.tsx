@@ -12,7 +12,7 @@ import GeneratedAvatar from '../components/GeneratedAvatar';
 
 const Profile = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const user = {
-        username: 'Jacob Goldberg',
+        username: 'Jefferey',
         role: 'Administrator',
         created_at: '2025-01-01',
     };
@@ -21,7 +21,7 @@ const Profile = ({ route, navigation }: NativeStackScreenProps<any>) => {
         <MainContainer>
             <NavBar />
             <Box style={styles.wrapper}>
-                <Heading size="2xl">User Profile</Heading>
+                <Heading size="4xl">User Profile</Heading>
                 <VStack space="lg" alignItems="center">
                     <GeneratedAvatar name={user.username} size={150} />
 
@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
         padding: 24,
-        backgroundColor: '#fff',
     },
     infoBox: {
         width: '100%',

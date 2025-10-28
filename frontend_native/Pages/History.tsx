@@ -22,7 +22,7 @@ export default function History(props: any) {
                 >
                     <Text>
                         This page will be developed after protocol launch and
-                        execution functionality is ready.
+                        execution functionality is fully implemented.
                     </Text>
                 </Box>
             </Box>

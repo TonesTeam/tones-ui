@@ -93,14 +93,14 @@ const ListItem = ({
                         placement="top"
                         padding="$3"
                         rounded="$xl"
-                        offset={5}
+                        offset={0}
                         isOpen={menuOpen}
                         onClose={() => setMenuOpen(false)}
                         trigger={({ ...triggerProps }) => {
                             return (
                                 <Pressable
                                     {...triggerProps}
-                                    alignItems="flex-end"
+                                    alignItems="flex-start"
                                     justifyContent="center"
                                     onPress={() => {
                                         requestAnimationFrame(() =>
@@ -153,11 +153,11 @@ const ListItem = ({
                         </MenuItem>
                         <MenuSeparator width="85%" alignSelf="center" />
                         <MenuItem
-                            onPress={() =>
+                            onPress={() => {
                                 navigation.navigate('ProtocolView', {
                                     protocol_ID: protocol.id,
-                                })
-                            }
+                                });
+                            }}
                             key="Info"
                             textValue="Info"
                             rounded="$md"
@@ -167,15 +167,16 @@ const ListItem = ({
                             </MenuItemLabel>
                         </MenuItem>
                         <MenuSeparator width="85%" alignSelf="center" />
-                        <MenuItem key="Delete" textValue="Delete" rounded="$md">
-                            <MenuItemLabel
-                                onPress={() => {
-                                    setMenuOpen(false); // Otherwise the menu stays open
-                                    setDeleteModal(true);
-                                }}
-                                size="lg"
-                                color="$error500"
-                            >
+                        <MenuItem
+                            onPress={() => {
+                                setMenuOpen(false); // Otherwise the menu stays open
+                                setDeleteModal(true);
+                            }}
+                            key="Delete"
+                            textValue="Delete"
+                            rounded="$md"
+                        >
+                            <MenuItemLabel size="lg" color="$error500">
                                 Delete
                             </MenuItemLabel>
                         </MenuItem>
@@ -206,7 +207,11 @@ const ListItem = ({
                         >
                             <ButtonIcon as={Play} mr="$2" color="white" />
                         </Box>
-                        <ButtonText color="$white" fontWeight={500}>
+                        <ButtonText
+                            color="white"
+                            minHeight={21}
+                            fontWeight={400}
+                        >
                             Launch
                         </ButtonText>
                     </Button>

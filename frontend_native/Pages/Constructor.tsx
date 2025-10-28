@@ -468,7 +468,6 @@ const s = StyleSheet.create({
         paddingHorizontal: '2%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: AppStyles.color.elem_back,
     },
 
     save_proto_btn: {
@@ -535,7 +534,10 @@ const s = StyleSheet.create({
 
     workspace: {
         flex: 7,
-        backgroundColor: AppStyles.color.elem_back,
+        borderWidth: 1,
+        margin: 10,
+        borderRadius: 8,
+        borderColor: '#00000030',
     },
 });
 

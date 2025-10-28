@@ -19,13 +19,19 @@ interface SortingSelectorProps {
 
 const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
-        <Select flex={3} ml="$1" onValueChange={onChange} selectedValue={value}>
+        <Select
+            flex={3}
+            minWidth={145}
+            ml="$1"
+            onValueChange={onChange}
+            selectedValue={value}
+        >
             <SelectTrigger
                 height={48}
                 variant="rounded"
                 borderColor="$borderLight400"
             >
-                <SelectIcon pl="$5" as={ArrowDownWideNarrow} />
+                <SelectIcon ml="$3" as={ArrowDownWideNarrow} />
                 <SelectInput placeholder="Oldest first" />
             </SelectTrigger>
             <SelectPortal>
