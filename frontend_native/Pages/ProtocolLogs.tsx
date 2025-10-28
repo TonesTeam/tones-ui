@@ -38,6 +38,13 @@ export default function ProtocolLogs({
     const [protocolName, setProtocolName] = useState('No active protocol');
     const [isRunning, setIsRunning] = useState(false);
     const [hasError, setHasError] = useState(false);
+    const [estimatedSteps, setEstimatedSteps] = useState<
+        { step: number; estimatedTimeSec: number }[]
+    >([]);
+    const [totalEstimatedTime, setTotalEstimatedTime] = useState<number>(0);
+    const [protocolStartTime, setProtocolStartTime] = useState<number | null>(
+        null,
+    );
 
     const protocol_ID = route.params
         ? (route.params as { protocol_ID: number }).protocol_ID
@@ -50,12 +57,13 @@ export default function ProtocolLogs({
     const protocolProgress = currentProtocol?.progress || 0;
 
     // Update progress in Redux
+    // NOTE: ignore actual computed value and always set progress to 0%
     const updateProgress = (newProgress: number) => {
         if (protocol_ID) {
             dispatch(
                 setProgress({
                     protocolId: protocol_ID,
-                    progress: newProgress,
+                    progress: newProgress === 100 ? 100 : 0, // Только 0% или 100%
                 }),
             );
         }
@@ -77,13 +85,12 @@ export default function ProtocolLogs({
         }
     };
 
-    // Monitor robot status - real robot data only
+    // Monitor robot status - real robot data onl
     const startStatusMonitoring = () => {
         addLogEntry('info', '[ROBOT] Starting robot status monitoring...');
-        updateProgress(5);
+        updateProgress(0);
 
         const monitoringInterval = setInterval(() => {
-            // Cheaking robot status every 2 seconds
             getRequest('/slot-status')
                 .then((response) => {
                     if (
@@ -92,8 +99,8 @@ export default function ProtocolLogs({
                         response.status === 200
                     ) {
                         const data = (response as any).data;
-                        let robotControlledFlow = false;
 
+                        // === 1. КРИТИЧЕСКИЕ ОШИБКИ ===
                         if (data.error) {
                             addLogEntry(
                                 'error',
@@ -109,15 +116,14 @@ export default function ProtocolLogs({
                             return;
                         }
 
+                        // === 2. СТАТУС ПРОТОКОЛА ===
                         if (data.protocolStatus) {
-                            robotControlledFlow = true;
-
                             if (data.protocolStatus === 'completed') {
                                 addLogEntry(
                                     'info',
                                     '[ROBOT] Protocol completed successfully!',
                                 );
-                                updateProgress(100);
+                                updateProgress(0);
                                 setIsRunning(false);
                                 clearInterval(monitoringInterval);
                                 return;
@@ -143,20 +149,69 @@ export default function ProtocolLogs({
                             }
                         }
 
-                        if (data.progress !== undefined && data.progress >= 0) {
-                            const robotProgress = Math.min(data.progress, 100);
-                            updateProgress(robotProgress);
-                            addLogEntry(
-                                'info',
-                                `[ROBOT] Progress: ${robotProgress}%`,
-                            );
+                        // === 3. ОСНОВНОЙ ПРОГРЕСС: ПО ШАГУ И ВРЕМЕНИ ===
+                        if (
+                            data.currentStep !== undefined &&
+                            protocolStartTime &&
+                            totalEstimatedTime > 0 &&
+                            estimatedSteps.length > 0
+                        ) {
+                            const currentStep = data.currentStep;
+                            const elapsedSec =
+                                (Date.now() - protocolStartTime) / 1000;
+
+                            let timeBeforeCurrent = 0;
+                            let stepFound = false;
+
+                            for (const s of estimatedSteps) {
+                                if (s.step < currentStep) {
+                                    timeBeforeCurrent += s.estimatedTimeSec;
+                                } else if (s.step === currentStep) {
+                                    stepFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (stepFound) {
+                                const currentStepInfo = estimatedSteps.find(
+                                    (s) => s.step === currentStep,
+                                );
+                                const stepElapsed = Math.min(
+                                    elapsedSec - timeBeforeCurrent,
+                                    currentStepInfo?.estimatedTimeSec || 0,
+                                );
+                                const totalElapsed =
+                                    timeBeforeCurrent + stepElapsed;
+                                const progress = Math.min(
+                                    Math.round(
+                                        (totalElapsed / totalEstimatedTime) *
+                                            100,
+                                    ),
+                                    99, // 100% только при completed
+                                );
+                                addLogEntry(
+                                    'info',
+                                    `[CALC] Step ${currentStep}: ${progress}%`,
+                                );
+
+                                // === ETA (оставшееся время) ===
+                                const remainingSec = Math.max(
+                                    0,
+                                    totalEstimatedTime - totalElapsed,
+                                );
+                                const etaMin = Math.floor(remainingSec / 60);
+                                const etaSec = Math.round(remainingSec % 60);
+                                addLogEntry(
+                                    'info',
+                                    `[ETA] ~${etaMin}m ${etaSec}s left`,
+                                );
+                            }
                         }
 
                         if (data.currentStep !== undefined) {
-                            const robotStep = data.currentStep;
                             addLogEntry(
                                 'info',
-                                `[ROBOT] Current step: ${robotStep}`,
+                                `[ROBOT] Current step: ${data.currentStep}`,
                             );
                         }
 
@@ -183,7 +238,6 @@ export default function ProtocolLogs({
                 });
         }, 2000);
 
-        // Stop monitoring after 10 minutes if still running
         setTimeout(() => {
             clearInterval(monitoringInterval);
             if (isRunning) {
@@ -289,6 +343,27 @@ export default function ProtocolLogs({
 
             addLogEntry('info', 'Sending execution command to robot...');
 
+            getRequest(`/protocol/${protocol_ID}/deployment`);
+
+            getRequest(`/protocol/${protocol_ID}/estimated-step-time`)
+                .then((response) => {
+                    if (response?.status === 200) {
+                        const { steps, totalEstimatedTimeSec } = response.data;
+                        setEstimatedSteps(steps);
+                        setTotalEstimatedTime(totalEstimatedTimeSec);
+                        addLogEntry(
+                            'info',
+                            `Estimated total: ${totalEstimatedTimeSec}s`,
+                        );
+                    }
+                })
+                .catch((err) => {
+                    addLogEntry(
+                        'warning',
+                        `No step time estimate: ${err.message}`,
+                    );
+                });
+
             getRequest(`/protocol/${protocol_ID}/execute`)
                 .then((response) => {
                     if (
@@ -316,8 +391,8 @@ export default function ProtocolLogs({
                             'info',
                             'Robot is processing the protocol...',
                         );
-                        updateProgress(10);
-
+                        updateProgress(0);
+                        setProtocolStartTime(Date.now());
                         startStatusMonitoring();
                     } else {
                         addLogEntry(
@@ -331,7 +406,7 @@ export default function ProtocolLogs({
                             );
                         }
                         setIsRunning(false);
-                        updateProgress(-1);
+                        updateProgress(0);
                     }
                 })
                 .catch((error) => {
@@ -532,10 +607,3 @@ export default function ProtocolLogs({
         </MainContainer>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-});
