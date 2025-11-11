@@ -439,6 +439,11 @@ export default function WorkBlock(props: WorkBlockProps) {
     const [timeUnit, setTimeUnit] = useState('Seconds');
     const [saveBlockError, setSaveBlockError] = useState('');
 
+    // Reset params when block changes (new block or editing different block)
+    useEffect(() => {
+        setParams(props.block.params || {});
+    }, [props.block.id, props.block.type]);
+
     // We don't want to be constantly showing the error message in the user's face
     useEffect(() => {
         setSaveBlockError('');

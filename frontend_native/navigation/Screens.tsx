@@ -62,4 +62,8 @@ export const Pages: Page[] = [
         component: ProtocolView,
         isNavigatableFromNavBar: false,
     },
+    {
+        name: 'ProtocolLogs',
+        component: ProtocolLogs,
+    },
 ];
