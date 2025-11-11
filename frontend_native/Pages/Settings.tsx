@@ -627,18 +627,12 @@ export default function Settings(props: any) {
     return (
         <MainContainer>
             <NavBar />
-            <View style={[globalElementStyle.page_container]}>
-                <Box
-                    width="100%"
-                    flex={1}
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    padding="$6"
-                >
-                    <Heading size="2xl">Reagent Library</Heading>
-                </Box>
+            <Box style={s.wrapper}>
+                <Heading size="4xl" mb="$8">
+                    Library
+                </Heading>
                 <Library />
-            </View>
+            </Box>
         </MainContainer>
     );
 }
@@ -647,7 +641,6 @@ const s = StyleSheet.create({
     wrapper: {
         flex: 1,
         padding: 24,
-        backgroundColor: '#fff',
     },
     tab_bar: {
         flex: 1,

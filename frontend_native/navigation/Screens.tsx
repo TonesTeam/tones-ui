@@ -9,15 +9,6 @@ import { SvgProps } from 'react-native-svg';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
-import ProtocolLogs from '../Pages/ProtocolLogs';
-import {
-    List,
-    FilePlus,
-    Clock,
-    Settings as SettingsIcon,
-    LogOut,
-    LucideIcon,
-} from 'lucide-react-native';
 
 export type Page = {
     name: string;
@@ -25,48 +16,51 @@ export type Page = {
         route,
         navigation,
     }: NativeStackScreenProps<any>) => React.JSX.Element;
-    icon?: LucideIcon;
+    isNavigatableFromNavBar: boolean;
     isLogout?: boolean;
 };
 
 export const Pages: Page[] = [
     {
-        name: 'Protocol List',
+        name: 'Protocols',
         component: ProtocolList,
-        icon: List,
+        isNavigatableFromNavBar: true,
     },
     {
         name: 'Create protocol',
         component: Constructor,
-        icon: FilePlus,
+        isNavigatableFromNavBar: false,
+    },
+    {
+        name: 'Library',
+        component: Settings,
+        isNavigatableFromNavBar: true,
     },
     {
         name: 'History',
         component: History,
-        icon: Clock,
-    },
-    {
-        name: 'Settings',
-        component: Settings,
-        icon: SettingsIcon,
+        isNavigatableFromNavBar: true,
     },
     {
         name: 'Logout',
         component: Login,
-        icon: LogOut,
         isLogout: true,
+        isNavigatableFromNavBar: false,
     },
     {
         name: 'Launch',
         component: Launch,
+        isNavigatableFromNavBar: false,
     },
     {
         name: 'Profile',
         component: Profile,
+        isNavigatableFromNavBar: false,
     },
     {
         name: 'ProtocolView',
         component: ProtocolView,
+        isNavigatableFromNavBar: false,
     },
     {
         name: 'ProtocolLogs',

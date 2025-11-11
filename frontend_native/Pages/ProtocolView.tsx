@@ -96,7 +96,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 }
                             >
                                 <Icon as={File} mr="$2" />
-                                <ButtonText>Template</ButtonText>
+                                <ButtonText>Duplicate</ButtonText>
                             </Button>
                             <Button
                                 size="sm"
@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
         padding: 24,
-        backgroundColor: '#fff',
     },
 });
 

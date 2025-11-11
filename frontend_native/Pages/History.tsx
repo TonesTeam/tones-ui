@@ -12,8 +12,7 @@ export default function History(props: any) {
     return (
         <MainContainer>
             <NavBar />
-            <Box style={s.wrapper}>
-                <Heading size="2xl">History</Heading>
+            <Box style={globalElementStyle.page_container}>
                 <Box
                     flex={1}
                     mt="$4"
@@ -23,7 +22,7 @@ export default function History(props: any) {
                 >
                     <Text>
                         This page will be developed after protocol launch and
-                        execution functionality is ready.
+                        execution functionality is fully implemented.
                     </Text>
                 </Box>
             </Box>

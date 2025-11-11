@@ -25,29 +25,21 @@ dependencies are installed by running:
 npm install
 ```
 
-## Backend Setup
+## How to run the backend
 
-1. **Navigate to the Backend Module**\
-   Open a terminal and change directory to the backend module:
-   ```bash
-   cd backend
-   ```
-
-2. **Generate Prisma Client**\
-   Generate the Prisma ORM database:
-   ```bash
-   npx prisma generate
-   ```
-
-3. **Start the Backend Server**\
-   Navigate to the root of the project and run the following
-   command to start the backend server in development mode:
-   ```bash
-   # Make sure you are in the root direcotory of the project
-   npm run start-dev:be
-   ```
+The backend has a docker setup, just make sure you have docker and docker-compose installed,
+and then run the following command from the root of the project:
+```bash
+docker-compose up -d --build
+```
 
 This will start a REST API on port 8080 connected to the database.
+
+When you wish to stop the backend, you can run:
+```bash
+docker-compose down
+```
+
 
 ## Frontend Setup (React Native with Expo)
 
