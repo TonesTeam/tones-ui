@@ -151,7 +151,7 @@ export default function NavBar() {
                         );
                     },
                 )}
-            </View>
+            </VStack>
 
             <Divider width="60%" />
 
@@ -161,23 +161,23 @@ export default function NavBar() {
             </Text>
 
             <Box flex={3}>
-                 <CircularProgress
-                        ref={progressRef}
-                        value={currentProgress}
-                        valueSuffix={'%'}
-                        allowFontScaling={false}
-                        radius={40}
-                        duration={0}
-                        progressValueColor={AppStyles.color.text_primary}
-                        activeStrokeColor={
-                            hasActiveProtocol
-                                ? AppStyles.color.secondary
-                                : AppStyles.color.background
-                        }
-                        inActiveStrokeColor={AppStyles.color.background}
-                        inActiveStrokeOpacity={0.5}
-                        inActiveStrokeWidth={10}
-                        activeStrokeWidth={6}
+                <CircularProgress
+                    ref={progressRef}
+                    value={currentProgress}
+                    valueSuffix={'%'}
+                    allowFontScaling={false}
+                    radius={40}
+                    duration={0}
+                    progressValueColor={AppStyles.color.text_primary}
+                    activeStrokeColor={
+                        hasActiveProtocol
+                            ? AppStyles.color.secondary
+                            : AppStyles.color.background
+                    }
+                    inActiveStrokeColor={AppStyles.color.background}
+                    inActiveStrokeOpacity={0.5}
+                    inActiveStrokeWidth={10}
+                    activeStrokeWidth={6}
                 />
             </Box>
 

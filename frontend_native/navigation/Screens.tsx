@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Settings from '../Pages/Settings';
 import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
-import { SvgProps } from 'react-native-svg';
+import ProtocolLogs from '../Pages/ProtocolLogs';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
@@ -65,5 +65,6 @@ export const Pages: Page[] = [
     {
         name: 'ProtocolLogs',
         component: ProtocolLogs,
+        isNavigatableFromNavBar: false,
     },
 ];
