@@ -69,6 +69,7 @@ async function findBE(): Promise<string> {
 export const setBackdoorAddress = (address: string) => {
     console.log(`Setting backdoor address to ${address}`);
     backdoorAddress = address;
+    domain = null; // Reset cached domain to force findBE() to run again
 };
 
 export const getBackdoorAddress = () => {

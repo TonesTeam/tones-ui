@@ -21,6 +21,10 @@ export default function App() {
         'Roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
         'Roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
         Newsreader: require('./assets/fonts/Newsreader.ttf'),
+        Orbitron: require('./assets/fonts/Orbitron-VariableFont_wght.ttf'),
+        'Orbitron-Medium': require('./assets/fonts/orbitron-medium.ttf'),
+        Manrope: require('./assets/fonts/Manrope-VariableFont_wght.ttf'),
+        'Manrope-Medium': require('./assets/fonts/manrope.medium.otf'),
     });
 
     const onLayoutRootView = useCallback(async () => {

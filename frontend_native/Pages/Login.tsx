@@ -1,195 +1,184 @@
-import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
-import { AppStyles } from '../constants/styles';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import GeneratedAvatar from '../components/GeneratedAvatar';
 import {
     Modal,
     Button,
     ButtonText,
     Text,
-    FormControl,
-    FormControlLabel,
-    FormControlLabelText,
     Input,
     InputField,
-    Checkbox,
-    CheckboxIndicator,
-    CheckboxLabel,
-    CheckboxIcon,
-    CheckIcon,
-    Link,
-    LinkText,
     Heading,
     Image,
-    EyeIcon,
-    EyeOffIcon,
-    InputSlot,
-    InputIcon,
     Pressable,
     ModalFooter,
     ModalBody,
     ModalHeader,
-    ModalCloseButton,
     ModalContent,
     ModalBackdrop,
     ButtonIcon,
+    HStack,
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { setBackdoorAddress, getBackdoorAddress } from '../common/util';
-import { HStack } from '@gluestack-ui/themed';
+
+type User = {
+    id: number;
+    username: string;
+    userfname: string;
+    role: string;
+    created_at: string;
+    isActive?: boolean;
+};
+
+const MOCK_USERS: User[] = [
+    {
+        id: 1,
+        username: 'Jefferey',
+        userfname: 'Coolguyevich',
+        role: 'Administrator',
+        created_at: '2025-01-01',
+        isActive: false,
+    },
+];
 
 export default function Login({
     route,
     navigation,
 }: NativeStackScreenProps<any>) {
-    return (
-        <View style={s.container}>
-            <FormColumn />
-            <PictureColumn />
-        </View>
-    );
-}
-
-const FormColumn = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [showPassword, setShowPassword] = useState(false);
-
-    const handleState = () => {
-        setShowPassword((showState) => {
-            return !showState;
-        });
-    };
-
-    return (
-        <View style={s.form_container}>
-            <Text bold={false} size="5xl" style={s.welcome_text}>
-                Welcome Back
-            </Text>
-
-            <View style={s.form}>
-                <FormControl size="lg" style={s.formChild}>
-                    <FormControlLabel>
-                        <FormControlLabelText>Username</FormControlLabelText>
-                    </FormControlLabel>
-                    <Input>
-                        <InputField
-                            type="text"
-                            placeholder="Enter your username"
-                        />
-                    </Input>
-                </FormControl>
-
-                <FormControl size="lg" style={s.formChild}>
-                    <FormControlLabel>
-                        <FormControlLabelText>Password</FormControlLabelText>
-                    </FormControlLabel>
-                    <Input>
-                        <InputField
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Enter your password"
-                        />
-                        <InputSlot
-                            style={{ paddingRight: 5 }}
-                            onPress={handleState}
-                        >
-                            <InputIcon
-                                as={showPassword ? EyeIcon : EyeOffIcon}
-                            />
-                        </InputSlot>
-                    </Input>
-                </FormControl>
-
-                <View
-                    style={[
-                        s.space_between_container,
-                        s.formChild,
-                        { marginTop: 0 },
-                    ]}
-                >
-                    <RememberMeCheckbox />
-                    <Link>
-                        <LinkText>Forgot Password</LinkText>
-                    </Link>
-                </View>
-
-                <Button
-                    onPress={() => navigation.navigate('Protocols')}
-                    style={[s.formChild, s.login_btn]}
-                >
-                    <ButtonText style={{ color: '#fff' }}>Sign In</ButtonText>
-                </Button>
-
-                <Text
-                    style={{
-                        color: AppStyles.color.text_faded,
-                        alignSelf: 'center',
-                    }}
-                >
-                    © 2021-2025 Tones. All rights reserved.
-                </Text>
-            </View>
-        </View>
-    );
-};
-
-const RememberMeCheckbox = () => {
-    return (
-        <Checkbox size="md" isInvalid={false} isDisabled={false}>
-            <CheckboxIndicator>
-                <CheckboxIcon as={CheckIcon} style={{ color: '#fff' }} />
-            </CheckboxIndicator>
-            <CheckboxLabel style={{ marginLeft: 8 }}>Remember me</CheckboxLabel>
-        </Checkbox>
-    );
-};
-
-const PictureColumn = () => {
-    const [imageClicks, setImageClicks] = useState(0);
+    const [users, setUsers] = useState<User[]>(MOCK_USERS);
     const [backdoorModal, setBackdoorModal] = useState(false);
+    const [loginClicks, setLoginClicks] = useState(0);
+
+    //Через API ПОЛУЧИТЬ инфу о пользователе
+    /* UseEffect(() => {
+    },[]);
+    */
 
     useEffect(() => {
-        if (imageClicks === 5) {
+        if (loginClicks === 5) {
             setBackdoorModal(true);
         }
-    }, [imageClicks]);
+    }, [loginClicks]);
 
-    const handleCancel = () => {
-        setImageClicks(0);
-        setBackdoorModal(false);
-    };
-
-    const handleSet = (address: string) => {
+    const handleSetBackdoor = (address: string) => {
         setBackdoorAddress(address);
         setBackdoorModal(false);
-        setImageClicks(0);
+        setLoginClicks(0);
+    };
+
+    const handleCancelBackdoor = () => {
+        setLoginClicks(0);
+        setBackdoorModal(false);
     };
 
     return (
-        <View style={s.image_container}>
+        <View style={s.container}>
+            <Header onLoginClick={() => setLoginClicks(loginClicks + 1)} />
+            <UserGrid users={users} navigation={navigation} />
+
+            {/* Логотип внизу страницы */}
             <Image
-                source={require('../assets/pics/login-art.jpg')}
-                alt="Riga old town"
-                style={s.image}
-                size="full"
+                source={require('../assets/pics/tones-logo.png')}
+                style={s.bottomLogo}
+                resizeMode="contain"
             />
-            <Pressable
-                onPress={() => setImageClicks(imageClicks + 1)}
-                style={s.credits_text}
-            >
-                <Text color="white">Photo by Sabīne Jaunzeme on Unsplash</Text>
-            </Pressable>
+
             <BackdoorModal
                 isOpen={backdoorModal}
-                onClose={() => setBackdoorModal(false)}
-                onCancel={handleCancel}
-                onSet={handleSet}
+                onClose={handleCancelBackdoor}
+                onSet={handleSetBackdoor}
                 initialAddress={getBackdoorAddress() ?? ''}
             />
         </View>
     );
+}
+
+//Заголовок
+type HeaderProps = {
+    onLoginClick: () => void;
 };
+
+const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
+    return (
+        <View style={s.header}>
+            {/* Нажми 5 раз на "Login" чтобы открыть настройки IP */}
+            <Pressable onPress={onLoginClick}>
+                <Heading size="3xl" style={s.loginHeading}>
+                    Login
+                </Heading>
+            </Pressable>
+        </View>
+    );
+};
+
+//Сетка пользователей
+type UserGridProps = {
+    users: User[];
+    navigation: any;
+};
+
+const UserGrid: React.FC<UserGridProps> = ({ users, navigation }) => {
+    console.log('UserGrid rendering with users:', users);
+    return (
+        <View style={s.gridContainer}>
+            {/* сетка из карточек пользователей (3 колонки) */}
+            <FlatList
+                data={users}
+                numColumns={3}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => {
+                    console.log('Rendering user:', item.username);
+                    return (
+                        <UserCard
+                            user={item}
+                            onPress={() => {
+                                console.log(`Logging in as ${item.username}`);
+                                navigation.navigate('Protocols');
+                            }}
+                        />
+                    );
+                }}
+                columnWrapperStyle={s.row}
+                contentContainerStyle={s.gridContent}
+            />
+        </View>
+    );
+};
+//Карточка пользователя
+type UserCardProps = {
+    user: User;
+    onPress: () => void;
+};
+
+const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
+    return (
+        <Pressable onPress={onPress} style={s.card}>
+            {/* Avatar */}
+            <View style={s.cardHeader}>
+                <GeneratedAvatar name={user.username} size={45} />
+            </View>
+
+            {/* User info */}
+            <View style={s.cardContent}>
+                <Text style={s.userNameText}>{user.username}</Text>
+                <Text style={s.userNameText}>{user.userfname}</Text>
+                <Text style={s.userRole}>{user.role}</Text>
+
+                {/* Active protocol indicator */}
+                {user.isActive && (
+                    <View style={s.activeProtocol}>
+                        <View style={s.activeDot} />
+                        <Text style={s.activeText}>Active protocol</Text>
+                    </View>
+                )}
+            </View>
+        </Pressable>
+    );
+};
+
+//(BackdoorModal)
 
 type BackdoorModalProps = {
     isOpen: boolean;
@@ -287,65 +276,97 @@ const BackdoorModal: React.FC<BackdoorModalProps> = ({
 
 const s = StyleSheet.create({
     container: {
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        height: '100%',
-    },
-
-    form_container: {
         flex: 1,
-        alignItems: 'center',
-        height: '100%',
-    },
-
-    welcome_text: {
-        fontFamily: 'Newsreader',
-        fontSize: 64,
-        color: '#000',
-        marginTop: '12%',
-    },
-
-    form: {
-        display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 50,
-        backgroundColor: '#fff',
-        width: '90%',
-        padding: AppStyles.layout.box_padding,
-        borderRadius: AppStyles.layout.border_radius,
+        backgroundColor: '#E5E7F0',
     },
 
-    formChild: {
-        width: '100%',
-        margin: '2%',
-    },
-
-    space_between_container: {
-        display: 'flex',
+    header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 30,
+    },
+    loginHeading: {
+        fontFamily: 'Orbitron-Medium',
+        fontWeight: '400',
     },
 
-    image_container: {
-        padding: 10,
+    bottomLogo: {
+        width: '100%',
+        height: 10.69,
+        marginBottom: 50,
+    },
+
+    gridContainer: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    row: {
+        justifyContent: 'space-around',
+        marginBottom: 20,
+        gap: 10,
+    },
+
+    gridContent: {
+        paddingVertical: 20,
+    },
+
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 20,
+        width: 200,
+        height: 204,
+        margin: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+
+    cardHeader: {
+        marginBottom: 12,
+    },
+
+    cardContent: {
+        alignItems: 'flex-start',
         flex: 1,
     },
 
-    image: {
-        borderRadius: 20,
+    activeProtocol: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 8,
     },
 
-    credits_text: {
-        position: 'absolute',
-        color: '#fff',
-        right: '5%',
-        bottom: '5%',
+    activeDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#00FF00',
+        marginRight: 6,
     },
 
-    login_btn: {
-        backgroundColor: '#333333',
+    activeText: {
+        fontSize: 12,
+        color: '#666',
+    },
+
+    userNameText: {
+        fontFamily: 'Manrope-Medium',
+        fontSize: 16,
+        color: '#333',
+        marginBottom: 4,
+    },
+
+    userRole: {
+        fontFamily: 'Manrope',
+        fontSize: 14,
+        color: '#999',
     },
 });
