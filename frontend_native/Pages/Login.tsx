@@ -21,40 +21,47 @@ import {
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { setBackdoorAddress, getBackdoorAddress } from '../common/util';
+import {
+    setBackdoorAddress,
+    getBackdoorAddress,
+    getRequest,
+} from '../common/util';
 
 type User = {
     id: number;
     username: string;
-    userfname: string;
     role: string;
-    created_at: string;
-    isActive?: boolean;
-};
+    created?: string;
+    updated?: string;
 
-const MOCK_USERS: User[] = [
-    {
-        id: 1,
-        username: 'Jefferey',
-        userfname: 'Coolguyevich',
-        role: 'Administrator',
-        created_at: '2025-01-01',
-        isActive: false,
-    },
-];
+    //userfname: string;
+    //isActive?: boolean;
+};
 
 export default function Login({
     route,
     navigation,
 }: NativeStackScreenProps<any>) {
-    const [users, setUsers] = useState<User[]>(MOCK_USERS);
+    const [users, setUsers] = useState<User[]>([]);
     const [backdoorModal, setBackdoorModal] = useState(false);
     const [loginClicks, setLoginClicks] = useState(0);
 
-    //Через API ПОЛУЧИТЬ инфу о пользователе
-    /* UseEffect(() => {
-    },[]);
-    */
+    useEffect(() => {
+        console.log('Fetching users from backend...');
+        getRequest<User[]>('/users')
+            .then((response) => {
+                console.log('Response received:', response);
+                if (response.data) {
+                    console.log('Users data:', response.data);
+                    setUsers(response.data);
+                } else {
+                    console.log('No data in response');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
     useEffect(() => {
         if (loginClicks === 5) {
@@ -163,16 +170,18 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
             {/* User info */}
             <View style={s.cardContent}>
                 <Text style={s.userNameText}>{user.username}</Text>
-                <Text style={s.userNameText}>{user.userfname}</Text>
+                {/* Open line 174 and lines 177-184 when in database will be added userfname and isActive*/}
+                {/* <Text style={s.userNameText}>{user.userfname}</Text> */}
                 <Text style={s.userRole}>{user.role}</Text>
-
                 {/* Active protocol indicator */}
+                {/* 
                 {user.isActive && (
                     <View style={s.activeProtocol}>
                         <View style={s.activeDot} />
                         <Text style={s.activeText}>Active protocol</Text>
                     </View>
-                )}
+                )} 
+                 */}
             </View>
         </Pressable>
     );

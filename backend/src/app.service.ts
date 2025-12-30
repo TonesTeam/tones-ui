@@ -24,6 +24,10 @@ export class AppService {
         private readonly protocolSaving: ProtocolSavingService,
     ) {}
 
+    async getUsers() {
+        return await this.dbService.getUsers();
+    }
+
     async getProtocols() {
         const protocols: FullProtocols = await this.dbService.getProtocols();
         return protocols.map(

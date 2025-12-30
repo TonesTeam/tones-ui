@@ -80,6 +80,12 @@ export class AppController {
         return 'Deleted protocol';
     }
 
+    @Get('users')
+    getUsers() {
+        this.logger.log('Retrieving all users');
+        return this.appService.getUsers();
+    }
+
     @Get('liquids')
     getPermanentLiquids() {
         this.logger.log('Retrieving all liquids');
