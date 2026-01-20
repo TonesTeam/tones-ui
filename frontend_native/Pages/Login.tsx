@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
         <View style={s.header}>
             {/* Нажми 5 раз на "Login" чтобы открыть настройки IP */}
             <Pressable onPress={onLoginClick}>
-                <Heading size="3xl" style={s.loginHeading}>
+                <Heading size="2xl" style={s.loginHeading}>
                     Login
                 </Heading>
             </Pressable>
@@ -164,7 +164,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
         <Pressable onPress={onPress} style={s.card}>
             {/* Avatar */}
             <View style={s.cardHeader}>
-                <GeneratedAvatar name={user.username} size={45} />
+                <GeneratedAvatar name={user.username} size={64} />
             </View>
 
             {/* User info */}
@@ -294,11 +294,12 @@ const s = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 30,
+        paddingTop: 80,
     },
     loginHeading: {
         fontFamily: 'Orbitron-Medium',
         fontWeight: '400',
+        fontSize: 32,
     },
 
     bottomLogo: {
@@ -310,6 +311,7 @@ const s = StyleSheet.create({
     gridContainer: {
         flex: 1,
         padding: 20,
+        paddingTop: 0,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -331,11 +333,12 @@ const s = StyleSheet.create({
         width: 200,
         height: 204,
         margin: 10,
+
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowRadius: 7.5,
+        elevation: 7,
     },
 
     cardHeader: {
@@ -369,13 +372,13 @@ const s = StyleSheet.create({
     userNameText: {
         fontFamily: 'Manrope-Medium',
         fontSize: 16,
-        color: '#333',
+        color: '#1F2832',
         marginBottom: 4,
     },
 
     userRole: {
         fontFamily: 'Manrope',
-        fontSize: 14,
-        color: '#999',
+        fontSize: 12,
+        color: 'rgba(31, 40, 50, 0.4)',
     },
 });
