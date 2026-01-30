@@ -1,4 +1,4 @@
-import { EllipsisVertical, Trash } from 'lucide-react-native';
+import { EllipsisVertical, Trash, Eye } from 'lucide-react-native';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { ProtocolDto } from 'common/dto/protocol.dto';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,7 +20,6 @@ import {
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../../components/GeneratedAvatar';
 import { Method } from 'axios';
-import { Play } from 'lucide-react-native';
 
 interface ListItemProps {
     protocol: ProtocolDto;
@@ -205,14 +204,14 @@ const ListItem = ({
                                 filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
                             }}
                         >
-                            <ButtonIcon as={Play} mr="$2" color="white" />
+                            <ButtonIcon as={Eye} mr="$2" color="white" />
                         </Box>
                         <ButtonText
                             color="white"
                             minHeight={21}
                             fontWeight={400}
                         >
-                            Launch
+                            View
                         </ButtonText>
                     </Button>
                 </HStack>

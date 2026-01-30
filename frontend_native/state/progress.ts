@@ -15,7 +15,7 @@ export interface SystemState {
 }
 
 export const enum Status {
-    Ongoing = 'ONGOING',
+    Ongoing = 'RUNNING',
     Error = 'ERROR',
     Finished = 'FINISHED',
 }

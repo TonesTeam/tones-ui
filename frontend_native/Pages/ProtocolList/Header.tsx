@@ -25,6 +25,9 @@ interface HeaderProps {
     authorList: string[];
     sortingStrategy: string;
     setSortingStrategy: (text: string) => void;
+    onSort: (column: string) => void;
+    sortColumn: string;
+    sortDirection: 'asc' | 'desc';
 }
 
 const Header = ({
@@ -37,6 +40,9 @@ const Header = ({
     authorList,
     sortingStrategy,
     setSortingStrategy,
+    onSort,
+    sortColumn,
+    sortDirection,
 }: HeaderProps) => {
     return (
         <VStack alignItems="start" width="95%" space="lg" mt="$4">
@@ -100,15 +106,71 @@ const Header = ({
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Text flex={1}># ID</Text>
-                <Text flex={6}>Protocol Name</Text>
-                <Text flex={3}>Author</Text>
-                <Box flex={2} justifyContent="center" alignItems="center">
-                    <Text>Created</Text>
-                </Box>
-                <Box flex={3} justifyContent="center" alignItems="center">
-                    <Text>Status</Text>
-                </Box>
+                <Button
+                    flex={1}
+                    variant="link"
+                    onPress={() => onSort('id')}
+                    justifyContent="flex-start"
+                    p="$0"
+                >
+                    <Text>
+                        # ID{' '}
+                        {sortColumn === 'id' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </Text>
+                </Button>
+                <Button
+                    flex={6}
+                    variant="link"
+                    onPress={() => onSort('name')}
+                    justifyContent="flex-start"
+                    p="$0"
+                >
+                    <Text>
+                        Protocol Name{' '}
+                        {sortColumn === 'name' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </Text>
+                </Button>
+                <Button
+                    flex={3}
+                    variant="link"
+                    onPress={() => onSort('author')}
+                    justifyContent="flex-start"
+                    p="$0"
+                >
+                    <Text>
+                        Author{' '}
+                        {sortColumn === 'author' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </Text>
+                </Button>
+                <Button
+                    flex={2}
+                    variant="link"
+                    onPress={() => onSort('created')}
+                    justifyContent="center"
+                    p="$0"
+                >
+                    <Text>
+                        Created{' '}
+                        {sortColumn === 'created' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </Text>
+                </Button>
+                <Button
+                    flex={3}
+                    variant="link"
+                    onPress={() => onSort('status')}
+                    justifyContent="center"
+                    p="$0"
+                >
+                    <Text>
+                        Status{' '}
+                        {sortColumn === 'status' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </Text>
+                </Button>
                 <Box flex={1}></Box>
                 <Box flex={2}></Box>
             </HStack>
