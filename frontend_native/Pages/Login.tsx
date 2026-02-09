@@ -26,6 +26,8 @@ import {
     getBackdoorAddress,
     getRequest,
 } from '../common/util';
+import { useAppSelector } from '../state/hooks';
+import { Status } from '../state/progress';
 
 type User = {
     id: number;
@@ -33,9 +35,7 @@ type User = {
     role: string;
     created?: string;
     updated?: string;
-
     //userfname: string;
-    //isActive?: boolean;
 };
 
 export default function Login({
@@ -45,6 +45,7 @@ export default function Login({
     const [users, setUsers] = useState<User[]>([]);
     const [backdoorModal, setBackdoorModal] = useState(false);
     const [loginClicks, setLoginClicks] = useState(0);
+    const activeProtocols = useAppSelector((state) => state.protocols);
 
     useEffect(() => {
         console.log('Fetching users from backend...');
@@ -83,7 +84,11 @@ export default function Login({
     return (
         <View style={s.container}>
             <Header onLoginClick={() => setLoginClicks(loginClicks + 1)} />
-            <UserGrid users={users} navigation={navigation} />
+            <UserGrid
+                users={users}
+                navigation={navigation}
+                activeProtocols={activeProtocols}
+            />
 
             {/* Логотип внизу страницы */}
             <Image
@@ -124,10 +129,23 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
 type UserGridProps = {
     users: User[];
     navigation: any;
+    activeProtocols: any[];
 };
 
-const UserGrid: React.FC<UserGridProps> = ({ users, navigation }) => {
+const UserGrid: React.FC<UserGridProps> = ({
+    users,
+    navigation,
+    activeProtocols,
+}) => {
     console.log('UserGrid rendering with users:', users);
+    const isUserActive = (username: string) => {
+        const isActive = activeProtocols.some(
+            (protocol) =>
+                protocol.protocol.author === username &&
+                protocol.status === Status.Ongoing,
+        );
+    };
+
     return (
         <View style={s.gridContainer}>
             {/* сетка из карточек пользователей (3 колонки) */}
@@ -140,6 +158,7 @@ const UserGrid: React.FC<UserGridProps> = ({ users, navigation }) => {
                     return (
                         <UserCard
                             user={item}
+                            isActive={isUserActive(item.username)}
                             onPress={() => {
                                 console.log(`Logging in as ${item.username}`);
                                 navigation.navigate('Protocols');
@@ -156,10 +175,11 @@ const UserGrid: React.FC<UserGridProps> = ({ users, navigation }) => {
 //Карточка пользователя
 type UserCardProps = {
     user: User;
+    isActive: boolean;
     onPress: () => void;
 };
 
-const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
+const UserCard: React.FC<UserCardProps> = ({ user, isActive, onPress }) => {
     return (
         <Pressable onPress={onPress} style={s.card}>
             {/* Avatar */}
@@ -170,18 +190,13 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
             {/* User info */}
             <View style={s.cardContent}>
                 <Text style={s.userNameText}>{user.username}</Text>
-                {/* Open line 174 and lines 177-184 when in database will be added userfname and isActive*/}
-                {/* <Text style={s.userNameText}>{user.userfname}</Text> */}
                 <Text style={s.userRole}>{user.role}</Text>
-                {/* Active protocol indicator */}
-                {/* 
-                {user.isActive && (
+                {isActive && (
                     <View style={s.activeProtocol}>
                         <View style={s.activeDot} />
                         <Text style={s.activeText}>Active protocol</Text>
                     </View>
-                )} 
-                 */}
+                )}
             </View>
         </Pressable>
     );
