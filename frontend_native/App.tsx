@@ -10,7 +10,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './state/store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
-import { config } from '@gluestack-ui/config';
+import { config } from './gluestack-config';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 
 export default function App() {
@@ -23,8 +23,9 @@ export default function App() {
         Newsreader: require('./assets/fonts/Newsreader.ttf'),
         Orbitron: require('./assets/fonts/Orbitron-VariableFont_wght.ttf'),
         'Orbitron-Medium': require('./assets/fonts/orbitron-medium.ttf'),
-        Manrope: require('./assets/fonts/Manrope-VariableFont_wght.ttf'),
-        'Manrope-Medium': require('./assets/fonts/manrope.medium.otf'),
+        'Manrope-Light': require('./assets/fonts/Manrope-Light.ttf'),
+        'Manrope-Medium': require('./assets/fonts/Manrope-Medium.ttf'),
+        'Manrope-SemiBold': require('./assets/fonts/Manrope-SemiBold.ttf'),
     });
 
     const onLayoutRootView = useCallback(async () => {
