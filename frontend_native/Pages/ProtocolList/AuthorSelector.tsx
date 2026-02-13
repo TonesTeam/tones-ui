@@ -22,7 +22,7 @@ const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
     return (
         <Select
             flex={2}
-            minWidth={130}
+            minWidth={170}
             ml="$1"
             onValueChange={onChange}
             selectedValue={value}

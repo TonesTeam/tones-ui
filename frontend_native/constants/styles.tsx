@@ -9,7 +9,7 @@ export const AppStyles = {
         warning_faded: 'rgba(209, 69, 51, 0.771)',
         text_primary: '#3b3d44',
         text_faded: '#838488',
-        background: '#eaeaea',
+        background: '#E5E7F0',
         accent_back: '#e4e4e4',
         accent_dark: '#475569',
         elem_back: '#ffffffff',

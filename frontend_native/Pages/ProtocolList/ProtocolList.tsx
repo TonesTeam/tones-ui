@@ -74,6 +74,8 @@ export default function ProtocolList({
     const [authorFilter, setAuthorFilter] = useState('All authors');
     const [authorList, setAuthorList] = useState<string[]>([]);
     const [sortingStrategy, setSortingStrategy] = useState('Oldest first');
+    const [sortColumn, setSortColumn] = useState<string>('');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const [active, setActive] = useState(false);
     useEffect(() => {
@@ -85,6 +87,20 @@ export default function ProtocolList({
 
         setAuthorList(authors);
     }, [protocols]);
+
+    const handleSort = (column: string) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(column);
+            setSortDirection('asc');
+        }
+    };
+
+    const handleSortingStrategyChange = (strategy: string) => {
+        setSortingStrategy(strategy);
+        setSortColumn('');
+    };
 
     function filterAndSort() {
         if (!protocols) return [] as ProtocolDto[];
@@ -105,6 +121,36 @@ export default function ProtocolList({
         });
 
         let sortedList = filteredList.sort((a, b) => {
+            if (sortColumn) {
+                let comparison = 0;
+
+                switch (sortColumn) {
+                    case 'id':
+                        comparison = a.id - b.id;
+                        break;
+                    case 'name':
+                        comparison = a.name.localeCompare(b.name);
+                        break;
+                    case 'author':
+                        comparison = (a.author || '').localeCompare(
+                            b.author || '',
+                        );
+                        break;
+                    case 'created':
+                        comparison =
+                            new Date(a.creationDate).getTime() -
+                            new Date(b.creationDate).getTime();
+                        break;
+                    case 'status':
+                        comparison = 0;
+                        break;
+                    default:
+                        comparison = 0;
+                }
+
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+
             if (sortingStrategy === 'Oldest first') {
                 return (
                     new Date(a.creationDate).getTime() -
@@ -145,7 +191,10 @@ export default function ProtocolList({
                     setAuthorFilter={setAuthorFilter}
                     authorList={authorList}
                     sortingStrategy={sortingStrategy}
-                    setSortingStrategy={setSortingStrategy}
+                    setSortingStrategy={handleSortingStrategyChange}
+                    onSort={handleSort}
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
                 />
                 <Box flex={9} width="95%" mt="$4">
                     {protocols == undefined && (
@@ -211,33 +260,32 @@ export default function ProtocolList({
                                         ref={scrollViewRef}
                                         showsVerticalScrollIndicator={true}
                                     >
-                                        {filterAndSort().map(
-                                            function (protocol, index) {
-                                                return (
-                                                    <ListItem
-                                                        removeProtocolFromList={(
-                                                            id: number,
-                                                        ) => {
-                                                            setProtocols(
-                                                                (protocols) =>
-                                                                    protocols
-                                                                        ? protocols.filter(
-                                                                              (
-                                                                                  p,
-                                                                              ) =>
-                                                                                  p.id !==
-                                                                                  id,
-                                                                          )
-                                                                        : protocols,
-                                                            );
-                                                        }}
-                                                        key={protocol.id}
-                                                        protocol={protocol}
-                                                        navigation={navigation}
-                                                    />
-                                                );
-                                            },
-                                        )}
+                                        {filterAndSort().map(function (
+                                            protocol,
+                                            index,
+                                        ) {
+                                            return (
+                                                <ListItem
+                                                    removeProtocolFromList={(
+                                                        id: number,
+                                                    ) => {
+                                                        setProtocols(
+                                                            (protocols) =>
+                                                                protocols
+                                                                    ? protocols.filter(
+                                                                          (p) =>
+                                                                              p.id !==
+                                                                              id,
+                                                                      )
+                                                                    : protocols,
+                                                        );
+                                                    }}
+                                                    key={protocol.id}
+                                                    protocol={protocol}
+                                                    navigation={navigation}
+                                                />
+                                            );
+                                        })}
                                     </ScrollView>
                                 )}
                             </View>

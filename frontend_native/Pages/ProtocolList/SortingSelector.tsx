@@ -21,7 +21,7 @@ const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
         <Select
             flex={3}
-            minWidth={145}
+            minWidth={170}
             ml="$1"
             onValueChange={onChange}
             selectedValue={value}
