@@ -7,7 +7,7 @@ const isoDateFormat =
 
 let domain: string | null = null;
 let backdoorAddress: string | null = null;
-const prefix = '/api/v2';
+const prefix = '';
 
 function generateIPRange(ip, subnetMask) {
     const ipParts = ip.split('.').map(Number);
@@ -38,7 +38,7 @@ function generateIPRange(ip, subnetMask) {
 
 async function scanNetwork(ipList: string[]): Promise<string | null> {
     const requests = ipList.map(async (ip) => {
-        const fullip = `http://${ip}:8080/api/v2/ping`;
+        const fullip = `http://${ip}:8080/health`;
         try {
             const resp = (await client.get(fullip, { timeout: 500 })).status;
             console.log(`Response from ${fullip}: ${resp}`);
@@ -60,7 +60,6 @@ async function findBE(): Promise<string> {
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
     let foundIP = await scanNetwork(ipList);
-    foundIP = '192.168.1.117';
     console.log(`Backdoor IP - ${backdoorAddress}`);
     if (backdoorAddress) foundIP = backdoorAddress;
     return `http://${foundIP}:8080`;

@@ -31,11 +31,11 @@ import { Status } from '../state/progress';
 
 type User = {
     id: number;
-    username: string;
+    first_name: string;
+    last_name: string;
+    is_deleted: boolean;
+    institution: string;
     role: string;
-    created?: string;
-    updated?: string;
-    //userfname: string;
 };
 
 export default function Login({
@@ -184,13 +184,17 @@ const UserCard: React.FC<UserCardProps> = ({ user, isActive, onPress }) => {
         <Pressable onPress={onPress} style={s.card}>
             {/* Avatar */}
             <View style={s.cardHeader}>
-                <GeneratedAvatar name={user.username} size={64} />
+                <GeneratedAvatar name={user.first_name} size={64} />
             </View>
 
             {/* User info */}
             <View style={s.cardContent}>
-                <Text style={s.userNameText}>{user.username}</Text>
-                <Text style={s.userRole}>{user.role}</Text>
+                <Text style={s.userNameText}>
+                    {user.first_name}
+                    {'\n'}
+                    {user.last_name}
+                </Text>
+                <Text style={s.userRole}>{user.institution}</Text>
                 {isActive && (
                     <View style={s.activeProtocol}>
                         <View style={s.activeDot} />
