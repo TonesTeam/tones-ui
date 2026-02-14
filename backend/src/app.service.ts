@@ -56,13 +56,20 @@ export class AppService {
             name: pr.name,
             author: pr.creator.username,
             description: pr.description,
-            steps: steps,
+            stepBatches: [
+                {
+                    id: 1,
+                    sequenceNumber: 1,
+                    steps: steps,
+                },
+            ],
             creationDate: pr.creationDate,
             lastUpdate: pr.lastUpdate,
             customLiquids: await this.getCustomProtocolLiquids(id),
             defaultWash: {
                 incubation: pr.defaultWashing.incubationTime,
                 iters: pr.defaultWashing.iter,
+                targetTemperature: 25,
                 liquid: await this.dbService.getLiquidInfo(
                     pr.defaultWashing.permanentLiquidId,
                 ),
@@ -126,13 +133,14 @@ export class AppService {
         return {
             id: step.id,
             type: step.stepType as StepType,
+            sequenceNumber: step.sequenceOrder,
             params: await this.getParams(step),
         };
     }
 
     private async getParams(step: ProtocolStep): Promise<StepParams> {
         switch (step.stepType as StepType) {
-            case StepType.LIQUID_APPL:
+            case StepType.REAGENT:
                 return {
                     incubation: step.liquidApplication.liquidIncubationTime,
                     liquid: await this.toLiquidDto(
@@ -151,6 +159,7 @@ export class AppService {
                 return {
                     incubation: step.washing.incubationTime,
                     iters: step.iterations,
+                    targetTemperature: 25,
                     liquid: await this.toLiquidDto(
                         step.washing.permanentLiquidId,
                     ),

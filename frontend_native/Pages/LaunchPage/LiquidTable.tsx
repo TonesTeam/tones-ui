@@ -219,7 +219,7 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
 
             // Go through each step and find liquid steps
             protocol.steps.forEach((step: any) => {
-                if (step.type === StepType.LIQUID_APPL) {
+                if (step.type === StepType.REAGENT) {
                     const reagentStep = step.params as ReagentStep;
                     const liquidName = reagentStep.liquid.name;
                     const typeName = reagentStep.liquid.type.name;

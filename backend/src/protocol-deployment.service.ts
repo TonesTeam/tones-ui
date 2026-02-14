@@ -12,7 +12,7 @@ export class ProtocolDeploymentService {
     async deployProtocol(protocolId: number): Promise<LiquidDeploymentDTO[]> {
         const p = await this.dbService.getProtocolById(protocolId);
         const appliedLiquids: number[] = p.steps
-            .filter((s) => s.stepType === StepType.LIQUID_APPL)
+            .filter((s) => s.stepType === StepType.REAGENT)
             .map((s) => s.liquidApplication.liquidInfo.id);
         const liquidToUseCount = countMap(appliedLiquids);
         const config: LiquidDeploymentDTO[] = [];

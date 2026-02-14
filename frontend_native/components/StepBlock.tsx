@@ -33,7 +33,7 @@ const STEP_CONFIG = {
         },
         icon: Waves,
     },
-    [StepType.LIQUID_APPL]: {
+    [StepType.REAGENT]: {
         name: 'Reagent',
         colors: {
             main: AppStyles.color.block.main_reagent,
@@ -159,7 +159,7 @@ const StepBlock = (props: StepBlockProps) => {
                         settings={props.settings}
                     />
                 );
-            case StepType.LIQUID_APPL:
+            case StepType.REAGENT:
                 return (
                     <ReagentStepParams
                         block={block}
@@ -172,7 +172,7 @@ const StepBlock = (props: StepBlockProps) => {
     };
 
     const hasAutoWash =
-        block.type === StepType.LIQUID_APPL &&
+        block.type === StepType.REAGENT &&
         (block.params as ReagentStep).autoWash === true;
 
     return (

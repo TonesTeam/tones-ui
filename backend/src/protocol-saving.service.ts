@@ -45,10 +45,9 @@ export class ProtocolSavingService {
                     },
                 },
                 steps: {
-                    create: protocol.steps.map((s) => {
-                        let i = 0;
-                        return this.createStep(s, ++i);
-                    }),
+                    create: protocol.stepBatches
+                        .flatMap((batch) => batch.steps)
+                        .map((step, index) => this.createStep(step, index + 1)),
                 },
             },
         });
@@ -85,10 +84,9 @@ export class ProtocolSavingService {
                     },
                 },
                 steps: {
-                    create: protocol.steps.map((s) => {
-                        let i = 0;
-                        return this.createStep(s, ++i);
-                    }),
+                    create: protocol.stepBatches
+                        .flatMap((batch) => batch.steps)
+                        .map((step, index) => this.createStep(step, index + 1)),
                 },
             },
         });
@@ -105,16 +103,17 @@ export class ProtocolSavingService {
         const step: Prisma.StepCreateWithoutProtocolInput = {
             sequenceOrder: order,
             stepType: s.type,
-            iterations: s.params.iters,
+            iterations:
+                s.type === StepType.WASHING ? (s.params as WashStep).iters : 1,
         };
-        if (s.type == StepType.LIQUID_APPL) {
+        if (s.type == StepType.REAGENT) {
             const params = s.params as ReagentStep;
             step.liquidApplication = {
                 create: {
                     liquidIncubationTime: params.incubation,
-                    washingIterations: params.washingIterations,
+                    washingIterations: 0,
                     incubationTemperature: params.targetTemperature,
-                    autoWash: params.autoWash,
+                    autoWash: false,
                     liquidInfo: this.getLiquidInfo(params.liquid),
                 },
             };

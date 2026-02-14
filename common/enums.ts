@@ -5,5 +5,7 @@ export enum UserRole {
 
 export enum StepType {
     WASHING = 'Washing',
-    LIQUID_APPL = 'Liquid Application',
+    REAGENT = 'Reagent',
+    COOLING = 'Cooling',
+    HEATING = 'Heating',
 }

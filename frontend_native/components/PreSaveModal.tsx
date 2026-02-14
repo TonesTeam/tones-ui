@@ -73,7 +73,7 @@ export default function PreSaveModal({
         switch (stepType) {
             case StepType.WASHING:
                 return Waves;
-            case StepType.LIQUID_APPL:
+            case StepType.REAGENT:
                 return FlaskConical;
             default:
                 return FlaskConical;
@@ -84,7 +84,7 @@ export default function PreSaveModal({
         switch (stepType) {
             case StepType.WASHING:
                 return 'Washing';
-            case StepType.LIQUID_APPL:
+            case StepType.REAGENT:
                 return 'Reagent';
             default:
                 return 'Unknown';
@@ -380,8 +380,13 @@ export default function PreSaveModal({
                                                                     color="$textLight900"
                                                                 >
                                                                     {block.type ===
-                                                                    StepType.LIQUID_APPL
-                                                                        ? `${(block.params as ReagentStep).targetTemperature}°C`
+                                                                    StepType.REAGENT
+                                                                        ? `${
+                                                                              (
+                                                                                  block.params as ReagentStep
+                                                                              )
+                                                                                  .targetTemperature
+                                                                          }°C`
                                                                         : '-'}
                                                                 </Text>
                                                             </Box>
@@ -422,7 +427,7 @@ export default function PreSaveModal({
 
                                                         {/* Auto-wash row for reagent steps */}
                                                         {block.type ===
-                                                            StepType.LIQUID_APPL &&
+                                                            StepType.REAGENT &&
                                                             (
                                                                 block.params as ReagentStep
                                                             )

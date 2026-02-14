@@ -33,7 +33,7 @@ export class ProtocolStepsResolver {
                     type: StepType.WASHING,
                 });
             }
-            if (step.stepType === StepType.LIQUID_APPL) {
+            if (step.stepType === StepType.REAGENT) {
                 steps.push({
                     type: 'Reagent',
                     incubation: step.liquidApplication.liquidIncubationTime,

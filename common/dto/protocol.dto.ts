@@ -1,5 +1,5 @@
 import { LiquidDTO } from './liquid.dto';
-import { WashStep, StepDTO } from './step.dto';
+import { WashStep, StepBatchDTO } from './step.dto';
 
 export interface ProtocolDto {
     id: number;
@@ -13,5 +13,5 @@ export interface ProtocolDto {
 export interface ProtocolWithStepsDTO extends ProtocolDto {
     defaultWash: WashStep;
     customLiquids: LiquidDTO[];
-    steps: StepDTO[];
+    stepBatches: StepBatchDTO[];
 }

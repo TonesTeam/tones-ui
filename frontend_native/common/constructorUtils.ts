@@ -18,7 +18,7 @@ export function calcDuration(blocks: StepDTO[]) {
                 Number((blocks[i].params as WashStep).iters) *
                 (Number((blocks[i].params as WashStep).incubation) +
                     Number(LIQUID_INJECT_TIME));
-        } else if (blocks[i].type == StepType.LIQUID_APPL) {
+        } else if (blocks[i].type == StepType.REAGENT) {
             duration +=
                 Number((blocks[i].params as ReagentStep).incubation) +
                 LIQUID_INJECT_TIME;

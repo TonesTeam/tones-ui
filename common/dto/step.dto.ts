@@ -1,24 +1,36 @@
 import { StepType } from 'common/enums';
 import { LiquidDTO } from './liquid.dto';
 
-export interface StepDTO {
-    type: StepType;
+export interface StepBatchDTO {
     id: number;
+    sequenceNumber: number;
+    name?: string;
+    steps: StepDTO[];
+}
+
+export interface StepDTO {
+    id: number;
+    type: StepType;
+    sequenceNumber: number;
     params: StepParams;
 }
 
-export interface StepParams {
-    iters: number;
-    incubation: number; // in seconds
-    liquid: LiquidDTO;
-}
+export type StepParams = TemperatureParams | WashStep | ReagentStep;
 
-export interface WashStep extends StepParams {}
-
-export interface ReagentStep extends StepParams {
-    autoWash: boolean;
+export interface TemperatureParams {
     targetTemperature: number;
-    washingIterations: number;
+    duration: number; //(секунды)
 }
 
-// Remove TemperatureStep interface as it's no longer needed
+export interface WashStep {
+    liquid: LiquidDTO;
+    incubation: number;
+    iters: number;
+    targetTemperature: number;
+}
+
+export interface ReagentStep {
+    liquid: LiquidDTO;
+    incubation: number;
+    targetTemperature: number;
+}

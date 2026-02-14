@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../components/ConfirmationModal';
-import StepBlock from '../components/StepBlock';
+import { Timeline } from './Constructor/TimelineComponents';
 import { Method } from 'axios';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
@@ -29,8 +29,32 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
             getRequest<ProtocolWithStepsDTO>(`/protocol/${protocol_ID}`)
                 .then((r) => {
                     if ('data' in r) {
-                        setProtocol(r.data);
-                        console.log('Protocol data fetched:', r.data.steps);
+                        const protocolData = r.data;
+
+                        // Временный fallback: конвертируем старую структуру в новую
+                        if (
+                            (!protocolData.stepBatches ||
+                                protocolData.stepBatches.length === 0) &&
+                            (protocolData as any).steps &&
+                            (protocolData as any).steps.length > 0
+                        ) {
+                            console.log(
+                                'Converting old steps[] to stepBatches[] format...',
+                            );
+                            protocolData.stepBatches = [
+                                {
+                                    id: 1,
+                                    sequenceNumber: 1,
+                                    steps: (protocolData as any).steps,
+                                },
+                            ];
+                        }
+
+                        setProtocol(protocolData);
+                        console.log(
+                            'Protocol stepBatches:',
+                            protocolData.stepBatches,
+                        );
                     }
                 })
                 .catch((err) => console.error(err));
@@ -124,35 +148,44 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             </Button>
                         </HStack>
 
-                        <HStack>
-                            <VStack flex={1} mr="$2">
-                                {protocol.steps.map((step, index) => (
-                                    <StepBlock
-                                        key={step.id}
-                                        renderParams={{
-                                            item: step,
-                                            drag: () => {},
-                                            isActive: false,
-                                            getIndex: () => index,
-                                        }}
-                                        settings={{
-                                            autoWashConfig:
-                                                protocol.defaultWash,
-                                            description: protocol.description,
-                                        }}
-                                        edit={false}
+                        <HStack space="md">
+                            <VStack flex={1}>
+                                {protocol.stepBatches &&
+                                protocol.stepBatches.length > 0 ? (
+                                    <Timeline
+                                        stepBatches={protocol.stepBatches}
+                                        onReorder={() => {}}
+                                        onReorderSteps={() => {}}
+                                        onEdit={() => {}}
+                                        onCopy={() => {}}
+                                        onDelete={() => {}}
+                                        deleteBlock={() => {}}
+                                        readonly={true}
                                     />
-                                ))}
+                                ) : (
+                                    <Box
+                                        p="$4"
+                                        borderRadius="$lg"
+                                        bg="$warmGray100"
+                                    >
+                                        <Text
+                                            color="$warmGray600"
+                                            textAlign="center"
+                                        >
+                                            No steps in this protocol
+                                        </Text>
+                                    </Box>
+                                )}
                             </VStack>
 
-                            <VStack flex={1} ml="$2">
-                                <HStack>
+                            <VStack flex={1}>
+                                <HStack mb="$2">
                                     <Text fontWeight="bold">Author:</Text>
                                     <Text ml="$2">
                                         {protocol?.author ?? ''}
                                     </Text>
                                 </HStack>
-                                <HStack>
+                                <HStack mb="$2">
                                     <Text fontWeight="bold">Created:</Text>
                                     <Text ml="$2">
                                         {protocol?.creationDate
@@ -163,7 +196,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                     </Text>
                                 </HStack>
                                 {protocol?.lastUpdate && (
-                                    <HStack>
+                                    <HStack mb="$2">
                                         <Text fontWeight="bold">
                                             Last Updated:
                                         </Text>
@@ -174,12 +207,12 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                         </Text>
                                     </HStack>
                                 )}
-                                <Text>
-                                    <Text fontWeight="bold">Description: </Text>
-                                    <Text fontWeight="normal" ml="$2">
+                                <Box>
+                                    <Text fontWeight="bold">Description:</Text>
+                                    <Text mt="$1">
                                         {protocol?.description ?? ''}
                                     </Text>
-                                </Text>
+                                </Box>
                             </VStack>
                         </HStack>
                     </VStack>

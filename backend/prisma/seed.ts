@@ -104,8 +104,10 @@ async function main() {
     let deparaf2 = await findOrCreateLiquid('Xylene substitute', deparafType);
 
     /**
-     * Protocols
+     * Эти протоколы написаны под старое DTO, временно закомментированы
      */
+
+    /*
     let pid =
         (
             await prisma.protocol.findFirst({
@@ -135,7 +137,7 @@ async function main() {
                 create: [
                     {
                         sequenceOrder: 1,
-                        stepType: StepType.LIQUID_APPL,
+                        stepType: StepType.REAGENT,
                         liquidApplication: {
                             create: {
                                 liquidInfo: {
@@ -150,7 +152,7 @@ async function main() {
                     },
                     {
                         sequenceOrder: 2,
-                        stepType: StepType.LIQUID_APPL,
+                        stepType: StepType.REAGENT,
                         liquidApplication: {
                             create: {
                                 liquidInfo: {
@@ -177,6 +179,7 @@ async function main() {
             },
         },
     });
+    */
 }
 
 main()
