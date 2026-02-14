@@ -249,11 +249,11 @@ function Library(props: {}) {
     };
 
     const listInitilizer = () => {
-        getRequest<PermanentLiquidDTO[]>('/liquids').then((r) => {
+        getRequest<LiquidDTO[]>('/liquids').then((r) => {
             setLiquids(r.data);
         });
 
-        getRequest<LiquidTypeDTO[]>('/types').then((r) => {
+        getRequest<LiquidTypeDTO[]>('/liquids/types').then((r) => {
             setCategories(r.data);
         });
 
@@ -319,6 +319,7 @@ function Library(props: {}) {
                     <Box width={900}>
                         <HStack space="xl" alignItems="center">
                             <SearchBar
+                                placeholder="Which reagent are you looking for?"
                                 value={searchPrompt}
                                 onChangeText={(e) => setSearchPrompt(e)}
                             />
@@ -485,7 +486,7 @@ function Library(props: {}) {
                                                         size="sm"
                                                         color="$textLight700"
                                                     >
-                                                        {liq.type.name}
+                                                        {/*liq.type.name*/}
                                                     </Text>
                                                 </Box>
                                                 <Box
@@ -628,9 +629,14 @@ export default function Settings(props: any) {
         <MainContainer>
             <NavBar />
             <Box style={s.wrapper}>
-                <Heading size="4xl" mb="$8">
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                >
                     Library
-                </Heading>
+                </Text>
                 <Library />
             </Box>
         </MainContainer>
