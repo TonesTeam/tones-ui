@@ -10,7 +10,7 @@ export interface LiquidDTO {
 }
 
 export interface PermanentLiquidDTO extends LiquidDTO {
-    usedCold: boolean;
-    toxic: boolean;
     position: number;
+    is_connected_to_selector: boolean;
+    liquid_type_id: number;
 }

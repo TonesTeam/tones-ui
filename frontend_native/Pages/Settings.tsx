@@ -47,6 +47,7 @@ import {
     Input,
     InputField,
     Switch,
+    ButtonIcon,
 } from '@gluestack-ui/themed';
 import {
     Trash,
@@ -55,6 +56,7 @@ import {
     Save,
     Snowflake,
     Biohazard,
+    Plus,
 } from 'lucide-react-native';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
@@ -324,14 +326,31 @@ function Library(props: {}) {
                                 onChangeText={(e) => setSearchPrompt(e)}
                             />
                             <Button
+                                variant="outline"
+                                rounded="$full"
+                                borderColor="$black"
+                                bg="#1F2832"
+                                mr="$2"
                                 onPress={() => setEditModal(true)}
-                                action="primary"
-                                variant="solid"
-                                size="md"
+                                alignItems="center"
+                                justifyContent="center"
+                                height={48}
                             >
-                                <Icon as={CirclePlus} color="white" mr="$2" />
-                                <ButtonText color="white">
-                                    Add new reagent
+                                <Box
+                                    style={{
+                                        filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                                    }}
+                                >
+                                    <ButtonIcon
+                                        bg="transparent"
+                                        color="white"
+                                        as={Plus}
+                                        mr="$2"
+                                        size={20}
+                                    />
+                                </Box>
+                                <ButtonText color="white" fontSize={14}>
+                                    New Liquid
                                 </ButtonText>
                             </Button>
                         </HStack>
@@ -392,7 +411,7 @@ function Library(props: {}) {
                                             size="sm"
                                             color="$textLight600"
                                         >
-                                            Selector position
+                                            Connection Type
                                         </Text>
                                     </Box>
                                     <Box flex={2}>
@@ -401,25 +420,16 @@ function Library(props: {}) {
                                             size="sm"
                                             color="$textLight600"
                                         >
+                                            Position
+                                        </Text>
+                                    </Box>
+                                    <Box flex={1}>
+                                        <Text
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
+                                        >
                                             Category
-                                        </Text>
-                                    </Box>
-                                    <Box flex={1}>
-                                        <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
-                                        >
-                                            Toxic
-                                        </Text>
-                                    </Box>
-                                    <Box flex={1}>
-                                        <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
-                                        >
-                                            Used Cold
                                         </Text>
                                     </Box>
                                     <Box flex={2}>
@@ -475,7 +485,9 @@ function Library(props: {}) {
                                                         color="$textLight900"
                                                         fontWeight="$medium"
                                                     >
-                                                        {liq.position ?? '-'}
+                                                        {liq.is_connected_to_selector
+                                                            ? 'Selector'
+                                                            : 'Grid'}
                                                     </Text>
                                                 </Box>
                                                 <Box
@@ -486,46 +498,19 @@ function Library(props: {}) {
                                                         size="sm"
                                                         color="$textLight700"
                                                     >
-                                                        {/*liq.type.name*/}
+                                                        {liq.position}
                                                     </Text>
                                                 </Box>
                                                 <Box
                                                     flex={1}
                                                     justifyContent="center"
                                                 >
-                                                    {liq.toxic ? (
-                                                        <Icon
-                                                            as={Biohazard}
-                                                            size="sm"
-                                                            color="$green600"
-                                                        />
-                                                    ) : (
-                                                        <Text
-                                                            size="sm"
-                                                            color="$textLight400"
-                                                        >
-                                                            -
-                                                        </Text>
-                                                    )}
-                                                </Box>
-                                                <Box
-                                                    flex={1}
-                                                    justifyContent="center"
-                                                >
-                                                    {liq.usedCold ? (
-                                                        <Icon
-                                                            as={Snowflake}
-                                                            size="sm"
-                                                            color="$blue500"
-                                                        />
-                                                    ) : (
-                                                        <Text
-                                                            size="sm"
-                                                            color="$textLight400"
-                                                        >
-                                                            -
-                                                        </Text>
-                                                    )}
+                                                    <Text
+                                                        size="sm"
+                                                        color="$textLight700"
+                                                    >
+                                                        {liq.liquid_type_id}
+                                                    </Text>
                                                 </Box>
                                                 <Box flex={2}>
                                                     <HStack space="lg">
