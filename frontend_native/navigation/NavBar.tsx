@@ -96,7 +96,7 @@ export default function NavBar() {
             style={{
                 filter: 'drop-shadow(8px 0px 44px rgba(0, 0, 0, 0.12))',
             }}
-            width="14%"
+            width={187}
             alignItems="center"
             flex
         >
@@ -115,9 +115,7 @@ export default function NavBar() {
 
             {/* Top logo */}
             <Logo
-                width={100}
-                height={100}
-                style={{ alignSelf: 'center', marginTop: 10, marginBottom: 10 }}
+                style={{ alignSelf: 'center', marginTop: 30, marginBottom: 26 }}
             ></Logo>
 
             {/* Navigation links */}
@@ -136,15 +134,15 @@ export default function NavBar() {
                                 }}
                                 width="100%"
                                 px="$6"
-                                py="$3"
-                                rounded="$2xl"
+                                py={8}
+                                borderRadius={12}
                                 bg={
                                     activePage?.name == page.name
                                         ? '#C8D3D6'
                                         : '$transparent'
                                 }
                             >
-                                <Text size="lg" color="#1F2832">
+                                <Text size="lg" color="#1F2832" fontSize={16}>
                                     {page.name}
                                 </Text>
                             </Pressable>
@@ -156,33 +154,12 @@ export default function NavBar() {
             <Divider width="60%" />
 
             {/* Version number */}
-            <Text p="$5" color="$textLight500" flex={1}>
+            <Text p="$5" color="rgba(31, 40, 50, 0.4)" flex={1} fontSize={12}>
                 Version 0.3.9
             </Text>
 
-            <Box flex={3}>
-                <CircularProgress
-                    ref={progressRef}
-                    value={currentProgress}
-                    valueSuffix={'%'}
-                    allowFontScaling={false}
-                    radius={40}
-                    duration={0}
-                    progressValueColor={AppStyles.color.text_primary}
-                    activeStrokeColor={
-                        hasActiveProtocol
-                            ? AppStyles.color.secondary
-                            : AppStyles.color.background
-                    }
-                    inActiveStrokeColor={AppStyles.color.background}
-                    inActiveStrokeOpacity={0.5}
-                    inActiveStrokeWidth={10}
-                    activeStrokeWidth={6}
-                />
-            </Box>
-
             {/* User info section */}
-            <VStack flex={7} mt="$5" alignItems="flex-start">
+            <VStack flex={7} mt={150} alignItems="flex-start">
                 <Pressable
                     my="$2"
                     onPress={() => navigation.navigate('Profile')}
