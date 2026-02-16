@@ -2,7 +2,7 @@ import Login from '../Pages/Login';
 import ProtocolList from '../Pages/ProtocolList/ProtocolList';
 import Constructor from '../Pages/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Settings from '../Pages/Settings';
+import Library from '../Pages/Library';
 import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
@@ -33,7 +33,7 @@ export const Pages: Page[] = [
     },
     {
         name: 'Library',
-        component: Settings,
+        component: Library,
         isNavigatableFromNavBar: true,
     },
     {

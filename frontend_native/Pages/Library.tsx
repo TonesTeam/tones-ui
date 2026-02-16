@@ -1,16 +1,4 @@
-import {
-    StyleSheet,
-    View,
-    TextInput,
-    Image,
-    TouchableOpacity,
-    Dimensions,
-} from 'react-native';
-import {
-    AppStyles,
-    MainContainer,
-    globalElementStyle,
-} from '../constants/styles';
+import { MainContainer, globalElementStyle } from '../constants/styles';
 import NavBar from '../navigation/NavBar';
 import { useEffect, useState } from 'react';
 import {
@@ -19,13 +7,8 @@ import {
     PermanentLiquidDTO,
 } from 'common/dto/liquid.dto';
 import { getRequest, makeRequest } from '../common/util';
-import User_s_Icon from '../assets/icons/user_settings.svg';
-import System_s_Icon from '../assets/icons/system_settings.svg';
-import Lib_s_Icon from '../assets/icons/reag_lib_settings.svg';
 import { CustomSelect } from '../components/Select';
 import { Method } from 'axios';
-import InfoModal from '../components/InfoModal';
-import { InfoType } from '../common/types';
 import { useIsFocused } from '@react-navigation/native';
 import {
     Box,
@@ -49,184 +32,34 @@ import {
     Switch,
     ButtonIcon,
 } from '@gluestack-ui/themed';
-import {
-    Trash,
-    Pencil,
-    CirclePlus,
-    Save,
-    Snowflake,
-    Biohazard,
-    Plus,
-} from 'lucide-react-native';
+import { Trash, Pencil, CirclePlus, Save, Plus } from 'lucide-react-native';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
 
-enum SettingTabs {
-    USER = 'User Settings',
-    SYSTEM = 'System Settings',
-    LIBRARY = 'Reagent Library',
-}
-
-function SaveLiquidModal(props: {
-    liquid: PermanentLiquidDTO | null;
-    categories: LiquidTypeDTO[];
-    closeModal: () => void;
-    saveLiquid: (liq: PermanentLiquidDTO) => void;
-    isOpen: boolean;
-}) {
-    const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>({
-        id: 0,
-        name: '',
-        type: props.categories[0],
-        usedCold: false,
-        toxic: false,
-        position: -1,
-    } as PermanentLiquidDTO);
-    const [positionText, setPositionText] = useState('0');
-
-    useEffect(() => {
-        if (props.liquid) setNewLiquid(props.liquid);
-        else
-            setNewLiquid({
-                id: 0,
-                name: '',
-                type: props.categories[0],
-                usedCold: false,
-                toxic: false,
-                position: -1,
-            } as PermanentLiquidDTO);
-    }, [props.liquid]);
-
-    const areInputsValid = (): boolean => {
-        const isPositionValid = !isNaN(Number(positionText));
-        const isNameValid = newLiquid.name.trim() !== '';
-
-        return isPositionValid && isNameValid;
-    };
-
+export default function Library(_props: any) {
     return (
-        <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
-            <ModalBackdrop />
-            <ModalContent padding="$3">
-                <ModalHeader>
-                    <Heading size="xl" color="$textLight900">
-                        {props.liquid != null
-                            ? 'Updating reagent data'
-                            : 'Adding new reagent'}
-                    </Heading>
-                </ModalHeader>
-                <ModalBody padding="$6">
-                    <VStack>
-                        <Text>Name:</Text>
-                        <Input variant="outline">
-                            <InputField
-                                value={newLiquid.name}
-                                onChangeText={(text: string) =>
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        name: text,
-                                    })
-                                }
-                            />
-                        </Input>
-                    </VStack>
-                    <HStack>
-                        <VStack flex={3} mr="$3">
-                            <Text>Category:</Text>
-                            <CustomSelect
-                                list={props.categories}
-                                selected={newLiquid.type}
-                                canAdd={false}
-                                onChangeSelect={(cat) =>
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        type: cat,
-                                    })
-                                }
-                            />
-                        </VStack>
-                        <VStack flex={1}>
-                            <Text>Selector position:</Text>
-                            <Input variant="outline">
-                                <InputField
-                                    value={positionText}
-                                    inputMode="numeric"
-                                    onChangeText={(text: string) => {
-                                        setPositionText(text);
-                                    }}
-                                />
-                            </Input>
-                        </VStack>
-                    </HStack>
-                    <VStack>
-                        <HStack space="md" alignItems="center">
-                            <Text size="lg">Toxic:</Text>
-                            <Switch
-                                size="lg"
-                                value={newLiquid.toxic}
-                                onValueChange={(val: boolean) => {
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        toxic: val,
-                                    });
-                                }}
-                            />
-                        </HStack>
-                        <HStack space="md" alignItems="center">
-                            <Text size="lg">Used cold:</Text>
-                            <Switch
-                                size="lg"
-                                value={newLiquid.usedCold}
-                                onValueChange={(val: boolean) => {
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        usedCold: val,
-                                    });
-                                }}
-                            />
-                        </HStack>
-                    </VStack>
-                </ModalBody>
-                <ModalFooter borderTopWidth="$1" borderColor="$borderLight200">
-                    <HStack space="md" flex={1} justifyContent="flex-end">
-                        <Button
-                            variant="outline"
-                            action="secondary"
-                            onPress={props.closeModal}
-                            size="md"
-                        >
-                            <ButtonText>Cancel</ButtonText>
-                        </Button>
-                        <Button
-                            bg="$black"
-                            size="md"
-                            onPress={() => {
-                                if (areInputsValid()) {
-                                    newLiquid.position = Number(positionText);
-                                    newLiquid.name = newLiquid.name.trim();
-                                    props.saveLiquid(newLiquid);
-                                    props.closeModal();
-                                }
-                            }}
-                            isDisabled={!areInputsValid()}
-                        >
-                            <Icon color="white" as={Save} mr="$2" />
-                            <ButtonText>
-                                {props.liquid != null ? 'Update' : 'Save'}
-                            </ButtonText>
-                        </Button>
-                    </HStack>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
+        <MainContainer>
+            <NavBar />
+            <Box flex={1} p={24}>
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                    mt={16}
+                >
+                    Library
+                </Text>
+                <LibraryBody />
+            </Box>
+        </MainContainer>
     );
 }
 
-function Library(props: {}) {
+const LibraryBody = () => {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
     const [searchPrompt, setSearchPrompt] = useState('');
-    const [active, setActive] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(-1);
     const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(
@@ -509,7 +342,7 @@ function Library(props: {}) {
                                                         size="sm"
                                                         color="$textLight700"
                                                     >
-                                                        {liq.liquid_type_id}
+                                                        {liq.liquid_type_name}
                                                     </Text>
                                                 </Box>
                                                 <Box flex={2}>
@@ -597,92 +430,159 @@ function Library(props: {}) {
             />
         </>
     );
-}
+};
 
-export default function Settings(props: any) {
-    const [currentTab, setCurrentTab] = useState<SettingTabs>(
-        SettingTabs.LIBRARY,
-    );
-    const [liquidUpdateModal, setLiquidUpdateModal] = useState<
-        boolean | undefined
-    >(undefined);
-    const [liquidDeleteModal, setLiquidDeleteModal] = useState<
-        boolean | undefined
-    >(undefined);
+function SaveLiquidModal(props: {
+    liquid: PermanentLiquidDTO | null;
+    categories: LiquidTypeDTO[];
+    closeModal: () => void;
+    saveLiquid: (liq: PermanentLiquidDTO) => void;
+    isOpen: boolean;
+}) {
+    const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>({
+        id: 0,
+        name: '',
+        type: props.categories[0],
+        usedCold: false,
+        toxic: false,
+        position: -1,
+    } as PermanentLiquidDTO);
+    const [positionText, setPositionText] = useState('0');
+
+    useEffect(() => {
+        if (props.liquid) setNewLiquid(props.liquid);
+        else
+            setNewLiquid({
+                id: 0,
+                name: '',
+                type: props.categories[0],
+                usedCold: false,
+                toxic: false,
+                position: -1,
+            } as PermanentLiquidDTO);
+    }, [props.liquid]);
+
+    const areInputsValid = (): boolean => {
+        const isPositionValid = !isNaN(Number(positionText));
+        const isNameValid = newLiquid.name.trim() !== '';
+
+        return isPositionValid && isNameValid;
+    };
 
     return (
-        <MainContainer>
-            <NavBar />
-            <Box style={s.wrapper}>
-                <Text
-                    color="black"
-                    fontSize={32}
-                    fontFamily="Orbitron-Medium"
-                    mb="$8"
-                >
-                    Library
-                </Text>
-                <Library />
-            </Box>
-        </MainContainer>
+        <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
+            <ModalBackdrop />
+            <ModalContent padding="$3">
+                <ModalHeader>
+                    <Heading size="xl" color="$textLight900">
+                        {props.liquid != null
+                            ? 'Updating reagent data'
+                            : 'Adding new reagent'}
+                    </Heading>
+                </ModalHeader>
+                <ModalBody padding="$6">
+                    <VStack>
+                        <Text>Name:</Text>
+                        <Input variant="outline">
+                            <InputField
+                                value={newLiquid.name}
+                                onChangeText={(text: string) =>
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        name: text,
+                                    })
+                                }
+                            />
+                        </Input>
+                    </VStack>
+                    <HStack>
+                        <VStack flex={3} mr="$3">
+                            <Text>Category:</Text>
+                            <CustomSelect
+                                list={props.categories}
+                                selected={newLiquid.type}
+                                canAdd={false}
+                                onChangeSelect={(cat) =>
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        type: cat,
+                                    })
+                                }
+                            />
+                        </VStack>
+                        <VStack flex={1}>
+                            <Text>Selector position:</Text>
+                            <Input variant="outline">
+                                <InputField
+                                    value={positionText}
+                                    inputMode="numeric"
+                                    onChangeText={(text: string) => {
+                                        setPositionText(text);
+                                    }}
+                                />
+                            </Input>
+                        </VStack>
+                    </HStack>
+                    <VStack>
+                        <HStack space="md" alignItems="center">
+                            <Text size="lg">Toxic:</Text>
+                            <Switch
+                                size="lg"
+                                value={newLiquid.toxic}
+                                onValueChange={(val: boolean) => {
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        toxic: val,
+                                    });
+                                }}
+                            />
+                        </HStack>
+                        <HStack space="md" alignItems="center">
+                            <Text size="lg">Used cold:</Text>
+                            <Switch
+                                size="lg"
+                                value={newLiquid.usedCold}
+                                onValueChange={(val: boolean) => {
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        usedCold: val,
+                                    });
+                                }}
+                            />
+                        </HStack>
+                    </VStack>
+                </ModalBody>
+                <ModalFooter borderTopWidth="$1" borderColor="$borderLight200">
+                    <HStack space="md" flex={1} justifyContent="flex-end">
+                        <Button
+                            variant="outline"
+                            action="secondary"
+                            onPress={props.closeModal}
+                            size="md"
+                        >
+                            <ButtonText>Cancel</ButtonText>
+                        </Button>
+                        <Button
+                            bg="$black"
+                            size="md"
+                            onPress={() => {
+                                if (areInputsValid()) {
+                                    newLiquid.position = Number(positionText);
+                                    newLiquid.name = newLiquid.name.trim();
+                                    props.saveLiquid(newLiquid);
+                                    props.closeModal();
+                                }
+                            }}
+                            isDisabled={!areInputsValid()}
+                        >
+                            <Icon color="white" as={Save} mr="$2" />
+                            <ButtonText>
+                                {props.liquid != null ? 'Update' : 'Save'}
+                            </ButtonText>
+                        </Button>
+                    </HStack>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 }
-
-const s = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-        padding: 24,
-    },
-    tab_bar: {
-        flex: 1,
-        width: '100%',
-        flexDirection: 'row',
-        marginRight: 18,
-    },
-
-    tab: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderLeftWidth: 1,
-        borderLeftColor: AppStyles.color.background,
-        borderRightWidth: 1,
-        borderRightColor: AppStyles.color.background,
-        backgroundColor: AppStyles.color.elem_back,
-    },
-
-    tab_text: {
-        textTransform: 'uppercase',
-        color: AppStyles.color.text_primary,
-        fontSize: 18,
-        fontFamily: 'Roboto-thin',
-    },
-
-    tab_icon: {
-        height: 40,
-        width: 40,
-        borderRadius: 40,
-        backgroundColor: AppStyles.color.background,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 10,
-    },
-
-    body: {
-        width: '100%',
-        flex: 10,
-        alignItems: 'center',
-        marginTop: 20,
-        marginRight: 18,
-        paddingHorizontal: '3%',
-    },
-
-    btn: {
-        borderRadius: 8,
-        paddingHorizontal: '5%',
-        paddingVertical: '3%',
-        alignItems: 'center',
-        borderWidth: 1,
-    },
-});
