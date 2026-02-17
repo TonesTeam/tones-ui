@@ -15,7 +15,7 @@ export function AppStack(props: any) {
                 animationTypeForReplace: 'pop',
                 animation: 'fade', //"none",
             }}
-            initialRouteName="Logout"
+            initialRouteName="Loading"
         >
             {Pages.map((page, index) => {
                 return (

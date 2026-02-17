@@ -36,30 +36,55 @@ function generateIPRange(ip, subnetMask) {
     return ipList;
 }
 
-async function scanNetwork(ipList: string[]): Promise<string | null> {
-    const requests = ipList.map(async (ip) => {
+async function scanNetwork(
+    ipList: string[],
+    setProgressValue: ((value: number) => void) | undefined,
+): Promise<string | null> {
+    let completed = 0;
+
+    const requests = ipList.map(async (ip, i) => {
         const fullip = `http://${ip}:8080/health`;
+
         try {
             const resp = (await client.get(fullip, { timeout: 500 })).status;
             console.log(`Response from ${fullip}: ${resp}`);
+
+            if (setProgressValue) {
+                completed++;
+                const progress = (completed / ipList.length) * 100;
+                console.log(
+                    `Scanning ${fullip} (${completed}/${ipList.length}) - ${progress.toFixed(1)}%`,
+                );
+                setProgressValue(progress);
+            }
+
             if (resp === 200) {
                 return ip;
             }
         } catch (err) {
             console.log(`Response from ${fullip}: 500`);
+
+            if (setProgressValue) {
+                completed++;
+                const progress = (completed / ipList.length) * 100;
+                setProgressValue(progress);
+            }
         }
         return null;
     });
+
     const results = await Promise.all(requests);
     return results.find((result) => result !== null) || null;
 }
 
-async function findBE(): Promise<string> {
+async function findBE(
+    setProgressValue: ((value: number) => void) | undefined,
+): Promise<string> {
     const ipAddress = await Network.getIpAddressAsync();
     const subnetMask = '255.255.254.0';
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
-    let foundIP = await scanNetwork(ipList);
+    let foundIP = await scanNetwork(ipList, setProgressValue);
     console.log(`Backdoor IP - ${backdoorAddress}`);
     if (backdoorAddress) foundIP = backdoorAddress;
     return `http://${foundIP}:8080`;
@@ -77,10 +102,12 @@ export const getBackdoorAddress = () => {
 
 let domainPromise: Promise<string> | null = null;
 
-async function getDomain() {
+export async function getDomain(
+    setProgressValue: ((value: number) => void) | undefined,
+) {
     if (domain == null) {
         if (!domainPromise) {
-            domainPromise = findBE(); // Start the initial findBE call
+            domainPromise = findBE(setProgressValue); // Start the initial findBE call
             domain = await domainPromise; // Wait for it to complete and store the result in domain
             domainPromise = null; // Clear the temporary promise once done
         } else {

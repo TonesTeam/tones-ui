@@ -6,6 +6,7 @@ import Library from '../Pages/Library';
 import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
+import Loading from '../Pages/Loading';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
@@ -65,6 +66,11 @@ export const Pages: Page[] = [
     {
         name: 'ProtocolLogs',
         component: ProtocolLogs,
+        isNavigatableFromNavBar: false,
+    },
+    {
+        name: 'Loading',
+        component: Loading,
         isNavigatableFromNavBar: false,
     },
 ];
