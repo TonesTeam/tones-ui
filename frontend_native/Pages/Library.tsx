@@ -31,6 +31,10 @@ import {
     InputField,
     Switch,
     ButtonIcon,
+    Select,
+    SelectTrigger,
+    SelectBackdrop,
+    SelectDragIndicator,
 } from '@gluestack-ui/themed';
 import {
     Trash,
@@ -39,10 +43,17 @@ import {
     Save,
     Plus,
     Eye,
+    ChevronDown,
 } from 'lucide-react-native';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
 import GeneratedAvatar from '../components/GeneratedAvatar';
+import { SelectInput } from '@gluestack-ui/themed';
+import { SelectIcon } from '@gluestack-ui/themed';
+import { SelectPortal } from '@gluestack-ui/themed';
+import { SelectContent } from '@gluestack-ui/themed';
+import { SelectDragIndicatorWrapper } from '@gluestack-ui/themed';
+import { SelectItem } from '@gluestack-ui/themed';
 
 export default function Library(_props: any) {
     return (
@@ -68,11 +79,9 @@ const LibraryBody = () => {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
     const [searchPrompt, setSearchPrompt] = useState('');
-    const [editModal, setEditModal] = useState(false);
-    const [deleteModal, setDeleteModal] = useState(-1);
-    const [editedLiquid, setEditedLiquid] = useState<PermanentLiquidDTO | null>(
-        null,
-    );
+    const [newLiquidModal, setNewLiquidModal] = useState(false);
+    const [viewLiquidModal, setViewLiquidModal] = useState(false);
+    const [selectedLiquid, setSelectedLiquid] = useState(-1);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -83,14 +92,6 @@ const LibraryBody = () => {
         }
     }, [isFocused]);
 
-    const idToName = (id: number) => {
-        console.log(id);
-        for (const liquid of liquids) {
-            if (liquid.id === id) return liquid.name;
-        }
-        return '';
-    };
-
     const listInitilizer = () => {
         getRequest<LiquidDTO[]>('/liquids').then((r) => {
             setLiquids(r.data);
@@ -99,26 +100,13 @@ const LibraryBody = () => {
         getRequest<LiquidTypeDTO[]>('/liquids/types').then((r) => {
             setCategories(r.data);
         });
-
-        setEditedLiquid(null);
     };
 
     useEffect(listInitilizer, []);
 
-    function saveOrUpdateLiquid(liq: PermanentLiquidDTO) {
-        makeRequest('POST' as Method, '/liquid/save', JSON.stringify(liq))
-            .then((r) => {
-                if (r.status >= 200 && r.status <= 299) {
-                    listInitilizer(); //workaround. buggy. TODO: pass rigger from parent (Settings)
-                }
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
-    }
-
-    function deleteLiquid(id: number) {
-        makeRequest('DELETE' as Method, `/liquid/delete/${id}`)
+    const deleteLiquid = (id: number) => {
+        setViewLiquidModal(false);
+        makeRequest('DELETE' as Method, `/liquids/${id}`)
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
                     listInitilizer();
@@ -128,7 +116,7 @@ const LibraryBody = () => {
             .catch((err) => {
                 console.log(err.message);
             });
-    }
+    };
 
     function filterAndSort() {
         if (liquids) {
@@ -155,8 +143,41 @@ const LibraryBody = () => {
         );
     }
 
+    const saveLiquid = (liq: PermanentLiquidDTO) => {
+        const json = JSON.stringify({
+            name: liq.name,
+            description: liq.description,
+            default_incubation_time: liq.default_incubation_time,
+            default_target_temperature: liq.default_incubation_temperature,
+            position: liq.position,
+            is_connected_to_selector: liq.is_connected_to_selector ? 1 : 0,
+            liquid_type_id: 1,
+            creator_id: 1,
+        });
+        console.log(json);
+
+        makeRequest('POST' as Method, '/liquids', json).then((r) => {
+            console.log(r.data);
+            if (r.status == 200) {
+                listInitilizer();
+            }
+        });
+    };
+
     return (
         <>
+            <NewLiquidModal
+                open={newLiquidModal}
+                categories={categories.map((e) => e.name)}
+                onClose={() => setNewLiquidModal(false)}
+                onSave={saveLiquid}
+            />
+            <ViewLiquidModal
+                open={viewLiquidModal}
+                liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
+                onClose={() => setViewLiquidModal(false)}
+                onDelete={deleteLiquid}
+            />
             {liquids.length != 0 && categories.length != 0 && (
                 <>
                     <Box width={900}>
@@ -172,7 +193,7 @@ const LibraryBody = () => {
                                 borderColor="$black"
                                 bg="#1F2832"
                                 mr="$2"
-                                onPress={() => setEditModal(true)}
+                                onPress={() => setNewLiquidModal(true)}
                                 alignItems="center"
                                 justifyContent="center"
                                 height={48}
@@ -273,10 +294,18 @@ const LibraryBody = () => {
                                 </HStack>
 
                                 {/* Table Rows */}
-                                <ScrollView>
+                                <ScrollView maxHeight={500}>
                                     {filterAndSort().map((liquid, i) => {
                                         return (
-                                            <ListItem liquid={liquid} key={i} />
+                                            <ListItem
+                                                liquid={liquid}
+                                                key={i}
+                                                onView={(id) => {
+                                                    setSelectedLiquid(id);
+                                                    console.log(id);
+                                                    setViewLiquidModal(true);
+                                                }}
+                                            />
                                         );
                                     })}
                                 </ScrollView>
@@ -292,9 +321,10 @@ const LibraryBody = () => {
 type ListItemProps = {
     liquid: PermanentLiquidDTO;
     key?: number;
+    onView?: (id: number) => void;
 };
 
-const ListItem = ({ liquid }: ListItemProps) => {
+const ListItem = ({ liquid, onView }: ListItemProps) => {
     return (
         <Box
             rounded="$xl"
@@ -343,6 +373,9 @@ const ListItem = ({ liquid }: ListItemProps) => {
                         alignItems="center"
                         justifyContent="center"
                         size="md"
+                        onPress={() => {
+                            onView(liquid.id);
+                        }}
                     >
                         <Box
                             style={{
@@ -358,5 +391,247 @@ const ListItem = ({ liquid }: ListItemProps) => {
                 </HStack>
             </HStack>
         </Box>
+    );
+};
+
+const NewLiquidModal = ({
+    open,
+    categories,
+    onClose,
+    onSave,
+}: {
+    open: boolean;
+    categories: string[];
+    onClose: () => void;
+    onSave: (liq: PermanentLiquidDTO) => void;
+}) => {
+    const [name, setName] = useState('');
+    const [type, setType] = useState(categories[0] || '');
+    const [description, setDescription] = useState('');
+    const [defaultIncubationTime, setDefaultIncubationTime] = useState(0);
+    const [defaultTargetTemperature, setDefaultTargetTemperature] = useState(0);
+    const [position, setPosition] = useState(0);
+    const [connectionType, setConnectionType] = useState('Selector');
+
+    const handleSave = () => {
+        const newLiquid: PermanentLiquidDTO = {
+            id: 0, // backend will assign ID
+            name,
+            description,
+            default_incubation_time: defaultIncubationTime,
+            default_incubation_temperature: defaultTargetTemperature,
+            position,
+            is_connected_to_selector: connectionType == 'Selector',
+            liquid_type_name: type,
+            created_at: 0,
+            type: {
+                id: 0,
+                name: type,
+            },
+        };
+        onSave(newLiquid);
+        onClose();
+    };
+
+    return (
+        open && (
+            <Modal isOpen={open} onClose={onClose}>
+                <ModalBackdrop />
+                <ModalContent>
+                    <ModalHeader>
+                        <Text fontSize={20} color="black">
+                            New Liquid
+                        </Text>
+                    </ModalHeader>
+                    <ModalBody>
+                        <VStack space="md">
+                            <Input>
+                                <InputField
+                                    placeholder="Name"
+                                    value={name}
+                                    onChange={(e: any) =>
+                                        setName(e.nativeEvent.text)
+                                    }
+                                />
+                            </Input>
+                            <Input>
+                                <InputField
+                                    placeholder="Description"
+                                    value={description}
+                                    onChange={(e: any) =>
+                                        setDescription(e.nativeEvent.text)
+                                    }
+                                />
+                            </Input>
+                            <Input>
+                                <InputField
+                                    placeholder="Default Incubation Time (s)"
+                                    value={
+                                        defaultIncubationTime
+                                            ? defaultIncubationTime.toString()
+                                            : ''
+                                    }
+                                    onChange={(e: any) =>
+                                        setDefaultIncubationTime(
+                                            parseInt(e.nativeEvent.text) || 0,
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                />
+                            </Input>
+                            <Input>
+                                <InputField
+                                    placeholder="Default Target Temperature (°C)"
+                                    value={
+                                        defaultTargetTemperature
+                                            ? defaultTargetTemperature.toString()
+                                            : ''
+                                    }
+                                    onChange={(e: any) =>
+                                        setDefaultTargetTemperature(
+                                            parseInt(e.nativeEvent.text) || 0,
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                />
+                            </Input>
+                            <Input>
+                                <InputField
+                                    placeholder="Position"
+                                    value={position ? position.toString() : ''}
+                                    onChange={(e: any) =>
+                                        setPosition(
+                                            parseInt(e.nativeEvent.text) || 0,
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                />
+                            </Input>
+                            <Select onValueChange={(e) => setConnectionType(e)}>
+                                <SelectTrigger>
+                                    <SelectInput
+                                        placeholder="Select connection type"
+                                        value={connectionType}
+                                    />
+                                    <SelectIcon as={ChevronDown} />
+                                    <SelectPortal>
+                                        <SelectBackdrop />
+                                        <SelectContent>
+                                            <SelectDragIndicatorWrapper>
+                                                <SelectDragIndicator />
+                                            </SelectDragIndicatorWrapper>
+                                            <SelectItem
+                                                label="Selector"
+                                                value="Selector"
+                                            />
+                                            <SelectItem
+                                                label="Grid"
+                                                value="Grid"
+                                            />
+                                        </SelectContent>
+                                    </SelectPortal>
+                                </SelectTrigger>
+                            </Select>
+                            <Select onValueChange={(e) => setType(e)}>
+                                <SelectTrigger>
+                                    <SelectInput
+                                        placeholder="Select liquid type"
+                                        value={type}
+                                    />
+                                    <SelectIcon as={ChevronDown} />
+                                    <SelectPortal>
+                                        <SelectBackdrop />
+                                        <SelectContent>
+                                            <SelectDragIndicatorWrapper>
+                                                <SelectDragIndicator />
+                                            </SelectDragIndicatorWrapper>
+                                            {categories.map((cat, i) => (
+                                                <SelectItem
+                                                    label={cat}
+                                                    value={cat}
+                                                    key={i}
+                                                />
+                                            ))}
+                                        </SelectContent>
+                                    </SelectPortal>
+                                </SelectTrigger>
+                            </Select>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="outline" onPress={onClose} mr="$2">
+                            <ButtonText>Cancel</ButtonText>
+                        </Button>
+                        <Button onPress={handleSave}>
+                            <ButtonText>Save</ButtonText>
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        )
+    );
+};
+
+const ViewLiquidModal = ({
+    open,
+    liquid,
+    onClose,
+    onDelete,
+}: {
+    open: boolean;
+    liquid: PermanentLiquidDTO;
+    onClose: () => void;
+    onDelete: (id: number) => void;
+}) => {
+    return (
+        open && (
+            <Modal isOpen={open} onClose={onClose}>
+                <ModalBackdrop />
+                <ModalContent>
+                    <ModalHeader>
+                        <Text fontSize={20} color="black">
+                            {liquid.name}
+                        </Text>
+                    </ModalHeader>
+                    <ModalBody>
+                        <VStack space="md">
+                            <Text color="$black">{liquid.description}</Text>
+                            <Text color="$black">
+                                Default Incubation Time:{' '}
+                                {liquid.default_incubation_time} s
+                            </Text>
+                            <Text color="$black">
+                                Default Target Temperature:{' '}
+                                {liquid.default_incubation_temperature} °C
+                            </Text>
+                            <Text color="$black">
+                                Position: {liquid.position}
+                            </Text>
+                            <Text color="$black">
+                                Connection Type:{' '}
+                                {liquid.is_connected_to_selector
+                                    ? 'Selector'
+                                    : 'Grid'}
+                            </Text>
+                            <Text color="$black">
+                                Liquid Type: {liquid.liquid_type_name}
+                            </Text>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            variant="outline"
+                            onPress={() => onDelete(liquid.id)}
+                            mr="$2"
+                        >
+                            <ButtonText>Delete</ButtonText>
+                        </Button>
+                        <Button onPress={onClose}>
+                            <ButtonText>Close</ButtonText>
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        )
     );
 };
