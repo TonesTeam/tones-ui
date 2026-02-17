@@ -119,7 +119,7 @@ export default function NavBar() {
             ></Logo>
 
             {/* Navigation links */}
-            <VStack alignItems="center" width="80%" pb="$4" flex={5}>
+            <VStack alignItems="center" width="80%" pb="$4" flex={8}>
                 {Pages.filter((page) => page.isNavigatableFromNavBar).map(
                     (page, index) => {
                         return (
@@ -159,7 +159,7 @@ export default function NavBar() {
             </Text>
 
             {/* User info section */}
-            <VStack flex={7} mt={150} alignItems="flex-start">
+            <VStack flex={7} mt={100} alignItems="flex-start">
                 <Pressable
                     my="$2"
                     onPress={() => navigation.navigate('Profile')}

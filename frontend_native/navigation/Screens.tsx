@@ -8,6 +8,7 @@ import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
 import Loading from '../Pages/Loading';
 import Settings from '../Pages/Settings';
+import Dashboard from '../Pages/Dashboard';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
@@ -23,6 +24,11 @@ export type Page = {
 };
 
 export const Pages: Page[] = [
+    {
+        name: 'Dashboard',
+        component: Dashboard,
+        isNavigatableFromNavBar: true,
+    },
     {
         name: 'Protocols',
         component: ProtocolList,
