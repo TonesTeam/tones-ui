@@ -9,42 +9,51 @@ import {
 } from '../constants/styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GeneratedAvatar from '../components/GeneratedAvatar';
+import { useUser } from '../contexts/UserContext';
 
 const Profile = ({ route, navigation }: NativeStackScreenProps<any>) => {
-    const user = {
-        username: 'Jefferey',
-        role: 'Administrator',
-        created_at: '2025-01-01',
-    };
+    const { user } = useUser();
 
     return (
         <MainContainer>
             <NavBar />
-            <Box style={styles.wrapper}>
-                <Heading size="4xl">User Profile</Heading>
+            <Box flex={1} p={24}>
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                    mt={16}
+                >
+                    User Profile
+                </Text>
                 <VStack space="lg" alignItems="center">
-                    <GeneratedAvatar name={user.username} size={150} />
+                    <GeneratedAvatar name={user?.first_name} size={150} />
 
                     <VStack space="md" style={styles.infoBox}>
                         <HStack style={styles.row}>
                             <Text fontFamily="Roboto-bold" style={styles.label}>
                                 Username:
                             </Text>
-                            <Text style={styles.value}>{user.username}</Text>
+                            <Text style={styles.value}>
+                                {user?.first_name} {user?.last_name}
+                            </Text>
                         </HStack>
 
                         <HStack style={styles.row}>
                             <Text fontFamily="Roboto-bold" style={styles.label}>
                                 Role:
                             </Text>
-                            <Text style={styles.value}>{user.role}</Text>
+                            <Text style={styles.value}>{user?.role}</Text>
                         </HStack>
 
                         <HStack style={styles.row}>
                             <Text fontFamily="Roboto-bold" style={styles.label}>
-                                Joined:
+                                Institution:
                             </Text>
-                            <Text style={styles.value}>{user.created_at}</Text>
+                            <Text style={styles.value}>
+                                {user?.institution}
+                            </Text>
                         </HStack>
                     </VStack>
                 </VStack>
