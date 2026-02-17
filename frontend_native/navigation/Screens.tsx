@@ -7,6 +7,7 @@ import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
 import Loading from '../Pages/Loading';
+import Settings from '../Pages/Settings';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
@@ -72,5 +73,10 @@ export const Pages: Page[] = [
         name: 'Loading',
         component: Loading,
         isNavigatableFromNavBar: false,
+    },
+    {
+        name: 'Settings',
+        component: Settings,
+        isNavigatableFromNavBar: true,
     },
 ];
