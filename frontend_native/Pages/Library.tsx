@@ -6,7 +6,7 @@ import {
     LiquidTypeDTO,
     PermanentLiquidDTO,
 } from 'common/dto/liquid.dto';
-import { getRequest, makeRequest } from '../common/util';
+import { formatSocialMediaTime, getRequest, makeRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import { Method } from 'axios';
 import { useIsFocused } from '@react-navigation/native';
@@ -32,9 +32,17 @@ import {
     Switch,
     ButtonIcon,
 } from '@gluestack-ui/themed';
-import { Trash, Pencil, CirclePlus, Save, Plus } from 'lucide-react-native';
+import {
+    Trash,
+    Pencil,
+    CirclePlus,
+    Save,
+    Plus,
+    Eye,
+} from 'lucide-react-native';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
+import GeneratedAvatar from '../components/GeneratedAvatar';
 
 export default function Library(_props: any) {
     return (
@@ -214,62 +222,50 @@ const LibraryBody = () => {
                             </Box>
                         )}
                         {filterAndSort().length != 0 && (
-                            <Box
-                                borderWidth="$1"
-                                borderColor="$borderLight200"
-                                rounded="$lg"
-                                overflow="hidden"
-                                mt="$5"
-                                mb="$6"
-                            >
+                            <Box overflow="hidden" mt="$5" mb="$6">
                                 {/* Table Header */}
-                                <HStack
-                                    bg="$backgroundLight100"
-                                    p="$3"
-                                    borderBottomWidth="$1"
-                                    borderColor="$borderLight200"
-                                >
-                                    <Box flex={3}>
-                                        <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
-                                        >
-                                            Reagent Name
-                                        </Text>
-                                    </Box>
-                                    <Box flex={2}>
-                                        <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
-                                        >
-                                            Connection Type
-                                        </Text>
-                                    </Box>
-                                    <Box flex={2}>
-                                        <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
-                                        >
-                                            Position
-                                        </Text>
-                                    </Box>
+                                <HStack p="$3">
                                     <Box flex={1}>
                                         <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
+                                            opacity={0.5}
+                                            fontSize={14}
+                                            color="#1F2832"
                                         >
-                                            Category
+                                            # ID
+                                        </Text>
+                                    </Box>
+                                    <Box flex={6}>
+                                        <Text
+                                            opacity={0.5}
+                                            fontSize={14}
+                                            color="#1F2832"
+                                        >
+                                            Name
+                                        </Text>
+                                    </Box>
+                                    <Box flex={3}>
+                                        <Text
+                                            opacity={0.5}
+                                            fontSize={14}
+                                            color="#1F2832"
+                                        >
+                                            Type
                                         </Text>
                                     </Box>
                                     <Box flex={2}>
                                         <Text
-                                            fontWeight="$semibold"
-                                            size="sm"
-                                            color="$textLight600"
+                                            opacity={0.5}
+                                            fontSize={14}
+                                            color="#1F2832"
+                                        >
+                                            Created
+                                        </Text>
+                                    </Box>
+                                    <Box flex={2}>
+                                        <Text
+                                            opacity={0.5}
+                                            fontSize={14}
+                                            color="#1F2832"
                                         >
                                             Actions
                                         </Text>
@@ -277,312 +273,90 @@ const LibraryBody = () => {
                                 </HStack>
 
                                 {/* Table Rows */}
-                                <ScrollView style={{ maxHeight: 400 }}>
-                                    {filterAndSort().map((liq, index) => {
-                                        const isOdd = index % 2 === 1;
+                                <ScrollView>
+                                    {filterAndSort().map((liquid, i) => {
                                         return (
-                                            <HStack
-                                                key={index}
-                                                p="$3"
-                                                bg={
-                                                    isOdd
-                                                        ? '$backgroundLight50'
-                                                        : 'transparent'
-                                                }
-                                                borderBottomWidth={
-                                                    index <
-                                                    filterAndSort().length - 1
-                                                        ? '$1'
-                                                        : '$0'
-                                                }
-                                                borderColor="$borderLight100"
-                                            >
-                                                <Box
-                                                    flex={3}
-                                                    justifyContent="center"
-                                                >
-                                                    <Text
-                                                        size="sm"
-                                                        color="$textLight900"
-                                                        fontWeight="$medium"
-                                                    >
-                                                        {liq.name}
-                                                    </Text>
-                                                </Box>
-                                                <Box
-                                                    flex={2}
-                                                    justifyContent="center"
-                                                >
-                                                    <Text
-                                                        size="sm"
-                                                        color="$textLight900"
-                                                        fontWeight="$medium"
-                                                    >
-                                                        {liq.is_connected_to_selector
-                                                            ? 'Selector'
-                                                            : 'Grid'}
-                                                    </Text>
-                                                </Box>
-                                                <Box
-                                                    flex={2}
-                                                    justifyContent="center"
-                                                >
-                                                    <Text
-                                                        size="sm"
-                                                        color="$textLight700"
-                                                    >
-                                                        {liq.position}
-                                                    </Text>
-                                                </Box>
-                                                <Box
-                                                    flex={1}
-                                                    justifyContent="center"
-                                                >
-                                                    <Text
-                                                        size="sm"
-                                                        color="$textLight700"
-                                                    >
-                                                        {liq.liquid_type_name}
-                                                    </Text>
-                                                </Box>
-                                                <Box flex={2}>
-                                                    <HStack space="lg">
-                                                        <Button
-                                                            size="xs"
-                                                            variant="link"
-                                                            onPress={() => {
-                                                                setEditedLiquid(
-                                                                    liq,
-                                                                );
-                                                                setEditModal(
-                                                                    true,
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Icon
-                                                                as={Pencil}
-                                                                color="$primary500"
-                                                                size="xs"
-                                                                mr="$1"
-                                                            />
-                                                            <ButtonText
-                                                                color="$primary500"
-                                                                size="xs"
-                                                            >
-                                                                Edit
-                                                            </ButtonText>
-                                                        </Button>
-                                                        <Button
-                                                            size="xs"
-                                                            variant="link"
-                                                            onPress={() =>
-                                                                setDeleteModal(
-                                                                    liq.id,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Icon
-                                                                as={Trash}
-                                                                color="$error500"
-                                                                size="xs"
-                                                                mr="$1"
-                                                            />
-                                                            <ButtonText
-                                                                color="$error500"
-                                                                size="xs"
-                                                            >
-                                                                Delete
-                                                            </ButtonText>
-                                                        </Button>
-                                                    </HStack>
-                                                </Box>
-                                            </HStack>
+                                            <ListItem liquid={liquid} key={i} />
                                         );
                                     })}
                                 </ScrollView>
                             </Box>
                         )}
                     </Box>
-
-                    <Box>
-                        <SaveLiquidModal
-                            isOpen={editModal}
-                            liquid={editedLiquid}
-                            categories={categories}
-                            closeModal={() => {
-                                setEditedLiquid(null);
-                                setEditModal(false);
-                            }}
-                            saveLiquid={(liq) => saveOrUpdateLiquid(liq)}
-                        />
-                    </Box>
                 </>
             )}
-            <ConfirmationModal
-                isOpen={deleteModal != -1}
-                onClose={() => setDeleteModal(-1)}
-                action={() => deleteLiquid(deleteModal)}
-                icon={Trash}
-                headline={`Delete reagent "${idToName(deleteModal)}"`}
-                text="Are you sure you want to delete this reagent? This action cannot be undone."
-                actionButtonText="Delete"
-                type="error"
-            />
         </>
     );
 };
 
-function SaveLiquidModal(props: {
-    liquid: PermanentLiquidDTO | null;
-    categories: LiquidTypeDTO[];
-    closeModal: () => void;
-    saveLiquid: (liq: PermanentLiquidDTO) => void;
-    isOpen: boolean;
-}) {
-    const [newLiquid, setNewLiquid] = useState<PermanentLiquidDTO>({
-        id: 0,
-        name: '',
-        type: props.categories[0],
-        usedCold: false,
-        toxic: false,
-        position: -1,
-    } as PermanentLiquidDTO);
-    const [positionText, setPositionText] = useState('0');
+type ListItemProps = {
+    liquid: PermanentLiquidDTO;
+    key?: number;
+};
 
-    useEffect(() => {
-        if (props.liquid) setNewLiquid(props.liquid);
-        else
-            setNewLiquid({
-                id: 0,
-                name: '',
-                type: props.categories[0],
-                usedCold: false,
-                toxic: false,
-                position: -1,
-            } as PermanentLiquidDTO);
-    }, [props.liquid]);
-
-    const areInputsValid = (): boolean => {
-        const isPositionValid = !isNaN(Number(positionText));
-        const isNameValid = newLiquid.name.trim() !== '';
-
-        return isPositionValid && isNameValid;
-    };
-
+const ListItem = ({ liquid }: ListItemProps) => {
     return (
-        <Modal onClose={props.closeModal} isOpen={props.isOpen} size="lg">
-            <ModalBackdrop />
-            <ModalContent padding="$3">
-                <ModalHeader>
-                    <Heading size="xl" color="$textLight900">
-                        {props.liquid != null
-                            ? 'Updating reagent data'
-                            : 'Adding new reagent'}
-                    </Heading>
-                </ModalHeader>
-                <ModalBody padding="$6">
-                    <VStack>
-                        <Text>Name:</Text>
-                        <Input variant="outline">
-                            <InputField
-                                value={newLiquid.name}
-                                onChangeText={(text: string) =>
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        name: text,
-                                    })
-                                }
-                            />
-                        </Input>
-                    </VStack>
-                    <HStack>
-                        <VStack flex={3} mr="$3">
-                            <Text>Category:</Text>
-                            <CustomSelect
-                                list={props.categories}
-                                selected={newLiquid.type}
-                                canAdd={false}
-                                onChangeSelect={(cat) =>
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        type: cat,
-                                    })
-                                }
-                            />
-                        </VStack>
-                        <VStack flex={1}>
-                            <Text>Selector position:</Text>
-                            <Input variant="outline">
-                                <InputField
-                                    value={positionText}
-                                    inputMode="numeric"
-                                    onChangeText={(text: string) => {
-                                        setPositionText(text);
-                                    }}
-                                />
-                            </Input>
-                        </VStack>
-                    </HStack>
-                    <VStack>
-                        <HStack space="md" alignItems="center">
-                            <Text size="lg">Toxic:</Text>
-                            <Switch
-                                size="lg"
-                                value={newLiquid.toxic}
-                                onValueChange={(val: boolean) => {
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        toxic: val,
-                                    });
-                                }}
-                            />
-                        </HStack>
-                        <HStack space="md" alignItems="center">
-                            <Text size="lg">Used cold:</Text>
-                            <Switch
-                                size="lg"
-                                value={newLiquid.usedCold}
-                                onValueChange={(val: boolean) => {
-                                    setNewLiquid({
-                                        ...newLiquid,
-                                        usedCold: val,
-                                    });
-                                }}
-                            />
-                        </HStack>
-                    </VStack>
-                </ModalBody>
-                <ModalFooter borderTopWidth="$1" borderColor="$borderLight200">
-                    <HStack space="md" flex={1} justifyContent="flex-end">
-                        <Button
-                            variant="outline"
-                            action="secondary"
-                            onPress={props.closeModal}
-                            size="md"
-                        >
-                            <ButtonText>Cancel</ButtonText>
-                        </Button>
-                        <Button
-                            bg="$black"
-                            size="md"
-                            onPress={() => {
-                                if (areInputsValid()) {
-                                    newLiquid.position = Number(positionText);
-                                    newLiquid.name = newLiquid.name.trim();
-                                    props.saveLiquid(newLiquid);
-                                    props.closeModal();
-                                }
+        <Box
+            rounded="$xl"
+            bg="$white"
+            p="$4"
+            mb="$3"
+            shadowColor="$borderLight100"
+            shadowOffset={{ width: 0, height: 1 }}
+            shadowOpacity={0.05}
+            shadowRadius={2}
+            flexDirection="row"
+            height={72}
+        >
+            <HStack
+                alignItems="center"
+                justifyContent="space-between"
+                width="100%"
+            >
+                <Text flex={1} textAlign="left" size="md" color="$black">
+                    # {liquid.id}
+                </Text>
+                <Text flex={6} textAlign="left" size="md" color="$black">
+                    {liquid.name}
+                </Text>
+
+                <HStack flex={3} alignItems="center" space="sm">
+                    <Text color="$black" size="md">
+                        {liquid.liquid_type_name}
+                    </Text>
+                </HStack>
+
+                <Box flex={2} alignItems="flex-start" justifyContent="center">
+                    <Text size="md" color="$black" textAlign="center">
+                        {formatSocialMediaTime(liquid.created_at)}
+                    </Text>
+                </Box>
+
+                <HStack flex={2} alignItems="flex-start" space="sm">
+                    <Button
+                        variant="outline"
+                        rounded="$full"
+                        borderColor="$black"
+                        bg="#1F2832"
+                        ml="$2"
+                        p="$5"
+                        alignItems="center"
+                        justifyContent="center"
+                        size="md"
+                    >
+                        <Box
+                            style={{
+                                filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
                             }}
-                            isDisabled={!areInputsValid()}
                         >
-                            <Icon color="white" as={Save} mr="$2" />
-                            <ButtonText>
-                                {props.liquid != null ? 'Update' : 'Save'}
-                            </ButtonText>
-                        </Button>
-                    </HStack>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
+                            <ButtonIcon as={Eye} mr="$2" color="white" />
+                        </Box>
+                        <ButtonText color="white" minHeight={21} fontSize={14}>
+                            View
+                        </ButtonText>
+                    </Button>
+                </HStack>
+            </HStack>
+        </Box>
     );
-}
+};
