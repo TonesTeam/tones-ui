@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
 import { config } from './gluestack-config';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { UserProvider } from './contexts/UserContext';
 
 export default function App() {
     // Ignore specific warning by message
@@ -48,7 +49,9 @@ export default function App() {
                         <SafeAreaProvider>
                             <SafeAreaView style={{ flex: 1 }}>
                                 <GluestackUIProvider config={config}>
-                                    <AppStack />
+                                    <UserProvider>
+                                        <AppStack />
+                                    </UserProvider>
                                 </GluestackUIProvider>
                             </SafeAreaView>
                         </SafeAreaProvider>

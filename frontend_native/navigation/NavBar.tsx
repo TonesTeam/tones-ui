@@ -8,7 +8,6 @@ import { Status } from '../state/progress';
 import CircularProgress, {
     ProgressRef,
 } from 'react-native-circular-progress-indicator';
-
 import Logo from '../assets/pics/tones_logo.svg';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { LogOut } from 'lucide-react-native';
@@ -23,6 +22,7 @@ import {
     Icon,
     Button,
 } from '@gluestack-ui/themed';
+import { useUser } from '../contexts/UserContext';
 
 export default function NavBar() {
     //Navigation stuff
@@ -85,8 +85,8 @@ export default function NavBar() {
         }
     };
 
-    //Animation stuff
     const [logoutConfirmModal, setLogoutConfirmModal] = useState(false);
+    const { user } = useUser();
 
     return (
         <Box
@@ -165,7 +165,7 @@ export default function NavBar() {
             </Text>
 
             {/* User info section */}
-            <VStack flex={7} mt={100} alignItems="flex-start">
+            <VStack flex={7} mt={70} alignItems="flex-start">
                 <Pressable
                     my="$2"
                     onPress={() => navigation.navigate('Profile')}
@@ -176,13 +176,15 @@ export default function NavBar() {
                         `,
                     }}
                 >
-                    <GeneratedAvatar name="Jacob Goldberg" size={64} />
+                    <GeneratedAvatar name={user?.first_name} size={64} />
                 </Pressable>
                 <Text fontSize={16} color="#1F2832">
-                    Jefferey
+                    {user?.first_name}
+                    {'\n'}
+                    {user?.last_name}
                 </Text>
                 <Text color="rgba(31, 40, 50, 0.4)" fontSize={12}>
-                    TSI Laboratories
+                    {user?.institution}
                 </Text>
                 <Button
                     variant="link"

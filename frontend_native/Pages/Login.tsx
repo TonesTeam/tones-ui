@@ -28,6 +28,7 @@ import {
 } from '../common/util';
 import { useAppSelector } from '../state/hooks';
 import { Status } from '../state/progress';
+import { useUser } from '../contexts/UserContext';
 
 type User = {
     id: number;
@@ -36,6 +37,7 @@ type User = {
     is_deleted: boolean;
     institution: string;
     role: string;
+    avatar: string | null;
 };
 
 export default function Login({
@@ -145,6 +147,7 @@ const UserGrid: React.FC<UserGridProps> = ({
                 protocol.status === Status.Ongoing,
         );
     };
+    const { setUser } = useUser();
 
     return (
         <View style={s.gridContainer}>
@@ -154,13 +157,15 @@ const UserGrid: React.FC<UserGridProps> = ({
                 numColumns={3}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => {
-                    console.log('Rendering user:', item.username);
                     return (
                         <UserCard
                             user={item}
                             isActive={isUserActive(item.username)}
                             onPress={() => {
-                                console.log(`Logging in as ${item.username}`);
+                                console.log(
+                                    `Logging in as ${item.first_name} ${item.last_name}`,
+                                );
+                                setUser(item);
                                 navigation.navigate('Protocols');
                             }}
                         />
