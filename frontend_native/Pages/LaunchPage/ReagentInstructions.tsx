@@ -1,15 +1,12 @@
 import { AppStyles } from '../../constants/styles';
-import {
-    Box,
-    VStack,
-    HStack,
-    Text,
-    ScrollView,
-    Heading,
-    Badge,
-    BadgeText,
-    Divider,
-} from '@gluestack-ui/themed';
+import { Box } from '../../components/ui/box';
+import { VStack } from '../../components/ui/vstack';
+import { HStack } from '../../components/ui/hstack';
+import { Text } from '../../components/ui/text';
+import { ScrollView } from '../../components/ui/scroll-view';
+import { Heading } from '../../components/ui/heading';
+import { Badge, BadgeText } from '../../components/ui/badge';
+import { Divider } from '../../components/ui/divider';
 
 export interface InstructionReagent {
     name: string;

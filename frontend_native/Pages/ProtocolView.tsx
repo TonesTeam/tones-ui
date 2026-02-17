@@ -1,15 +1,16 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainContainer } from '../constants/styles';
 import { StyleSheet } from 'react-native';
-import { Box, Heading, Text, VStack, HStack } from '@gluestack-ui/themed';
+import { Box } from '../components/ui/box';
+import { Heading } from '../components/ui/heading';
+import { Text } from '../components/ui/text';
+import { VStack } from '../components/ui/vstack';
+import { HStack } from '../components/ui/hstack';
 import NavBar from '../navigation/NavBar';
-import {
-    Button,
-    ButtonText,
-    Icon,
-    Spinner,
-    ScrollView,
-} from '@gluestack-ui/themed';
+import { Button, ButtonText } from '../components/ui/button';
+import { Icon } from '../components/ui/icon';
+import { Spinner } from '../components/ui/spinner';
+import { ScrollView } from '../components/ui/scroll-view';
 import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';

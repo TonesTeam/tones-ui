@@ -50,20 +50,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InfoType } from '../common/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import App from '../App';
-import {
-    Heading,
-    Box,
-    VStack,
-    Button,
-    HStack,
-    Text,
-    Input,
-    InputField,
-    InputSlot,
-    InputIcon,
-    ButtonText,
-    Icon,
-} from '@gluestack-ui/themed';
+import { Heading } from '../components/ui/heading';
+import { Box } from '../components/ui/box';
+import { VStack } from '../components/ui/vstack';
+import { Button, ButtonText } from '../components/ui/button';
+import { HStack } from '../components/ui/hstack';
+import { Text } from '../components/ui/text';
+import { Input, InputField, InputSlot, InputIcon } from '../components/ui/input';
+import { Icon } from '../components/ui/icon';
 import { Save } from 'lucide-react-native';
 import { FlaskConical, Waves } from 'lucide-react-native';
 import PreSaveModal from '../components/PreSaveModal';

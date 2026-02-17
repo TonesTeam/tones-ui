@@ -1,14 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-    Box,
-    Progress,
-    ProgressFilledTrack,
-    VStack,
-    Text,
-    Pressable,
-    Button,
-    ButtonText,
-} from '@gluestack-ui/themed';
+import { Box } from '../components/ui/box';
+import { Progress, ProgressFilledTrack } from '../components/ui/progress';
+import { VStack } from '../components/ui/vstack';
+import { Text } from '../components/ui/text';
+import { Pressable } from '../components/ui/pressable';
+import { Button, ButtonText } from '../components/ui/button';
 import Logo from '../assets/pics/tones_logo.svg';
 import { useEffect, useState } from 'react';
 import { getDomain } from '../common/util';

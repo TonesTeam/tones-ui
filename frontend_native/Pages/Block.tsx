@@ -28,11 +28,10 @@ import {
     TEMPERATURE_MIN,
     DEFAULT_TEMEPRATURE,
 } from '../constants/protocol_constants';
+import { VStack } from '../components/ui/vstack';
+import { Input, InputField } from '../components/ui/input';
+import { Text } from '../components/ui/text';
 import {
-    VStack,
-    InputField,
-    Input,
-    Text,
     Select,
     SelectTrigger,
     SelectInput,
@@ -43,21 +42,15 @@ import {
     SelectDragIndicator,
     SelectDragIndicatorWrapper,
     SelectItem,
-    Alert,
-    AlertIcon,
-    AlertText,
-    Button,
-    ButtonText,
-    Toast,
-    ToastTitle,
-    ToastDescription,
-    useToast,
-    Icon,
-    Switch,
-    Heading,
-} from '@gluestack-ui/themed';
+} from '../components/ui/select';
+import { Alert, AlertIcon, AlertText } from '../components/ui/alert';
+import { Button, ButtonText } from '../components/ui/button';
+import { Toast, ToastTitle, ToastDescription, useToast } from '../components/ui/toast';
+import { Icon } from '../components/ui/icon';
+import { Switch } from '../components/ui/switch';
+import { Heading } from '../components/ui/heading';
 import { ChevronDown, Check, Info } from 'lucide-react-native';
-import { HStack } from '@gluestack-ui/themed';
+import { HStack } from '../components/ui/hstack';
 import { formatDuration } from '../common/util';
 
 export interface WorkBlockProps {

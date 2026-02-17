@@ -1,6 +1,7 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, ButtonIcon, ButtonText, Text } from '@gluestack-ui/themed';
-import { Box } from '@gluestack-ui/themed';
+import { Button, ButtonIcon, ButtonText } from '../../components/ui/button';
+import { Text } from '../../components/ui/text';
+import { Box } from '../../components/ui/box';
 import { Plus } from 'lucide-react-native';
 
 interface EmptyListPlaceholderProps {

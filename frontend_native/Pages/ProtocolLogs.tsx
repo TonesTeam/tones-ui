@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-    Box,
-    VStack,
-    HStack,
-    Text,
-    Heading,
-    ScrollView,
-    Badge,
-    BadgeText,
-} from '@gluestack-ui/themed';
+import { Box } from '../components/ui/box';
+import { VStack } from '../components/ui/vstack';
+import { HStack } from '../components/ui/hstack';
+import { Text } from '../components/ui/text';
+import { Heading } from '../components/ui/heading';
+import { ScrollView } from '../components/ui/scroll-view';
+import { Badge, BadgeText } from '../components/ui/badge';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { MainContainer } from '../constants/styles';
 import NavBar from '../navigation/NavBar';

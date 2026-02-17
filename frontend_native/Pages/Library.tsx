@@ -10,28 +10,25 @@ import { formatSocialMediaTime, getRequest, makeRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import { Method } from 'axios';
 import { useIsFocused } from '@react-navigation/native';
+import { Box } from '../components/ui/box';
+import { Heading } from '../components/ui/heading';
+import { Icon } from '../components/ui/icon';
+import { Text } from '../components/ui/text';
+import { Spinner } from '../components/ui/spinner';
+import { ScrollView } from '../components/ui/scroll-view';
+import { Button, ButtonText, ButtonIcon } from '../components/ui/button';
 import {
-    Box,
-    Heading,
-    Icon,
-    Text,
-    Spinner,
-    ScrollView,
-    Button,
-    ButtonText,
     Modal,
     ModalBackdrop,
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
-    VStack,
-    HStack,
-    Input,
-    InputField,
-    Switch,
-    ButtonIcon,
-} from '@gluestack-ui/themed';
+} from '../components/ui/modal';
+import { VStack } from '../components/ui/vstack';
+import { HStack } from '../components/ui/hstack';
+import { Input, InputField } from '../components/ui/input';
+import { Switch } from '../components/ui/switch';
 import {
     Trash,
     Pencil,

@@ -1,13 +1,9 @@
-import {
-    Box,
-    Button,
-    ButtonIcon,
-    ButtonText,
-    Heading,
-    HStack,
-    Text,
-    VStack,
-} from '@gluestack-ui/themed';
+import { Box } from '../../components/ui/box';
+import { Button, ButtonIcon, ButtonText } from '../../components/ui/button';
+import { Heading } from '../../components/ui/heading';
+import { HStack } from '../../components/ui/hstack';
+import { Text } from '../../components/ui/text';
+import { VStack } from '../../components/ui/vstack';
 import { Plus } from 'lucide-react-native';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

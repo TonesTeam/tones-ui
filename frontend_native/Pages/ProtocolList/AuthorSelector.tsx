@@ -9,7 +9,7 @@ import {
     SelectItem,
     SelectPortal,
     SelectTrigger,
-} from '@gluestack-ui/themed';
+} from '../../components/ui/select';
 import { ListFilter } from 'lucide-react-native';
 
 interface AuthorSelectorProps {

@@ -4,20 +4,13 @@ import { ProtocolDto } from 'common/dto/protocol.dto';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { formatSocialMediaTime, makeRequest } from '../../common/util';
-import {
-    HStack,
-    Text,
-    Box,
-    Icon,
-    Pressable,
-    MenuItem,
-    MenuItemLabel,
-    MenuSeparator,
-    Button,
-    ButtonText,
-    Menu,
-    ButtonIcon,
-} from '@gluestack-ui/themed';
+import { HStack } from '../../components/ui/hstack';
+import { Text } from '../../components/ui/text';
+import { Box } from '../../components/ui/box';
+import { Icon } from '../../components/ui/icon';
+import { Pressable } from '../../components/ui/pressable';
+import { MenuItem, MenuItemLabel, MenuSeparator, Menu } from '../../components/ui/menu';
+import { Button, ButtonText, ButtonIcon } from '../../components/ui/button';
 import GeneratedAvatar from '../../components/GeneratedAvatar';
 import { Method } from 'axios';
 

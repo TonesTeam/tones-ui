@@ -20,7 +20,11 @@ import {
     NativeStackNavigationProp,
     NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { Icon, Box, VStack, Text, Spinner } from '@gluestack-ui/themed';
+import { Icon } from '../../components/ui/icon';
+import { Box } from '../../components/ui/box';
+import { VStack } from '../../components/ui/vstack';
+import { Text } from '../../components/ui/text';
+import { Spinner } from '../../components/ui/spinner';
 import { X } from 'lucide-react-native';
 
 import ListItem from './ListItem';

@@ -9,7 +9,7 @@ import {
     SelectItem,
     SelectPortal,
     SelectTrigger,
-} from '@gluestack-ui/themed';
+} from '../../components/ui/select';
 import { ArrowDownWideNarrow } from 'lucide-react-native';
 
 interface SortingSelectorProps {

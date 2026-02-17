@@ -3,22 +3,19 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import {
     Modal,
-    Button,
-    ButtonText,
-    Text,
-    Input,
-    InputField,
-    Heading,
-    Image,
-    Pressable,
     ModalFooter,
     ModalBody,
     ModalHeader,
     ModalContent,
     ModalBackdrop,
-    ButtonIcon,
-    HStack,
-} from '@gluestack-ui/themed';
+} from '../components/ui/modal';
+import { Button, ButtonText, ButtonIcon } from '../components/ui/button';
+import { Text } from '../components/ui/text';
+import { Input, InputField } from '../components/ui/input';
+import { Heading } from '../components/ui/heading';
+import { Image } from '../components/ui/image';
+import { Pressable } from '../components/ui/pressable';
+import { HStack } from '../components/ui/hstack';
 import { Save } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import {
