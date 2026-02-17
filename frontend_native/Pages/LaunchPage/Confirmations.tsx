@@ -11,7 +11,7 @@ import {
     Table,
     VectorSquare,
 } from 'lucide-react-native';
-import { Icon } from '@gluestack-ui/themed';
+import { Icon } from '../../components/ui/icon';
 
 function ConfirmBox(props: {
     icon: LucideIcon;

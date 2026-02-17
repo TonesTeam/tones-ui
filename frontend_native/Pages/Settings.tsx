@@ -1,4 +1,5 @@
-import { Box, Text } from '@gluestack-ui/themed';
+import { Box } from '../components/ui/box';
+import { Text } from '../components/ui/text';
 import { MainContainer, globalElementStyle } from '../constants/styles';
 import NavBar from '../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';

@@ -1,6 +1,7 @@
 import { MainContainer } from '../constants/styles';
 import NavBar from '../navigation/NavBar';
-import { Box, Text } from '@gluestack-ui/themed';
+import { Box } from '../components/ui/box';
+import { Text } from '../components/ui/text';
 
 const History = (props: any) => {
     return (

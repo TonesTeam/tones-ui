@@ -1,4 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const extraNodeModules = {
@@ -26,5 +27,5 @@ module.exports = (() => {
 
     config.watchFolders = [...(config.watchFolders || []), ...watchFolders];
 
-    return config;
+    return withNativeWind(config, { input: './global.css' });
 })();

@@ -8,7 +8,9 @@ import { getRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { StepDTO, ReagentStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
-import { Box, VStack, HStack } from '@gluestack-ui/themed';
+import { Box } from '../../components/ui/box';
+import { VStack } from '../../components/ui/vstack';
+import { HStack } from '../../components/ui/hstack';
 import { ReagentInstructions, ReagentInstruction } from './ReagentInstructions';
 
 interface ReagentInfo {
