@@ -79,7 +79,7 @@ const ListItem = ({
                 </HStack>
 
                 <Text size="md" color="$black" flex={2} textAlign="center">
-                    {formatSocialMediaTime(protocol.creationDate)}
+                    {formatSocialMediaTime(protocol.created_at)}
                 </Text>
 
                 <Text color="$black" size="md" flex={3} textAlign="center">

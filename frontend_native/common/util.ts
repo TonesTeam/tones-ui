@@ -168,11 +168,9 @@ export const formatDuration = (seconds: number): string => {
     return `${minutes} min ${extra_seconds} sec`;
 };
 
-export const formatSocialMediaTime = (
-    dateInput: string | number | Date,
-): string => {
+export const formatSocialMediaTime = (dateInput: number): string => {
     const now = new Date();
-    const date = new Date(dateInput);
+    const date = new Date(dateInput * 1000);
     const diffMs = now.getTime() - date.getTime();
 
     const minute = 60 * 1000;
