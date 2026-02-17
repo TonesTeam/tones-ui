@@ -46,14 +46,6 @@ const Header = ({
 }: HeaderProps) => {
     return (
         <VStack alignItems="start" width="95%" space="lg" mt="$4">
-            {/* Protocol list page title and protocol count */}
-            <HStack alignItems="center" justifyContent="flex-start">
-                <Heading size="4xl">Protocols</Heading>
-                <Text size="xl" color="$textLight500" ml="$2" mt="$4">
-                    ({protocolCount})
-                </Text>
-            </HStack>
-
             {/* Row with the search bar, sorting selectors and call to action button */}
             <HStack justifyContent="space-between" width="100%">
                 <HStack>

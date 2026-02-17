@@ -181,9 +181,27 @@ export default function ProtocolList({
     return (
         <MainContainer>
             <NavBar />
-            <View style={[globalElementStyle.page_container]}>
+            <Box flex={1} p={24}>
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                    mt={16}
+                >
+                    Protocols{' '}
+                    {protocols && (
+                        <Text
+                            fontSize={20}
+                            color="rgba(0, 0, 0, 0.3)"
+                            fontFamily="Orbitron-Medium"
+                        >
+                            ({protocols.length})
+                        </Text>
+                    )}
+                </Text>
                 <Header
-                    protocolCount={protocols ? protocols.length : 0}
+                    protocolCount={0}
                     navigation={navigation}
                     searchPrompt={searchPrompt}
                     setSearchPrompt={setSearchPrompt}
@@ -260,39 +278,40 @@ export default function ProtocolList({
                                         ref={scrollViewRef}
                                         showsVerticalScrollIndicator={true}
                                     >
-                                        {filterAndSort().map(function (
-                                            protocol,
-                                            index,
-                                        ) {
-                                            return (
-                                                <ListItem
-                                                    removeProtocolFromList={(
-                                                        id: number,
-                                                    ) => {
-                                                        setProtocols(
-                                                            (protocols) =>
-                                                                protocols
-                                                                    ? protocols.filter(
-                                                                          (p) =>
-                                                                              p.id !==
-                                                                              id,
-                                                                      )
-                                                                    : protocols,
-                                                        );
-                                                    }}
-                                                    key={protocol.id}
-                                                    protocol={protocol}
-                                                    navigation={navigation}
-                                                />
-                                            );
-                                        })}
+                                        {filterAndSort().map(
+                                            function (protocol, index) {
+                                                return (
+                                                    <ListItem
+                                                        removeProtocolFromList={(
+                                                            id: number,
+                                                        ) => {
+                                                            setProtocols(
+                                                                (protocols) =>
+                                                                    protocols
+                                                                        ? protocols.filter(
+                                                                              (
+                                                                                  p,
+                                                                              ) =>
+                                                                                  p.id !==
+                                                                                  id,
+                                                                          )
+                                                                        : protocols,
+                                                            );
+                                                        }}
+                                                        key={protocol.id}
+                                                        protocol={protocol}
+                                                        navigation={navigation}
+                                                    />
+                                                );
+                                            },
+                                        )}
                                     </ScrollView>
                                 )}
                             </View>
                         </>
                     )}
                 </Box>
-            </View>
+            </Box>
         </MainContainer>
     );
 }
