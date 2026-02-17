@@ -151,10 +151,16 @@ export default function NavBar() {
                 )}
             </VStack>
 
-            <Divider width="60%" />
+            <Divider width="60%" bg="rgba(0, 0, 0, 0.1)" />
 
             {/* Version number */}
-            <Text p="$5" color="rgba(31, 40, 50, 0.4)" flex={1} fontSize={12}>
+            <Text
+                ml={-35}
+                p="$5"
+                color="rgba(31, 40, 50, 0.4)"
+                flex={1}
+                fontSize={12}
+            >
                 Version 0.3.9
             </Text>
 
@@ -172,8 +178,10 @@ export default function NavBar() {
                 >
                     <GeneratedAvatar name="Jacob Goldberg" size={64} />
                 </Pressable>
-                <Text size="lg">Jefferey</Text>
-                <Text size="sm" color="$textLight400">
+                <Text fontSize={16} color="#1F2832">
+                    Jefferey
+                </Text>
+                <Text color="rgba(31, 40, 50, 0.4)" fontSize={12}>
                     TSI Laboratories
                 </Text>
                 <Button
@@ -181,7 +189,7 @@ export default function NavBar() {
                     onPress={() => setLogoutConfirmModal(true)}
                     mt="$4"
                 >
-                    <ButtonText color="#1F2832" mr="$2">
+                    <ButtonText color="#1F2832" mr="$2" fontSize={14}>
                         Log out
                     </ButtonText>
                     <Icon color="black" as={LogOut} />
