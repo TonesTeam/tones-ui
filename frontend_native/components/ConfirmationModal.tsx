@@ -10,7 +10,7 @@ import {
     Button,
     ButtonText,
     Box,
-} from '@gluestack-ui/themed';
+} from '@gluestack-ui/core/themed/creator';
 import { StyleSheet, Text } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import tinycolor from 'tinycolor2';

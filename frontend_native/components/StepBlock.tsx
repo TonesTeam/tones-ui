@@ -16,7 +16,7 @@ import {
     ButtonText,
     Box,
     Pressable,
-} from '@gluestack-ui/themed';
+} from '@gluestack-ui/core/themed/creator';
 import { FlaskConical, Waves } from 'lucide-react-native';
 import { Trash, Pencil } from 'lucide-react-native';
 import { formatDuration } from '../common/util';

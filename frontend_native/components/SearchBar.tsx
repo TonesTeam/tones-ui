@@ -4,7 +4,7 @@ import {
     InputIcon,
     Pressable,
     InputSlot,
-} from '@gluestack-ui/themed';
+} from '@gluestack-ui/core/themed/creator';
 import { StyleSheet } from 'react-native';
 import { SearchIcon, X } from 'lucide-react-native';
 

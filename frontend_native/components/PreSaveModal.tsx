@@ -17,7 +17,7 @@ import {
     Input,
     InputField,
     ScrollView,
-} from '@gluestack-ui/themed';
+} from '@gluestack-ui/core/themed/creator';
 import { StyleSheet, View } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import {
