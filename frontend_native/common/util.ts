@@ -105,7 +105,7 @@ let domainPromise: Promise<string> | null = null;
 export async function getDomain(
     setProgressValue: ((value: number) => void) | undefined,
 ) {
-    if (domain == null) {
+    if (domain == null || domain.includes('null')) {
         if (!domainPromise) {
             domainPromise = findBE(setProgressValue); // Start the initial findBE call
             domain = await domainPromise; // Wait for it to complete and store the result in domain
