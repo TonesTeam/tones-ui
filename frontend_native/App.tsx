@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import './global.css';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AppStack } from './navigation/AppStack';
@@ -10,8 +11,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './state/store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
-import { config } from './gluestack-config';
-import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { GluestackUIProvider } from './components/ui/gluestack-ui-provider';
 import { UserProvider } from './contexts/UserContext';
 
 export default function App() {
@@ -48,7 +48,7 @@ export default function App() {
                     <NavigationContainer>
                         <SafeAreaProvider>
                             <SafeAreaView style={{ flex: 1 }}>
-                                <GluestackUIProvider config={config}>
+                                <GluestackUIProvider mode="light">
                                     <UserProvider>
                                         <AppStack />
                                     </UserProvider>
