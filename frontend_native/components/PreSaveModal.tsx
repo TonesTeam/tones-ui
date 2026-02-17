@@ -1,23 +1,14 @@
 import React from 'react';
-import {
-    Modal,
-    ModalBackdrop,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Heading,
-    Icon,
-    Button,
-    ButtonText,
-    Box,
-    VStack,
-    HStack,
-    Text,
-    Input,
-    InputField,
-    ScrollView,
-} from '@gluestack-ui/core/themed/creator';
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter } from './ui/modal';
+import { Heading } from './ui/heading';
+import { Icon } from './ui/icon';
+import { Button, ButtonText } from './ui/button';
+import { Box } from './ui/box';
+import { VStack } from './ui/vstack';
+import { HStack } from './ui/hstack';
+import { Text } from './ui/text';
+import { Input, InputField } from './ui/input';
+import { ScrollView } from './ui/scroll-view';
 import { StyleSheet, View } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import {

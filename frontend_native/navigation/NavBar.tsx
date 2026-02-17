@@ -12,16 +12,13 @@ import Logo from '../assets/pics/tones_logo.svg';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { LogOut } from 'lucide-react-native';
 import GeneratedAvatar from '../components/GeneratedAvatar';
-import {
-    VStack,
-    Box,
-    Pressable,
-    Text,
-    Divider,
-    ButtonText,
-    Icon,
-    Button,
-} from '@gluestack-ui/themed';
+import { VStack } from '../components/ui/vstack';
+import { Box } from '../components/ui/box';
+import { Pressable } from '../components/ui/pressable';
+import { Text } from '../components/ui/text';
+import { Divider } from '../components/ui/divider';
+import { Button, ButtonText } from '../components/ui/button';
+import { Icon } from '../components/ui/icon';
 import { useUser } from '../contexts/UserContext';
 
 export default function NavBar() {

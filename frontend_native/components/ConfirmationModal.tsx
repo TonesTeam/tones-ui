@@ -1,16 +1,8 @@
-import {
-    Modal,
-    ModalBackdrop,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Heading,
-    Icon,
-    Button,
-    ButtonText,
-    Box,
-} from '@gluestack-ui/core/themed/creator';
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter } from './ui/modal';
+import { Heading } from './ui/heading';
+import { Icon } from './ui/icon';
+import { Button, ButtonText } from './ui/button';
+import { Box } from './ui/box';
 import { StyleSheet, Text } from 'react-native';
 import { AppStyles } from '../constants/styles';
 import tinycolor from 'tinycolor2';

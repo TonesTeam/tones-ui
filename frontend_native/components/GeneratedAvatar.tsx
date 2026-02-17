@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Text } from '@gluestack-ui/core/themed/creator';
+import { Text } from './ui/text';
 
 const GeneratedAvatar = ({
     name,

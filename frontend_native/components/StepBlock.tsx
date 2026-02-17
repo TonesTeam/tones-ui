@@ -7,16 +7,13 @@ import { AppStyles } from '../constants/styles';
 import Close_icon from '../assets/icons/X.svg';
 import { useState } from 'react';
 import { ProtocolSettings } from '../common/constructorUtils';
-import {
-    HStack,
-    VStack,
-    Icon,
-    Button,
-    Text,
-    ButtonText,
-    Box,
-    Pressable,
-} from '@gluestack-ui/core/themed/creator';
+import { HStack } from './ui/hstack';
+import { VStack } from './ui/vstack';
+import { Icon } from './ui/icon';
+import { Button, ButtonText } from './ui/button';
+import { Text } from './ui/text';
+import { Box } from './ui/box';
+import { Pressable } from './ui/pressable';
 import { FlaskConical, Waves } from 'lucide-react-native';
 import { Trash, Pencil } from 'lucide-react-native';
 import { formatDuration } from '../common/util';

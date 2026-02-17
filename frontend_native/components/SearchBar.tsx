@@ -1,10 +1,5 @@
-import {
-    Input,
-    InputField,
-    InputIcon,
-    Pressable,
-    InputSlot,
-} from '@gluestack-ui/core/themed/creator';
+import { Input, InputField, InputIcon, InputSlot } from './ui/input';
+import { Pressable } from './ui/pressable';
 import { StyleSheet } from 'react-native';
 import { SearchIcon, X } from 'lucide-react-native';
 
