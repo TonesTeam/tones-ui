@@ -1,6 +1,5 @@
 import {
     StyleSheet,
-    Text,
     View,
     TextInput,
     Image,
@@ -31,9 +30,13 @@ import { WashingLiquidsStep } from './WashingLiquidsStep';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
 import { Confirmations } from './Confirmations';
 import { SetLaunchTime } from './SetLaunchTime';
-import { getRequest } from '../../common/util';
+import { getRequest, makeRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { StepType } from 'common/enums';
+import { Method } from 'axios';
+import { useUser } from '../../contexts/UserContext';
+import { Box, Text, HStack, Pressable, Icon } from '@gluestack-ui/themed';
+import { ArrowLeft } from 'lucide-react-native';
 
 enum LaunchStage {
     STEP_ONE = 1,
@@ -192,6 +195,9 @@ export default function Launch({
     const protocol_ID = route.params
         ? (route.params as { protocol_ID: number }).protocol_ID
         : undefined;
+    const protocol_name = route.params
+        ? (route.params as { protocol_name: string }).protocol_name
+        : undefined;
 
     const [stage, setStage] = useState<LaunchStage>(LaunchStage.STEP_ONE);
     const [slotNumber, setSlotNumber] = useState<number | ''>(0);
@@ -205,6 +211,9 @@ export default function Launch({
         useState(false);
     const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
     const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
+
+    const { user } = useUser();
+    const current_user_id = user ? user.id : null;
 
     useEffect(() => {
         if (protocol_ID) {
@@ -287,7 +296,40 @@ export default function Launch({
     return (
         <MainContainer>
             <NavBar />
-            <View style={[globalElementStyle.page_container, s.container]}>
+            <Box flex={1} p={24}>
+                <HStack mb="$8" mt={16}>
+                    <Pressable
+                        onPress={() => {
+                            if (stage != LaunchStage.STEP_ONE) {
+                                setStage(stage.valueOf() - 1);
+                            }
+                        }}
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        pr="$3"
+                    >
+                        <Icon
+                            as={ArrowLeft}
+                            width={20}
+                            height={15}
+                            color="#1F2832"
+                        />
+                    </Pressable>
+                    <Text
+                        fontSize={24}
+                        color="rgba(31, 40, 50, 0.3)"
+                        fontFamily="Orbitron-Medium"
+                    >
+                        Run protocol:{' '}
+                    </Text>
+                    <Text
+                        color="black"
+                        fontSize={24}
+                        fontFamily="Orbitron-Medium"
+                    >
+                        {protocol_name}
+                    </Text>
+                </HStack>
                 <View style={s.header}>
                     <View style={{ flex: 1 }}>
                         <StageMenu
@@ -431,8 +473,17 @@ export default function Launch({
                                 stage == LaunchStage.STEP_FOUR &&
                                 isLaunchTimeValid
                             ) {
-                                navigation.navigate('ProtocolLogs', {
-                                    protocol_ID: protocol_ID,
+                                makeRequest(
+                                    'POST' as Method,
+                                    '/jobs',
+                                    JSON.stringify({
+                                        protocol_id: protocol_ID,
+                                        slots_used: [1, 2, 3],
+                                        name: 'hello world',
+                                        creator_id: current_user_id,
+                                    }),
+                                ).then((res) => {
+                                    console.log(res.data);
                                 });
                             }
                         }}
@@ -457,7 +508,7 @@ export default function Launch({
                         </Txt>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Box>
         </MainContainer>
     );
 }
