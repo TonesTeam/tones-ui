@@ -40,7 +40,11 @@ import {
     DEFAULT_TEMEPRATURE,
     DEFAULT_WASH_STEP,
 } from '../constants/protocol_constants';
-import { ProtocolDto, ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
+import {
+    ProtocolDto,
+    ProtocolWithStepsDTO,
+    StepGroupWithStepsDTO,
+} from 'common/dto/protocol.dto';
 import { getRequest, makeRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import RadioButton from '../components/RadioButton';
@@ -63,11 +67,14 @@ import {
     InputIcon,
     ButtonText,
     Icon,
+    Pressable,
+    ScrollView as GlueScrollView,
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
-import { FlaskConical, Waves } from 'lucide-react-native';
+import { FlaskConical, Waves, Plus, Trash } from 'lucide-react-native';
 import PreSaveModal from '../components/PreSaveModal';
 import { Pencil } from 'lucide-react-native';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 export const stepTypeClass = new Map<StepType, string>([
     [StepType.WASHING, 'washing'],
@@ -150,16 +157,125 @@ function StepTab(props: {
 }
 
 const Timeline = ({
-    blocks,
+    stepGroups,
+    activeGroupIndex,
+    setActiveGroupIndex,
     flatListRef,
-    handleBlocksChange,
+    handleStepsChange,
     settings,
     revealWorkBlock,
     deleteBlock,
-}: any) => {
+    addStepGroup,
+    deleteStepGroup,
+}: {
+    stepGroups: StepGroupWithStepsDTO[];
+    activeGroupIndex: number;
+    setActiveGroupIndex: (index: number) => void;
+    flatListRef: MutableRefObject<any>;
+    handleStepsChange: (data: StepDTO[]) => void;
+    settings: ProtocolSettings;
+    revealWorkBlock: (step: StepDTO) => void;
+    deleteBlock: (step: StepDTO) => void;
+    addStepGroup: () => void;
+    deleteStepGroup: (index: number) => void;
+}) => {
+    const [deleteGroupIndex, setDeleteGroupIndex] = useState<number | null>(
+        null,
+    );
+    const activeGroup = stepGroups[activeGroupIndex];
+    const blocks = activeGroup?.steps ?? [];
+
     return (
         <View style={s.timeline}>
-            <Txt style={s.timelineHeader}>Protocol timeline</Txt>
+            <HStack
+                justifyContent="space-between"
+                alignItems="center"
+                px="$4"
+                pt="$2"
+            >
+                <Txt style={s.timelineHeader}>Protocol timeline</Txt>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    action="primary"
+                    onPress={addStepGroup}
+                >
+                    <Icon as={Plus} size="sm" mr="$1" />
+                    <ButtonText size="sm">Add Group</ButtonText>
+                </Button>
+            </HStack>
+
+            {/* Step Group Tabs */}
+            <GlueScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <HStack space="sm" px="$4" py="$2">
+                    {stepGroups.map((group, index) => (
+                        <Pressable
+                            key={group.step_group.id}
+                            onPress={() => setActiveGroupIndex(index)}
+                        >
+                            <HStack
+                                bg={
+                                    index === activeGroupIndex
+                                        ? '$primary500'
+                                        : '$white'
+                                }
+                                borderRadius="$lg"
+                                px="$3"
+                                py="$2"
+                                alignItems="center"
+                                space="sm"
+                                borderWidth={1}
+                                borderColor={
+                                    index === activeGroupIndex
+                                        ? '$primary500'
+                                        : '$borderLight300'
+                                }
+                            >
+                                <Text
+                                    color={
+                                        index === activeGroupIndex
+                                            ? '$white'
+                                            : '$textLight700'
+                                    }
+                                    fontWeight="$medium"
+                                    size="sm"
+                                >
+                                    {group.step_group.name}
+                                </Text>
+                                <Text
+                                    color={
+                                        index === activeGroupIndex
+                                            ? '$white'
+                                            : '$textLight400'
+                                    }
+                                    size="xs"
+                                >
+                                    ({group.steps.length})
+                                </Text>
+                                {stepGroups.length > 1 && (
+                                    <Pressable
+                                        onPress={() => {
+                                            setDeleteGroupIndex(index);
+                                        }}
+                                        p="$0.5"
+                                    >
+                                        <Icon
+                                            as={Trash}
+                                            size="xs"
+                                            color={
+                                                index === activeGroupIndex
+                                                    ? '$white'
+                                                    : '$error500'
+                                            }
+                                        />
+                                    </Pressable>
+                                )}
+                            </HStack>
+                        </Pressable>
+                    ))}
+                </HStack>
+            </GlueScrollView>
+
             {blocks.length == 0 && (
                 <Box alignItems="center" justifyContent="center" flex={1}>
                     <Text fontSize="$6xl">😇</Text>
@@ -173,7 +289,7 @@ const Timeline = ({
                 containerStyle={{ paddingBottom: 60 }}
                 data={blocks}
                 ref={flatListRef}
-                onScrollToIndexFailed={(info) => {
+                onScrollToIndexFailed={(info: any) => {
                     console.log('Failed to scroll to index: ', info.index);
                 }}
                 onContentSizeChange={() => {
@@ -185,9 +301,11 @@ const Timeline = ({
                         });
                     }
                 }}
-                onDragEnd={({ data }) => handleBlocksChange(data)}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={(params) =>
+                onDragEnd={({ data }: { data: StepDTO[] }) =>
+                    handleStepsChange(data)
+                }
+                keyExtractor={(item: StepDTO) => item.id.toString()}
+                renderItem={(params: any) =>
                     StepBlock({
                         renderParams: params,
                         deleteStep: deleteBlock,
@@ -197,6 +315,22 @@ const Timeline = ({
                     })
                 }
                 onDragBegin={() => Vibration.vibrate([100])}
+            />
+
+            <ConfirmationModal
+                isOpen={deleteGroupIndex !== null}
+                onClose={() => setDeleteGroupIndex(null)}
+                action={() => {
+                    if (deleteGroupIndex !== null) {
+                        deleteStepGroup(deleteGroupIndex);
+                        setDeleteGroupIndex(null);
+                    }
+                }}
+                icon={Trash}
+                headline="Delete step group"
+                text={`Are you sure you want to delete "${stepGroups[deleteGroupIndex ?? 0]?.step_group.name}"? All steps in this group will be removed.`}
+                actionButtonText="Delete"
+                type="error"
             />
         </View>
     );
@@ -212,7 +346,20 @@ export default function Constructor({
         protocol_ID = reference_ID = route.params.protocol_ID;
     else if (route.params && !route.params.preserveID)
         reference_ID = route.params.protocol_ID;
-    const [blocks, setBlocks] = useState<StepDTO[]>([]); //All steps
+    const defaultStepGroup = (): StepGroupWithStepsDTO => ({
+        step_group: {
+            id: 0,
+            name: 'Group 1',
+            protocol_id: protocol_ID ?? -1,
+            sequence_number: 0,
+        },
+        steps: [],
+    });
+
+    const [stepGroups, setStepGroups] = useState<StepGroupWithStepsDTO[]>([
+        defaultStepGroup(),
+    ]);
+    const [activeGroupIndex, setActiveGroupIndex] = useState(0);
     const [workBlock, setWorkBlock] = useState<StepDTO>({
         type: StepType.LIQUID_APPL,
         id: -1,
@@ -225,7 +372,6 @@ export default function Constructor({
     const [customLiquids, setCustomLiquids] = useState<LiquidDTO[]>([]);
     const [protocolName, setProtocolName] = useState('Untitled protocol');
     const [protocolDescription, setProtocolDescription] = useState('');
-    const [washingIterations, setWashingItertions] = useState(2);
     const [defaultWashStep, setDefaultWashStep] = useState<
         WashStep | undefined
     >(undefined);
@@ -236,7 +382,8 @@ export default function Constructor({
         undefined,
     );
     const flatListRef: MutableRefObject<any> = useRef(null);
-    console.log(`blocks: ${JSON.stringify(blocks)}`);
+
+    const allBlocks = stepGroups.flatMap((group) => group.steps);
 
     function initialization() {
         if (reference_ID) {
@@ -247,10 +394,9 @@ export default function Constructor({
                     const data = r.data;
                     setProtocolName(data.metadata.name);
                     setProtocolDescription(data.metadata.description);
-                    const allSteps = data.step_groups.flatMap(
-                        (group) => group.steps,
-                    );
-                    setBlocks(allSteps);
+                    if (data.step_groups.length > 0) {
+                        setStepGroups(data.step_groups);
+                    }
                 }
             });
         }
@@ -288,25 +434,32 @@ export default function Constructor({
         setCustomLiquids(newLiquids);
     }
 
-    function addBlock(newBlock: StepDTO) {
-        const newID =
-            blocks.length == 0
-                ? 0
-                : blocks.length == 1
-                ? 1
-                : blocks.reduce((prev, current) =>
-                      prev && prev.id > current.id ? prev : current,
-                  ).id + 1;
+    function updateActiveGroupSteps(newSteps: StepDTO[]) {
+        setStepGroups((prev) =>
+            prev.map((group, i) =>
+                i === activeGroupIndex
+                    ? { ...group, steps: newSteps }
+                    : group,
+            ),
+        );
+    }
 
-        const finalBlocks = [
-            ...blocks,
+    function addBlock(newBlock: StepDTO) {
+        const activeSteps = stepGroups[activeGroupIndex]?.steps ?? [];
+        const newID =
+            allBlocks.length == 0
+                ? 0
+                : Math.max(...allBlocks.map((b) => b.id)) + 1;
+
+        const updatedSteps = [
+            ...activeSteps,
             {
                 ...newBlock,
                 id: newBlock.id == -1 ? newID : newBlock.id,
             },
         ];
 
-        setBlocks(finalBlocks);
+        updateActiveGroupSteps(updatedSteps);
         setWorkBlock({
             type: newBlock.type,
             id: -1,
@@ -320,10 +473,40 @@ export default function Constructor({
     }
 
     function deleteBlock(blockToRemove: StepDTO) {
-        const newBlocks = blocks.filter(
+        const activeSteps = stepGroups[activeGroupIndex]?.steps ?? [];
+        const newSteps = activeSteps.filter(
             (block) => block.id !== blockToRemove.id,
         );
-        setBlocks(newBlocks);
+        updateActiveGroupSteps(newSteps);
+    }
+
+    function addStepGroup() {
+        const newId =
+            stepGroups.length === 0
+                ? 0
+                : Math.max(...stepGroups.map((g) => g.step_group.id)) + 1;
+        const newGroup: StepGroupWithStepsDTO = {
+            step_group: {
+                id: newId,
+                name: `Group ${stepGroups.length + 1}`,
+                protocol_id: protocol_ID ?? -1,
+                sequence_number: stepGroups.length,
+            },
+            steps: [],
+        };
+        setStepGroups((prev) => [...prev, newGroup]);
+        setActiveGroupIndex(stepGroups.length);
+    }
+
+    function deleteStepGroup(index: number) {
+        if (stepGroups.length <= 1) return;
+        const updated = stepGroups.filter((_, i) => i !== index);
+        setStepGroups(updated);
+        if (activeGroupIndex >= updated.length) {
+            setActiveGroupIndex(updated.length - 1);
+        } else if (activeGroupIndex === index) {
+            setActiveGroupIndex(0);
+        }
     }
 
     function save() {
@@ -343,17 +526,7 @@ export default function Constructor({
                 author_last_name: '',
                 history_id: '',
             } as ProtocolDto,
-            step_groups: [
-                {
-                    step_group: {
-                        id: 0,
-                        name: 'Default',
-                        protocol_id: protocol_ID ?? -1,
-                        sequence_number: 0,
-                    },
-                    steps: blocks,
-                },
-            ],
+            step_groups: stepGroups,
         };
 
         console.log(JSON.stringify(new_protocol));
@@ -439,12 +612,16 @@ export default function Constructor({
                                     </View>
                                 </View>
                                 <Timeline
-                                    blocks={blocks}
+                                    stepGroups={stepGroups}
+                                    activeGroupIndex={activeGroupIndex}
+                                    setActiveGroupIndex={setActiveGroupIndex}
                                     flatListRef={flatListRef}
-                                    handleBlocksChange={setBlocks}
+                                    handleStepsChange={updateActiveGroupSteps}
                                     settings={settings}
                                     revealWorkBlock={revealWorkBlock}
                                     deleteBlock={deleteBlock}
+                                    addStepGroup={addStepGroup}
+                                    deleteStepGroup={deleteStepGroup}
                                 />
                             </View>
                         </View>
@@ -460,7 +637,7 @@ export default function Constructor({
                             setProtocolName={setProtocolName}
                             protocolDescription={protocolDescription}
                             setProtocolDescription={setProtocolDescription}
-                            blocks={blocks}
+                            blocks={allBlocks}
                             settings={settings}
                             defaultWashStep={defaultWashStep}
                             protocol_ID={protocol_ID}
