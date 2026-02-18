@@ -20,8 +20,7 @@ interface SortingSelectorProps {
 const SortingSelector = ({ value, onChange }: SortingSelectorProps) => {
     return (
         <Select
-            flex={3}
-            minWidth={170}
+            minWidth={174}
             ml="$1"
             onValueChange={onChange}
             selectedValue={value}

@@ -214,7 +214,7 @@ export default function ProtocolList({
                     sortColumn={sortColumn}
                     sortDirection={sortDirection}
                 />
-                <Box flex={9} width="95%" mt="$4">
+                <Box flex={9} width="100%" mt="0">
                     {protocols == undefined && (
                         <Box
                             alignItems="center"

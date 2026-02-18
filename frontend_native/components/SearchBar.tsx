@@ -12,18 +12,23 @@ interface SearchBarProps {
     value: string;
     onChangeText: (text: string) => void;
     placeholder?: string;
+    minWidth?: number;
 }
 
-const SearchBar = ({ value, onChangeText, placeholder }: SearchBarProps) => {
+const SearchBar = ({
+    value,
+    onChangeText,
+    placeholder,
+    minWidth,
+}: SearchBarProps) => {
     return (
         <Input
             style={{ flex: 8 }}
-            minWidth={200}
             variant="rounded"
             borderColor="transparent"
             bg="#ffffff"
             height={48}
-            minWidth={350}
+            minWidth={minWidth ?? 350}
         >
             <InputSlot pl="$8">
                 <InputIcon size="xl" as={SearchIcon} />

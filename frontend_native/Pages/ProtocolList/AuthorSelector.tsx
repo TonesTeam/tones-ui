@@ -21,8 +21,7 @@ interface AuthorSelectorProps {
 const AuthorSelector = ({ value, onChange, authors }: AuthorSelectorProps) => {
     return (
         <Select
-            flex={2}
-            minWidth={170}
+            minWidth={174}
             ml="$1"
             onValueChange={onChange}
             selectedValue={value}
