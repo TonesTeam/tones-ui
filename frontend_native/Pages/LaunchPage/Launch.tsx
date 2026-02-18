@@ -1,6 +1,5 @@
 import {
     StyleSheet,
-    Text,
     View,
     TextInput,
     Image,
@@ -28,6 +27,8 @@ import { SlotMap } from './SlotMap';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
 import { Confirmations } from './Confirmations';
 import { getRequest } from '../../common/util';
+import { Box, Text, HStack, Pressable, Icon } from '@gluestack-ui/themed';
+import { ArrowLeft } from 'lucide-react-native';
 
 enum LaunchStage {
     STEP_ONE = 1,
@@ -149,6 +150,9 @@ export default function Launch({
     const protocol_ID = route.params
         ? (route.params as { protocol_ID: number }).protocol_ID
         : undefined;
+    const protocol_name = route.params
+        ? (route.params as { protocol_name: string }).protocol_name
+        : undefined;
 
     const [stage, setStage] = useState<LaunchStage>(LaunchStage.STEP_ONE);
     const [slotNumber, setSlotNumber] = useState<number | ''>(1);
@@ -167,7 +171,40 @@ export default function Launch({
     return (
         <MainContainer>
             <NavBar />
-            <View style={[globalElementStyle.page_container, s.container]}>
+            <Box flex={1} p={24}>
+                <HStack mb="$8" mt={16}>
+                    <Pressable
+                        onPress={() => {
+                            if (stage != LaunchStage.STEP_ONE) {
+                                setStage(stage.valueOf() - 1);
+                            }
+                        }}
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        pr="$3"
+                    >
+                        <Icon
+                            as={ArrowLeft}
+                            width={20}
+                            height={15}
+                            color="#1F2832"
+                        />
+                    </Pressable>
+                    <Text
+                        fontSize={24}
+                        color="rgba(31, 40, 50, 0.3)"
+                        fontFamily="Orbitron-Medium"
+                    >
+                        Run protocol:{' '}
+                    </Text>
+                    <Text
+                        color="black"
+                        fontSize={24}
+                        fontFamily="Orbitron-Medium"
+                    >
+                        {protocol_name}
+                    </Text>
+                </HStack>
                 <View style={s.header}>
                     <View style={{ flex: 1 }}>
                         <StageMenu
@@ -269,9 +306,9 @@ export default function Launch({
                                                 slotNumber == ''
                                                     ? 1
                                                     : Number(slotNumber) + 1 <=
-                                                      SLOT_QUANTITY
-                                                    ? Number(slotNumber) + 1
-                                                    : Number(slotNumber),
+                                                        SLOT_QUANTITY
+                                                      ? Number(slotNumber) + 1
+                                                      : Number(slotNumber),
                                             )
                                         }
                                     >
@@ -362,8 +399,8 @@ export default function Launch({
                                 state == true
                                     ? setConfirmations(confirmations + 1)
                                     : confirmations > 0
-                                    ? setConfirmations(confirmations - 1)
-                                    : setConfirmations(0)
+                                      ? setConfirmations(confirmations - 1)
+                                      : setConfirmations(0)
                             }
                         />
                     )}
@@ -420,7 +457,7 @@ export default function Launch({
                         </Txt>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Box>
         </MainContainer>
     );
 }

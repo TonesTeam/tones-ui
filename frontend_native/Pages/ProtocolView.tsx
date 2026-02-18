@@ -193,6 +193,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         onPress={() =>
                             navigation.navigate('Launch', {
                                 protocol_ID: protocol.metadata.id,
+                                protocol_name: protocol.metadata.name,
                             })
                         }
                     >
