@@ -25,14 +25,21 @@ import Slot_quantity_inactive_Icon from '../../assets/icons/slots_quantity_inact
 import { useEffect, useState } from 'react';
 import { LiquidTable } from './LiquidTable';
 import { SlotMap } from './SlotMap';
+import { SlotSelection } from './SlotSelection';
+import { ReagentTrayStep } from './ReagentTrayStep';
+import { WashingLiquidsStep } from './WashingLiquidsStep';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
 import { Confirmations } from './Confirmations';
+import { SetLaunchTime } from './SetLaunchTime';
 import { getRequest } from '../../common/util';
+import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
+import { StepType } from 'common/enums';
 
 enum LaunchStage {
     STEP_ONE = 1,
     STEP_TWO = 2,
     STEP_THREE = 3,
+    STEP_FOUR = 4,
 }
 
 function StageMenu(props: {
@@ -60,7 +67,7 @@ function StageMenu(props: {
                         fontFamily: 'Roboto-bold',
                     }}
                 >
-                    Step 1
+                    1.Slots
                 </Txt>
             </TouchableOpacity>
 
@@ -96,7 +103,7 @@ function StageMenu(props: {
                         left: 40,
                     }}
                 >
-                    Step 2
+                    2.Reagents
                 </Txt>
             </TouchableOpacity>
 
@@ -135,7 +142,43 @@ function StageMenu(props: {
                         left: 20,
                     }}
                 >
-                    Step 3
+                    3.Liquids
+                </Txt>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 70,
+                }}
+                onPress={() => props.changeStage(LaunchStage.STEP_FOUR)}
+                activeOpacity={1}
+            >
+                {props.stage.valueOf() > 3 ? (
+                    <Step3_inactive
+                        height={50}
+                        width={180}
+                        style={{ left: -110, zIndex: 70 }}
+                    />
+                ) : (
+                    <Step3
+                        height={50}
+                        width={180}
+                        style={{ left: -110, zIndex: 70 }}
+                    />
+                )}
+
+                <Txt
+                    style={{
+                        position: 'absolute',
+                        zIndex: 110,
+                        color: AppStyles.color.elem_back,
+                        fontFamily: 'Roboto-bold',
+                        left: -20,
+                    }}
+                >
+                    4.Launch
                 </Txt>
             </TouchableOpacity>
         </View>
@@ -151,17 +194,94 @@ export default function Launch({
         : undefined;
 
     const [stage, setStage] = useState<LaunchStage>(LaunchStage.STEP_ONE);
-    const [slotNumber, setSlotNumber] = useState<number | ''>(1);
+    const [slotNumber, setSlotNumber] = useState<number | ''>(0);
     const [slotActivityMap, setSlotActivityMap] = useState<boolean[]>(
         Array(SLOT_QUANTITY).fill(false),
     );
     const [confirmations, setConfirmations] = useState(0);
+    const [protocol, setProtocol] = useState<ProtocolWithStepsDTO | null>(null);
+    const [estimatedTime, setEstimatedTime] = useState<string>('0:00:00');
+    const [allReagentSlotsSelected, setAllReagentSlotsSelected] =
+        useState(false);
+    const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
+    const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
+
+    useEffect(() => {
+        if (protocol_ID) {
+            loadProtocol();
+        }
+    }, [protocol_ID]);
+
+    const loadProtocol = async () => {
+        try {
+            const response = await getRequest<ProtocolWithStepsDTO>(
+                `/protocol/${protocol_ID}`,
+            );
+            if ('data' in response) {
+                setProtocol(response.data);
+                calculateEstimatedTime(response.data);
+            }
+        } catch (error) {
+            console.error('Error loading protocol:', error);
+        }
+    };
+
+    const calculateEstimatedTime = (protocol: ProtocolWithStepsDTO) => {
+        let totalSeconds = 0;
+
+        // Go through all steps and sum up incubation times
+        const allSteps =
+            protocol.stepBatches?.flatMap((batch: any) => batch.steps) || [];
+
+        allSteps.forEach((step: any) => {
+            if (step.type === StepType.REAGENT) {
+                // ReagentStep has incubation time in seconds
+                totalSeconds += step.params.incubation || 0;
+            } else if (step.type === StepType.WASHING) {
+                // WashStep has incubation * iters
+                const incubation = step.params.incubation || 0;
+                const iters = step.params.iters || 1;
+                totalSeconds += incubation * iters;
+            } else if (
+                step.type === StepType.COOLING ||
+                step.type === StepType.HEATING
+            ) {
+                // Temperature steps (cooling/heating) have duration in seconds
+                totalSeconds += step.params.duration || 0;
+            }
+        });
+
+        // Add some overhead time for liquid dispensing, washing operations, etc.
+        // Estimate ~30 seconds per reagent step, ~20 seconds per wash iteration
+        const reagentSteps = allSteps.filter(
+            (s: any) => s.type === StepType.REAGENT,
+        ).length;
+        const washIterations = allSteps
+            .filter((s: any) => s.type === StepType.WASHING)
+            .reduce((sum: number, s: any) => sum + (s.params.iters || 1), 0);
+
+        totalSeconds += reagentSteps * 30 + washIterations * 20;
+
+        // Convert to H:MM:SS format
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const formatted = `${hours}:${String(minutes).padStart(
+            2,
+            '0',
+        )}:${String(seconds).padStart(2, '0')}`;
+        setEstimatedTime(formatted);
+    };
 
     function toggleSlotActivity(idx: number) {
         const newSlotActivityMap = slotActivityMap.map((slot, index) => {
             return index === idx ? !slot : slot;
         });
         setSlotActivityMap(newSlotActivityMap);
+        // Update slot count
+        const selectedCount = newSlotActivityMap.filter((s) => s).length;
+        setSlotNumber(selectedCount);
     }
 
     return (
@@ -180,106 +300,6 @@ export default function Launch({
                         />
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        {stage == LaunchStage.STEP_ONE && (
-                            <View
-                                style={{
-                                    alignSelf: 'flex-end',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <Txt
-                                    style={{
-                                        fontFamily: 'Roboto-bold',
-                                        fontSize: 16,
-                                        flex: 1,
-                                        paddingHorizontal: 10,
-                                    }}
-                                >
-                                    Choose quantity of slots used for current
-                                    deployment:
-                                </Txt>
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        borderRadius: 8,
-                                        backgroundColor:
-                                            AppStyles.color.background,
-                                        height: 60,
-                                        alignItems: 'center',
-                                        borderWidth: 1,
-                                        borderColor: AppStyles.color.background,
-                                    }}
-                                >
-                                    <TouchableOpacity
-                                        style={{
-                                            paddingHorizontal: 45,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
-                                        onPress={() =>
-                                            Number(slotNumber) > 1 &&
-                                            setSlotNumber(
-                                                Number(slotNumber) - 1,
-                                            )
-                                        }
-                                    >
-                                        <Txt style={{ fontSize: 50 }}>-</Txt>
-                                    </TouchableOpacity>
-                                    <View
-                                        style={{
-                                            backgroundColor:
-                                                AppStyles.color.elem_back,
-                                            height: '100%',
-                                            width: 80,
-                                        }}
-                                    >
-                                        <TextInput
-                                            textAlign={'center'}
-                                            maxLength={1}
-                                            value={slotNumber.toString()}
-                                            onChangeText={(text) =>
-                                                setSlotNumber(
-                                                    Number(text) == 0 ||
-                                                        isNaN(Number(text)) ||
-                                                        Number(text) >
-                                                            SLOT_QUANTITY
-                                                        ? ''
-                                                        : Number(text),
-                                                )
-                                            }
-                                            onBlur={(e) => {
-                                                if (slotNumber == '')
-                                                    setSlotNumber(1);
-                                            }}
-                                            inputMode={
-                                                'numeric' as InputModeOptions
-                                            }
-                                            style={{ flex: 1, fontSize: 30 }}
-                                        />
-                                    </View>
-                                    <TouchableOpacity
-                                        style={{
-                                            paddingHorizontal: 45,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
-                                        onPress={() =>
-                                            setSlotNumber(
-                                                slotNumber == ''
-                                                    ? 1
-                                                    : Number(slotNumber) + 1 <=
-                                                      SLOT_QUANTITY
-                                                    ? Number(slotNumber) + 1
-                                                    : Number(slotNumber),
-                                            )
-                                        }
-                                    >
-                                        <Txt style={{ fontSize: 40 }}>+</Txt>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        )}
                         {stage == LaunchStage.STEP_TWO && (
                             <View
                                 style={{
@@ -299,7 +319,9 @@ export default function Launch({
                                 ) : (
                                     <Slot_quantity_inactive_Icon height={30} />
                                 )}
-                                <Txt style={{ fontSize: 20 }}>Selected </Txt>
+                                <Txt style={{ fontSize: 20 }}>
+                                    Selected slots:{' '}
+                                </Txt>
                                 <Txt
                                     style={{
                                         fontSize: 26,
@@ -312,58 +334,45 @@ export default function Launch({
                                         ).length
                                     }
                                 </Txt>
-                                <Txt style={{ fontSize: 20 }}>
-                                    {' '}
-                                    slots out of{' '}
-                                </Txt>
-                                <Txt
-                                    style={{
-                                        fontSize: 26,
-                                        fontFamily: 'Roboto-bold',
-                                    }}
-                                >
-                                    {Number(slotNumber)}
-                                </Txt>
                             </View>
                         )}
-                        {stage == LaunchStage.STEP_THREE && (
-                            <Txt
-                                style={{
-                                    fontSize: 18,
-                                }}
-                            >
-                                This is final step before launching protocol.
-                                Please go through check-up points and confirm
-                                all before launching protocol.
-                            </Txt>
-                        )}
+                        {stage == LaunchStage.STEP_THREE}
                     </View>
                 </View>
                 <View style={s.body}>
                     {stage == LaunchStage.STEP_ONE && (
-                        <LiquidTable
-                            slots={slotNumber == '' ? 1 : Number(slotNumber)}
-                            protocolId={protocol_ID}
+                        <SlotSelection
+                            selectedSlots={
+                                slotNumber == '' ? 0 : Number(slotNumber)
+                            }
+                            onSelectSlot={(num) => setSlotNumber(num)}
+                            selectedSlotsList={slotActivityMap}
+                            onToggleSlot={toggleSlotActivity}
                         />
                     )}
                     {stage == LaunchStage.STEP_TWO && (
-                        <SlotMap
-                            slotsMap={slotActivityMap}
-                            limitReached={
-                                slotActivityMap.filter((slot) => slot == true)
-                                    .length == Number(slotNumber)
+                        <ReagentTrayStep
+                            slots={slotNumber == '' ? 1 : Number(slotNumber)}
+                            protocolId={protocol_ID}
+                            onSelectionChange={(allSelected) =>
+                                setAllReagentSlotsSelected(allSelected)
                             }
-                            changeActiveSlots={(idx) => toggleSlotActivity(idx)}
                         />
                     )}
                     {stage == LaunchStage.STEP_THREE && (
-                        <Confirmations
-                            updateConfirmations={(state: boolean) =>
-                                state == true
-                                    ? setConfirmations(confirmations + 1)
-                                    : confirmations > 0
-                                    ? setConfirmations(confirmations - 1)
-                                    : setConfirmations(0)
+                        <WashingLiquidsStep
+                            slots={slotNumber == '' ? 1 : Number(slotNumber)}
+                            protocolId={protocol_ID}
+                            onCompletionChange={(allOn) =>
+                                setAllWashingSwitchesOn(allOn)
+                            }
+                        />
+                    )}
+                    {stage == LaunchStage.STEP_FOUR && (
+                        <SetLaunchTime
+                            estimatedDuration={estimatedTime}
+                            onValidationChange={(isValid) =>
+                                setIsLaunchTimeValid(isValid)
                             }
                         />
                     )}
@@ -386,29 +395,57 @@ export default function Launch({
                         </Txt>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={s.footer_btn_next}
+                        style={[
+                            s.footer_btn_next,
+                            (stage == LaunchStage.STEP_ONE &&
+                                !Number(slotNumber)) ||
+                            (stage == LaunchStage.STEP_TWO &&
+                                !allReagentSlotsSelected) ||
+                            (stage == LaunchStage.STEP_THREE &&
+                                !allWashingSwitchesOn) ||
+                            (stage == LaunchStage.STEP_FOUR &&
+                                !isLaunchTimeValid)
+                                ? s.footer_btn_disabled
+                                : {},
+                        ]}
                         onPress={() => {
                             if (
-                                stage == LaunchStage.STEP_TWO &&
-                                slotActivityMap.filter((slot) => slot == true)
-                                    .length == Number(slotNumber)
+                                stage == LaunchStage.STEP_ONE &&
+                                Number(slotNumber)
                             ) {
                                 setStage(stage + 1);
                             }
                             if (
-                                stage == LaunchStage.STEP_ONE &&
-                                Number(slotNumber)
-                            )
+                                stage == LaunchStage.STEP_TWO &&
+                                allReagentSlotsSelected
+                            ) {
                                 setStage(stage + 1);
+                            }
                             if (
                                 stage == LaunchStage.STEP_THREE &&
-                                confirmations == 4
+                                allWashingSwitchesOn
+                            ) {
+                                setStage(stage + 1);
+                            }
+                            if (
+                                stage == LaunchStage.STEP_FOUR &&
+                                isLaunchTimeValid
                             ) {
                                 navigation.navigate('ProtocolLogs', {
                                     protocol_ID: protocol_ID,
                                 });
                             }
                         }}
+                        disabled={
+                            (stage == LaunchStage.STEP_ONE &&
+                                !Number(slotNumber)) ||
+                            (stage == LaunchStage.STEP_TWO &&
+                                !allReagentSlotsSelected) ||
+                            (stage == LaunchStage.STEP_THREE &&
+                                !allWashingSwitchesOn) ||
+                            (stage == LaunchStage.STEP_FOUR &&
+                                !isLaunchTimeValid)
+                        }
                     >
                         <Txt
                             style={{
@@ -416,7 +453,7 @@ export default function Launch({
                                 fontFamily: 'Roboto-bold',
                             }}
                         >
-                            {stage == 3 ? 'Launch' : 'Next'}
+                            {stage == 4 ? 'Launch' : 'Next'}
                         </Txt>
                     </TouchableOpacity>
                 </View>
@@ -476,5 +513,11 @@ const s = StyleSheet.create({
         borderColor: AppStyles.color.dark_btn,
         borderRadius: 8,
         alignItems: 'center',
+    },
+
+    footer_btn_disabled: {
+        backgroundColor: AppStyles.color.background,
+        borderColor: AppStyles.color.background,
+        opacity: 0.5,
     },
 });

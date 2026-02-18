@@ -60,7 +60,7 @@ async function findBE(): Promise<string> {
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
     let foundIP = await scanNetwork(ipList);
-    foundIP = '192.168.1.117';
+    foundIP = '10.151.67.51';
     console.log(`Backdoor IP - ${backdoorAddress}`);
     if (backdoorAddress) foundIP = backdoorAddress;
     return `http://${foundIP}:8080`;

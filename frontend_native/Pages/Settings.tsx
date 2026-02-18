@@ -68,6 +68,7 @@ enum SettingTabs {
 function SaveLiquidModal(props: {
     liquid: PermanentLiquidDTO | null;
     categories: LiquidTypeDTO[];
+    liquids: PermanentLiquidDTO[];
     closeModal: () => void;
     saveLiquid: (liq: PermanentLiquidDTO) => void;
     isOpen: boolean;
@@ -79,12 +80,14 @@ function SaveLiquidModal(props: {
         usedCold: false,
         toxic: false,
         position: -1,
+        washingTrayPosition: undefined,
     } as PermanentLiquidDTO);
     const [positionText, setPositionText] = useState('0');
 
     useEffect(() => {
-        if (props.liquid) setNewLiquid(props.liquid);
-        else
+        if (props.liquid) {
+            setNewLiquid(props.liquid);
+        } else {
             setNewLiquid({
                 id: 0,
                 name: '',
@@ -92,14 +95,34 @@ function SaveLiquidModal(props: {
                 usedCold: false,
                 toxic: false,
                 position: -1,
+                washingTrayPosition: undefined,
             } as PermanentLiquidDTO);
+        }
     }, [props.liquid]);
 
     const areInputsValid = (): boolean => {
         const isPositionValid = !isNaN(Number(positionText));
         const isNameValid = newLiquid.name.trim() !== '';
+        const isWashingCat = newLiquid.type.name === 'Washing';
+        const isWashingPosValid =
+            !isWashingCat || newLiquid.washingTrayPosition !== undefined;
 
-        return isPositionValid && isNameValid;
+        return isPositionValid && isNameValid && isWashingPosValid;
+    };
+
+    // Get available washing tray positions (1-6, excluding occupied ones)
+    const getAvailableWashingPositions = (): number[] => {
+        const allPositions = [1, 2, 3, 4, 5, 6];
+        const occupiedPositions = props.liquids
+            .filter(
+                (liq) =>
+                    liq.type.name === 'Washing' &&
+                    liq.washingTrayPosition !== undefined &&
+                    liq.id !== newLiquid.id, // Exclude current liquid if editing
+            )
+            .map((liq) => liq.washingTrayPosition!);
+
+        return allPositions.filter((pos) => !occupiedPositions.includes(pos));
     };
 
     return (
@@ -135,12 +158,28 @@ function SaveLiquidModal(props: {
                                 list={props.categories}
                                 selected={newLiquid.type}
                                 canAdd={false}
-                                onChangeSelect={(cat) =>
-                                    setNewLiquid({
+                                onChangeSelect={(cat) => {
+                                    const updatedLiquid = {
                                         ...newLiquid,
                                         type: cat,
-                                    })
-                                }
+                                    };
+
+                                    // Auto-select first available position when switching to Washing
+                                    if (
+                                        cat.name === 'Washing' &&
+                                        newLiquid.washingTrayPosition ===
+                                            undefined
+                                    ) {
+                                        const available =
+                                            getAvailableWashingPositions();
+                                        if (available.length > 0) {
+                                            updatedLiquid.washingTrayPosition =
+                                                available[0];
+                                        }
+                                    }
+
+                                    setNewLiquid(updatedLiquid);
+                                }}
                             />
                         </VStack>
                         <VStack flex={1}>
@@ -156,6 +195,43 @@ function SaveLiquidModal(props: {
                             </Input>
                         </VStack>
                     </HStack>
+                    {newLiquid.type.name === 'Washing' && (
+                        <VStack mt="$3">
+                            <Text>Washing Tray Position:</Text>
+                            <CustomSelect
+                                list={getAvailableWashingPositions().map(
+                                    (pos) =>
+                                        ({
+                                            id: pos,
+                                            name: `Position ${pos}`,
+                                        } as LiquidTypeDTO),
+                                )}
+                                selected={
+                                    newLiquid.washingTrayPosition !== undefined
+                                        ? ({
+                                              id: newLiquid.washingTrayPosition,
+                                              name: `Position ${newLiquid.washingTrayPosition}`,
+                                          } as LiquidTypeDTO)
+                                        : getAvailableWashingPositions()
+                                              .length > 0
+                                        ? ({
+                                              id: getAvailableWashingPositions()[0],
+                                              name: `Position ${
+                                                  getAvailableWashingPositions()[0]
+                                              }`,
+                                          } as LiquidTypeDTO)
+                                        : undefined
+                                }
+                                canAdd={false}
+                                onChangeSelect={(item) => {
+                                    setNewLiquid({
+                                        ...newLiquid,
+                                        washingTrayPosition: item.id,
+                                    });
+                                }}
+                            />
+                        </VStack>
+                    )}
                     <VStack>
                         <HStack space="md" alignItems="center">
                             <Text size="lg">Toxic:</Text>
@@ -202,6 +278,10 @@ function SaveLiquidModal(props: {
                                 if (areInputsValid()) {
                                     newLiquid.position = Number(positionText);
                                     newLiquid.name = newLiquid.name.trim();
+                                    if (newLiquid.type.name !== 'Washing') {
+                                        newLiquid.washingTrayPosition =
+                                            undefined;
+                                    }
                                     props.saveLiquid(newLiquid);
                                     props.closeModal();
                                 }
@@ -250,11 +330,15 @@ function Library(props: {}) {
 
     const listInitilizer = () => {
         getRequest<PermanentLiquidDTO[]>('/liquids').then((r) => {
-            setLiquids(r.data);
+            if ('data' in r) {
+                setLiquids(r.data);
+            }
         });
 
         getRequest<LiquidTypeDTO[]>('/types').then((r) => {
-            setCategories(r.data);
+            if ('data' in r) {
+                setCategories(r.data);
+            }
         });
 
         setEditedLiquid(null);
@@ -409,6 +493,15 @@ function Library(props: {}) {
                                             size="sm"
                                             color="$textLight600"
                                         >
+                                            Wash Tray
+                                        </Text>
+                                    </Box>
+                                    <Box flex={1}>
+                                        <Text
+                                            fontWeight="$semibold"
+                                            size="sm"
+                                            color="$textLight600"
+                                        >
                                             Toxic
                                         </Text>
                                     </Box>
@@ -486,6 +579,21 @@ function Library(props: {}) {
                                                         color="$textLight700"
                                                     >
                                                         {liq.type.name}
+                                                    </Text>
+                                                </Box>
+                                                <Box
+                                                    flex={1}
+                                                    justifyContent="center"
+                                                >
+                                                    <Text
+                                                        size="sm"
+                                                        color="$textLight700"
+                                                    >
+                                                        {liq.type.name ===
+                                                            'Washing' &&
+                                                        liq.washingTrayPosition
+                                                            ? liq.washingTrayPosition
+                                                            : '-'}
                                                     </Text>
                                                 </Box>
                                                 <Box
@@ -590,6 +698,7 @@ function Library(props: {}) {
                             isOpen={editModal}
                             liquid={editedLiquid}
                             categories={categories}
+                            liquids={liquids}
                             closeModal={() => {
                                 setEditedLiquid(null);
                                 setEditModal(false);

@@ -13,4 +13,5 @@ export interface PermanentLiquidDTO extends LiquidDTO {
     usedCold: boolean;
     toxic: boolean;
     position: number;
+    washingTrayPosition?: number; // Position in washing tray (1-6) for Washing category liquids
 }

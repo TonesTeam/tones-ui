@@ -206,54 +206,51 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
             const response = await getRequest<ProtocolWithStepsDTO>(
                 `/protocol/${props.protocolId}`,
             );
-            const protocol = response.data;
+            if ('data' in response) {
+                const protocol = response.data;
 
-            setWashingName(protocol.defaultWash.liquid.name);
-            setDefaultWashingIterations(protocol.defaultWash.iters);
+                setWashingName(protocol.defaultWash.liquid.name);
+                setDefaultWashingIterations(protocol.defaultWash.iters);
 
-            const reagentUsage = new Map<
-                string,
-                { name: string; usage: number; type: string }
-            >();
-            let totalWashing = 0;
+                const reagentUsage = new Map<
+                    string,
+                    { name: string; usage: number; type: string }
+                >();
+                let totalWashing = 0;
 
-            // Go through each step and find liquid steps
-            protocol.steps.forEach((step: any) => {
-                if (step.type === StepType.REAGENT) {
-                    const reagentStep = step.params as ReagentStep;
-                    const liquidName = reagentStep.liquid.name;
-                    const typeName = reagentStep.liquid.type.name;
-                    const stepUsage = reagentStep.iters || 1;
+                // Go through each step and find liquid steps
+                const allSteps =
+                    protocol.stepBatches?.flatMap((batch) => batch.steps) || [];
+                allSteps.forEach((step: any) => {
+                    if (step.type === StepType.REAGENT) {
+                        const reagentStep = step.params as ReagentStep;
+                        const liquidName = reagentStep.liquid.name;
+                        const typeName = reagentStep.liquid.type.name;
+                        const stepUsage = 1; // Each reagent step uses the reagent once
 
-                    let stepWashing = 0;
-
-                    if (reagentStep.autoWash) {
-                        stepWashing += protocol.defaultWash.iters;
+                        if (reagentUsage.has(liquidName)) {
+                            reagentUsage.get(liquidName)!.usage += stepUsage;
+                        } else {
+                            reagentUsage.set(liquidName, {
+                                name: liquidName,
+                                usage: stepUsage,
+                                type: typeName,
+                            });
+                        }
+                    } else if (step.type === StepType.WASHING) {
+                        const washStep = step.params;
+                        if (washStep.iters) {
+                            totalWashing += washStep.iters;
+                        }
                     }
+                });
 
-                    if (reagentStep.washingIterations) {
-                        stepWashing += reagentStep.washingIterations;
-                    }
-
-                    totalWashing += stepWashing * stepUsage * props.slots;
-
-                    if (reagentUsage.has(liquidName)) {
-                        reagentUsage.get(liquidName)!.usage += stepUsage;
-                    } else {
-                        reagentUsage.set(liquidName, {
-                            name: liquidName,
-                            usage: stepUsage,
-                            type: typeName,
-                        });
-                    }
-                }
-            });
-
-            setTotalWashingIterations(totalWashing);
-            console.log('Get washing iterations:', totalWashing);
-            const reagentsList = Array.from(reagentUsage.values());
-            console.log('Reagents loaded:', reagentsList);
-            setReagents(reagentsList);
+                setTotalWashingIterations(totalWashing);
+                console.log('Get washing iterations:', totalWashing);
+                const reagentsList = Array.from(reagentUsage.values());
+                console.log('Reagents loaded:', reagentsList);
+                setReagents(reagentsList);
+            }
         } catch (error) {
             console.error('Error loading reagents:', error);
         } finally {
