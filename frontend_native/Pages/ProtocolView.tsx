@@ -151,7 +151,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 <HStack>
                                     <Text fontWeight="bold">Author:</Text>
                                     <Text ml="$2">
-                                        {protocol?.metadata.author_id ?? ''}
+                                        {`${protocol?.metadata.author_first_name} ${protocol?.metadata.author_last_name}`}
                                     </Text>
                                 </HStack>
                                 <HStack>

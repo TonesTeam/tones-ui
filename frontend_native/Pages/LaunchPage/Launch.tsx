@@ -26,9 +26,11 @@ import { LiquidTable } from './LiquidTable';
 import { SlotMap } from './SlotMap';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
 import { Confirmations } from './Confirmations';
-import { getRequest } from '../../common/util';
+import { getRequest, makeRequest } from '../../common/util';
 import { Box, Text, HStack, Pressable, Icon } from '@gluestack-ui/themed';
 import { ArrowLeft } from 'lucide-react-native';
+import { Method } from 'axios';
+import { useUser } from '../../contexts/UserContext';
 
 enum LaunchStage {
     STEP_ONE = 1,
@@ -160,6 +162,9 @@ export default function Launch({
         Array(SLOT_QUANTITY).fill(false),
     );
     const [confirmations, setConfirmations] = useState(0);
+
+    const { user } = useUser();
+    const current_user_id = user ? user.id : null;
 
     function toggleSlotActivity(idx: number) {
         const newSlotActivityMap = slotActivityMap.map((slot, index) => {
@@ -441,8 +446,17 @@ export default function Launch({
                                 stage == LaunchStage.STEP_THREE &&
                                 confirmations == 4
                             ) {
-                                navigation.navigate('ProtocolLogs', {
-                                    protocol_ID: protocol_ID,
+                                makeRequest(
+                                    'POST' as Method,
+                                    '/jobs',
+                                    JSON.stringify({
+                                        protocol_id: protocol_ID,
+                                        slots_used: [1, 2, 3],
+                                        name: 'hello world',
+                                        creator_id: current_user_id,
+                                    }),
+                                ).then((res) => {
+                                    console.log(res.data);
                                 });
                             }
                         }}
