@@ -1,5 +1,4 @@
-import { LiquidDTO } from './liquid.dto';
-import { WashStep, StepDTO } from './step.dto';
+import { StepDTO } from './step.dto';
 
 export interface ProtocolDto {
     author_id: number;
@@ -8,7 +7,7 @@ export interface ProtocolDto {
     history_id: string;
     id: number;
     is_deleted: boolean;
-    last_launched: number;
+    last_launched: number | null;
     last_updated: number;
     name: string;
     version: number;

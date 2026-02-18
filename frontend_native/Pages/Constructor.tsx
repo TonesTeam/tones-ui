@@ -40,7 +40,7 @@ import {
     DEFAULT_TEMEPRATURE,
     DEFAULT_WASH_STEP,
 } from '../constants/protocol_constants';
-import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
+import { ProtocolDto, ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { getRequest, makeRequest } from '../common/util';
 import { CustomSelect } from '../components/Select';
 import RadioButton from '../components/RadioButton';
@@ -216,7 +216,8 @@ export default function Constructor({
     const [workBlock, setWorkBlock] = useState<StepDTO>({
         type: StepType.LIQUID_APPL,
         id: -1,
-        params: {} as ReagentStep,
+        iterations: 1,
+        incubation_time: 0,
     });
     const [preSaveModal, setPreSaveModal] = useState(false);
     const [settingsModal, setSettingsModal] = useState(false);
@@ -240,24 +241,30 @@ export default function Constructor({
     function initialization() {
         if (reference_ID) {
             getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${reference_ID.toString()}`,
+                `/protocols/${reference_ID.toString()}`,
             ).then((r) => {
-                setCustomLiquids(r.data.customLiquids);
-                setDefaultWashStep(r.data.defaultWash);
-                setProtocolName(r.data.name);
-                setProtocolDescription(r.data.description);
-                setBlocks(r.data.steps);
+                if ('data' in r) {
+                    const data = r.data;
+                    setProtocolName(data.metadata.name);
+                    setProtocolDescription(data.metadata.description);
+                    const allSteps = data.step_groups.flatMap(
+                        (group) => group.steps,
+                    );
+                    setBlocks(allSteps);
+                }
             });
         }
 
         getRequest<LiquidDTO[]>(`/liquids`).then((r) => {
-            setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
-            let defaultWashing = {
-                iters: 1,
-                incubation: 10,
-                liquid: r.data.filter((liq) => liq.type.id == 2)[0],
-            } as WashStep;
-            setDefaultWashStep(defaultWashing);
+            if ('data' in r) {
+                setWashLiquids(r.data.filter((liq) => liq.type.id == 2));
+                let defaultWashing = {
+                    iters: 1,
+                    incubation: 10,
+                    liquid: r.data.filter((liq) => liq.type.id == 2)[0],
+                } as WashStep;
+                setDefaultWashStep(defaultWashing);
+            }
         });
     }
 
@@ -294,17 +301,17 @@ export default function Constructor({
         const finalBlocks = [
             ...blocks,
             {
-                type: newBlock.type,
+                ...newBlock,
                 id: newBlock.id == -1 ? newID : newBlock.id,
-                params: newBlock.params,
-            } as StepDTO,
+            },
         ];
 
         setBlocks(finalBlocks);
         setWorkBlock({
             type: newBlock.type,
             id: -1,
-            params: {} as ReagentStep,
+            iterations: 1,
+            incubation_time: 0,
         });
     }
 
@@ -320,27 +327,43 @@ export default function Constructor({
     }
 
     function save() {
-        let new_protocol = {
-            id: protocol_ID ? protocol_ID : -1,
-            name: protocolName,
-            customLiquids: customLiquids.map((liq) => {
-                return { ...liq, id: 0 };
-            }),
-            description: protocolDescription,
-            steps: blocks,
-            creationDate: new Date(),
-            defaultWash: settings?.autoWashConfig,
-            washingIterations: washingIterations,
-            author: null,
-        } as ProtocolWithStepsDTO;
+        const now = Math.floor(Date.now() / 1000);
+        let new_protocol: ProtocolWithStepsDTO = {
+            metadata: {
+                id: protocol_ID ?? -1,
+                name: protocolName,
+                description: protocolDescription,
+                created_at: now,
+                last_launched: null,
+                last_updated: now,
+                version: now,
+                is_deleted: false,
+                author_id: 0,
+                author_first_name: '',
+                author_last_name: '',
+                history_id: '',
+            } as ProtocolDto,
+            step_groups: [
+                {
+                    step_group: {
+                        id: 0,
+                        name: 'Default',
+                        protocol_id: protocol_ID ?? -1,
+                        sequence_number: 0,
+                    },
+                    steps: blocks,
+                },
+            ],
+        };
 
         console.log(JSON.stringify(new_protocol));
 
-        makeRequest(
-            'POST' as Method,
-            '/protocol/save',
-            JSON.stringify(new_protocol),
-        )
+        const method: Method = protocol_ID ? 'PUT' : 'POST';
+        const path = protocol_ID
+            ? `/protocols/${protocol_ID}`
+            : '/protocols';
+
+        makeRequest(method, path, JSON.stringify(new_protocol))
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) setSuccessSaving(true);
                 else setSuccessSaving(false);
