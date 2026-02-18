@@ -26,7 +26,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     useEffect(() => {
         if (protocol_ID) {
             console.log('Fetching protocol data...');
-            getRequest<ProtocolWithStepsDTO>(`/protocol/${protocol_ID}`)
+            getRequest<ProtocolWithStepsDTO>(`/protocols/${protocol_ID}`)
                 .then((r) => {
                     if ('data' in r) {
                         setProtocol(r.data);
@@ -38,7 +38,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     }, [protocol_ID]);
 
     const deleteProtocol = (id: number) => {
-        makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
+        makeRequest('DELETE' as Method, `/protocols/${id}`)
             .then((r) => {
                 if (r.status >= 200 && r.status <= 299) {
                     setDeleteModal(false);
@@ -71,26 +71,25 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     return (
         <MainContainer>
             <NavBar />
-            <Box
-                flex={1}
-                minHeight="100%"
-                alignItems="stretch"
-                justifyContent="space-between"
-                style={styles.wrapper}
-            >
+            <Box flex={1} p={24}>
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                    mt={16}
+                >
+                    {protocol?.metadata.name ?? 'Loading...'}
+                </Text>
                 <ScrollView>
                     <VStack>
-                        <Heading size="2xl">
-                            {protocol?.name ?? 'Loading...'}
-                        </Heading>
-
                         <HStack justifyContent="flex-end" space="sm">
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onPress={() =>
                                     navigation.navigate('Create protocol', {
-                                        protocol_ID: protocol.id,
+                                        protocol_ID: protocol.metadata.id,
                                         preserveID: false,
                                     })
                                 }
@@ -103,7 +102,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 variant="outline"
                                 onPress={() =>
                                     navigation.navigate('Create protocol', {
-                                        protocol_ID: protocol.id,
+                                        protocol_ID: protocol.metadata.id,
                                         preserveID: true,
                                     })
                                 }
@@ -126,50 +125,53 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
 
                         <HStack>
                             <VStack flex={1} mr="$2">
-                                {protocol.steps.map((step, index) => (
-                                    <StepBlock
-                                        key={step.id}
-                                        renderParams={{
-                                            item: step,
-                                            drag: () => {},
-                                            isActive: false,
-                                            getIndex: () => index,
-                                        }}
-                                        settings={{
-                                            autoWashConfig:
-                                                protocol.defaultWash,
-                                            description: protocol.description,
-                                        }}
-                                        edit={false}
-                                    />
-                                ))}
+                                {protocol.step_groups.map((group) =>
+                                    group.steps.map((step, index) => (
+                                        <StepBlock
+                                            key={step.id}
+                                            renderParams={{
+                                                item: step,
+                                                drag: () => {},
+                                                isActive: false,
+                                                getIndex: () => index,
+                                            }}
+                                            settings={{
+                                                autoWashConfig:
+                                                    protocol.defaultWash,
+                                                description:
+                                                    protocol.description,
+                                            }}
+                                            edit={false}
+                                        />
+                                    )),
+                                )}
                             </VStack>
 
                             <VStack flex={1} ml="$2">
                                 <HStack>
                                     <Text fontWeight="bold">Author:</Text>
                                     <Text ml="$2">
-                                        {protocol?.author ?? ''}
+                                        {protocol?.metadata.author_id ?? ''}
                                     </Text>
                                 </HStack>
                                 <HStack>
                                     <Text fontWeight="bold">Created:</Text>
                                     <Text ml="$2">
-                                        {protocol?.creationDate
+                                        {protocol?.metadata.created_at
                                             ? formatSocialMediaTime(
-                                                  protocol.creationDate,
+                                                  protocol.metadata.created_at,
                                               )
                                             : ''}
                                     </Text>
                                 </HStack>
-                                {protocol?.lastUpdate && (
+                                {protocol?.metadata.last_updated && (
                                     <HStack>
                                         <Text fontWeight="bold">
                                             Last Updated:
                                         </Text>
                                         <Text ml="$2">
                                             {formatSocialMediaTime(
-                                                protocol.lastUpdate,
+                                                protocol.metadata.last_updated,
                                             )}
                                         </Text>
                                     </HStack>
@@ -177,7 +179,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 <Text>
                                     <Text fontWeight="bold">Description: </Text>
                                     <Text fontWeight="normal" ml="$2">
-                                        {protocol?.description ?? ''}
+                                        {protocol?.metadata.description ?? ''}
                                     </Text>
                                 </Text>
                             </VStack>
@@ -190,7 +192,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         alignSelf="center"
                         onPress={() =>
                             navigation.navigate('Launch', {
-                                protocol_ID: protocol.id,
+                                protocol_ID: protocol.metadata.id,
                             })
                         }
                     >
@@ -205,7 +207,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 onClose={() => setDeleteModal(false)}
                 action={() => deleteProtocol(protocol.id)}
                 icon={Trash}
-                headline={`Delete protocol "${protocol.name}"`}
+                headline={`Delete protocol "${protocol.metadata.name}"?`}
                 text="Are you sure you want to delete this protocol? This action cannot be undone."
                 actionButtonText="Delete"
                 type="error"

@@ -48,7 +48,7 @@ export default function ConfirmationModal({
     const s = StyleSheet.create({
         modal_container: {
             alignItems: 'center',
-            maxWidth: '25%',
+            maxWidth: '30%',
         },
         icon_container: {
             display: 'flex',

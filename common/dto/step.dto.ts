@@ -4,14 +4,11 @@ import { LiquidDTO } from './liquid.dto';
 export interface StepDTO {
     type: StepType;
     id: number;
-    params: StepParams;
+    iterations: number;
+    incubation_time: number; // in seconds
 }
 
-export interface StepParams {
-    iters: number;
-    incubation: number; // in seconds
-    liquid: LiquidDTO;
-}
+export interface StepParams {}
 
 export interface WashStep extends StepParams {}
 

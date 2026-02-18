@@ -45,13 +45,14 @@ const Header = ({
     sortDirection,
 }: HeaderProps) => {
     return (
-        <VStack alignItems="start" width="95%" space="lg" mt="$4">
+        <VStack alignItems="start" width="100%" space="lg" mt="$4">
             {/* Row with the search bar, sorting selectors and call to action button */}
             <HStack justifyContent="space-between" width="100%">
                 <HStack>
                     <SearchBar
                         onChangeText={(e) => setSearchPrompt(e)}
                         value={searchPrompt}
+                        minWidth={300}
                     />
                     <AuthorSelector
                         value={authorFilter}
@@ -86,7 +87,9 @@ const Header = ({
                             mr="$1"
                         />
                     </Box>
-                    <ButtonText color="white">Create New Protocol</ButtonText>
+                    <ButtonText color="white" fontSize={14}>
+                        Create New Protocol
+                    </ButtonText>
                 </Button>
             </HStack>
 
@@ -105,7 +108,7 @@ const Header = ({
                     justifyContent="flex-start"
                     p="$0"
                 >
-                    <Text>
+                    <Text fontSize={14} color="#1F2832" opacity={0.5}>
                         # ID{' '}
                         {sortColumn === 'id' &&
                             (sortDirection === 'asc' ? '↑' : '↓')}
@@ -118,7 +121,7 @@ const Header = ({
                     justifyContent="flex-start"
                     p="$0"
                 >
-                    <Text>
+                    <Text fontSize={14} color="#1F2832" opacity={0.5}>
                         Protocol Name{' '}
                         {sortColumn === 'name' &&
                             (sortDirection === 'asc' ? '↑' : '↓')}
@@ -131,7 +134,7 @@ const Header = ({
                     justifyContent="flex-start"
                     p="$0"
                 >
-                    <Text>
+                    <Text fontSize={14} color="#1F2832" opacity={0.5}>
                         Author{' '}
                         {sortColumn === 'author' &&
                             (sortDirection === 'asc' ? '↑' : '↓')}
@@ -144,7 +147,7 @@ const Header = ({
                     justifyContent="center"
                     p="$0"
                 >
-                    <Text>
+                    <Text fontSize={14} color="#1F2832" opacity={0.5}>
                         Created{' '}
                         {sortColumn === 'created' &&
                             (sortDirection === 'asc' ? '↑' : '↓')}
@@ -157,7 +160,7 @@ const Header = ({
                     justifyContent="center"
                     p="$0"
                 >
-                    <Text>
+                    <Text fontSize={14} color="#1F2832" opacity={0.5}>
                         Status{' '}
                         {sortColumn === 'status' &&
                             (sortDirection === 'asc' ? '↑' : '↓')}

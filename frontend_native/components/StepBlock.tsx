@@ -17,7 +17,7 @@ import {
     Box,
     Pressable,
 } from '@gluestack-ui/themed';
-import { FlaskConical, Waves } from 'lucide-react-native';
+import { Eye, FlaskConical, Waves } from 'lucide-react-native';
 import { Trash, Pencil } from 'lucide-react-native';
 import { formatDuration } from '../common/util';
 
@@ -144,12 +144,6 @@ const StepBlock = (props: StepBlockProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
 
     const block = item;
-    const stepConfig = getStepConfig(block.type);
-    const blockColor = isActive
-        ? stepConfig.colors.transparent
-        : stepConfig.colors.main;
-    const IconComponent = stepConfig.icon;
-
     const renderStepParams = () => {
         switch (block.type) {
             case StepType.WASHING:
@@ -175,6 +169,7 @@ const StepBlock = (props: StepBlockProps) => {
         block.type === StepType.LIQUID_APPL &&
         (block.params as ReagentStep).autoWash === true;
 
+    console.log(block);
     return (
         <>
             <TouchableOpacity
@@ -184,7 +179,7 @@ const StepBlock = (props: StepBlockProps) => {
                 disabled={isActive}
             >
                 <Box
-                    backgroundColor={blockColor}
+                    bg="$white"
                     borderRadius="$lg"
                     marginVertical="$1.5"
                     paddingHorizontal="$4"
@@ -213,7 +208,7 @@ const StepBlock = (props: StepBlockProps) => {
                                 justifyContent="center"
                             >
                                 <Icon
-                                    as={IconComponent}
+                                    as={Eye}
                                     color="$white"
                                     size="lg"
                                     height={iconSize}
@@ -221,9 +216,8 @@ const StepBlock = (props: StepBlockProps) => {
                                 />
                             </Box>
                             <Text color="$white" size="lg" fontWeight="$bold">
-                                {stepConfig.name}
-                                {block.params.iters > 1
-                                    ? ` (${block.params.iters} times)`
+                                {block.iterations > 1
+                                    ? ` (${block.iterations} times)`
                                     : ''}
                             </Text>
                         </HStack>
@@ -302,7 +296,7 @@ const StepBlock = (props: StepBlockProps) => {
                 onClose={() => setDeleteModal(false)}
                 action={() => props.deleteStep?.(item)}
                 icon={Trash}
-                headline={`Delete ${item.type.toLowerCase()} step`}
+                headline={`Delete step`}
                 text="Are you sure you want to delete this step? This action cannot be undone."
                 actionButtonText="Delete"
                 type="error"
