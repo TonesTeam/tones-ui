@@ -58,31 +58,35 @@ const ListItem = ({
             shadowOpacity={0.05}
             shadowRadius={2}
             flexDirection="row"
+            height={72}
         >
             <HStack
                 alignItems="center"
                 justifyContent="space-between"
                 width="100%"
             >
-                <Text flex={1} textAlign="left" size="md" color="$black">
+                <Text flex={1} textAlign="left" size="md" color="#1F2832">
                     # {protocol.id}
                 </Text>
-                <Text flex={6} textAlign="left" size="md" color="$black">
+                <Text flex={5} textAlign="left" size="md" color="#1F2832">
                     {protocol.name}
                 </Text>
 
-                <HStack flex={3} alignItems="center" space="sm">
-                    <GeneratedAvatar name={'Jefferey'} size={32} />
-                    <Text color="$black" size="md">
-                        {protocol.author}
+                <HStack flex={4} alignItems="center" space="sm">
+                    <GeneratedAvatar
+                        name={protocol.author_first_name}
+                        size={32}
+                    />
+                    <Text color="#1F2832" size="md">
+                        {protocol.author_first_name} {protocol.author_last_name}
                     </Text>
                 </HStack>
 
-                <Text size="md" color="$black" flex={2} textAlign="center">
+                <Text size="md" color="#1F2832" flex={2} textAlign="center">
                     {formatSocialMediaTime(protocol.created_at)}
                 </Text>
 
-                <Text color="$black" size="md" flex={3} textAlign="center">
+                <Text color="#1F2832" size="md" flex={3} textAlign="center">
                     Ready
                 </Text>
 
@@ -206,11 +210,7 @@ const ListItem = ({
                         >
                             <ButtonIcon as={Eye} mr="$2" color="white" />
                         </Box>
-                        <ButtonText
-                            color="white"
-                            minHeight={21}
-                            fontWeight={400}
-                        >
+                        <ButtonText color="white" minHeight={20} fontSize={14}>
                             View
                         </ButtonText>
                     </Button>

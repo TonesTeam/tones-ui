@@ -115,7 +115,7 @@ const Header = ({
                     </Text>
                 </Button>
                 <Button
-                    flex={6}
+                    flex={5}
                     variant="link"
                     onPress={() => onSort('name')}
                     justifyContent="flex-start"
@@ -128,7 +128,7 @@ const Header = ({
                     </Text>
                 </Button>
                 <Button
-                    flex={3}
+                    flex={4}
                     variant="link"
                     onPress={() => onSort('author')}
                     justifyContent="flex-start"

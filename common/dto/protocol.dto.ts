@@ -12,6 +12,8 @@ export interface ProtocolDto {
     last_updated: number;
     name: string;
     version: number;
+    author_first_name: string;
+    author_last_name: string;
 }
 
 export interface StepGroupDTO {
