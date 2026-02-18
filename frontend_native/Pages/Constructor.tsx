@@ -328,7 +328,11 @@ const Timeline = ({
                 }}
                 icon={Trash}
                 headline="Delete step group"
-                text={`Are you sure you want to delete "${stepGroups[deleteGroupIndex ?? 0]?.step_group.name}"? All steps in this group will be removed.`}
+                text={
+                    deleteGroupIndex !== null
+                        ? `Are you sure you want to delete "${stepGroups[deleteGroupIndex]?.step_group.name}"? All steps in this group will be removed.`
+                        : ''
+                }
                 actionButtonText="Delete"
                 type="error"
             />
@@ -488,7 +492,7 @@ export default function Constructor({
         const newGroup: StepGroupWithStepsDTO = {
             step_group: {
                 id: newId,
-                name: `Group ${stepGroups.length + 1}`,
+                name: `Group ${newId + 1}`,
                 protocol_id: protocol_ID ?? -1,
                 sequence_number: stepGroups.length,
             },
