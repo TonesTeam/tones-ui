@@ -141,6 +141,7 @@ export async function makeRequest<R>(
     path: string,
     payload?: string,
 ): Promise<AxiosResponse<R, any>> {
+    console.log(`Making ${method} request to ${path} with payload: ${payload}`);
     const fullpath = (await getDomain()) + prefix + path;
     console.log(`${method}: ${fullpath}`);
     return await client.request({

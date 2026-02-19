@@ -6,6 +6,9 @@ export interface StepDTO {
     id: number;
     iterations: number;
     incubation_time: number; // in seconds
+    targetTemperature: number;
+    applied_liquid_id: number;
+    sequence_number: number;
 }
 
 export interface StepParams {}
@@ -14,7 +17,6 @@ export interface WashStep extends StepParams {}
 
 export interface ReagentStep extends StepParams {
     autoWash: boolean;
-    targetTemperature: number;
     washingIterations: number;
 }
 

@@ -36,7 +36,7 @@ const ListItem = ({
     const [menuOpen, setMenuOpen] = useState(false);
 
     const deleteProtocol = (id: number) => {
-        makeRequest('DELETE' as Method, `/protocol/delete/${id}`)
+        makeRequest('DELETE' as Method, `/protocols/${id}`)
             .then((_) => {
                 removeProtocolFromList(id);
                 setDeleteModal(false);

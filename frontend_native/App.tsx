@@ -24,6 +24,7 @@ export default function App() {
         Newsreader: require('./assets/fonts/Newsreader.ttf'),
         Orbitron: require('./assets/fonts/Orbitron-VariableFont_wght.ttf'),
         'Orbitron-Medium': require('./assets/fonts/orbitron-medium.ttf'),
+        'Orbitron-Regular': require('./assets/fonts/Orbitron-Regular.ttf'),
         'Manrope-Light': require('./assets/fonts/Manrope-Light.ttf'),
         'Manrope-Medium': require('./assets/fonts/Manrope-Medium.ttf'),
         'Manrope-SemiBold': require('./assets/fonts/Manrope-SemiBold.ttf'),
