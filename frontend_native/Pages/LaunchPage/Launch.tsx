@@ -478,7 +478,7 @@ export default function Launch({
                                     '/jobs',
                                     JSON.stringify({
                                         protocol_id: protocol_ID,
-                                        slots_used: [1, 2, 3],
+                                        slots_used: [0],
                                         name: 'hello world',
                                         creator_id: current_user_id,
                                     }),
