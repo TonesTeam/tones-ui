@@ -167,6 +167,7 @@ const AddLiquidForm = ({
     const [selectedLiquid, setSelectedLiquid] = useState<number | null>(null);
     const [incubationTime, setIncubationTime] = useState<string>('');
     const [targetTemperature, setTargetTemperature] = useState<string>('');
+    const [washingIterations, setWashingIterations] = useState<string>('0');
 
     const findNextSequenceNumberForSteps = (
         stepGroups: StepGroupWithStepsDTO[],
@@ -224,7 +225,7 @@ const AddLiquidForm = ({
                     </Pressable>
                 </Box>
             </HStack>
-            <VStack gap={16}>
+            <VStack gap={8}>
                 {/* Reagent category */}
                 <VStack gap={8}>
                     <Text fontSize={12} color="black" opacity={0.7}>
@@ -363,8 +364,33 @@ const AddLiquidForm = ({
                         />
                     </Input>
                 </VStack>
+
+                {/* Washing iterations */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Washing iterations
+                    </Text>
+                    <Input
+                        height={48}
+                        borderRadius={16}
+                        bg="#F1F1F1"
+                        borderWidth={0}
+                        value={washingIterations}
+                        onChange={(e: any) =>
+                            setWashingIterations(e.nativeEvent.text)
+                        }
+                    >
+                        <InputField
+                            color="black"
+                            fontSize={16}
+                            placeholder="Number of washing iterations"
+                            keyboardType="numeric"
+                            ml={16}
+                        />
+                    </Input>
+                </VStack>
             </VStack>
-            <HStack gap={24} mt={50}>
+            <HStack gap={24} mt={30}>
                 <Button
                     height={40}
                     width={95}
@@ -401,6 +427,7 @@ const AddLiquidForm = ({
                                     stepGroups,
                                     activeStepGroup,
                                 ),
+                                washing_iterations: parseInt(washingIterations),
                             };
 
                             const updatedStepGroups = stepGroups.map(

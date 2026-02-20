@@ -58,6 +58,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         target_temperature: s.targetTemperature,
                         incubation_time: s.incubation_time,
                         applied_liquid_id: s.applied_liquid_id,
+                        washing_iterations: s.washing_iterations,
                     })),
                 })),
             }),
