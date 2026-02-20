@@ -1,6 +1,6 @@
 import { HStack, Text, Icon, Box } from '@gluestack-ui/themed';
 import { StepDTO } from 'common/dto/step.dto';
-import { AlignJustify } from 'lucide-react-native';
+import { AlignJustify, Thermometer } from 'lucide-react-native';
 import { Clock, Copy, FlaskConical, Pencil, Trash } from 'lucide-react-native';
 
 interface StepProps {
@@ -11,7 +11,7 @@ interface StepProps {
 
 const Step = ({ index, step }: StepProps) => {
     return (
-        <HStack gap={4} alignItems="center" p={8} width="100%">
+        <HStack gap={8} alignItems="center" width="100%">
             <Box>
                 <Icon as={AlignJustify} opacity={0.6} size={20} />
             </Box>
@@ -24,23 +24,28 @@ const Step = ({ index, step }: StepProps) => {
                 alignItems="center"
                 px={16}
             >
-                <Text color="black" fontSize={12} flex={1}>
+                <Text color="black" fontSize={12} flex={0.7}>
                     #{index}
                 </Text>
-                <Text
-                    color="black"
-                    fontSize={12}
-                    justifyContent="center"
-                    flex={3}
-                >
+                <HStack justifyContent="center" flex={3}>
                     <Icon as={FlaskConical} size={16} />
-                    Reagent
-                </Text>
-                <Text color="black" fontSize={12} flex={3}>
+                    <Text color="black" fontSize={12} ml={6}>
+                        Reagent
+                    </Text>
+                </HStack>
+                <HStack flex={3} justifyContent="center" alignItems="center">
                     <Icon as={Clock} size={16} />
-                    {step.incubation_time}
-                </Text>
-                <Box flex={5}></Box>
+                    <Text color="black" fontSize={12} ml={6}>
+                        {step.incubation_time / 60} minutes
+                    </Text>
+                </HStack>
+                <HStack flex={2} justifyContent="center" alignItems="center">
+                    <Icon as={Thermometer} size={16} />
+                    <Text color="black" fontSize={12} ml={6}>
+                        {step.targetTemperature} °C
+                    </Text>
+                </HStack>
+                <Box flex={3}></Box>
             </HStack>
         </HStack>
     );
