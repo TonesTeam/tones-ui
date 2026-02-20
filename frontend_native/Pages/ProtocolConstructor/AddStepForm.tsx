@@ -310,7 +310,7 @@ const AddLiquidForm = ({
                 {/* Incubation time */}
                 <VStack gap={8}>
                     <Text fontSize={12} color="black" opacity={0.7}>
-                        Incubation time
+                        Incubation time (minutes)
                     </Text>
                     <Input
                         height={48}
@@ -325,7 +325,7 @@ const AddLiquidForm = ({
                         <InputField
                             color="black"
                             fontSize={16}
-                            placeholder="Name"
+                            placeholder="Time in minutes"
                             keyboardType="numeric"
                             ml={16}
                         />
@@ -350,7 +350,7 @@ const AddLiquidForm = ({
                         <InputField
                             color="black"
                             fontSize={16}
-                            placeholder="Name"
+                            placeholder="Degrees in celsius"
                             keyboardType="numeric"
                             ml={16}
                         />
@@ -387,7 +387,7 @@ const AddLiquidForm = ({
                                 id: Date.now(), // Temporary ID, replace with actual ID from backend
                                 type: 'Liquid Application' as StepType,
                                 applied_liquid_id: selectedLiquid!,
-                                incubation_time: parseInt(incubationTime),
+                                incubation_time: parseInt(incubationTime) * 60, // Convert minutes to seconds
                                 targetTemperature: parseInt(targetTemperature),
                                 iterations: 1,
                                 sequence_number: findNextSequenceNumberForSteps(
