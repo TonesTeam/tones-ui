@@ -76,6 +76,7 @@ export default function Login({
         setBackdoorAddress(address);
         setBackdoorModal(false);
         setLoginClicks(0);
+        navigation.navigate('Loading');
     };
 
     const handleCancelBackdoor = () => {

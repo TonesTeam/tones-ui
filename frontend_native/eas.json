@@ -2,6 +2,7 @@
     "build": {
         "preview": {
             "android": {
+                "gradleCommand": ":app:assembleDebug",
                 "buildType": "apk"
             }
         },
