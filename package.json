@@ -7,7 +7,6 @@
   ],
   "version": "1.0.0",
   "description": "tones ui",
-  "main": "index.js",
   "scripts": {
     "frontend": "cd frontend_native && npx expo start",
     "backend": "cd backend && npx prisma generate && npx prisma db push && npx prisma db seed && cd .. && npm run start -w backend"
