@@ -39,7 +39,6 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
     const { user } = useUser();
-    console.log(stepGroups[0].steps);
 
     const saveProtocol = () => {
         makeRequest(
