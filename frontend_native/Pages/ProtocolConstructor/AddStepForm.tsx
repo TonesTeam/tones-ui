@@ -34,12 +34,14 @@ interface AddStepFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     activeStepGroup: number;
+    setActiveStepGroup: (sequenceNumber: number) => void;
 }
 
 const AddStepForm = ({
     stepGroups,
     setStepGroups,
     activeStepGroup,
+    setActiveStepGroup,
 }: AddStepFormProps) => {
     const [state, setState] = useState('Select' as 'Select' | 'Add liquid');
 
@@ -49,6 +51,7 @@ const AddStepForm = ({
                 setFormState={setState}
                 stepGroups={stepGroups}
                 setStepGroups={setStepGroups}
+                setActiveStepGroup={setActiveStepGroup}
             />
         );
     } else {
@@ -67,12 +70,14 @@ interface SelectFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     setFormState: (state: 'Select' | 'Add liquid') => void;
+    setActiveStepGroup: (sequenceNumber: number) => void;
 }
 
 const SelectForm = ({
     stepGroups,
     setStepGroups,
     setFormState,
+    setActiveStepGroup,
 }: SelectFormProps) => {
     const findNextSequenceNumber = () => {
         let biggest = 0;
@@ -96,6 +101,7 @@ const SelectForm = ({
                 borderColor="rgba(0, 0, 0, 0.3)"
                 borderRadius={7}
                 onPress={() => {
+                    let newSequenceNumber = findNextSequenceNumber();
                     setStepGroups([
                         ...stepGroups,
                         {
@@ -103,11 +109,12 @@ const SelectForm = ({
                                 id: 1,
                                 name: `Step ${stepGroups.length + 1}`,
                                 protocol_id: 1,
-                                sequence_number: findNextSequenceNumber(),
+                                sequence_number: newSequenceNumber,
                             },
                             steps: [],
                         },
                     ]);
+                    setActiveStepGroup(newSequenceNumber);
                 }}
             >
                 <ButtonIcon as={Plus} size={20} color="black" mr="$1" />

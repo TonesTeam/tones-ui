@@ -64,6 +64,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             }),
         ).then((response) => {
             console.log(response.data);
+            navigation.navigate('Protocols');
         });
     };
 
@@ -125,6 +126,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             stepGroups={stepGroups}
                             setStepGroups={setStepGroups}
                             activeStepGroup={activeStepGroup}
+                            setActiveStepGroup={setActiveStepGroup}
                         />
                     </Box>
                 </Box>
