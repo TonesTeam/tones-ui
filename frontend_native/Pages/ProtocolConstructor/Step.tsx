@@ -1,15 +1,25 @@
-import { HStack, Text, Icon, Box } from '@gluestack-ui/themed';
+import { HStack, Text, Icon, Box, Pressable } from '@gluestack-ui/themed';
 import { StepDTO } from 'common/dto/step.dto';
 import { AlignJustify, Thermometer } from 'lucide-react-native';
-import { Clock, Copy, FlaskConical, Pencil, Trash } from 'lucide-react-native';
+import { Clock, X, FlaskConical } from 'lucide-react-native';
+import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 
 interface StepProps {
     key: number;
     index: number;
     step: StepDTO;
+    setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
+    allStepGroups: StepGroupWithStepsDTO[];
+    stepGroupSequenceNumber: number;
 }
 
-const Step = ({ index, step }: StepProps) => {
+const Step = ({
+    index,
+    step,
+    setStepGroups,
+    allStepGroups,
+    stepGroupSequenceNumber,
+}: StepProps) => {
     return (
         <HStack gap={8} alignItems="center" width="100%">
             <Box>
@@ -45,7 +55,30 @@ const Step = ({ index, step }: StepProps) => {
                         {step.targetTemperature} °C
                     </Text>
                 </HStack>
-                <Box flex={3}></Box>
+                <Box flex={2}></Box>
+                <Pressable
+                    onPress={() => {
+                        const updatedStepGroups = allStepGroups.map((group) => {
+                            if (
+                                group.step_group.sequence_number ===
+                                stepGroupSequenceNumber
+                            ) {
+                                return {
+                                    ...group,
+                                    steps: group.steps.filter(
+                                        (s) =>
+                                            s.sequence_number !==
+                                            step.sequence_number,
+                                    ),
+                                };
+                            }
+                            return group;
+                        });
+                        setStepGroups(updatedStepGroups);
+                    }}
+                >
+                    <Icon as={X} />
+                </Pressable>
             </HStack>
         </HStack>
     );

@@ -129,7 +129,18 @@ const StepGroup = ({
                     console.log(
                         `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
                     );
-                    return <Step key={index} index={index + 1} step={step} />;
+                    return (
+                        <Step
+                            key={index}
+                            index={index + 1}
+                            step={step}
+                            setStepGroups={setStepGroups}
+                            allStepGroups={allStepGroups}
+                            stepGroupSequenceNumber={
+                                stepGroup.step_group.sequence_number
+                            }
+                        />
+                    );
                 })}
             </VStack>
         </VStack>
