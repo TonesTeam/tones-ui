@@ -41,6 +41,7 @@ docker-compose down
 ```
 
 
+
 ## Frontend Setup (React Native with Expo)
 
 1. **Navigate to the Frontend Module**\
