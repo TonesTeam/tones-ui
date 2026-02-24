@@ -84,9 +84,13 @@ async function findBE(
     const subnetMask = '255.255.254.0';
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
-    let foundIP = await scanNetwork(ipList, setProgressValue);
-    console.log(`Backdoor IP - ${backdoorAddress}`);
+
+    let foundIP: string | null = '';
+
     if (backdoorAddress) foundIP = backdoorAddress;
+    else foundIP = await scanNetwork(ipList, setProgressValue);
+
+    console.log(`Backdoor IP - ${backdoorAddress}`);
     return `http://${foundIP}:8080`;
 }
 
@@ -94,6 +98,7 @@ export const setBackdoorAddress = (address: string) => {
     console.log(`Setting backdoor address to ${address}`);
     backdoorAddress = address;
     domain = null; // Reset cached domain to force findBE() to run again
+    domainPromise = null;
 };
 
 export const getBackdoorAddress = () => {
@@ -131,7 +136,7 @@ export async function getRequest<T>(
             return error;
         } else {
             console.error('Other Error:', error);
-            //throw error;
+            throw error;
         }
     }
 }

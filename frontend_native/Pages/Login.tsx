@@ -50,20 +50,48 @@ export default function Login({
     const activeProtocols = useAppSelector((state) => state.protocols);
 
     useEffect(() => {
-        console.log('Fetching users from backend...');
-        getRequest<User[]>('/users')
-            .then((response) => {
-                console.log('Response received:', response);
-                if (response.data) {
-                    console.log('Users data:', response.data);
-                    setUsers(response.data);
+        const fetchUsers = async () => {
+            try {
+                console.log('[Login] Fetching users from backend...');
+                const res = await getRequest<User[]>('/users');
+
+                console.log('[Login] /users success', {
+                    status: res.status,
+                    url: res.config?.url,
+                    method: res.config?.method,
+                    responseHeaders: res.headers,
+                    dataType: typeof res.data,
+                    dataLength: Array.isArray(res.data)
+                        ? res.data.length
+                        : undefined,
+                    // preview so you don't spam logcat:
+                    dataPreview: Array.isArray(res.data)
+                        ? res.data.slice(0, 3)
+                        : res.data,
+                });
+
+                setUsers(res.data);
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err)) {
+                    console.error('[Login] /users axios error', {
+                        message: err.message,
+                        code: err.code,
+                        url: err.config?.url,
+                        method: err.config?.method,
+                        timeout: err.config?.timeout,
+                        requestHeaders: err.config?.headers,
+                        // Present only if server responded (HTTP error codes etc.)
+                        status: err.response?.status,
+                        responseHeaders: err.response?.headers,
+                        responseData: err.response?.data,
+                    });
                 } else {
-                    console.log('No data in response');
+                    console.error('[Login] /users non-axios error', err);
                 }
-            })
-            .catch((error) => {
-                console.error('Error fetching users:', error);
-            });
+            }
+        };
+
+        fetchUsers();
     }, []);
 
     useEffect(() => {
