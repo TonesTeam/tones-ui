@@ -124,20 +124,23 @@ export async function getDomain(
 
 export async function getRequest<T>(
     path: string,
-): Promise<AxiosResponse<T, any> | AxiosError> {
-    const fullpath = (await getDomain()) + prefix + path;
+): Promise<AxiosResponse<T, any>> {
+    const fullpath = (await getDomain(undefined)) + prefix + path;
     console.log('GET: ' + fullpath);
-    //return await client.get(fullpath);
+
     try {
-        return await client.get(fullpath);
+        return await client.get<T>(fullpath);
     } catch (error) {
-        if (axios.isAxiosError(error) && !error.response) {
-            console.error('Network Error:', error.message);
-            return error;
-        } else {
-            console.error('Other Error:', error);
-            throw error;
+        if (axios.isAxiosError(error)) {
+            console.error('GET failed', {
+                url: fullpath,
+                message: error.message,
+                code: error.code,
+                status: error.response?.status,
+                data: error.response?.data,
+            });
         }
+        throw error;
     }
 }
 
