@@ -8,18 +8,21 @@ import {
     Pressable,
     Button,
     ButtonText,
+    Input,
+    InputField,
 } from '@gluestack-ui/themed';
 import Logo from '../assets/pics/tones_logo.svg';
 import { useEffect, useState } from 'react';
-import { getDomain } from '../common/util';
+import { getDomain, setBackdoorAddress } from '../common/util';
 
 const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [progressValue, setProgressValue] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [errorClicks, setErrorClicks] = useState(0);
     const [refresh, setRefresh] = useState(0);
+    const [ipAddress, setIpAddress] = useState('');
 
-    useEffect(() => {
+    const goForAScan = () => {
         getDomain(setProgressValue).then((domain) => {
             if (!domain.includes('null')) {
                 navigation.replace('Logout');
@@ -29,7 +32,12 @@ const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 );
             }
         });
-    }, [refresh]);
+    };
+
+    const useSetIpAddress = () => {
+        setBackdoorAddress(ipAddress);
+        navigation.replace('Logout');
+    };
 
     return (
         <VStack
@@ -41,6 +49,23 @@ const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
             justifyContent="center"
         >
             <Logo />
+            <Button onPress={goForAScan} mt={4}>
+                <ButtonText color="white" fontSize={14}>
+                    Start Scan
+                </ButtonText>
+            </Button>
+            <Button onPress={useSetIpAddress} mt={4}>
+                <ButtonText color="white" fontSize={14}>
+                    Try with pre-defined IP
+                </ButtonText>
+            </Button>
+            <Input width={300} mt={4}>
+                <InputField
+                    placeholder="Enter IP address to try"
+                    onChange={(e: any) => setIpAddress(e.nativeEvent.text)}
+                    value={ipAddress}
+                />
+            </Input>
             {!error ? (
                 <VStack mt={50} alignItems="center">
                     <Text fontSize={12}>
