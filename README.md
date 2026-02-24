@@ -41,9 +41,6 @@ docker-compose down
 ```
 
 
-## Android Cleartext HTTP
-
-Android release builds block plain HTTP traffic by default. The app's `AndroidManifest.xml` sets `android:usesCleartextTraffic="true"` on the `<application>` tag so that axios requests to the HTTP backend (e.g. `http://10.214.34.21:8080`) succeed. If you need to restrict or change this behavior, edit `frontend_native/android/app/src/main/AndroidManifest.xml`.
 
 ## Frontend Setup (React Native with Expo)
 
