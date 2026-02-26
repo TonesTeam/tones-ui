@@ -295,11 +295,9 @@ const StepBlock = (props: StepBlockProps) => {
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}
                 action={() => props.deleteStep?.(item)}
-                icon={Trash}
                 headline={`Delete step`}
                 text="Are you sure you want to delete this step? This action cannot be undone."
                 actionButtonText="Delete"
-                type="error"
             />
         </>
     );

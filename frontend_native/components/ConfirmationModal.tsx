@@ -1,19 +1,15 @@
 import {
     Modal,
     ModalBackdrop,
-    ModalContent,
-    ModalHeader,
     ModalBody,
     ModalFooter,
     Heading,
-    Icon,
     Button,
     ButtonText,
-    Box,
 } from '@gluestack-ui/themed';
 import { StyleSheet, Text } from 'react-native';
 import { AppStyles } from '../constants/styles';
-import tinycolor from 'tinycolor2';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type TonesModalProps = {
     isOpen: boolean;
@@ -21,9 +17,7 @@ type TonesModalProps = {
     action: () => void;
     headline: string;
     text: string;
-    icon: any;
     actionButtonText: string;
-    type: 'error' | 'warning' | 'info';
 };
 
 export default function ConfirmationModal({
@@ -32,62 +26,53 @@ export default function ConfirmationModal({
     action,
     headline,
     text,
-    icon,
     actionButtonText,
-    type,
 }: TonesModalProps) {
-    const accentColors = {
-        error: '#dc2828',
-        warning: '#f5a623',
-        info: '#0076e6',
-    };
-    const accent = accentColors[type];
-
-    const iconBgColor = tinycolor.mix(accent, '#ffffff', 90).toHexString();
-
     const s = StyleSheet.create({
         modal_container: {
-            alignItems: 'center',
-            maxWidth: '30%',
-        },
-        icon_container: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '100%',
-            width: 56,
-            height: 56,
-            backgroundColor: iconBgColor,
+            padding: 32,
+            borderRadius: 24,
+            width: '45%',
         },
         text_center: {
             textAlign: 'center',
         },
         flex_grow: {
             display: 'flex',
-            flexGrow: 1,
+            flexGrow: 5,
+            borderRadius: 75,
         },
         margin_left: {
-            marginLeft: 10,
+            marginLeft: 40,
         },
     });
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalBackdrop />
-            <ModalContent style={s.modal_container}>
-                <ModalHeader>
-                    <Box style={s.icon_container}>
-                        <Icon as={icon} style={{ color: accent }} size="xl" />
-                    </Box>
-                </ModalHeader>
+            <LinearGradient
+                colors={['#F4F9FF', '#D6E5F4']}
+                style={s.modal_container}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
                 <ModalBody>
-                    <Heading size="md" style={s.text_center}>
+                    <Heading
+                        style={[
+                            s.text_center,
+                            { marginBottom: 19, fontSize: 25 },
+                        ]}
+                    >
                         {headline}
                     </Heading>
                     <Text
                         style={[
                             s.text_center,
-                            { color: AppStyles.color.text_faded },
+                            {
+                                color: AppStyles.color.text_primary,
+                                marginBottom: 11,
+                                fontSize: 16,
+                            },
                         ]}
                     >
                         {text}
@@ -95,31 +80,33 @@ export default function ConfirmationModal({
                 </ModalBody>
                 <ModalFooter>
                     <Button
-                        variant="outline"
                         action="secondary"
-                        size="sm"
+                        size="lg"
                         onPress={onClose}
-                        style={s.flex_grow}
+                        style={[s.flex_grow, { backgroundColor: '#FFFFFF' }]}
                     >
-                        <ButtonText>Cancel</ButtonText>
+                        <ButtonText color={AppStyles.color.text_primary}>
+                            Cancel
+                        </ButtonText>
                     </Button>
                     <Button
                         onPress={() => {
                             action();
                             onClose();
                         }}
-                        size="sm"
+                        size="lg"
                         style={[
                             s.flex_grow,
                             s.margin_left,
-
-                            { backgroundColor: accent },
+                            { backgroundColor: AppStyles.color.text_primary },
                         ]}
                     >
-                        <ButtonText>{actionButtonText}</ButtonText>
+                        <ButtonText color="#FFFFFF">
+                            {actionButtonText}
+                        </ButtonText>
                     </Button>
                 </ModalFooter>
-            </ModalContent>
+            </LinearGradient>
         </Modal>
     );
 }

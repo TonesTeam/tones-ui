@@ -108,8 +108,6 @@ export default function NavBar() {
                 }}
                 headline="Are you sure you want to log out?"
                 text="You’ll need to sign in again to access your account."
-                icon={LogOut}
-                type="warning"
                 actionButtonText="Log out"
             />
 

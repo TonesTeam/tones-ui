@@ -7,7 +7,7 @@ export const AppStyles = {
         secondary: '#26b640', //"#26b65c",
         warning: 'rgb(209, 70, 51)',
         warning_faded: 'rgba(209, 69, 51, 0.771)',
-        text_primary: '#3b3d44',
+        text_primary: '#1F2832',
         text_faded: '#838488',
         background: '#E5E7F0',
         accent_back: '#e4e4e4',
