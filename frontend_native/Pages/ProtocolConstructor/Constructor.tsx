@@ -14,7 +14,7 @@ import { MainContainer, globalElementStyle } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from './Header';
 import Timeline from './Timeline';
@@ -67,6 +67,14 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             navigation.navigate('Protocols');
         });
     };
+
+    useEffect(() => {
+        console.log('stepGroups', stepGroups);
+        stepGroups.sort(
+            (a, b) =>
+                a.step_group.sequence_number - b.step_group.sequence_number,
+        );
+    }, [stepGroups]);
 
     return (
         <MainContainer>

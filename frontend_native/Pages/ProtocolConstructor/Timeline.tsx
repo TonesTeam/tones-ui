@@ -67,7 +67,11 @@ const Timeline = ({
                     {estimatedExectuionTime} sec
                 </Text>
             </HStack>
-            <ScrollView mt={24} showsVerticalScrollIndicator={false}>
+            <ScrollView
+                mt={24}
+                showsVerticalScrollIndicator={false}
+                height="91%"
+            >
                 {stepGroups.map((group, index) => (
                     <StepGroup
                         key={index}

@@ -96,7 +96,40 @@ const StepGroup = ({
                                 size={21}
                             />
                         </Pressable>
-                        <Pressable>
+                        <Pressable
+                            onPress={() => {
+                                const current_sn =
+                                    stepGroup.step_group.sequence_number;
+                                allStepGroups.forEach((group) => {
+                                    if (
+                                        group.step_group.sequence_number >
+                                        current_sn
+                                    ) {
+                                        ++group.step_group.sequence_number;
+                                    }
+                                });
+
+                                const newStepGroup: StepGroupWithStepsDTO = {
+                                    step_group: {
+                                        name: `${stepGroup.step_group.name} Copy`,
+                                        id: 1,
+                                        protocol_id: 1,
+                                        sequence_number: current_sn + 1,
+                                    },
+                                    steps: stepGroup.steps,
+                                };
+                                console.log(
+                                    `New step group: ${JSON.stringify(newStepGroup)}`,
+                                );
+                                setStepGroups(
+                                    [...allStepGroups, newStepGroup].sort(
+                                        (a, b) =>
+                                            a.step_group.sequence_number -
+                                            b.step_group.sequence_number,
+                                    ),
+                                );
+                            }}
+                        >
                             <Icon
                                 as={Copy}
                                 opacity={0.7}
