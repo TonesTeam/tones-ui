@@ -220,11 +220,9 @@ const ListItem = ({
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}
                 action={() => deleteProtocol(protocol.id)}
-                icon={Trash}
                 headline={`Delete protocol "${protocol.name}"`}
                 text="Are you sure you want to delete this protocol? This action cannot be undone."
                 actionButtonText="Delete"
-                type="error"
             />
         </Box>
     );
