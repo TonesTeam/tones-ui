@@ -206,7 +206,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
             <ConfirmationModal
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}
-                action={() => deleteProtocol(protocol.id)}
+                action={() => deleteProtocol(protocol.metadata.id)}
                 headline={`Delete protocol "${protocol.metadata.name}"?`}
                 text="Are you sure you want to delete this protocol? This action cannot be undone."
                 actionButtonText="Delete"
