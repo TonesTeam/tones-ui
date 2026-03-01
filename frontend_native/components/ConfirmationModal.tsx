@@ -19,6 +19,7 @@ type TonesModalProps = {
     headline: string;
     text: string;
     actionButtonText: string;
+    cancelButtonText?: string;
 };
 
 export default function ConfirmationModal({
@@ -28,6 +29,7 @@ export default function ConfirmationModal({
     headline,
     text,
     actionButtonText,
+    cancelButtonText = 'Cancel',
 }: TonesModalProps) {
     const s = StyleSheet.create({
         modal_container: {
@@ -101,7 +103,7 @@ export default function ConfirmationModal({
                                 color={AppStyles.color.text_primary}
                                 fontFamily="Manrope-SemiBold"
                             >
-                                Cancel
+                                {cancelButtonText}
                             </ButtonText>
                         </Button>
                         <Button
