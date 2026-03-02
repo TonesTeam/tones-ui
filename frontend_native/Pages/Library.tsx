@@ -80,6 +80,7 @@ const LibraryBody = () => {
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
     const [searchPrompt, setSearchPrompt] = useState('');
     const [newLiquidModal, setNewLiquidModal] = useState(false);
+    const [newCategoryModal, setNewCategoryModal] = useState(false);
     const [viewLiquidModal, setViewLiquidModal] = useState(false);
     const [selectedLiquid, setSelectedLiquid] = useState(-1);
     const isFocused = useIsFocused();
@@ -111,6 +112,23 @@ const LibraryBody = () => {
                 if (r.status >= 200 && r.status <= 299) {
                     listInitilizer();
                 } else {
+                }
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    };
+
+    const saveCategory = (categoryName: string) => {
+        const json = JSON.stringify({
+            name: categoryName,
+        });
+
+        makeRequest('POST' as Method, '/liquids/types', json)
+            .then((r) => {
+                if (r.status >= 200 && r.status < 300) {
+                    listInitilizer();
+                    setNewCategoryModal(false);
                 }
             })
             .catch((err) => {
@@ -151,7 +169,7 @@ const LibraryBody = () => {
             default_target_temperature: liq.default_incubation_temperature,
             position: liq.position,
             is_connected_to_selector: liq.is_connected_to_selector ? 1 : 0,
-            liquid_type_id: 1,
+            liquid_type_id: liq.liquid_type_id,
             creator_id: 1,
         });
         console.log(json);
@@ -168,9 +186,14 @@ const LibraryBody = () => {
         <>
             <NewLiquidModal
                 open={newLiquidModal}
-                categories={categories.map((e) => e.name)}
+                categories={categories}
                 onClose={() => setNewLiquidModal(false)}
                 onSave={saveLiquid}
+            />
+            <NewCategoryModal
+                open={newCategoryModal}
+                onClose={() => setNewCategoryModal(false)}
+                onSave={saveCategory}
             />
             <ViewLiquidModal
                 open={viewLiquidModal}
@@ -213,6 +236,34 @@ const LibraryBody = () => {
                                 </Box>
                                 <ButtonText color="white" fontSize={14}>
                                     New Liquid
+                                </ButtonText>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                rounded="$full"
+                                borderColor="$black"
+                                bg="#1F2832"
+                                mr="$2"
+                                onPress={() => setNewCategoryModal(true)}
+                                alignItems="center"
+                                justifyContent="center"
+                                height={48}
+                            >
+                                <Box
+                                    style={{
+                                        filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                                    }}
+                                >
+                                    <ButtonIcon
+                                        bg="transparent"
+                                        color="white"
+                                        as={Plus}
+                                        mr="$2"
+                                        size={20}
+                                    />
+                                </Box>
+                                <ButtonText color="white" fontSize={14}>
+                                    New Category
                                 </ButtonText>
                             </Button>
                         </HStack>
@@ -270,7 +321,7 @@ const LibraryBody = () => {
                                             fontSize={14}
                                             color="#1F2832"
                                         >
-                                            Type
+                                            Category
                                         </Text>
                                     </Box>
                                     <Box flex={2}>
@@ -401,12 +452,17 @@ const NewLiquidModal = ({
     onSave,
 }: {
     open: boolean;
-    categories: string[];
+    categories: LiquidTypeDTO[];
     onClose: () => void;
     onSave: (liq: PermanentLiquidDTO) => void;
 }) => {
     const [name, setName] = useState('');
-    const [type, setType] = useState(categories[0] || '');
+    const [selectedTypeId, setSelectedTypeId] = useState(
+        categories[0]?.id || 0,
+    );
+    const [selectedTypeName, setSelectedTypeName] = useState(
+        categories[0]?.name || '',
+    );
     const [description, setDescription] = useState('');
     const [defaultIncubationTime, setDefaultIncubationTime] = useState(0);
     const [defaultTargetTemperature, setDefaultTargetTemperature] = useState(0);
@@ -422,11 +478,12 @@ const NewLiquidModal = ({
             default_incubation_temperature: defaultTargetTemperature,
             position,
             is_connected_to_selector: connectionType == 'Selector',
-            liquid_type_name: type,
+            liquid_type_name: selectedTypeName,
+            liquid_type_id: selectedTypeId,
             created_at: 0,
             type: {
-                id: 0,
-                name: type,
+                id: selectedTypeId,
+                name: selectedTypeName,
             },
         };
         onSave(newLiquid);
@@ -532,11 +589,21 @@ const NewLiquidModal = ({
                                     </SelectPortal>
                                 </SelectTrigger>
                             </Select>
-                            <Select onValueChange={(e) => setType(e)}>
+                            <Select
+                                onValueChange={(e) => {
+                                    const selected = categories.find(
+                                        (cat) => cat.id === parseInt(e),
+                                    );
+                                    if (selected) {
+                                        setSelectedTypeId(selected.id);
+                                        setSelectedTypeName(selected.name);
+                                    }
+                                }}
+                            >
                                 <SelectTrigger>
                                     <SelectInput
-                                        placeholder="Select liquid type"
-                                        value={type}
+                                        placeholder="Select liquid type/category"
+                                        value={selectedTypeName}
                                     />
                                     <SelectIcon as={ChevronDown} />
                                     <SelectPortal>
@@ -547,8 +614,8 @@ const NewLiquidModal = ({
                                             </SelectDragIndicatorWrapper>
                                             {categories.map((cat, i) => (
                                                 <SelectItem
-                                                    label={cat}
-                                                    value={cat}
+                                                    label={cat.name}
+                                                    value={cat.id.toString()}
                                                     key={i}
                                                 />
                                             ))}
@@ -556,6 +623,61 @@ const NewLiquidModal = ({
                                     </SelectPortal>
                                 </SelectTrigger>
                             </Select>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="outline" onPress={onClose} mr="$2">
+                            <ButtonText>Cancel</ButtonText>
+                        </Button>
+                        <Button onPress={handleSave}>
+                            <ButtonText>Save</ButtonText>
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        )
+    );
+};
+
+const NewCategoryModal = ({
+    open,
+    onClose,
+    onSave,
+}: {
+    open: boolean;
+    onClose: () => void;
+    onSave: (categoryName: string) => void;
+}) => {
+    const [categoryName, setCategoryName] = useState('');
+
+    const handleSave = () => {
+        if (categoryName.trim()) {
+            onSave(categoryName);
+            setCategoryName('');
+        }
+    };
+
+    return (
+        open && (
+            <Modal isOpen={open} onClose={onClose}>
+                <ModalBackdrop />
+                <ModalContent>
+                    <ModalHeader>
+                        <Text fontSize={20} color="black">
+                            New Category
+                        </Text>
+                    </ModalHeader>
+                    <ModalBody>
+                        <VStack space="md">
+                            <Input>
+                                <InputField
+                                    placeholder="Category Name"
+                                    value={categoryName}
+                                    onChange={(e: any) =>
+                                        setCategoryName(e.nativeEvent.text)
+                                    }
+                                />
+                            </Input>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
