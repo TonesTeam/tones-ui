@@ -278,6 +278,7 @@ export function ReagentTrayStep(props: {
     protocolId?: number;
     liquids?: any[];
     onSelectionChange?: (allSelected: boolean) => void;
+    onReagentDataChange?: (data: any) => void;
 }) {
     const table_config = CARTRIDGE_CONFIG;
     const [reagents, setReagents] = useState<ReagentInfo[]>([]);
@@ -454,6 +455,20 @@ export function ReagentTrayStep(props: {
             );
 
             props.onSelectionChange(allSelected);
+
+            // Send reagent placement data
+            if (props.onReagentDataChange) {
+                const reagentData = {
+                    smallReagents: Array.from(selectedSlotsS).map((pos) =>
+                        smallReagents.find((r) => r.trayPosition === pos),
+                    ),
+                    mediumReagents: Array.from(selectedSlotsM).map((pos) =>
+                        mediumReagents.find((r) => r.trayPosition === pos),
+                    ),
+                    allSelected,
+                };
+                props.onReagentDataChange(reagentData);
+            }
         }
     }, [selectedSlotsS, selectedSlotsM, allReagentsWithTrayPos]);
 

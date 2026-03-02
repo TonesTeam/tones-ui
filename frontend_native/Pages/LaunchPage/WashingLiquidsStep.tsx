@@ -108,6 +108,7 @@ export function WashingLiquidsStep(props: {
     protocolId?: number;
     liquids?: any[];
     onCompletionChange?: (allSwitchesOn: boolean) => void;
+    onWashingDataChange?: (data: any) => void;
 }) {
     const [washingLiquids, setWashingLiquids] = useState<WashingInfo[]>([]);
     const [loading, setLoading] = useState(false);
@@ -126,6 +127,19 @@ export function WashingLiquidsStep(props: {
             const allOn =
                 allWashingOn && generalWasteChecked && hazardWasteChecked;
             props.onCompletionChange(allOn);
+
+            // Send washing data
+            if (props.onWashingDataChange) {
+                const washingData = {
+                    washingLiquids: washingLiquids.filter(
+                        (l) => washingChecked.get(l.name) === true,
+                    ),
+                    generalWaste: generalWasteChecked,
+                    hazardWaste: hazardWasteChecked,
+                    allOn,
+                };
+                props.onWashingDataChange(washingData);
+            }
         }
     }, [
         washingChecked,

@@ -218,6 +218,8 @@ export default function Launch({
     const [estimatedTime, setEstimatedTime] = useState<string>('0:00:00');
     const [allReagentSlotsSelected, setAllReagentSlotsSelected] =
         useState(false);
+    const [reagentPlacement, setReagentPlacement] = useState<any>(null);
+    const [washingSelection, setWashingSelection] = useState<any>(null);
     const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
     const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
 
@@ -399,6 +401,9 @@ export default function Launch({
                             onSelectionChange={(allSelected) =>
                                 setAllReagentSlotsSelected(allSelected)
                             }
+                            onReagentDataChange={(data) =>
+                                setReagentPlacement(data)
+                            }
                         />
                     )}
                     {stage == LaunchStage.STEP_THREE && (
@@ -408,6 +413,9 @@ export default function Launch({
                             liquids={liquids}
                             onCompletionChange={(allOn) =>
                                 setAllWashingSwitchesOn(allOn)
+                            }
+                            onWashingDataChange={(data) =>
+                                setWashingSelection(data)
                             }
                         />
                     )}
@@ -474,18 +482,39 @@ export default function Launch({
                                 stage == LaunchStage.STEP_FOUR &&
                                 isLaunchTimeValid
                             ) {
+                                // Собираем выбранные slots
+                                const selectedSlots = slotActivityMap
+                                    .map((selected, idx) =>
+                                        selected ? idx : null,
+                                    )
+                                    .filter((idx) => idx !== null) as number[];
+
+                                const jobData = {
+                                    protocol_id: protocol_ID,
+                                    slots_used: selectedSlots,
+                                    name: protocol_name || 'Protocol Run',
+                                    creator_id: current_user_id,
+                                    reagent_placement: reagentPlacement,
+                                    washing_selection: washingSelection,
+                                };
+
                                 makeRequest(
                                     'POST' as Method,
                                     '/jobs',
-                                    JSON.stringify({
-                                        protocol_id: protocol_ID,
-                                        slots_used: [0],
-                                        name: 'hello world',
-                                        creator_id: current_user_id,
-                                    }),
-                                ).then((res) => {
-                                    console.log(res.data);
-                                });
+                                    JSON.stringify(jobData),
+                                )
+                                    .then((res) => {
+                                        console.log('Job created:', res.data);
+                                        navigation.navigate('ProtocolLogs', {
+                                            protocol_ID: protocol_ID,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        console.error(
+                                            'Error creating job:',
+                                            err,
+                                        );
+                                    });
                             }
                         }}
                         disabled={
