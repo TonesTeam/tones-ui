@@ -35,6 +35,7 @@ import {
     SelectTrigger,
     SelectBackdrop,
     SelectDragIndicator,
+    Pressable,
 } from '@gluestack-ui/themed';
 import {
     Trash,
@@ -44,6 +45,8 @@ import {
     Plus,
     Eye,
     ChevronDown,
+    X,
+    ArrowLeft,
 } from 'lucide-react-native';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SearchBar from '../components/SearchBar';
@@ -55,27 +58,55 @@ import { SelectContent } from '@gluestack-ui/themed';
 import { SelectDragIndicatorWrapper } from '@gluestack-ui/themed';
 import { SelectItem } from '@gluestack-ui/themed';
 
-export default function Library(_props: any) {
+export default function Library(props: any) {
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+        null,
+    );
+
     return (
         <MainContainer>
             <NavBar />
             <Box flex={1} p={24}>
-                <Text
-                    color="black"
-                    fontSize={32}
-                    fontFamily="Orbitron-Medium"
-                    mb="$8"
-                    mt={16}
-                >
-                    Library
-                </Text>
-                <LibraryBody />
+                <HStack alignItems="center" mb="$8" mt={16}>
+                    {selectedCategoryId !== null && (
+                        <Pressable
+                            onPress={() => setSelectedCategoryId(null)}
+                            alignItems="flex-start"
+                            justifyContent="center"
+                            pr="$3"
+                        >
+                            <Icon
+                                as={ArrowLeft}
+                                width={20}
+                                height={15}
+                                color="#1F2832"
+                            />
+                        </Pressable>
+                    )}
+                    <Text
+                        color="black"
+                        fontSize={32}
+                        fontFamily="Orbitron-Medium"
+                    >
+                        Library
+                    </Text>
+                </HStack>
+                <LibraryBody
+                    selectedCategoryId={selectedCategoryId}
+                    setSelectedCategoryId={setSelectedCategoryId}
+                />
             </Box>
         </MainContainer>
     );
 }
 
-const LibraryBody = () => {
+const LibraryBody = ({
+    selectedCategoryId,
+    setSelectedCategoryId,
+}: {
+    selectedCategoryId: number | null;
+    setSelectedCategoryId: (id: number | null) => void;
+}) => {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
     const [searchPrompt, setSearchPrompt] = useState('');
@@ -83,6 +114,10 @@ const LibraryBody = () => {
     const [newCategoryModal, setNewCategoryModal] = useState(false);
     const [viewLiquidModal, setViewLiquidModal] = useState(false);
     const [selectedLiquid, setSelectedLiquid] = useState(-1);
+    const [categoryToDelete, setCategoryToDelete] = useState<number | null>(
+        null,
+    );
+    const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -94,7 +129,7 @@ const LibraryBody = () => {
     }, [isFocused]);
 
     const listInitilizer = () => {
-        getRequest<LiquidDTO[]>('/liquids').then((r) => {
+        getRequest<PermanentLiquidDTO[]>('/liquids').then((r) => {
             setLiquids(r.data);
         });
 
@@ -136,31 +171,6 @@ const LibraryBody = () => {
             });
     };
 
-    function filterAndSort() {
-        if (liquids) {
-            let filteredList = liquids.filter((e) =>
-                searchPrompt === ''
-                    ? e
-                    : e.name.toLowerCase().includes(searchPrompt.toLowerCase()),
-            );
-            let sortedList = filteredList;
-            return sortedList;
-        } else return [] as PermanentLiquidDTO[];
-    }
-
-    if (liquids.length === 0 || categories.length === 0) {
-        return (
-            <Box
-                flex={1}
-                justifyContent="center"
-                alignItems="center"
-                width={800}
-            >
-                <Spinner size="large" color="grey" />
-            </Box>
-        );
-    }
-
     const saveLiquid = (liq: PermanentLiquidDTO) => {
         const json = JSON.stringify({
             name: liq.name,
@@ -182,6 +192,208 @@ const LibraryBody = () => {
         });
     };
 
+    const deleteCategory = (id: number) => {
+        makeRequest('DELETE' as Method, `/liquids/types/${id}`)
+            .then((r) => {
+                if (r.status >= 200 && r.status <= 299) {
+                    listInitilizer();
+                    setDeleteCategoryModal(false);
+                    setCategoryToDelete(null);
+                }
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    };
+
+    function filterAndSort() {
+        if (liquids) {
+            let filteredList = liquids
+                .filter((e) =>
+                    selectedCategoryId
+                        ? e.liquid_type_id === selectedCategoryId
+                        : true,
+                )
+                .filter((e) =>
+                    searchPrompt === ''
+                        ? e
+                        : e.name
+                              .toLowerCase()
+                              .includes(searchPrompt.toLowerCase()),
+                );
+            let sortedList = filteredList;
+            return sortedList;
+        } else return [] as PermanentLiquidDTO[];
+    }
+
+    if (liquids.length === 0 || categories.length === 0) {
+        return (
+            <Box
+                flex={1}
+                justifyContent="center"
+                alignItems="center"
+                width={800}
+            >
+                <Spinner size="large" color="grey" />
+            </Box>
+        );
+    }
+
+    // Если выбрана категория - показываем список жидкостей
+    if (selectedCategoryId !== null) {
+        return (
+            <>
+                <NewLiquidModal
+                    open={newLiquidModal}
+                    categories={categories}
+                    onClose={() => setNewLiquidModal(false)}
+                    onSave={saveLiquid}
+                />
+                <NewCategoryModal
+                    open={newCategoryModal}
+                    onClose={() => setNewCategoryModal(false)}
+                    onSave={saveCategory}
+                />
+                <ViewLiquidModal
+                    open={viewLiquidModal}
+                    liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
+                    onClose={() => setViewLiquidModal(false)}
+                    onDelete={deleteLiquid}
+                />
+                <Box width={900}>
+                    <HStack space="xl" alignItems="center" mb="$4">
+                        <SearchBar
+                            placeholder="Which reagent are you looking for?"
+                            value={searchPrompt}
+                            onChangeText={(e) => setSearchPrompt(e)}
+                        />
+                        <Button
+                            variant="outline"
+                            rounded="$full"
+                            borderColor="$black"
+                            bg="#1F2832"
+                            mr="$2"
+                            onPress={() => setNewLiquidModal(true)}
+                            alignItems="center"
+                            justifyContent="center"
+                            height={48}
+                        >
+                            <Box
+                                style={{
+                                    filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                                }}
+                            >
+                                <ButtonIcon
+                                    bg="transparent"
+                                    color="white"
+                                    as={Plus}
+                                    mr="$2"
+                                    size={20}
+                                />
+                            </Box>
+                            <ButtonText color="white" fontSize={14}>
+                                New Liquid
+                            </ButtonText>
+                        </Button>
+                    </HStack>
+                    {filterAndSort().length === 0 && (
+                        <Box
+                            p="$6"
+                            bg="$backgroundLight50"
+                            rounded="$lg"
+                            borderWidth="$1"
+                            borderColor="$borderLight200"
+                            borderStyle="dashed"
+                            mt="$5"
+                        >
+                            <VStack alignItems="center" space="md">
+                                <Icon
+                                    as={CirclePlus}
+                                    size="xl"
+                                    color="$textLight400"
+                                />
+                                <Text color="$textLight500" textAlign="center">
+                                    No reagents found! Try adjusting your search
+                                    or add a new reagent.
+                                </Text>
+                            </VStack>
+                        </Box>
+                    )}
+                    {filterAndSort().length != 0 && (
+                        <Box overflow="hidden" mt="$5" mb="$6">
+                            {/* Table Header */}
+                            <HStack p="$3">
+                                <Box flex={1}>
+                                    <Text
+                                        opacity={0.5}
+                                        fontSize={14}
+                                        color="#1F2832"
+                                    >
+                                        # ID
+                                    </Text>
+                                </Box>
+                                <Box flex={6}>
+                                    <Text
+                                        opacity={0.5}
+                                        fontSize={14}
+                                        color="#1F2832"
+                                    >
+                                        Name
+                                    </Text>
+                                </Box>
+                                <Box flex={3}>
+                                    <Text
+                                        opacity={0.5}
+                                        fontSize={14}
+                                        color="#1F2832"
+                                    >
+                                        Category
+                                    </Text>
+                                </Box>
+                                <Box flex={2}>
+                                    <Text
+                                        opacity={0.5}
+                                        fontSize={14}
+                                        color="#1F2832"
+                                    >
+                                        Created
+                                    </Text>
+                                </Box>
+                                <Box flex={2}>
+                                    <Text
+                                        opacity={0.5}
+                                        fontSize={14}
+                                        color="#1F2832"
+                                    >
+                                        Actions
+                                    </Text>
+                                </Box>
+                            </HStack>
+
+                            {/* Table Rows */}
+                            <ScrollView maxHeight={500}>
+                                {filterAndSort().map((liquid, i) => {
+                                    return (
+                                        <ListItem
+                                            liquid={liquid}
+                                            key={i}
+                                            onView={(id) => {
+                                                setSelectedLiquid(id);
+                                                console.log(id);
+                                                setViewLiquidModal(true);
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </ScrollView>
+                        </Box>
+                    )}
+                </Box>
+            </>
+        );
+    }
+
+    // Показываем сетку категорий
     return (
         <>
             <NewLiquidModal
@@ -201,170 +413,113 @@ const LibraryBody = () => {
                 onClose={() => setViewLiquidModal(false)}
                 onDelete={deleteLiquid}
             />
-            {liquids.length != 0 && categories.length != 0 && (
-                <>
-                    <Box width={900}>
-                        <HStack space="xl" alignItems="center">
-                            <SearchBar
-                                placeholder="Which reagent are you looking for?"
-                                value={searchPrompt}
-                                onChangeText={(e) => setSearchPrompt(e)}
-                            />
-                            <Button
-                                variant="outline"
-                                rounded="$full"
-                                borderColor="$black"
-                                bg="#1F2832"
-                                mr="$2"
-                                onPress={() => setNewLiquidModal(true)}
-                                alignItems="center"
-                                justifyContent="center"
-                                height={48}
-                            >
-                                <Box
-                                    style={{
-                                        filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
-                                    }}
-                                >
-                                    <ButtonIcon
-                                        bg="transparent"
-                                        color="white"
-                                        as={Plus}
-                                        mr="$2"
-                                        size={20}
-                                    />
-                                </Box>
-                                <ButtonText color="white" fontSize={14}>
-                                    New Liquid
-                                </ButtonText>
-                            </Button>
-                            <Button
-                                variant="outline"
-                                rounded="$full"
-                                borderColor="$black"
-                                bg="#1F2832"
-                                mr="$2"
-                                onPress={() => setNewCategoryModal(true)}
-                                alignItems="center"
-                                justifyContent="center"
-                                height={48}
-                            >
-                                <Box
-                                    style={{
-                                        filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
-                                    }}
-                                >
-                                    <ButtonIcon
-                                        bg="transparent"
-                                        color="white"
-                                        as={Plus}
-                                        mr="$2"
-                                        size={20}
-                                    />
-                                </Box>
-                                <ButtonText color="white" fontSize={14}>
-                                    New Category
-                                </ButtonText>
-                            </Button>
-                        </HStack>
-                        {filterAndSort().length === 0 && (
-                            <Box
-                                p="$6"
-                                bg="$backgroundLight50"
-                                rounded="$lg"
-                                borderWidth="$1"
-                                borderColor="$borderLight200"
-                                borderStyle="dashed"
-                                mt="$5"
-                            >
-                                <VStack alignItems="center" space="md">
-                                    <Icon
-                                        as={CirclePlus}
-                                        size="xl"
-                                        color="$textLight400"
-                                    />
-                                    <Text
-                                        color="$textLight500"
-                                        textAlign="center"
-                                    >
-                                        No reagents found! Try adjusting your
-                                        search or add a new reagent.
-                                    </Text>
-                                </VStack>
-                            </Box>
-                        )}
-                        {filterAndSort().length != 0 && (
-                            <Box overflow="hidden" mt="$5" mb="$6">
-                                {/* Table Header */}
-                                <HStack p="$3">
-                                    <Box flex={1}>
-                                        <Text
-                                            opacity={0.5}
-                                            fontSize={14}
-                                            color="#1F2832"
-                                        >
-                                            # ID
-                                        </Text>
-                                    </Box>
-                                    <Box flex={6}>
-                                        <Text
-                                            opacity={0.5}
-                                            fontSize={14}
-                                            color="#1F2832"
-                                        >
-                                            Name
-                                        </Text>
-                                    </Box>
-                                    <Box flex={3}>
-                                        <Text
-                                            opacity={0.5}
-                                            fontSize={14}
-                                            color="#1F2832"
-                                        >
-                                            Category
-                                        </Text>
-                                    </Box>
-                                    <Box flex={2}>
-                                        <Text
-                                            opacity={0.5}
-                                            fontSize={14}
-                                            color="#1F2832"
-                                        >
-                                            Created
-                                        </Text>
-                                    </Box>
-                                    <Box flex={2}>
-                                        <Text
-                                            opacity={0.5}
-                                            fontSize={14}
-                                            color="#1F2832"
-                                        >
-                                            Actions
-                                        </Text>
-                                    </Box>
-                                </HStack>
-
-                                {/* Table Rows */}
-                                <ScrollView maxHeight={500}>
-                                    {filterAndSort().map((liquid, i) => {
-                                        return (
-                                            <ListItem
-                                                liquid={liquid}
-                                                key={i}
-                                                onView={(id) => {
-                                                    setSelectedLiquid(id);
-                                                    console.log(id);
-                                                    setViewLiquidModal(true);
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </ScrollView>
-                            </Box>
-                        )}
+            <ConfirmationModal
+                isOpen={deleteCategoryModal}
+                onClose={() => {
+                    setDeleteCategoryModal(false);
+                    setCategoryToDelete(null);
+                }}
+                action={() => {
+                    if (categoryToDelete) {
+                        deleteCategory(categoryToDelete);
+                    }
+                }}
+                headline="Delete Category"
+                text="Are you sure you want to delete this category? This action cannot be undone."
+                actionButtonText="Delete"
+            />
+            <Box width={900} mb="$10">
+                <Button
+                    variant="outline"
+                    rounded="$full"
+                    borderColor="$black"
+                    bg="#1F2832"
+                    mb="$8"
+                    onPress={() => setNewCategoryModal(true)}
+                    alignItems="center"
+                    justifyContent="center"
+                    height={48}
+                >
+                    <Box
+                        style={{
+                            filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                        }}
+                    >
+                        <ButtonIcon
+                            bg="transparent"
+                            color="white"
+                            as={Plus}
+                            mr="$2"
+                            size={20}
+                        />
                     </Box>
-                </>
-            )}
+                    <ButtonText color="white" fontSize={14}>
+                        New Category
+                    </ButtonText>
+                </Button>
+
+                {/* Сетка категорий */}
+                <Box
+                    flexDirection="row"
+                    flexWrap="wrap"
+                    justifyContent="flex-start"
+                    gap={20}
+                >
+                    {categories.map((category, i) => (
+                        <Box
+                            key={i}
+                            position="relative"
+                            height={150}
+                            width="30%"
+                        >
+                            <Button
+                                onPress={() =>
+                                    setSelectedCategoryId(category.id)
+                                }
+                                rounded="$xl"
+                                bg="white"
+                                borderWidth={0}
+                                height={150}
+                                width="100%"
+                                alignItems="center"
+                                justifyContent="center"
+                                shadowColor="$borderLight100"
+                                shadowOffset={{ width: 0, height: 1 }}
+                                shadowOpacity={0.05}
+                                shadowRadius={2}
+                            >
+                                <ButtonText
+                                    color="$black"
+                                    fontSize={16}
+                                    fontWeight="$bold"
+                                    textAlign="center"
+                                >
+                                    {category.name}
+                                </ButtonText>
+                            </Button>
+                            <Button
+                                position="absolute"
+                                top={-8}
+                                right={-8}
+                                rounded="$full"
+                                bg="#626262"
+                                borderWidth={0}
+                                height={32}
+                                width={32}
+                                alignItems="center"
+                                justifyContent="center"
+                                p="$0"
+                                onPress={() => {
+                                    setCategoryToDelete(category.id);
+                                    setDeleteCategoryModal(true);
+                                }}
+                            >
+                                <ButtonIcon as={X} size={20} color="white" />
+                            </Button>
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
         </>
     );
 };
@@ -425,7 +580,7 @@ const ListItem = ({ liquid, onView }: ListItemProps) => {
                         justifyContent="center"
                         size="md"
                         onPress={() => {
-                            onView(liquid.id);
+                            onView?.(liquid.id);
                         }}
                     >
                         <Box
