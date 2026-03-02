@@ -106,6 +106,7 @@ function WasteContainerToggle(props: {
 export function WashingLiquidsStep(props: {
     slots: number;
     protocolId?: number;
+    liquids?: any[];
     onCompletionChange?: (allSwitchesOn: boolean) => void;
 }) {
     const [washingLiquids, setWashingLiquids] = useState<WashingInfo[]>([]);
@@ -143,7 +144,7 @@ export function WashingLiquidsStep(props: {
         setLoading(true);
         try {
             const response = await getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${props.protocolId}`,
+                `/protocols/${props.protocolId}`,
             );
             if ('data' in response) {
                 const protocol = response.data;
@@ -159,52 +160,34 @@ export function WashingLiquidsStep(props: {
 
                 // Go through each step and collect washing liquids
                 const allSteps =
-                    protocol.stepBatches?.flatMap(
-                        (batch: any) => batch.steps,
+                    protocol.step_groups?.flatMap(
+                        (group: any) => group.steps,
                     ) || [];
 
                 allSteps.forEach((step: any) => {
-                    // Look for steps with type "Washing"
-                    if (step.type === StepType.WASHING) {
-                        const washStep = step.params;
+                    // Определяем мойка это или реагент по типу жидкости
+                    const liquid = props.liquids?.find(
+                        (l: any) => l.id === step.applied_liquid_id,
+                    );
+                    const isWashing =
+                        liquid?.liquid_type_name?.includes('Washing') ||
+                        liquid?.liquid_type_name === 'Washing Liquid' ||
+                        liquid?.liquid_type_name === 'Washing Buffer';
 
-                        if (washStep.liquid?.name) {
-                            const washName = washStep.liquid.name;
-                            const washPosition = (
-                                washStep.liquid as PermanentLiquidDTO
-                            ).washingTrayPosition;
-                            const iterations = washStep.iters || 1;
+                    if (isWashing && liquid) {
+                        const washName = liquid.name;
+                        const iterations = step.iterations || 1;
 
-                            if (washingUsage.has(washName)) {
-                                washingUsage.get(washName)!.count += iterations;
-                            } else {
-                                washingUsage.set(washName, {
-                                    name: washName,
-                                    count: iterations,
-                                    washingTrayPosition: washPosition,
-                                });
-                            }
+                        if (washingUsage.has(washName)) {
+                            washingUsage.get(washName)!.count += iterations;
+                        } else {
+                            washingUsage.set(washName, {
+                                name: washName,
+                                count: iterations,
+                            });
                         }
                     }
                 });
-
-                // If no washing steps found, use defaultWash as fallback
-                if (
-                    washingUsage.size === 0 &&
-                    protocol.defaultWash?.liquid?.name
-                ) {
-                    const reagentStepsCount = allSteps.filter(
-                        (step: any) => step.type === StepType.REAGENT,
-                    ).length;
-
-                    washingUsage.set(protocol.defaultWash.liquid.name, {
-                        name: protocol.defaultWash.liquid.name,
-                        count: reagentStepsCount,
-                        washingTrayPosition: (
-                            protocol.defaultWash.liquid as PermanentLiquidDTO
-                        ).washingTrayPosition,
-                    });
-                }
 
                 // Convert to WashingInfo list
                 const washingList: WashingInfo[] = [];

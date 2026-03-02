@@ -315,14 +315,17 @@ export function ReagentTrayStep(props: {
                         (group: any) => group.steps,
                     ) || [];
                 allSteps.forEach((step: any) => {
+                    // Определяем мойка это или реагент по типу жидкости
+                    const liquid = props.liquids?.find(
+                        (l: any) => l.id === step.applied_liquid_id,
+                    );
                     const isWashing =
-                        !step.washing_iterations ||
-                        step.washing_iterations === 0;
+                        liquid?.liquid_type_name?.includes('Washing') ||
+                        liquid?.liquid_type_name === 'Washing Liquid' ||
+                        liquid?.liquid_type_name === 'Washing Buffer';
+
                     if (!isWashing && step.applied_liquid_id) {
                         // Получаем имя жидкости из переданного массива
-                        const liquid = props.liquids?.find(
-                            (l: any) => l.id === step.applied_liquid_id,
-                        );
                         const liquidName =
                             liquid?.name || `Liquid ${step.applied_liquid_id}`;
                         const stepUsage = step.iterations || 1;

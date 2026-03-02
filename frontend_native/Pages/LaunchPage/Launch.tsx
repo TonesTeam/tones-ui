@@ -405,6 +405,7 @@ export default function Launch({
                         <WashingLiquidsStep
                             slots={slotNumber == '' ? 1 : Number(slotNumber)}
                             protocolId={protocol_ID}
+                            liquids={liquids}
                             onCompletionChange={(allOn) =>
                                 setAllWashingSwitchesOn(allOn)
                             }

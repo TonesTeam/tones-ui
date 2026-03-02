@@ -184,7 +184,11 @@ function Table(props: {
 
 //Left panel: Instructions for reagent preparation
 //Right panel: Visual representation of physical robot stand
-export function LiquidTable(props: { slots: number; protocolId?: number }) {
+export function LiquidTable(props: {
+    slots: number;
+    protocolId?: number;
+    liquids?: any[];
+}) {
     const table_config = CARTRIDGE_CONFIG;
     const [reagents, setReagents] = useState<ReagentInfo[]>([]);
     const [loading, setLoading] = useState(false);
@@ -219,12 +223,19 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
                 const allSteps =
                     protocol.step_groups?.flatMap((group) => group.steps) || [];
                 allSteps.forEach((step: any) => {
+                    // Определяем мойка это или реагент по типу жидкости
+                    const liquid = props.liquids?.find(
+                        (l: any) => l.id === step.applied_liquid_id,
+                    );
                     const isWashing =
-                        !step.washing_iterations ||
-                        step.washing_iterations === 0;
+                        liquid?.liquid_type_name?.includes('Washing') ||
+                        liquid?.liquid_type_name === 'Washing Liquid' ||
+                        liquid?.liquid_type_name === 'buffer';
+
                     if (!isWashing && step.applied_liquid_id) {
                         // Reagent step
-                        const liquidName = `Liquid ${step.applied_liquid_id}`;
+                        const liquidName =
+                            liquid?.name || `Liquid ${step.applied_liquid_id}`;
                         const stepUsage = step.iterations || 1;
 
                         if (reagentUsage.has(liquidName)) {
