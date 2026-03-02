@@ -86,7 +86,7 @@ const AddStepForm = ({
 interface SelectFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
-    setFormState: (state: 'Select' | 'Add liquid') => void;
+    setFormState: (state: 'Select' | 'Add liquid' | 'Add washing') => void;
     setActiveStepGroup: (sequenceNumber: number) => void;
 }
 
@@ -202,7 +202,6 @@ const AddLiquidForm = ({
     const [selectedLiquid, setSelectedLiquid] = useState<number | null>(null);
     const [incubationTime, setIncubationTime] = useState<string>('');
     const [targetTemperature, setTargetTemperature] = useState<string>('');
-    const [washingIterations, setWashingIterations] = useState<string>('0');
 
     const findNextSequenceNumberForSteps = (
         stepGroups: StepGroupWithStepsDTO[],
@@ -222,7 +221,7 @@ const AddLiquidForm = ({
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids/types')
             .then((response) => {
-                setCategories(response.data);
+                setCategories(response.data as { id: number; name: string }[]);
             })
             .catch((error) => {
                 console.error('Failed to fetch liquid categories', error);
@@ -230,7 +229,7 @@ const AddLiquidForm = ({
 
         makeRequest('GET' as Method, '/liquids')
             .then((response) => {
-                setLiquids(response.data);
+                setLiquids(response.data as PermanentLiquidDTO[]);
             })
             .catch((error) => {
                 console.error('Failed to fetch liquids', error);
@@ -399,31 +398,6 @@ const AddLiquidForm = ({
                         />
                     </Input>
                 </VStack>
-
-                {/* Washing iterations */}
-                <VStack gap={8}>
-                    <Text fontSize={12} color="black" opacity={0.7}>
-                        Washing iterations
-                    </Text>
-                    <Input
-                        height={48}
-                        borderRadius={16}
-                        bg="#F1F1F1"
-                        borderWidth={0}
-                        value={washingIterations}
-                        onChange={(e: any) =>
-                            setWashingIterations(e.nativeEvent.text)
-                        }
-                    >
-                        <InputField
-                            color="black"
-                            fontSize={16}
-                            placeholder="Number of washing iterations"
-                            keyboardType="numeric"
-                            ml={16}
-                        />
-                    </Input>
-                </VStack>
             </VStack>
             <HStack gap={24} mt={30}>
                 <Button
@@ -476,11 +450,11 @@ const AddLiquidForm = ({
                                 incubation_time: parseInt(incubationTime) * 60, // Convert minutes to seconds
                                 targetTemperature: parseInt(targetTemperature),
                                 iterations: 1,
+                                washing_iterations: 0,
                                 sequence_number: findNextSequenceNumberForSteps(
                                     stepGroups,
                                     activeStepGroup,
                                 ),
-                                washing_iterations: parseInt(washingIterations),
                             };
 
                             const updatedStepGroups = stepGroups.map(
@@ -551,9 +525,11 @@ const AddWashingForm = ({
         makeRequest('GET' as Method, '/liquids')
             .then((response) => {
                 // Filter only washing liquids (Buffer type)
-                const washingLiquids = response.data.filter(
+                const washingLiquids = (
+                    response.data as PermanentLiquidDTO[]
+                ).filter(
                     (liquid: PermanentLiquidDTO) =>
-                        liquid.liquid_type_name === 'Buffer',
+                        liquid.liquid_type_name === 'washing',
                 );
                 setLiquids(washingLiquids);
             })
@@ -629,7 +605,7 @@ const AddWashingForm = ({
                 {/* Washing iterations */}
                 <VStack gap={8}>
                     <Text fontSize={12} color="black" opacity={0.7}>
-                        Iterations
+                        Washing iterations
                     </Text>
                     <Input
                         height={48}
@@ -644,7 +620,7 @@ const AddWashingForm = ({
                         <InputField
                             color="black"
                             fontSize={16}
-                            placeholder="Number of washing iterations"
+                            placeholder="Number of iterations"
                             keyboardType="numeric"
                             ml={16}
                         />
@@ -724,9 +700,9 @@ const AddWashingForm = ({
                 <Button
                     bg={
                         selectedLiquid &&
-                        washingIterations &&
                         incubationTime &&
-                        targetTemperature
+                        targetTemperature &&
+                        washingIterations
                             ? '#1F2832'
                             : '#CCCCCC'
                     }
@@ -735,9 +711,9 @@ const AddWashingForm = ({
                     borderRadius={999}
                     disabled={
                         !selectedLiquid ||
-                        !washingIterations ||
                         !incubationTime ||
-                        !targetTemperature
+                        !targetTemperature ||
+                        !washingIterations
                     }
                 >
                     <ButtonText
@@ -758,12 +734,12 @@ const AddWashingForm = ({
                                 applied_liquid_id: selectedLiquid!,
                                 incubation_time: parseInt(incubationTime) * 60, // Convert minutes to seconds
                                 targetTemperature: parseInt(targetTemperature),
+                                washing_iterations: parseInt(washingIterations),
                                 iterations: 1,
                                 sequence_number: findNextSequenceNumberForSteps(
                                     stepGroups,
                                     activeStepGroup,
                                 ),
-                                washing_iterations: parseInt(washingIterations),
                             };
 
                             const updatedStepGroups = stepGroups.map(
@@ -774,10 +750,7 @@ const AddWashingForm = ({
                                     ) {
                                         return {
                                             ...stepGroup,
-                                            steps: [
-                                                ...stepGroup.steps,
-                                                newStep,
-                                            ],
+                                            steps: [...stepGroup.steps, step],
                                         };
                                     }
                                     return stepGroup;

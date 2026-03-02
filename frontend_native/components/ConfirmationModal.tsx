@@ -90,7 +90,6 @@ export default function ConfirmationModal({
                     </ModalBody>
                     <ModalFooter>
                         <Button
-                            action="secondary"
                             size="lg"
                             onPress={onClose}
                             style={[

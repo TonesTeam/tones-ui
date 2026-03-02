@@ -41,10 +41,15 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
     const [showExitModal, setShowExitModal] = useState(false);
+    const [showSaveModal, setShowSaveModal] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<any>(null);
     const { user } = useUser();
 
     const saveProtocol = () => {
+        setShowSaveModal(true);
+    };
+
+    const confirmSaveProtocol = () => {
         makeRequest(
             'POST' as Method,
             '/protocols',
@@ -68,6 +73,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             }),
         ).then((response) => {
             console.log(response.data);
+            setShowSaveModal(false);
             navigation.navigate('Protocols');
         });
     };
@@ -75,7 +81,10 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const handleExit = () => {
         setShowExitModal(false);
         if (pendingNavigation) {
-            pendingNavigation.data.action(pendingNavigation.data.action);
+            navigation.navigate(
+                pendingNavigation.screen,
+                pendingNavigation.params,
+            );
         }
     };
 
@@ -92,31 +101,16 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         );
     }, [stepGroups]);
 
-    useFocusEffect(
-        useCallback(() => {
-            const unsubscribe = navigation.addListener(
-                'beforeRemove',
-                (e: any) => {
-                    e.preventDefault();
-                    setShowExitModal(true);
-                    setPendingNavigation(e);
-                },
-            );
-
-            return unsubscribe;
-        }, [navigation]),
-    );
-
     return (
         <>
             <ConfirmationModal
-                isOpen={showExitModal}
-                onClose={handleStayInConstructor}
-                action={handleExit}
-                headline="Exit Protocol setup?"
-                text="If you exit now, all your changes will be deleted and the protocol will not be saved."
-                actionButtonText="Exit"
-                cancelButtonText="Not Exit"
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                action={confirmSaveProtocol}
+                headline="Save Protocol?"
+                text="Are you sure you want to save this protocol?"
+                actionButtonText="Save"
+                cancelButtonText="Cancel"
             />
             <MainContainer>
                 <NavBar />
