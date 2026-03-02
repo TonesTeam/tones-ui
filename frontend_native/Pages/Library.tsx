@@ -186,7 +186,8 @@ const LibraryBody = ({
 
         makeRequest('POST' as Method, '/liquids', json).then((r) => {
             console.log(r.data);
-            if (r.status == 200) {
+            if (r.status >= 200 && r.status <= 299) {
+                setNewLiquidModal(false);
                 listInitilizer();
             }
         });
