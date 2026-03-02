@@ -176,10 +176,17 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                                         step: any,
                                                         index: number,
                                                     ) => {
+                                                        // Определяем мойка это или реагент по типу жидкости
+                                                        const liquid =
+                                                            liquids.find(
+                                                                (l: any) =>
+                                                                    l.id ===
+                                                                    step.applied_liquid_id,
+                                                            );
                                                         const isWashing =
-                                                            !step.washing_iterations ||
-                                                            step.washing_iterations ===
-                                                                0;
+                                                            liquid?.liquid_type_name?.includes(
+                                                                'washing',
+                                                            );
                                                         return (
                                                             <HStack
                                                                 key={step.id}
