@@ -11,6 +11,7 @@ import { Copy, Pencil, Trash } from 'lucide-react-native';
 import { useState } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Step from './Step';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 
 interface StepGroupProps {
     key: number;
@@ -19,6 +20,7 @@ interface StepGroupProps {
     allStepGroups: StepGroupWithStepsDTO[];
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
+    liquids: PermanentLiquidDTO[];
 }
 
 const StepGroup = ({
@@ -27,6 +29,7 @@ const StepGroup = ({
     allStepGroups,
     activeStepGroup,
     setActiveStepGroup,
+    liquids,
 }: StepGroupProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
 
@@ -195,6 +198,7 @@ const StepGroup = ({
                                 stepGroupSequenceNumber={
                                     stepGroup.step_group.sequence_number
                                 }
+                                liquids={liquids}
                             />
                         );
                     })}

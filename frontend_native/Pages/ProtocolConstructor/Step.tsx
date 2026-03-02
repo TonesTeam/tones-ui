@@ -1,10 +1,11 @@
 import { HStack, Text, Icon, Box, Pressable } from '@gluestack-ui/themed';
 import { StepDTO } from 'common/dto/step.dto';
 import { AlignJustify, Thermometer } from 'lucide-react-native';
-import { Clock, X, FlaskConical } from 'lucide-react-native';
+import { Clock, X, FlaskConical, Droplet } from 'lucide-react-native';
 import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { useState } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 
 interface StepProps {
     key: number;
@@ -13,6 +14,7 @@ interface StepProps {
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     allStepGroups: StepGroupWithStepsDTO[];
     stepGroupSequenceNumber: number;
+    liquids: PermanentLiquidDTO[];
 }
 
 const Step = ({
@@ -21,6 +23,7 @@ const Step = ({
     setStepGroups,
     allStepGroups,
     stepGroupSequenceNumber,
+    liquids,
 }: StepProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
 
@@ -67,9 +70,19 @@ const Step = ({
                         #{index}
                     </Text>
                     <HStack justifyContent="center" flex={3}>
-                        <Icon as={FlaskConical} size={16} />
+                        {step.type === 'Washing' ? (
+                            <Icon as={Droplet} size={16} />
+                        ) : (
+                            <Icon as={FlaskConical} size={16} />
+                        )}
                         <Text color="black" fontSize={12} ml={6}>
-                            Reagent
+                            {liquids.find(
+                                (liquid) =>
+                                    liquid.id === step.applied_liquid_id,
+                            )?.name ||
+                                (step.type === 'Washing'
+                                    ? 'Washing'
+                                    : 'Reagent')}
                         </Text>
                     </HStack>
                     <HStack
