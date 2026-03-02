@@ -230,7 +230,7 @@ export function LiquidTable(props: {
                     const isWashing =
                         liquid?.liquid_type_name?.includes('Washing') ||
                         liquid?.liquid_type_name === 'Washing Liquid' ||
-                        liquid?.liquid_type_name === 'buffer';
+                        liquid?.liquid_type_name === 'Washing Buffer';
 
                     if (!isWashing && step.applied_liquid_id) {
                         // Reagent step
