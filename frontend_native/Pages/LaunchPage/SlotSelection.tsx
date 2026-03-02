@@ -180,28 +180,28 @@ const s = StyleSheet.create({
     // Right Panel Styles
     rightPanel: {
         flex: 1,
-        padding: 30,
+        padding: 20,
         backgroundColor: '#f5f5f5',
     },
     slotContainer: {
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 20,
+        gap: 12,
         alignContent: 'flex-start',
     },
     slotBox: {
         width: '31%',
         backgroundColor: '#ffffff',
-        borderRadius: 12,
+        borderRadius: 8,
         borderWidth: 2,
         borderColor: '#e0e0e0',
-        padding: 15,
+        padding: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
     },
     slotBoxSelected: {
         borderColor: '#4CAF50',
@@ -216,7 +216,7 @@ const s = StyleSheet.create({
     },
     slotTitle: {
         fontFamily: 'Roboto-bold',
-        fontSize: 16,
+        fontSize: 14,
         color: '#000000',
     },
     slotTitleInput: {
@@ -232,10 +232,10 @@ const s = StyleSheet.create({
         padding: 5,
     },
     slotImageContainer: {
-        height: 90,
+        height: 60,
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: 6,
     },
     slotImage: {
         width: '100%',
