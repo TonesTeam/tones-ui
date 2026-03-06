@@ -81,16 +81,12 @@ const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
                 bg="#1F2832"
                 alignSelf="center"
                 ml="auto"
-                onPress={() => {}}
+                onPress={() => {
+                    saveProtocol();
+                }}
                 borderRadius={999}
             >
-                <ButtonText
-                    fontSize={14}
-                    color="white"
-                    onPress={() => {
-                        saveProtocol();
-                    }}
-                >
+                <ButtonText fontSize={14} color="white">
                     Save
                 </ButtonText>
             </Button>

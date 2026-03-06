@@ -14,8 +14,10 @@ import { MainContainer, globalElementStyle } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import Header from './Header';
 import Timeline from './Timeline';
 import AddStepForm from './AddStepForm';
@@ -38,9 +40,16 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         },
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
+    const [showExitModal, setShowExitModal] = useState(false);
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [pendingNavigation, setPendingNavigation] = useState<any>(null);
     const { user } = useUser();
 
     const saveProtocol = () => {
+        setShowSaveModal(true);
+    };
+
+    const confirmSaveProtocol = () => {
         makeRequest(
             'POST' as Method,
             '/protocols',
@@ -64,8 +73,24 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             }),
         ).then((response) => {
             console.log(response.data);
+            setShowSaveModal(false);
             navigation.navigate('Protocols');
         });
+    };
+
+    const handleExit = () => {
+        setShowExitModal(false);
+        if (pendingNavigation) {
+            navigation.navigate(
+                pendingNavigation.screen,
+                pendingNavigation.params,
+            );
+        }
+    };
+
+    const handleStayInConstructor = () => {
+        setShowExitModal(false);
+        setPendingNavigation(null);
     };
 
     useEffect(() => {
@@ -77,69 +102,80 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     }, [stepGroups]);
 
     return (
-        <MainContainer>
-            <NavBar />
-            <Box flex={1} p={24}>
-                <Header
-                    saveProtocol={saveProtocol}
-                    navigation={navigation}
-                    name={name}
-                    setName={setName}
-                />
+        <>
+            <ConfirmationModal
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                action={confirmSaveProtocol}
+                headline="Save Protocol?"
+                text="Are you sure you want to save this protocol?"
+                actionButtonText="Save"
+                cancelButtonText="Cancel"
+            />
+            <MainContainer>
+                <NavBar />
+                <Box flex={1} p={24}>
+                    <Header
+                        saveProtocol={saveProtocol}
+                        navigation={navigation}
+                        name={name}
+                        setName={setName}
+                    />
 
-                <Box
-                    mt={38}
-                    alignItems="center"
-                    justifyContent="center"
-                    flexDirection="row"
-                    width="100%"
-                    flex={1}
-                    borderRadius={20}
-                    bg="white"
-                    overflow="hidden"
-                >
-                    <Box flex={621} height="100%">
-                        <LinearGradient
-                            colors={[
-                                'rgba(255, 255, 255, 0.7)',
-                                'rgba(238, 240, 242, 0.07)',
-                            ]}
-                            locations={[0, 1]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{
-                                flex: 1,
-                                width: '100%',
-                                height: '100%',
-                                backgroundColor: '#EEF0F2',
-                                paddingHorizontal: 32,
-                                paddingTop: 44,
-                            }}
+                    <Box
+                        mt={38}
+                        alignItems="center"
+                        justifyContent="center"
+                        flexDirection="row"
+                        width="100%"
+                        flex={1}
+                        borderRadius={20}
+                        bg="white"
+                        overflow="hidden"
+                    >
+                        <Box flex={621} height="100%">
+                            <LinearGradient
+                                colors={[
+                                    'rgba(255, 255, 255, 0.7)',
+                                    'rgba(238, 240, 242, 0.07)',
+                                ]}
+                                locations={[0, 1]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                                style={{
+                                    flex: 1,
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: '#EEF0F2',
+                                    paddingHorizontal: 32,
+                                    paddingTop: 44,
+                                }}
+                            >
+                                <Timeline
+                                    stepGroups={stepGroups}
+                                    setStepGroups={setStepGroups}
+                                    activeStepGroup={activeStepGroup}
+                                    setActiveStepGroup={setActiveStepGroup}
+                                />
+                            </LinearGradient>
+                        </Box>
+                        <Box
+                            flex={392}
+                            alignItems="center"
+                            justifyContent="center"
+                            height="100%"
                         >
-                            <Timeline
+                            <AddStepForm
                                 stepGroups={stepGroups}
                                 setStepGroups={setStepGroups}
                                 activeStepGroup={activeStepGroup}
                                 setActiveStepGroup={setActiveStepGroup}
                             />
-                        </LinearGradient>
-                    </Box>
-                    <Box
-                        flex={392}
-                        alignItems="center"
-                        justifyContent="center"
-                        height="100%"
-                    >
-                        <AddStepForm
-                            stepGroups={stepGroups}
-                            setStepGroups={setStepGroups}
-                            activeStepGroup={activeStepGroup}
-                            setActiveStepGroup={setActiveStepGroup}
-                        />
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-        </MainContainer>
+            </MainContainer>
+        </>
     );
 };
 

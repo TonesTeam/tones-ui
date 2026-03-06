@@ -4,6 +4,7 @@ import StepGroup from './StepGroup';
 import { useEffect, useState } from 'react';
 import { getRequest, makeRequest } from '../../common/util';
 import { Method } from 'axios';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 
 interface TimelineProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -21,6 +22,17 @@ const Timeline = ({
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
         '' as '' | number,
     );
+    const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
+
+    useEffect(() => {
+        getRequest<PermanentLiquidDTO[]>('/liquids')
+            .then((response) => {
+                setLiquids(response.data);
+            })
+            .catch((error) => {
+                console.error('Failed to fetch liquids', error);
+            });
+    }, []);
 
     useEffect(() => {
         const payload = JSON.stringify(
@@ -80,6 +92,7 @@ const Timeline = ({
                         allStepGroups={stepGroups}
                         activeStepGroup={activeStepGroup}
                         setActiveStepGroup={setActiveStepGroup}
+                        liquids={liquids}
                     />
                 ))}
             </ScrollView>
