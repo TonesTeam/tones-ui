@@ -21,6 +21,7 @@ interface StepGroupProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     liquids: PermanentLiquidDTO[];
+    selectedWashingLiquid?: number | null;
 }
 
 const StepGroup = ({
@@ -30,6 +31,7 @@ const StepGroup = ({
     activeStepGroup,
     setActiveStepGroup,
     liquids,
+    selectedWashingLiquid,
 }: StepGroupProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
 
@@ -188,6 +190,18 @@ const StepGroup = ({
                                 stepGroup.step_group.name
                             }`,
                         );
+                        // Calculate global index: each reagent + washing pair counts as 2 items
+                        let globalIndex = 1;
+                        for (let i = 0; i < index; i++) {
+                            globalIndex++;
+                            if (
+                                stepGroup.steps[i].type ===
+                                    'Liquid Application' &&
+                                selectedWashingLiquid
+                            ) {
+                                globalIndex++;
+                            }
+                        }
                         return (
                             <Step
                                 key={index}
@@ -199,6 +213,8 @@ const StepGroup = ({
                                     stepGroup.step_group.sequence_number
                                 }
                                 liquids={liquids}
+                                selectedWashingLiquid={selectedWashingLiquid}
+                                globalIndex={globalIndex}
                             />
                         );
                     })}

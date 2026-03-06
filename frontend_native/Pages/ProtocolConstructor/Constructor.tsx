@@ -42,6 +42,9 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
     const [showExitModal, setShowExitModal] = useState(false);
     const [showSaveModal, setShowSaveModal] = useState(false);
+    const [selectedWashingLiquid, setSelectedWashingLiquid] = useState<
+        number | null
+    >(null);
     const [pendingNavigation, setPendingNavigation] = useState<any>(null);
     const { user } = useUser();
 
@@ -156,6 +159,9 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                     setStepGroups={setStepGroups}
                                     activeStepGroup={activeStepGroup}
                                     setActiveStepGroup={setActiveStepGroup}
+                                    selectedWashingLiquid={
+                                        selectedWashingLiquid
+                                    }
                                 />
                             </LinearGradient>
                         </Box>
@@ -170,6 +176,10 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 setStepGroups={setStepGroups}
                                 activeStepGroup={activeStepGroup}
                                 setActiveStepGroup={setActiveStepGroup}
+                                selectedWashingLiquid={selectedWashingLiquid}
+                                setSelectedWashingLiquid={
+                                    setSelectedWashingLiquid
+                                }
                             />
                         </Box>
                     </Box>

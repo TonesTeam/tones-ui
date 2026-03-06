@@ -11,6 +11,7 @@ interface TimelineProps {
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
+    selectedWashingLiquid?: number | null;
 }
 
 const Timeline = ({
@@ -18,6 +19,7 @@ const Timeline = ({
     setStepGroups,
     activeStepGroup,
     setActiveStepGroup,
+    selectedWashingLiquid,
 }: TimelineProps) => {
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
         '' as '' | number,
@@ -63,7 +65,9 @@ const Timeline = ({
             console.log(contents.status);
             console.log(contents.data);
             setEstimatedExecutionTime(
-                contents.data['estimated_execution_time'] || 0,
+                (contents.data as { estimated_execution_time: number })[
+                    'estimated_execution_time'
+                ] || 0,
             );
         });
     }, [stepGroups]);
@@ -93,6 +97,7 @@ const Timeline = ({
                         activeStepGroup={activeStepGroup}
                         setActiveStepGroup={setActiveStepGroup}
                         liquids={liquids}
+                        selectedWashingLiquid={selectedWashingLiquid}
                     />
                 ))}
             </ScrollView>
