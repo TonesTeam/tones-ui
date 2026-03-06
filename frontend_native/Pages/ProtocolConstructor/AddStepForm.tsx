@@ -35,6 +35,7 @@ import { Method } from 'axios';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 interface AddStepFormProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -64,6 +65,7 @@ const AddStepForm = ({
                 stepGroups={stepGroups}
                 setStepGroups={setStepGroups}
                 setActiveStepGroup={setActiveStepGroup}
+                selectedWashingLiquid={selectedWashingLiquid}
             />
         );
     } else if (state === 'Add liquid') {
@@ -91,6 +93,8 @@ interface SelectFormProps {
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     setFormState: (state: 'Select' | 'Add liquid' | 'Add washing') => void;
     setActiveStepGroup: (sequenceNumber: number) => void;
+    selectedWashingLiquid?: number | null;
+    liquids?: PermanentLiquidDTO[];
 }
 
 const SelectForm = ({
@@ -98,7 +102,27 @@ const SelectForm = ({
     setStepGroups,
     setFormState,
     setActiveStepGroup,
+    selectedWashingLiquid,
+    liquids: externalLiquids,
 }: SelectFormProps) => {
+    const [liquids, setLiquids] = useState(
+        externalLiquids || ([] as PermanentLiquidDTO[]),
+    );
+    const [showWashingRequiredModal, setShowWashingRequiredModal] =
+        useState(false);
+
+    useEffect(() => {
+        if (!externalLiquids) {
+            makeRequest('GET' as Method, '/liquids')
+                .then((response) => {
+                    setLiquids(response.data as PermanentLiquidDTO[]);
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch liquids', error);
+                });
+        }
+    }, [externalLiquids]);
+
     const findNextSequenceNumber = () => {
         let biggest = 0;
         for (let stepGroup of stepGroups) {
@@ -109,23 +133,46 @@ const SelectForm = ({
 
     return (
         <VStack height={300} alignItems="center" gap={40}>
-            <Button
-                bg="transparent"
-                width={250}
-                height={44}
-                style={{ borderStyle: 'dashed' }}
-                borderWidth={1}
-                borderColor="rgba(0, 0, 0, 0.3)"
-                borderRadius={7}
-                onPress={() => {
-                    setFormState('Add washing');
-                }}
-            >
-                <ButtonText fontSize={16} color="black">
-                    Select washing
-                </ButtonText>
-                <ButtonIcon as={Droplet} size={15} color="black" ml="$3" />
-            </Button>
+            {selectedWashingLiquid && liquids ? (
+                <HStack
+                    width={250}
+                    height={44}
+                    borderRadius={7}
+                    alignItems="center"
+                    justifyContent="center"
+                    bg="#f0f0f0"
+                    px={16}
+                >
+                    <Icon as={Droplet} size={16} color="black" mr={8} />
+                    <Text
+                        fontSize={14}
+                        color="black"
+                        fontFamily="Manrope-SemiBold"
+                    >
+                        Selected washing:{' '}
+                        {liquids.find((l) => l.id === selectedWashingLiquid)
+                            ?.name || 'Unknown'}
+                    </Text>
+                </HStack>
+            ) : (
+                <Button
+                    bg="transparent"
+                    width={250}
+                    height={44}
+                    style={{ borderStyle: 'dashed' }}
+                    borderWidth={1}
+                    borderColor="rgba(0, 0, 0, 0.3)"
+                    borderRadius={7}
+                    onPress={() => {
+                        setFormState('Add washing');
+                    }}
+                >
+                    <ButtonText fontSize={16} color="black">
+                        Select washing
+                    </ButtonText>
+                    <ButtonIcon as={Droplet} size={15} color="black" ml="$3" />
+                </Button>
+            )}
             <Text fontSize={16} opacity={0.5} color="black">
                 Add to step:
             </Text>
@@ -168,7 +215,11 @@ const SelectForm = ({
                 borderColor="rgba(0, 0, 0, 0.3)"
                 borderRadius={7}
                 onPress={() => {
-                    setFormState('Add liquid');
+                    if (!selectedWashingLiquid) {
+                        setShowWashingRequiredModal(true);
+                    } else {
+                        setFormState('Add liquid');
+                    }
                 }}
             >
                 <ButtonIcon as={Plus} size={20} color="black" mr="$1" />
@@ -177,6 +228,17 @@ const SelectForm = ({
                 </ButtonText>
                 <ButtonIcon as={FlaskConical} size={15} color="black" ml="$3" />
             </Button>
+            <ConfirmationModal
+                isOpen={showWashingRequiredModal}
+                onClose={() => setShowWashingRequiredModal(false)}
+                headline="Washing Liquid Required"
+                text="Please select a washing liquid first before adding reagents."
+                actionButtonText="Select Washing"
+                action={() => {
+                    setShowWashingRequiredModal(false);
+                    setFormState('Add washing');
+                }}
+            />
         </VStack>
     );
 };
@@ -534,6 +596,10 @@ const AddWashingForm = ({
     setFormState,
 }: AddWashingFormProps) => {
     const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
+    const [tempSelectedLiquid, setTempSelectedLiquid] = useState<number | null>(
+        null,
+    );
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids')
@@ -551,6 +617,10 @@ const AddWashingForm = ({
                 console.error('Failed to fetch liquids', error);
             });
     }, []);
+
+    const selectedLiquidName = liquids.find(
+        (l) => l.id === tempSelectedLiquid,
+    )?.name;
 
     return (
         <Box>
@@ -583,12 +653,12 @@ const AddWashingForm = ({
                     </Text>
                     <Select
                         selectedValue={
-                            selectedWashingLiquid
-                                ? selectedWashingLiquid.toString()
+                            tempSelectedLiquid
+                                ? tempSelectedLiquid.toString()
                                 : null
                         }
                         onValueChange={(value) =>
-                            setSelectedWashingLiquid(parseInt(value))
+                            setTempSelectedLiquid(parseInt(value))
                         }
                     >
                         <SelectTrigger
@@ -639,25 +709,37 @@ const AddWashingForm = ({
                     </ButtonText>
                 </Button>
                 <Button
-                    bg={selectedWashingLiquid ? '#1F2832' : '#CCCCCC'}
+                    bg={tempSelectedLiquid ? '#1F2832' : '#CCCCCC'}
                     height={40}
                     width={170}
                     borderRadius={999}
-                    disabled={!selectedWashingLiquid}
+                    disabled={!tempSelectedLiquid}
                 >
                     <ButtonText
                         fontSize={14}
                         color="white"
                         fontFamily="Manrope-SemiBold"
                         onPress={() => {
-                            if (!selectedWashingLiquid) return;
-                            setFormState('Select');
+                            if (!tempSelectedLiquid) return;
+                            setShowConfirmModal(true);
                         }}
                     >
                         Confirm
                     </ButtonText>
                 </Button>
             </HStack>
+            <ConfirmationModal
+                isOpen={showConfirmModal}
+                onClose={() => setShowConfirmModal(false)}
+                headline="Set Washing Liquid"
+                text={`Set "${selectedLiquidName}" as the washing liquid for this protocol? This cannot be changed later. You will have to create a new protocol."  `}
+                actionButtonText="Confirm"
+                action={() => {
+                    setSelectedWashingLiquid(tempSelectedLiquid);
+                    setShowConfirmModal(false);
+                    setFormState('Select');
+                }}
+            />
         </Box>
     );
 };
