@@ -93,11 +93,19 @@ const Step = ({
                         </Text>
                         <HStack justifyContent="center" flex={3}>
                             {step.type === 'Washing' ? (
-                                <Icon as={Droplet} size={16} />
+                                <Icon as={Droplet} size={16} color="#1193CF" />
                             ) : (
                                 <Icon as={FlaskConical} size={16} />
                             )}
-                            <Text color="black" fontSize={12} ml={6}>
+                            <Text
+                                color={
+                                    step.type === 'Washing'
+                                        ? '#1193CF'
+                                        : 'black'
+                                }
+                                fontSize={12}
+                                ml={6}
+                            >
                                 {liquids.find(
                                     (liquid) =>
                                         liquid.id === step.applied_liquid_id,
@@ -131,7 +139,16 @@ const Step = ({
                             flex={2}
                             justifyContent="center"
                             alignItems="center"
-                        ></HStack>
+                        >
+                            {step.type === 'Washing' && (
+                                <>
+                                    <Icon as={RotateCcw} size={16} />
+                                    <Text color="black" fontSize={12} ml={6}>
+                                        {step.washing_iterations}
+                                    </Text>
+                                </>
+                            )}
+                        </HStack>
                         <Pressable
                             width={28}
                             justifyContent="center"
