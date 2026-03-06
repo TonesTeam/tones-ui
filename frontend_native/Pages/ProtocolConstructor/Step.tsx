@@ -30,6 +30,7 @@ interface StepProps {
     stepGroupSequenceNumber: number;
     liquids: PermanentLiquidDTO[];
     selectedWashingLiquid?: number | null;
+    washingIncubationTime?: number | null;
     globalIndex?: number;
 }
 
@@ -41,6 +42,7 @@ const Step = ({
     stepGroupSequenceNumber,
     liquids,
     selectedWashingLiquid,
+    washingIncubationTime,
     globalIndex,
 }: StepProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
@@ -73,7 +75,7 @@ const Step = ({
             />
             <VStack width="100%" gap={8}>
                 <HStack gap={8} alignItems="center" width="100%">
-                    <Box>
+                    <Box width={20} justifyContent="center" alignItems="center">
                         <Icon as={AlignJustify} opacity={0.6} size={20} />
                     </Box>
                     <HStack
@@ -84,6 +86,7 @@ const Step = ({
                         borderRadius={12}
                         alignItems="center"
                         px={16}
+                        overflow="hidden"
                     >
                         <Text color="black" fontSize={12} flex={0.7}>
                             #{globalIndex || index}
@@ -124,8 +127,17 @@ const Step = ({
                                 {step.targetTemperature} °C
                             </Text>
                         </HStack>
-                        <Box flex={2}></Box>
-                        <Pressable onPress={() => setDeleteModal(true)}>
+                        <HStack
+                            flex={2}
+                            justifyContent="center"
+                            alignItems="center"
+                        ></HStack>
+                        <Pressable
+                            width={28}
+                            justifyContent="center"
+                            alignItems="center"
+                            onPress={() => setDeleteModal(true)}
+                        >
                             <Icon as={X} />
                         </Pressable>
                     </HStack>
@@ -134,12 +146,8 @@ const Step = ({
                 {/* Washing info block for Reagent steps */}
                 {step.type === 'Liquid Application' &&
                     selectedWashingLiquid && (
-                        <HStack
-                            gap={8}
-                            alignItems="center"
-                            width="100%"
-                            ml={28}
-                        >
+                        <HStack gap={8} alignItems="center" width="100%">
+                            <Box width={20}></Box>
                             <HStack
                                 flex={1}
                                 height={50}
@@ -148,6 +156,7 @@ const Step = ({
                                 borderRadius={12}
                                 alignItems="center"
                                 px={16}
+                                overflow="hidden"
                             >
                                 <Text color="black" fontSize={12} flex={0.7}>
                                     #{(globalIndex || index) + 1}
@@ -164,6 +173,19 @@ const Step = ({
                                                 liquid.id ===
                                                 selectedWashingLiquid,
                                         )?.name || 'Washing'}
+                                    </Text>
+                                </HStack>
+                                <HStack
+                                    flex={3}
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Icon as={Clock} size={16} />
+                                    <Text color="black" fontSize={12} ml={6}>
+                                        {washingIncubationTime
+                                            ? washingIncubationTime / 60
+                                            : 0}{' '}
+                                        minutes
                                     </Text>
                                 </HStack>
                                 <HStack
@@ -186,7 +208,7 @@ const Step = ({
                                         {step.washing_iterations}
                                     </Text>
                                 </HStack>
-                                <Box flex={2}></Box>
+                                <Box width={28}></Box>
                             </HStack>
                         </HStack>
                     )}

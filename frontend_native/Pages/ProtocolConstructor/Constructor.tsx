@@ -32,7 +32,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         {
             step_group: {
                 id: 1,
-                name: 'Step 1',
+                name: 'Step Group 1',
                 protocol_id: 1,
                 sequence_number: 1,
             },
@@ -43,6 +43,9 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [showExitModal, setShowExitModal] = useState(false);
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [selectedWashingLiquid, setSelectedWashingLiquid] = useState<
+        number | null
+    >(null);
+    const [washingIncubationTime, setWashingIncubationTime] = useState<
         number | null
     >(null);
     const [pendingNavigation, setPendingNavigation] = useState<any>(null);
@@ -162,6 +165,9 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                     selectedWashingLiquid={
                                         selectedWashingLiquid
                                     }
+                                    washingIncubationTime={
+                                        washingIncubationTime
+                                    }
                                 />
                             </LinearGradient>
                         </Box>
@@ -179,6 +185,10 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 selectedWashingLiquid={selectedWashingLiquid}
                                 setSelectedWashingLiquid={
                                     setSelectedWashingLiquid
+                                }
+                                washingIncubationTime={washingIncubationTime}
+                                setWashingIncubationTime={
+                                    setWashingIncubationTime
                                 }
                             />
                         </Box>

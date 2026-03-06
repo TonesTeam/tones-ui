@@ -12,6 +12,7 @@ interface TimelineProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     selectedWashingLiquid?: number | null;
+    washingIncubationTime?: number | null;
 }
 
 const Timeline = ({
@@ -20,6 +21,7 @@ const Timeline = ({
     activeStepGroup,
     setActiveStepGroup,
     selectedWashingLiquid,
+    washingIncubationTime,
 }: TimelineProps) => {
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
         '' as '' | number,
@@ -98,6 +100,7 @@ const Timeline = ({
                         setActiveStepGroup={setActiveStepGroup}
                         liquids={liquids}
                         selectedWashingLiquid={selectedWashingLiquid}
+                        washingIncubationTime={washingIncubationTime}
                     />
                 ))}
             </ScrollView>

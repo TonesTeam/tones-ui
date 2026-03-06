@@ -22,6 +22,7 @@ interface StepGroupProps {
     setActiveStepGroup: (id: number) => void;
     liquids: PermanentLiquidDTO[];
     selectedWashingLiquid?: number | null;
+    washingIncubationTime?: number | null;
 }
 
 const StepGroup = ({
@@ -32,6 +33,7 @@ const StepGroup = ({
     setActiveStepGroup,
     liquids,
     selectedWashingLiquid,
+    washingIncubationTime,
 }: StepGroupProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
 
@@ -237,6 +239,7 @@ const StepGroup = ({
                                 }
                                 liquids={liquids}
                                 selectedWashingLiquid={selectedWashingLiquid}
+                                washingIncubationTime={washingIncubationTime}
                                 globalIndex={globalIndex}
                             />
                         );

@@ -44,6 +44,8 @@ interface AddStepFormProps {
     setActiveStepGroup: (sequenceNumber: number) => void;
     selectedWashingLiquid: number | null;
     setSelectedWashingLiquid: (id: number | null) => void;
+    washingIncubationTime: number | null;
+    setWashingIncubationTime: (time: number | null) => void;
 }
 
 const AddStepForm = ({
@@ -53,6 +55,8 @@ const AddStepForm = ({
     setActiveStepGroup,
     selectedWashingLiquid,
     setSelectedWashingLiquid,
+    washingIncubationTime,
+    setWashingIncubationTime,
 }: AddStepFormProps) => {
     const [state, setState] = useState(
         'Select' as 'Select' | 'Add liquid' | 'Add washing',
@@ -82,6 +86,8 @@ const AddStepForm = ({
             <AddWashingForm
                 selectedWashingLiquid={selectedWashingLiquid}
                 setSelectedWashingLiquid={setSelectedWashingLiquid}
+                washingIncubationTime={washingIncubationTime}
+                setWashingIncubationTime={setWashingIncubationTime}
                 setFormState={setState}
             />
         );
@@ -587,17 +593,24 @@ const AddLiquidForm = ({
 interface AddWashingFormProps {
     selectedWashingLiquid: number | null;
     setSelectedWashingLiquid: (id: number | null) => void;
+    washingIncubationTime: number | null;
+    setWashingIncubationTime: (time: number | null) => void;
     setFormState: (state: 'Select' | 'Add liquid' | 'Add washing') => void;
 }
 
 const AddWashingForm = ({
     selectedWashingLiquid,
     setSelectedWashingLiquid,
+    washingIncubationTime,
+    setWashingIncubationTime,
     setFormState,
 }: AddWashingFormProps) => {
     const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
     const [tempSelectedLiquid, setTempSelectedLiquid] = useState<number | null>(
         null,
+    );
+    const [tempIncubationTime, setTempIncubationTime] = useState<string>(
+        washingIncubationTime ? (washingIncubationTime / 60).toString() : '',
     );
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -687,6 +700,25 @@ const AddWashingForm = ({
                         </SelectPortal>
                     </Select>
                 </VStack>
+                {/* Incubation time */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Incubation Time (minutes)
+                    </Text>
+                    <Input
+                        borderWidth={0}
+                        bg="#F1F1F1"
+                        height={48}
+                        borderRadius={16}
+                    >
+                        <InputField
+                            placeholder="Enter time in minutes"
+                            value={tempIncubationTime}
+                            onChangeText={setTempIncubationTime}
+                            keyboardType="numeric"
+                        />
+                    </Input>
+                </VStack>
             </VStack>
             <HStack gap={24} mt={30}>
                 <Button
@@ -709,18 +741,23 @@ const AddWashingForm = ({
                     </ButtonText>
                 </Button>
                 <Button
-                    bg={tempSelectedLiquid ? '#1F2832' : '#CCCCCC'}
+                    bg={
+                        tempSelectedLiquid && tempIncubationTime
+                            ? '#1F2832'
+                            : '#CCCCCC'
+                    }
                     height={40}
                     width={170}
                     borderRadius={999}
-                    disabled={!tempSelectedLiquid}
+                    disabled={!tempSelectedLiquid || !tempIncubationTime}
                 >
                     <ButtonText
                         fontSize={14}
                         color="white"
                         fontFamily="Manrope-SemiBold"
                         onPress={() => {
-                            if (!tempSelectedLiquid) return;
+                            if (!tempSelectedLiquid || !tempIncubationTime)
+                                return;
                             setShowConfirmModal(true);
                         }}
                     >
@@ -732,10 +769,11 @@ const AddWashingForm = ({
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
                 headline="Set Washing Liquid"
-                text={`Set "${selectedLiquidName}" as the washing liquid for this protocol? This cannot be changed later. You will have to create a new protocol."  `}
+                text={`Set "${selectedLiquidName}" as the washing liquid for this protocol? This cannot be changed later. You will have to create a new protocol. Time can be changed later in "+ Washing" `}
                 actionButtonText="Confirm"
                 action={() => {
                     setSelectedWashingLiquid(tempSelectedLiquid);
+                    setWashingIncubationTime(parseInt(tempIncubationTime) * 60);
                     setShowConfirmModal(false);
                     setFormState('Select');
                 }}
