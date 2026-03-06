@@ -42,6 +42,29 @@ const StepGroup = ({
                 stepGroup.step_group.sequence_number,
         );
         setStepGroups(updatedStepGroups);
+
+        // If deleted group was active, select the previous group
+        if (activeStepGroup === stepGroup.step_group.sequence_number) {
+            if (updatedStepGroups.length > 0) {
+                // Find group with smaller sequence_number (previous step)
+                const previousGroup = updatedStepGroups
+                    .filter(
+                        (g) =>
+                            g.step_group.sequence_number <
+                            stepGroup.step_group.sequence_number,
+                    )
+                    .sort(
+                        (a, b) =>
+                            b.step_group.sequence_number -
+                            a.step_group.sequence_number,
+                    )[0];
+
+                // If no previous group exists, use the first available
+                const nextActiveGroup = previousGroup || updatedStepGroups[0];
+                setActiveStepGroup(nextActiveGroup.step_group.sequence_number);
+            }
+        }
+
         setDeleteModal(false);
     };
 
