@@ -19,6 +19,7 @@ import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { useState } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 interface StepProps {
     key: number;
@@ -78,7 +79,7 @@ const Step = ({
                     <HStack
                         flex={1}
                         height={50}
-                        bg="white"
+                        bg={'white'}
                         width="92%"
                         borderRadius={12}
                         alignItems="center"
@@ -142,7 +143,7 @@ const Step = ({
                             <HStack
                                 flex={1}
                                 height={50}
-                                bg="white"
+                                bg="rgba(98,98,98,0.1)"
                                 width="92%"
                                 borderRadius={12}
                                 alignItems="center"
@@ -152,8 +153,12 @@ const Step = ({
                                     #{(globalIndex || index) + 1}
                                 </Text>
                                 <HStack justifyContent="center" flex={3}>
-                                    <Icon as={Droplet} size={16} />
-                                    <Text color="black" fontSize={12} ml={6}>
+                                    <Icon
+                                        as={Droplet}
+                                        size={16}
+                                        color="#1193CF"
+                                    />
+                                    <Text color="#1193CF" fontSize={12} ml={6}>
                                         {liquids.find(
                                             (liquid) =>
                                                 liquid.id ===
