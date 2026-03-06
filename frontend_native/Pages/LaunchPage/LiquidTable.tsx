@@ -184,7 +184,11 @@ function Table(props: {
 
 //Left panel: Instructions for reagent preparation
 //Right panel: Visual representation of physical robot stand
-export function LiquidTable(props: { slots: number; protocolId?: number }) {
+export function LiquidTable(props: {
+    slots: number;
+    protocolId?: number;
+    liquids?: any[];
+}) {
     const table_config = CARTRIDGE_CONFIG;
     const [reagents, setReagents] = useState<ReagentInfo[]>([]);
     const [loading, setLoading] = useState(false);
@@ -204,13 +208,10 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
         setLoading(true);
         try {
             const response = await getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${props.protocolId}`,
+                `/protocols/${props.protocolId}`,
             );
             if ('data' in response) {
                 const protocol = response.data;
-
-                setWashingName(protocol.defaultWash.liquid.name);
-                setDefaultWashingIterations(protocol.defaultWash.iters);
 
                 const reagentUsage = new Map<
                     string,
@@ -220,13 +221,22 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
 
                 // Go through each step and find liquid steps
                 const allSteps =
-                    protocol.stepBatches?.flatMap((batch) => batch.steps) || [];
+                    protocol.step_groups?.flatMap((group) => group.steps) || [];
                 allSteps.forEach((step: any) => {
-                    if (step.type === StepType.REAGENT) {
-                        const reagentStep = step.params as ReagentStep;
-                        const liquidName = reagentStep.liquid.name;
-                        const typeName = reagentStep.liquid.type.name;
-                        const stepUsage = 1; // Each reagent step uses the reagent once
+                    // Определяем мойка это или реагент по типу жидкости
+                    const liquid = props.liquids?.find(
+                        (l: any) => l.id === step.applied_liquid_id,
+                    );
+                    const isWashing =
+                        liquid?.liquid_type_name?.includes('Washing') ||
+                        liquid?.liquid_type_name === 'Washing Liquid' ||
+                        liquid?.liquid_type_name === 'Washing Buffer';
+
+                    if (!isWashing && step.applied_liquid_id) {
+                        // Reagent step
+                        const liquidName =
+                            liquid?.name || `Liquid ${step.applied_liquid_id}`;
+                        const stepUsage = step.iterations || 1;
 
                         if (reagentUsage.has(liquidName)) {
                             reagentUsage.get(liquidName)!.usage += stepUsage;
@@ -234,14 +244,12 @@ export function LiquidTable(props: { slots: number; protocolId?: number }) {
                             reagentUsage.set(liquidName, {
                                 name: liquidName,
                                 usage: stepUsage,
-                                type: typeName,
+                                type: 'Reagent',
                             });
                         }
-                    } else if (step.type === StepType.WASHING) {
-                        const washStep = step.params;
-                        if (washStep.iters) {
-                            totalWashing += washStep.iters;
-                        }
+                    } else if (isWashing) {
+                        // Washing step
+                        totalWashing += step.iterations || 1;
                     }
                 });
 

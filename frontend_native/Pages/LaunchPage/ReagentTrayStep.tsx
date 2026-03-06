@@ -276,7 +276,9 @@ function Table(props: {
 export function ReagentTrayStep(props: {
     slots: number;
     protocolId?: number;
+    liquids?: any[];
     onSelectionChange?: (allSelected: boolean) => void;
+    onReagentDataChange?: (data: any) => void;
 }) {
     const table_config = CARTRIDGE_CONFIG;
     const [reagents, setReagents] = useState<ReagentInfo[]>([]);
@@ -298,7 +300,7 @@ export function ReagentTrayStep(props: {
         setLoading(true);
         try {
             const response = await getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${props.protocolId}`,
+                `/protocols/${props.protocolId}`,
             );
             if ('data' in response) {
                 const protocol = response.data;
@@ -310,19 +312,24 @@ export function ReagentTrayStep(props: {
 
                 // Go through each step and find liquid steps (exclude washing)
                 const allSteps =
-                    protocol.stepBatches?.flatMap(
-                        (batch: any) => batch.steps,
+                    protocol.step_groups?.flatMap(
+                        (group: any) => group.steps,
                     ) || [];
                 allSteps.forEach((step: any) => {
-                    if (step.type === StepType.REAGENT) {
-                        const reagentStep = step.params as ReagentStep;
-                        const liquidName = reagentStep.liquid.name;
-                        const typeName = reagentStep.liquid.type.name;
+                    // Определяем мойка это или реагент по типу жидкости
+                    const liquid = props.liquids?.find(
+                        (l: any) => l.id === step.applied_liquid_id,
+                    );
+                    const isWashing =
+                        liquid?.liquid_type_name?.includes('Washing') ||
+                        liquid?.liquid_type_name === 'Washing Liquid' ||
+                        liquid?.liquid_type_name === 'Washing Buffer';
 
-                        // Skip washing liquids
-                        if (typeName === 'Washing') return;
-
-                        const stepUsage = 1;
+                    if (!isWashing && step.applied_liquid_id) {
+                        // Получаем имя жидкости из переданного массива
+                        const liquidName =
+                            liquid?.name || `Liquid ${step.applied_liquid_id}`;
+                        const stepUsage = step.iterations || 1;
 
                         if (reagentUsage.has(liquidName)) {
                             reagentUsage.get(liquidName)!.usage += stepUsage;
@@ -330,7 +337,7 @@ export function ReagentTrayStep(props: {
                             reagentUsage.set(liquidName, {
                                 name: liquidName,
                                 usage: stepUsage,
-                                type: typeName,
+                                type: 'Reagent',
                             });
                         }
                     }
@@ -448,6 +455,20 @@ export function ReagentTrayStep(props: {
             );
 
             props.onSelectionChange(allSelected);
+
+            // Send reagent placement data
+            if (props.onReagentDataChange) {
+                const reagentData = {
+                    smallReagents: Array.from(selectedSlotsS).map((pos) =>
+                        smallReagents.find((r) => r.trayPosition === pos),
+                    ),
+                    mediumReagents: Array.from(selectedSlotsM).map((pos) =>
+                        mediumReagents.find((r) => r.trayPosition === pos),
+                    ),
+                    allSelected,
+                };
+                props.onReagentDataChange(reagentData);
+            }
         }
     }, [selectedSlotsS, selectedSlotsM, allReagentsWithTrayPos]);
 
@@ -510,8 +531,8 @@ export function ReagentTrayStep(props: {
                             rows={table_config.size_S.y}
                             cols={table_config.size_S.x}
                             color="#FFFFFF"
-                            slotSize={30}
-                            slotMargin={4.23}
+                            slotSize={28}
+                            slotMargin={3}
                             startNumber={1}
                         />
                         <ReagentTray
@@ -521,8 +542,8 @@ export function ReagentTrayStep(props: {
                             rows={table_config.size_M.y}
                             cols={table_config.size_M.x}
                             color={AppStyles.color.secondary}
-                            slotSize={45}
-                            slotMargin={5}
+                            slotSize={40}
+                            slotMargin={4}
                             startNumber={33}
                         />
                     </HStack>

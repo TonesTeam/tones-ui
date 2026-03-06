@@ -10,5 +10,5 @@ export const CARTRIDGE_CONFIG = {
     }, // 2 rows × 2 columns (washing liquid)
 };
 
-export const SLOT_QUANTITY = 5;
+export const SLOT_QUANTITY = 6;
 export const SLOT_VOLUME_ML = 0.25;

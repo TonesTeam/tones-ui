@@ -126,13 +126,21 @@ function StageMenu(props: {
                     <Step3_inactive
                         height={50}
                         width={180}
-                        style={{ left: -70, zIndex: 80 }}
+                        style={{
+                            left: -70,
+                            zIndex: 80,
+                            transform: [{ scaleX: -1 }],
+                        }}
                     />
                 ) : (
                     <Step3
                         height={50}
                         width={180}
-                        style={{ left: -70, zIndex: 80 }}
+                        style={{
+                            left: -70,
+                            zIndex: 80,
+                            transform: [{ scaleX: -1 }],
+                        }}
                     />
                 )}
 
@@ -206,9 +214,12 @@ export default function Launch({
     );
     const [confirmations, setConfirmations] = useState(0);
     const [protocol, setProtocol] = useState<ProtocolWithStepsDTO | null>(null);
+    const [liquids, setLiquids] = useState<any[]>([]);
     const [estimatedTime, setEstimatedTime] = useState<string>('0:00:00');
     const [allReagentSlotsSelected, setAllReagentSlotsSelected] =
         useState(false);
+    const [reagentPlacement, setReagentPlacement] = useState<any>(null);
+    const [washingSelection, setWashingSelection] = useState<any>(null);
     const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
     const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
 
@@ -218,13 +229,14 @@ export default function Launch({
     useEffect(() => {
         if (protocol_ID) {
             loadProtocol();
+            loadLiquids();
         }
     }, [protocol_ID]);
 
     const loadProtocol = async () => {
         try {
             const response = await getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${protocol_ID}`,
+                `/protocols/${protocol_ID}`,
             );
             if ('data' in response) {
                 setProtocol(response.data);
@@ -235,41 +247,30 @@ export default function Launch({
         }
     };
 
+    const loadLiquids = async () => {
+        try {
+            const response = await getRequest<any[]>('/liquids');
+            if ('data' in response) {
+                setLiquids(response.data);
+                console.log('Liquids loaded:', response.data);
+            }
+        } catch (error) {
+            console.error('Error loading liquids:', error);
+        }
+    };
+
     const calculateEstimatedTime = (protocol: ProtocolWithStepsDTO) => {
         let totalSeconds = 0;
 
         // Go through all steps and sum up incubation times
         const allSteps =
-            protocol.stepBatches?.flatMap((batch: any) => batch.steps) || [];
+            protocol.step_groups?.flatMap((group: any) => group.steps) || [];
 
         allSteps.forEach((step: any) => {
-            if (step.type === StepType.REAGENT) {
-                // ReagentStep has incubation time in seconds
-                totalSeconds += step.params.incubation || 0;
-            } else if (step.type === StepType.WASHING) {
-                // WashStep has incubation * iters
-                const incubation = step.params.incubation || 0;
-                const iters = step.params.iters || 1;
-                totalSeconds += incubation * iters;
-            } else if (
-                step.type === StepType.COOLING ||
-                step.type === StepType.HEATING
-            ) {
-                // Temperature steps (cooling/heating) have duration in seconds
-                totalSeconds += step.params.duration || 0;
-            }
+            // Calculate based on incubation_time and iterations
+            totalSeconds +=
+                (step.incubation_time || 0) * (step.iterations || 1);
         });
-
-        // Add some overhead time for liquid dispensing, washing operations, etc.
-        // Estimate ~30 seconds per reagent step, ~20 seconds per wash iteration
-        const reagentSteps = allSteps.filter(
-            (s: any) => s.type === StepType.REAGENT,
-        ).length;
-        const washIterations = allSteps
-            .filter((s: any) => s.type === StepType.WASHING)
-            .reduce((sum: number, s: any) => sum + (s.params.iters || 1), 0);
-
-        totalSeconds += reagentSteps * 30 + washIterations * 20;
 
         // Convert to H:MM:SS format
         const hours = Math.floor(totalSeconds / 3600);
@@ -396,8 +397,12 @@ export default function Launch({
                         <ReagentTrayStep
                             slots={slotNumber == '' ? 1 : Number(slotNumber)}
                             protocolId={protocol_ID}
+                            liquids={liquids}
                             onSelectionChange={(allSelected) =>
                                 setAllReagentSlotsSelected(allSelected)
+                            }
+                            onReagentDataChange={(data) =>
+                                setReagentPlacement(data)
                             }
                         />
                     )}
@@ -405,8 +410,12 @@ export default function Launch({
                         <WashingLiquidsStep
                             slots={slotNumber == '' ? 1 : Number(slotNumber)}
                             protocolId={protocol_ID}
+                            liquids={liquids}
                             onCompletionChange={(allOn) =>
                                 setAllWashingSwitchesOn(allOn)
+                            }
+                            onWashingDataChange={(data) =>
+                                setWashingSelection(data)
                             }
                         />
                     )}
@@ -473,18 +482,39 @@ export default function Launch({
                                 stage == LaunchStage.STEP_FOUR &&
                                 isLaunchTimeValid
                             ) {
+                                // Собираем выбранные slots
+                                const selectedSlots = slotActivityMap
+                                    .map((selected, idx) =>
+                                        selected ? idx : null,
+                                    )
+                                    .filter((idx) => idx !== null) as number[];
+
+                                const jobData = {
+                                    protocol_id: protocol_ID,
+                                    slots_used: selectedSlots,
+                                    name: protocol_name || 'Protocol Run',
+                                    creator_id: current_user_id,
+                                    reagent_placement: reagentPlacement,
+                                    washing_selection: washingSelection,
+                                };
+
                                 makeRequest(
                                     'POST' as Method,
                                     '/jobs',
-                                    JSON.stringify({
-                                        protocol_id: protocol_ID,
-                                        slots_used: [0],
-                                        name: 'hello world',
-                                        creator_id: current_user_id,
-                                    }),
-                                ).then((res) => {
-                                    console.log(res.data);
-                                });
+                                    JSON.stringify(jobData),
+                                )
+                                    .then((res) => {
+                                        console.log('Job created:', res.data);
+                                        navigation.navigate('ProtocolLogs', {
+                                            protocol_ID: protocol_ID,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        console.error(
+                                            'Error creating job:',
+                                            err,
+                                        );
+                                    });
                             }
                         }}
                         disabled={
