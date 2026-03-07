@@ -35,6 +35,7 @@ import { Method } from 'axios';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 interface AddStepFormProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -43,6 +44,8 @@ interface AddStepFormProps {
     setActiveStepGroup: (sequenceNumber: number) => void;
     selectedWashingLiquid: number | null;
     setSelectedWashingLiquid: (id: number | null) => void;
+    washingIncubationTime: number | null;
+    setWashingIncubationTime: (time: number | null) => void;
 }
 
 const AddStepForm = ({
@@ -52,9 +55,11 @@ const AddStepForm = ({
     setActiveStepGroup,
     selectedWashingLiquid,
     setSelectedWashingLiquid,
+    washingIncubationTime,
+    setWashingIncubationTime,
 }: AddStepFormProps) => {
     const [state, setState] = useState(
-        'Select' as 'Select' | 'Add liquid' | 'Add washing',
+        'Select' as 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
     );
 
     if (state === 'Select') {
@@ -64,6 +69,9 @@ const AddStepForm = ({
                 stepGroups={stepGroups}
                 setStepGroups={setStepGroups}
                 setActiveStepGroup={setActiveStepGroup}
+                selectedWashingLiquid={selectedWashingLiquid}
+                washingIncubationTime={washingIncubationTime}
+                liquids={[]}
             />
         );
     } else if (state === 'Add liquid') {
@@ -75,11 +83,25 @@ const AddStepForm = ({
                 setFormState={setState}
             />
         );
-    } else {
+    } else if (state === 'Add washing') {
         return (
             <AddWashingForm
                 selectedWashingLiquid={selectedWashingLiquid}
                 setSelectedWashingLiquid={setSelectedWashingLiquid}
+                washingIncubationTime={washingIncubationTime}
+                setWashingIncubationTime={setWashingIncubationTime}
+                setFormState={setState}
+            />
+        );
+    } else {
+        return (
+            <EditWashingForm
+                stepGroups={stepGroups}
+                setStepGroups={setStepGroups}
+                activeStepGroup={activeStepGroup}
+                selectedWashingLiquid={selectedWashingLiquid}
+                washingIncubationTime={washingIncubationTime}
+                setWashingIncubationTime={setWashingIncubationTime}
                 setFormState={setState}
             />
         );
@@ -89,8 +111,13 @@ const AddStepForm = ({
 interface SelectFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
-    setFormState: (state: 'Select' | 'Add liquid' | 'Add washing') => void;
+    setFormState: (
+        state: 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
+    ) => void;
     setActiveStepGroup: (sequenceNumber: number) => void;
+    selectedWashingLiquid?: number | null;
+    washingIncubationTime?: number | null;
+    liquids?: PermanentLiquidDTO[];
 }
 
 const SelectForm = ({
@@ -98,7 +125,28 @@ const SelectForm = ({
     setStepGroups,
     setFormState,
     setActiveStepGroup,
+    selectedWashingLiquid,
+    washingIncubationTime,
+    liquids: externalLiquids,
 }: SelectFormProps) => {
+    const [liquids, setLiquids] = useState(
+        externalLiquids || ([] as PermanentLiquidDTO[]),
+    );
+    const [showWashingRequiredModal, setShowWashingRequiredModal] =
+        useState(false);
+
+    useEffect(() => {
+        if (!externalLiquids || externalLiquids.length === 0) {
+            makeRequest('GET' as Method, '/liquids')
+                .then((response) => {
+                    setLiquids(response.data as PermanentLiquidDTO[]);
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch liquids', error);
+                });
+        }
+    }, [externalLiquids]);
+
     const findNextSequenceNumber = () => {
         let biggest = 0;
         for (let stepGroup of stepGroups) {
@@ -109,23 +157,46 @@ const SelectForm = ({
 
     return (
         <VStack height={300} alignItems="center" gap={40}>
-            <Button
-                bg="transparent"
-                width={250}
-                height={44}
-                style={{ borderStyle: 'dashed' }}
-                borderWidth={1}
-                borderColor="rgba(0, 0, 0, 0.3)"
-                borderRadius={7}
-                onPress={() => {
-                    setFormState('Add washing');
-                }}
-            >
-                <ButtonText fontSize={16} color="black">
-                    Select washing
-                </ButtonText>
-                <ButtonIcon as={Droplet} size={15} color="black" ml="$3" />
-            </Button>
+            {selectedWashingLiquid && liquids ? (
+                <HStack
+                    width={250}
+                    height={44}
+                    borderRadius={7}
+                    alignItems="center"
+                    justifyContent="center"
+                    bg="#f0f0f0"
+                    px={16}
+                >
+                    <Icon as={Droplet} size={16} color="black" mr={8} />
+                    <Text
+                        fontSize={14}
+                        color="black"
+                        fontFamily="Manrope-SemiBold"
+                    >
+                        Selected washing:{' '}
+                        {liquids.find((l) => l.id === selectedWashingLiquid)
+                            ?.name || 'Unknown'}
+                    </Text>
+                </HStack>
+            ) : (
+                <Button
+                    bg="transparent"
+                    width={250}
+                    height={44}
+                    style={{ borderStyle: 'dashed' }}
+                    borderWidth={1}
+                    borderColor="rgba(0, 0, 0, 0.3)"
+                    borderRadius={7}
+                    onPress={() => {
+                        setFormState('Add washing');
+                    }}
+                >
+                    <ButtonText fontSize={16} color="black">
+                        Select washing
+                    </ButtonText>
+                    <ButtonIcon as={Droplet} size={15} color="black" ml="$3" />
+                </Button>
+            )}
             <Text fontSize={16} opacity={0.5} color="black">
                 Add to step:
             </Text>
@@ -144,7 +215,7 @@ const SelectForm = ({
                         {
                             step_group: {
                                 id: 1,
-                                name: `Step ${stepGroups.length + 1}`,
+                                name: `Step Group ${stepGroups.length + 1}`,
                                 protocol_id: 1,
                                 sequence_number: newSequenceNumber,
                             },
@@ -168,7 +239,11 @@ const SelectForm = ({
                 borderColor="rgba(0, 0, 0, 0.3)"
                 borderRadius={7}
                 onPress={() => {
-                    setFormState('Add liquid');
+                    if (!selectedWashingLiquid) {
+                        setShowWashingRequiredModal(true);
+                    } else {
+                        setFormState('Add liquid');
+                    }
                 }}
             >
                 <ButtonIcon as={Plus} size={20} color="black" mr="$1" />
@@ -177,6 +252,53 @@ const SelectForm = ({
                 </ButtonText>
                 <ButtonIcon as={FlaskConical} size={15} color="black" ml="$3" />
             </Button>
+            <Button
+                bg="transparent"
+                width={250}
+                height={44}
+                style={{ borderStyle: 'dashed' }}
+                borderWidth={1}
+                borderColor="rgba(0, 0, 0, 0.3)"
+                borderRadius={7}
+                onPress={() => {
+                    if (!selectedWashingLiquid) {
+                        setShowWashingRequiredModal(true);
+                    } else {
+                        setFormState('Edit washing');
+                    }
+                }}
+                disabled={!selectedWashingLiquid}
+            >
+                <ButtonIcon
+                    as={Plus}
+                    size={20}
+                    color={selectedWashingLiquid ? 'black' : 'rgba(0,0,0,0.3)'}
+                    mr="$1"
+                />
+                <ButtonText
+                    fontSize={16}
+                    color={selectedWashingLiquid ? 'black' : 'rgba(0,0,0,0.3)'}
+                >
+                    Washing
+                </ButtonText>
+                <ButtonIcon
+                    as={Droplet}
+                    size={15}
+                    color={selectedWashingLiquid ? 'black' : 'rgba(0,0,0,0.3)'}
+                    ml="$3"
+                />
+            </Button>
+            <ConfirmationModal
+                isOpen={showWashingRequiredModal}
+                onClose={() => setShowWashingRequiredModal(false)}
+                headline="Washing Liquid Required"
+                text="Please select a washing liquid first before adding reagents."
+                actionButtonText="Select Washing"
+                action={() => {
+                    setShowWashingRequiredModal(false);
+                    setFormState('Add washing');
+                }}
+            />
         </VStack>
     );
 };
@@ -525,15 +647,26 @@ const AddLiquidForm = ({
 interface AddWashingFormProps {
     selectedWashingLiquid: number | null;
     setSelectedWashingLiquid: (id: number | null) => void;
+    washingIncubationTime: number | null;
+    setWashingIncubationTime: (time: number | null) => void;
     setFormState: (state: 'Select' | 'Add liquid' | 'Add washing') => void;
 }
 
 const AddWashingForm = ({
     selectedWashingLiquid,
     setSelectedWashingLiquid,
+    washingIncubationTime,
+    setWashingIncubationTime,
     setFormState,
 }: AddWashingFormProps) => {
     const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
+    const [tempSelectedLiquid, setTempSelectedLiquid] = useState<number | null>(
+        null,
+    );
+    const [tempIncubationTime, setTempIncubationTime] = useState<string>(
+        washingIncubationTime ? (washingIncubationTime / 60).toString() : '',
+    );
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids')
@@ -551,6 +684,10 @@ const AddWashingForm = ({
                 console.error('Failed to fetch liquids', error);
             });
     }, []);
+
+    const selectedLiquidName = liquids.find(
+        (l) => l.id === tempSelectedLiquid,
+    )?.name;
 
     return (
         <Box>
@@ -583,12 +720,12 @@ const AddWashingForm = ({
                     </Text>
                     <Select
                         selectedValue={
-                            selectedWashingLiquid
-                                ? selectedWashingLiquid.toString()
+                            tempSelectedLiquid
+                                ? tempSelectedLiquid.toString()
                                 : null
                         }
                         onValueChange={(value) =>
-                            setSelectedWashingLiquid(parseInt(value))
+                            setTempSelectedLiquid(parseInt(value))
                         }
                     >
                         <SelectTrigger
@@ -617,6 +754,25 @@ const AddWashingForm = ({
                         </SelectPortal>
                     </Select>
                 </VStack>
+                {/* Incubation time */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Incubation Time (minutes)
+                    </Text>
+                    <Input
+                        borderWidth={0}
+                        bg="#F1F1F1"
+                        height={48}
+                        borderRadius={16}
+                    >
+                        <InputField
+                            placeholder="Enter time in minutes"
+                            value={tempIncubationTime}
+                            onChangeText={setTempIncubationTime}
+                            keyboardType="numeric"
+                        />
+                    </Input>
+                </VStack>
             </VStack>
             <HStack gap={24} mt={30}>
                 <Button
@@ -639,22 +795,234 @@ const AddWashingForm = ({
                     </ButtonText>
                 </Button>
                 <Button
-                    bg={selectedWashingLiquid ? '#1F2832' : '#CCCCCC'}
+                    bg={
+                        tempSelectedLiquid && tempIncubationTime
+                            ? '#1F2832'
+                            : '#CCCCCC'
+                    }
                     height={40}
                     width={170}
                     borderRadius={999}
-                    disabled={!selectedWashingLiquid}
+                    disabled={!tempSelectedLiquid || !tempIncubationTime}
                 >
                     <ButtonText
                         fontSize={14}
                         color="white"
                         fontFamily="Manrope-SemiBold"
                         onPress={() => {
-                            if (!selectedWashingLiquid) return;
-                            setFormState('Select');
+                            if (!tempSelectedLiquid || !tempIncubationTime)
+                                return;
+                            setShowConfirmModal(true);
                         }}
                     >
                         Confirm
+                    </ButtonText>
+                </Button>
+            </HStack>
+            <ConfirmationModal
+                isOpen={showConfirmModal}
+                onClose={() => setShowConfirmModal(false)}
+                headline="Set Washing Liquid"
+                text={`Set "${selectedLiquidName}" as the washing liquid for this protocol? This cannot be changed later. You will have to create a new protocol. Time can be changed later in "+ Washing" `}
+                actionButtonText="Confirm"
+                action={() => {
+                    setSelectedWashingLiquid(tempSelectedLiquid);
+                    setWashingIncubationTime(parseInt(tempIncubationTime) * 60);
+                    setShowConfirmModal(false);
+                    setFormState('Select');
+                }}
+            />
+        </Box>
+    );
+};
+
+interface EditWashingFormProps {
+    stepGroups: StepGroupWithStepsDTO[];
+    setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
+    activeStepGroup: number;
+    selectedWashingLiquid: number | null;
+    washingIncubationTime: number | null;
+    setWashingIncubationTime: (time: number | null) => void;
+    setFormState: (
+        state: 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
+    ) => void;
+}
+
+const EditWashingForm = ({
+    stepGroups,
+    setStepGroups,
+    activeStepGroup,
+    selectedWashingLiquid,
+    washingIncubationTime,
+    setWashingIncubationTime,
+    setFormState,
+}: EditWashingFormProps) => {
+    const [tempIncubationTime, setTempIncubationTime] = useState<string>(
+        washingIncubationTime ? (washingIncubationTime / 60).toString() : '',
+    );
+    const [tempWashingIterations, setTempWashingIterations] =
+        useState<string>('1');
+
+    const findNextSequenceNumberForSteps = (
+        stepGroups: StepGroupWithStepsDTO[],
+        activeStepGroup: number,
+    ) => {
+        const currentGroup = stepGroups.find(
+            (sg) => sg.step_group.sequence_number === activeStepGroup,
+        );
+        if (!currentGroup) return 1;
+        let biggest = 0;
+        for (let step of currentGroup.steps) {
+            biggest = Math.max(biggest, step.sequence_number);
+        }
+        return biggest + 1;
+    };
+
+    return (
+        <Box>
+            <HStack
+                mb={24}
+                alignItems="center"
+                borderBottomWidth={1}
+                borderColor="rgba(0, 0, 0, 0.2)"
+                height={48}
+            >
+                <Icon as={Droplet} size={16} color="black" mr="$1" />
+                <Text fontSize={16} color="black">
+                    Edit Washing
+                </Text>
+                <Box ml="auto">
+                    <Pressable
+                        onPress={() => {
+                            setFormState('Select');
+                        }}
+                    >
+                        <Icon as={X} size={24} color="black" />
+                    </Pressable>
+                </Box>
+            </HStack>
+            <VStack gap={8}>
+                {/* Incubation time */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Incubation Time (minutes)
+                    </Text>
+                    <Input
+                        borderWidth={0}
+                        bg="#F1F1F1"
+                        height={48}
+                        borderRadius={16}
+                    >
+                        <InputField
+                            placeholder="Enter time in minutes"
+                            value={tempIncubationTime}
+                            onChangeText={setTempIncubationTime}
+                            keyboardType="numeric"
+                        />
+                    </Input>
+                </VStack>
+                {/* Washing iterations */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Washing Iterations
+                    </Text>
+                    <Input
+                        borderWidth={0}
+                        bg="#F1F1F1"
+                        height={48}
+                        borderRadius={16}
+                    >
+                        <InputField
+                            placeholder="Number of iterations"
+                            value={tempWashingIterations}
+                            onChangeText={setTempWashingIterations}
+                            keyboardType="numeric"
+                        />
+                    </Input>
+                </VStack>
+            </VStack>
+            <HStack gap={24} mt={30}>
+                <Button
+                    height={40}
+                    width={95}
+                    borderWidth={1}
+                    borderColor="rgba(31, 40, 50, 0.2)"
+                    borderRadius={999}
+                    bg="transparent"
+                >
+                    <ButtonText
+                        onPress={() => {
+                            setFormState('Select');
+                        }}
+                        fontSize={14}
+                        color="#1F2832"
+                        fontFamily="Manrope-SemiBold"
+                    >
+                        Cancel
+                    </ButtonText>
+                </Button>
+                <Button
+                    bg={
+                        tempIncubationTime && tempWashingIterations
+                            ? '#1F2832'
+                            : '#CCCCCC'
+                    }
+                    height={40}
+                    width={170}
+                    borderRadius={999}
+                    disabled={!tempIncubationTime || !tempWashingIterations}
+                >
+                    <ButtonText
+                        fontSize={14}
+                        color="white"
+                        fontFamily="Manrope-SemiBold"
+                        onPress={() => {
+                            if (
+                                !tempIncubationTime ||
+                                !tempWashingIterations ||
+                                !selectedWashingLiquid
+                            )
+                                return;
+                            const newStep: StepDTO = {
+                                id: Date.now(),
+                                type: 'Washing' as StepType,
+                                applied_liquid_id: selectedWashingLiquid,
+                                incubation_time:
+                                    parseInt(tempIncubationTime) * 60,
+                                targetTemperature: 25,
+                                iterations: parseInt(tempWashingIterations),
+                                washing_iterations: parseInt(
+                                    tempWashingIterations,
+                                ),
+                                sequence_number: findNextSequenceNumberForSteps(
+                                    stepGroups,
+                                    activeStepGroup,
+                                ),
+                            };
+
+                            const updatedStepGroups = stepGroups.map(
+                                (stepGroup) => {
+                                    if (
+                                        stepGroup.step_group.sequence_number ===
+                                        activeStepGroup
+                                    ) {
+                                        return {
+                                            ...stepGroup,
+                                            steps: [
+                                                ...stepGroup.steps,
+                                                newStep,
+                                            ],
+                                        };
+                                    }
+                                    return stepGroup;
+                                },
+                            );
+
+                            setStepGroups(updatedStepGroups);
+                            setFormState('Select');
+                        }}
+                    >
+                        Add Washing Step
                     </ButtonText>
                 </Button>
             </HStack>

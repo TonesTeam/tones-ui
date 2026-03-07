@@ -19,6 +19,7 @@ import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { useState } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 interface StepProps {
     key: number;
@@ -29,6 +30,7 @@ interface StepProps {
     stepGroupSequenceNumber: number;
     liquids: PermanentLiquidDTO[];
     selectedWashingLiquid?: number | null;
+    washingIncubationTime?: number | null;
     globalIndex?: number;
 }
 
@@ -40,6 +42,7 @@ const Step = ({
     stepGroupSequenceNumber,
     liquids,
     selectedWashingLiquid,
+    washingIncubationTime,
     globalIndex,
 }: StepProps) => {
     const [deleteModal, setDeleteModal] = useState(false);
@@ -72,28 +75,37 @@ const Step = ({
             />
             <VStack width="100%" gap={8}>
                 <HStack gap={8} alignItems="center" width="100%">
-                    <Box>
+                    <Box width={20} justifyContent="center" alignItems="center">
                         <Icon as={AlignJustify} opacity={0.6} size={20} />
                     </Box>
                     <HStack
                         flex={1}
                         height={50}
-                        bg="white"
+                        bg={'white'}
                         width="92%"
                         borderRadius={12}
                         alignItems="center"
                         px={16}
+                        overflow="hidden"
                     >
                         <Text color="black" fontSize={12} flex={0.7}>
                             #{globalIndex || index}
                         </Text>
                         <HStack justifyContent="center" flex={3}>
                             {step.type === 'Washing' ? (
-                                <Icon as={Droplet} size={16} />
+                                <Icon as={Droplet} size={16} color="#1193CF" />
                             ) : (
                                 <Icon as={FlaskConical} size={16} />
                             )}
-                            <Text color="black" fontSize={12} ml={6}>
+                            <Text
+                                color={
+                                    step.type === 'Washing'
+                                        ? '#1193CF'
+                                        : 'black'
+                                }
+                                fontSize={12}
+                                ml={6}
+                            >
                                 {liquids.find(
                                     (liquid) =>
                                         liquid.id === step.applied_liquid_id,
@@ -123,8 +135,26 @@ const Step = ({
                                 {step.targetTemperature} °C
                             </Text>
                         </HStack>
-                        <Box flex={2}></Box>
-                        <Pressable onPress={() => setDeleteModal(true)}>
+                        <HStack
+                            flex={2}
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            {step.type === 'Washing' && (
+                                <>
+                                    <Icon as={RotateCcw} size={16} />
+                                    <Text color="black" fontSize={12} ml={6}>
+                                        {step.washing_iterations}
+                                    </Text>
+                                </>
+                            )}
+                        </HStack>
+                        <Pressable
+                            width={28}
+                            justifyContent="center"
+                            alignItems="center"
+                            onPress={() => setDeleteModal(true)}
+                        >
                             <Icon as={X} />
                         </Pressable>
                     </HStack>
@@ -133,32 +163,46 @@ const Step = ({
                 {/* Washing info block for Reagent steps */}
                 {step.type === 'Liquid Application' &&
                     selectedWashingLiquid && (
-                        <HStack
-                            gap={8}
-                            alignItems="center"
-                            width="100%"
-                            ml={28}
-                        >
+                        <HStack gap={8} alignItems="center" width="100%">
+                            <Box width={20}></Box>
                             <HStack
                                 flex={1}
                                 height={50}
-                                bg="white"
+                                bg="rgba(98,98,98,0.1)"
                                 width="92%"
                                 borderRadius={12}
                                 alignItems="center"
                                 px={16}
+                                overflow="hidden"
                             >
                                 <Text color="black" fontSize={12} flex={0.7}>
                                     #{(globalIndex || index) + 1}
                                 </Text>
                                 <HStack justifyContent="center" flex={3}>
-                                    <Icon as={Droplet} size={16} />
-                                    <Text color="black" fontSize={12} ml={6}>
+                                    <Icon
+                                        as={Droplet}
+                                        size={16}
+                                        color="#1193CF"
+                                    />
+                                    <Text color="#1193CF" fontSize={12} ml={6}>
                                         {liquids.find(
                                             (liquid) =>
                                                 liquid.id ===
                                                 selectedWashingLiquid,
                                         )?.name || 'Washing'}
+                                    </Text>
+                                </HStack>
+                                <HStack
+                                    flex={3}
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Icon as={Clock} size={16} />
+                                    <Text color="black" fontSize={12} ml={6}>
+                                        {washingIncubationTime
+                                            ? washingIncubationTime / 60
+                                            : 0}{' '}
+                                        minutes
                                     </Text>
                                 </HStack>
                                 <HStack
@@ -181,7 +225,7 @@ const Step = ({
                                         {step.washing_iterations}
                                     </Text>
                                 </HStack>
-                                <Box flex={2}></Box>
+                                <Box width={28}></Box>
                             </HStack>
                         </HStack>
                     )}
