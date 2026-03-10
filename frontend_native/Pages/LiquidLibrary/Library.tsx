@@ -62,31 +62,30 @@ import { SelectContent } from '@gluestack-ui/themed';
 import { SelectDragIndicatorWrapper } from '@gluestack-ui/themed';
 import { SelectItem } from '@gluestack-ui/themed';
 
-export default function Library(props: any) {
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-        null,
-    );
+export default function Library({
+    route,
+    navigation,
+}: NativeStackScreenProps<any>) {
+    const selectedCategoryId = route.params?.categoryId || null;
 
     return (
         <MainContainer>
             <NavBar />
             <Box flex={1} p={24}>
                 <HStack alignItems="center" mb="$8" mt={16}>
-                    {selectedCategoryId !== null && (
-                        <Pressable
-                            onPress={() => setSelectedCategoryId(null)}
-                            alignItems="flex-start"
-                            justifyContent="center"
-                            pr="$3"
-                        >
-                            <Icon
-                                as={ArrowLeft}
-                                width={20}
-                                height={15}
-                                color="#1F2832"
-                            />
-                        </Pressable>
-                    )}
+                    <Pressable
+                        onPress={() => navigation.goBack()}
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        pr="$3"
+                    >
+                        <Icon
+                            as={ArrowLeft}
+                            width={20}
+                            height={15}
+                            color="#1F2832"
+                        />
+                    </Pressable>
                     <Text
                         color="black"
                         fontSize={32}
@@ -95,10 +94,7 @@ export default function Library(props: any) {
                         Library
                     </Text>
                 </HStack>
-                <LibraryBody
-                    selectedCategoryId={selectedCategoryId}
-                    setSelectedCategoryId={setSelectedCategoryId}
-                />
+                <LibraryBody selectedCategoryId={selectedCategoryId} />
             </Box>
         </MainContainer>
     );
@@ -106,10 +102,8 @@ export default function Library(props: any) {
 
 const LibraryBody = ({
     selectedCategoryId,
-    setSelectedCategoryId,
 }: {
     selectedCategoryId: number | null;
-    setSelectedCategoryId: (id: number | null) => void;
 }) => {
     const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
@@ -197,20 +191,6 @@ const LibraryBody = ({
         });
     };
 
-    const deleteCategory = (id: number) => {
-        makeRequest('DELETE' as Method, `/liquids/types/${id}`)
-            .then((r) => {
-                if (r.status >= 200 && r.status <= 299) {
-                    listInitilizer();
-                    setDeleteCategoryModal(false);
-                    setCategoryToDelete(null);
-                }
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
-    };
-
     function filterAndSort() {
         if (liquids) {
             let filteredList = liquids
@@ -253,11 +233,6 @@ const LibraryBody = ({
                     categories={categories}
                     onClose={() => setNewLiquidModal(false)}
                     onSave={saveLiquid}
-                />
-                <NewCategoryModal
-                    open={newCategoryModal}
-                    onClose={() => setNewCategoryModal(false)}
-                    onSave={saveCategory}
                 />
                 <ViewLiquidModal
                     open={viewLiquidModal}
@@ -398,133 +373,7 @@ const LibraryBody = ({
         );
     }
 
-    // Показываем сетку категорий
-    return (
-        <>
-            <NewLiquidModal
-                open={newLiquidModal}
-                categories={categories}
-                onClose={() => setNewLiquidModal(false)}
-                onSave={saveLiquid}
-            />
-            <NewCategoryModal
-                open={newCategoryModal}
-                onClose={() => setNewCategoryModal(false)}
-                onSave={saveCategory}
-            />
-            <ViewLiquidModal
-                open={viewLiquidModal}
-                liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
-                onClose={() => setViewLiquidModal(false)}
-                onDelete={deleteLiquid}
-            />
-            <ConfirmationModal
-                isOpen={deleteCategoryModal}
-                onClose={() => {
-                    setDeleteCategoryModal(false);
-                    setCategoryToDelete(null);
-                }}
-                action={() => {
-                    if (categoryToDelete) {
-                        deleteCategory(categoryToDelete);
-                    }
-                }}
-                headline="Delete Category"
-                text="Are you sure you want to delete this category? This action cannot be undone."
-                actionButtonText="Delete"
-            />
-            <Box width={900} mb="$10">
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    maxHeight={520}
-                >
-                    <Box
-                        mt="$2"
-                        flexDirection="row"
-                        flexWrap="wrap"
-                        justifyContent="flex-start"
-                        gap={70}
-                    >
-                        {categories.map((category, i) => (
-                            <Box
-                                key={i}
-                                position="relative"
-                                height={150}
-                                width={250}
-                            >
-                                <Button
-                                    onPress={() =>
-                                        setSelectedCategoryId(category.id)
-                                    }
-                                    rounded="$xl"
-                                    bg="white"
-                                    borderWidth={0}
-                                    height={150}
-                                    width="100%"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    shadowColor="$borderLight100"
-                                    shadowOffset={{ width: 0, height: 1 }}
-                                    shadowOpacity={0.05}
-                                    shadowRadius={2}
-                                >
-                                    <ButtonText
-                                        color="$black"
-                                        fontSize={16}
-                                        textAlign="center"
-                                    >
-                                        {category.name}
-                                    </ButtonText>
-                                </Button>
-                                <Button
-                                    position="absolute"
-                                    top={-8}
-                                    right={-8}
-                                    rounded="$full"
-                                    bg="#626262"
-                                    borderWidth={0}
-                                    height={32}
-                                    width={32}
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    px="$0"
-                                    onPress={() => {
-                                        setCategoryToDelete(category.id);
-                                        setDeleteCategoryModal(true);
-                                    }}
-                                >
-                                    <ButtonIcon as={Trash} color="white" />
-                                </Button>
-                            </Box>
-                        ))}
-                        <Button
-                            onPress={() => setNewCategoryModal(true)}
-                            rounded="$xl"
-                            bg="transparent"
-                            borderWidth={0}
-                            height={150}
-                            width={250}
-                            alignItems="center"
-                            justifyContent="center"
-                            shadowColor="$borderLight100"
-                            shadowOffset={{ width: 0, height: 1 }}
-                            shadowOpacity={0.05}
-                            shadowRadius={2}
-                            borderStyle="dashed"
-                            borderColor="rgba(0, 0, 0, 0.3)"
-                            borderWidth={2}
-                            borderColor="#8d8d8d"
-                        >
-                            <ButtonIcon as={Plus} color="black" mr="$1" />
-                            <ButtonText fontSize={16} color="black">
-                                Category
-                            </ButtonText>
-                        </Button>
-                    </Box>
-                </ScrollView>
-            </Box>
-        </>
-    );
+    return <></>;
 };
 
 type ListItemProps = {

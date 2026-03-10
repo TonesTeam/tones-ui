@@ -25,7 +25,7 @@ import { Method } from 'axios';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { makeRequest } from '../../common/util';
 import { LiquidTypeDTO } from 'common/dto/liquid.dto';
-import { Header } from 'Header';
+import Header from './Header';
 
 const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
@@ -34,9 +34,6 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
     );
     const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
     const [newCategoryModal, setNewCategoryModal] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-        null,
-    );
 
     const listInitilizer = () => {
         makeRequest('GET' as Method, '/liquids/types')
@@ -114,14 +111,14 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     <Box width={900} mb="$10">
                         <ScrollView
                             showsVerticalScrollIndicator={false}
-                            maxHeight={520}
+                            maxHeight={600}
                         >
                             <Box
                                 mt="$2"
                                 flexDirection="row"
                                 flexWrap="wrap"
                                 justifyContent="flex-start"
-                                gap={70}
+                                gap={40}
                             >
                                 {categories.map((category, i) => (
                                     <Box
@@ -132,8 +129,11 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                     >
                                         <Button
                                             onPress={() =>
-                                                setSelectedCategoryId(
-                                                    category.id,
+                                                navigation.navigate(
+                                                    'Liquid list',
+                                                    {
+                                                        categoryId: category.id,
+                                                    },
                                                 )
                                             }
                                             rounded="$xl"

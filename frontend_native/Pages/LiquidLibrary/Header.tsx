@@ -1,6 +1,10 @@
 import { Box, Text, HStack } from '@gluestack-ui/themed';
 
-const Header = (subpageName: string) => {
+interface HeaderProps {
+    subpageName: string;
+}
+
+const Header = ({ subpageName }: HeaderProps) => {
     return (
         <HStack alignItems="center" mt={16} mb="$8">
             <Text color="black" fontSize={24} fontFamily="Orbitron-Medium">
