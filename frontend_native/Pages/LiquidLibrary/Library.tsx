@@ -1,13 +1,17 @@
-import { MainContainer, globalElementStyle } from '../constants/styles';
-import NavBar from '../navigation/NavBar';
+import { MainContainer, globalElementStyle } from '../../constants/styles';
+import NavBar from '../../navigation/NavBar';
 import { useEffect, useState } from 'react';
 import {
     LiquidDTO,
     LiquidTypeDTO,
     PermanentLiquidDTO,
 } from 'common/dto/liquid.dto';
-import { formatSocialMediaTime, getRequest, makeRequest } from '../common/util';
-import { CustomSelect } from '../components/Select';
+import {
+    formatSocialMediaTime,
+    getRequest,
+    makeRequest,
+} from '../../common/util';
+import { CustomSelect } from '../../components/Select';
 import { Method } from 'axios';
 import { useIsFocused } from '@react-navigation/native';
 import {
@@ -48,9 +52,9 @@ import {
     X,
     ArrowLeft,
 } from 'lucide-react-native';
-import ConfirmationModal from '../components/ConfirmationModal';
-import SearchBar from '../components/SearchBar';
-import GeneratedAvatar from '../components/GeneratedAvatar';
+import ConfirmationModal from '../../components/ConfirmationModal';
+import SearchBar from '../../components/SearchBar';
+import GeneratedAvatar from '../../components/GeneratedAvatar';
 import { SelectInput } from '@gluestack-ui/themed';
 import { SelectIcon } from '@gluestack-ui/themed';
 import { SelectPortal } from '@gluestack-ui/themed';
@@ -777,61 +781,6 @@ const NewLiquidModal = ({
                                     </SelectPortal>
                                 </SelectTrigger>
                             </Select>
-                        </VStack>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button variant="outline" onPress={onClose} mr="$2">
-                            <ButtonText>Cancel</ButtonText>
-                        </Button>
-                        <Button onPress={handleSave}>
-                            <ButtonText>Save</ButtonText>
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        )
-    );
-};
-
-const NewCategoryModal = ({
-    open,
-    onClose,
-    onSave,
-}: {
-    open: boolean;
-    onClose: () => void;
-    onSave: (categoryName: string) => void;
-}) => {
-    const [categoryName, setCategoryName] = useState('');
-
-    const handleSave = () => {
-        if (categoryName.trim()) {
-            onSave(categoryName);
-            setCategoryName('');
-        }
-    };
-
-    return (
-        open && (
-            <Modal isOpen={open} onClose={onClose}>
-                <ModalBackdrop />
-                <ModalContent>
-                    <ModalHeader>
-                        <Text fontSize={20} color="black">
-                            New Category
-                        </Text>
-                    </ModalHeader>
-                    <ModalBody>
-                        <VStack space="md">
-                            <Input>
-                                <InputField
-                                    placeholder="Category Name"
-                                    value={categoryName}
-                                    onChange={(e: any) =>
-                                        setCategoryName(e.nativeEvent.text)
-                                    }
-                                />
-                            </Input>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>

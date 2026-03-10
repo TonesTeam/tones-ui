@@ -2,7 +2,7 @@ import Login from '../Pages/Login';
 import ProtocolList from '../Pages/ProtocolList/ProtocolList';
 import Constructor from '../Pages/ProtocolConstructor/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Library from '../Pages/Library';
+import Library from '../Pages/LiquidLibrary/CategoryGrid';
 import History from '../Pages/History';
 import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
@@ -12,6 +12,7 @@ import Dashboard from '../Pages/Dashboard';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
+import CategoryGrid from '../Pages/LiquidLibrary/CategoryGrid';
 
 export type Page = {
     name: string;
@@ -41,7 +42,7 @@ export const Pages: Page[] = [
     },
     {
         name: 'Library',
-        component: Library,
+        component: CategoryGrid,
         isNavigatableFromNavBar: true,
     },
     {
