@@ -163,19 +163,23 @@ export async function makeRequest<R>(
     });
 }
 
-// TODO: handle hours if properly
 export const formatDuration = (seconds: number): string => {
-    if (seconds < 60) {
-        return `${seconds} sec`;
-    }
-
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const extra_seconds = seconds % 60;
-    if (extra_seconds === 0) {
-        return `${minutes} min`;
+
+    const parts: string[] = [];
+    if (hours > 0) {
+        parts.push(`${hours} h`);
+    }
+    if (minutes > 0) {
+        parts.push(`${minutes} min`);
+    }
+    if (extra_seconds > 0) {
+        parts.push(`${extra_seconds} sec`);
     }
 
-    return `${minutes} min ${extra_seconds} sec`;
+    return parts.join(' ') || '0 sec';
 };
 
 export const formatSocialMediaTime = (dateInput: number): string => {
