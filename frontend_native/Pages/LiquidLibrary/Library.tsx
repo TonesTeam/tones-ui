@@ -224,7 +224,6 @@ const LibraryBody = ({
         );
     }
 
-    // Если выбрана категория - показываем список жидкостей
     return (
         <>
             <NewLiquidModal
