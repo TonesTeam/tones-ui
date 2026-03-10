@@ -25,6 +25,7 @@ import { Method } from 'axios';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { makeRequest } from '../../common/util';
 import { LiquidTypeDTO } from 'common/dto/liquid.dto';
+import { Header } from 'Header';
 
 const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
@@ -88,34 +89,7 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
         <MainContainer>
             <NavBar />
             <Box flex={1} p={24}>
-                <HStack alignItems="center" mt={16} mb="$8">
-                    <Text
-                        color="black"
-                        fontSize={24}
-                        fontFamily="Orbitron-Medium"
-                    >
-                        Library
-                    </Text>
-
-                    {/* Divider */}
-                    <Box
-                        ml={21}
-                        mr={21}
-                        minHeight={30}
-                        minWidth={1}
-                        bg="black"
-                        opacity={0.2}
-                    />
-
-                    <Text
-                        fontSize={24}
-                        fontFamily="Orbitron-Regular"
-                        color="#1F2832"
-                    >
-                        Select liquid category
-                    </Text>
-                </HStack>
-
+                <Header subpageName="Select liquid category" />
                 <>
                     <NewCategoryModal
                         open={newCategoryModal}
