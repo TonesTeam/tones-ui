@@ -225,155 +225,151 @@ const LibraryBody = ({
     }
 
     // Если выбрана категория - показываем список жидкостей
-    if (selectedCategoryId !== null) {
-        return (
-            <>
-                <NewLiquidModal
-                    open={newLiquidModal}
-                    categories={categories}
-                    onClose={() => setNewLiquidModal(false)}
-                    onSave={saveLiquid}
-                />
-                <ViewLiquidModal
-                    open={viewLiquidModal}
-                    liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
-                    onClose={() => setViewLiquidModal(false)}
-                    onDelete={deleteLiquid}
-                />
-                <Box width={900}>
-                    <HStack space="xl" alignItems="center" mb="$4">
-                        <SearchBar
-                            placeholder="Which reagent are you looking for?"
-                            value={searchPrompt}
-                            onChangeText={(e) => setSearchPrompt(e)}
-                        />
-                        <Button
-                            variant="outline"
-                            rounded="$full"
-                            borderColor="$black"
-                            bg="#1F2832"
-                            mr="$2"
-                            onPress={() => setNewLiquidModal(true)}
-                            alignItems="center"
-                            justifyContent="center"
-                            height={48}
-                        >
-                            <Box
-                                style={{
-                                    filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
-                                }}
-                            >
-                                <ButtonIcon
-                                    bg="transparent"
-                                    color="white"
-                                    as={Plus}
-                                    mr="$2"
-                                    size={20}
-                                />
-                            </Box>
-                            <ButtonText color="white" fontSize={14}>
-                                New Liquid
-                            </ButtonText>
-                        </Button>
-                    </HStack>
-                    {filterAndSort().length === 0 && (
+    return (
+        <>
+            <NewLiquidModal
+                open={newLiquidModal}
+                categories={categories}
+                onClose={() => setNewLiquidModal(false)}
+                onSave={saveLiquid}
+            />
+            <ViewLiquidModal
+                open={viewLiquidModal}
+                liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
+                onClose={() => setViewLiquidModal(false)}
+                onDelete={deleteLiquid}
+            />
+            <Box width={900}>
+                <HStack space="xl" alignItems="center" mb="$4">
+                    <SearchBar
+                        placeholder="Which reagent are you looking for?"
+                        value={searchPrompt}
+                        onChangeText={(e) => setSearchPrompt(e)}
+                    />
+                    <Button
+                        variant="outline"
+                        rounded="$full"
+                        borderColor="$black"
+                        bg="#1F2832"
+                        mr="$2"
+                        onPress={() => setNewLiquidModal(true)}
+                        alignItems="center"
+                        justifyContent="center"
+                        height={48}
+                    >
                         <Box
-                            p="$6"
-                            bg="$backgroundLight50"
-                            rounded="$lg"
-                            borderWidth="$1"
-                            borderColor="$borderLight200"
-                            borderStyle="dashed"
-                            mt="$5"
+                            style={{
+                                filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+                            }}
                         >
-                            <VStack alignItems="center" space="md">
-                                <Icon
-                                    as={CirclePlus}
-                                    size="xl"
-                                    color="$textLight400"
-                                />
-                                <Text color="$textLight500" textAlign="center">
-                                    No reagents found! Try adjusting your search
-                                    or add a new reagent.
+                            <ButtonIcon
+                                bg="transparent"
+                                color="white"
+                                as={Plus}
+                                mr="$2"
+                                size={20}
+                            />
+                        </Box>
+                        <ButtonText color="white" fontSize={14}>
+                            New Liquid
+                        </ButtonText>
+                    </Button>
+                </HStack>
+                {filterAndSort().length === 0 && (
+                    <Box
+                        p="$6"
+                        bg="$backgroundLight50"
+                        rounded="$lg"
+                        borderWidth="$1"
+                        borderColor="$borderLight200"
+                        borderStyle="dashed"
+                        mt="$5"
+                    >
+                        <VStack alignItems="center" space="md">
+                            <Icon
+                                as={CirclePlus}
+                                size="xl"
+                                color="$textLight400"
+                            />
+                            <Text color="$textLight500" textAlign="center">
+                                No reagents found! Try adjusting your search or
+                                add a new reagent.
+                            </Text>
+                        </VStack>
+                    </Box>
+                )}
+                {filterAndSort().length != 0 && (
+                    <Box overflow="hidden" mt="$5" mb="$6">
+                        {/* Table Header */}
+                        <HStack p="$3">
+                            <Box flex={1}>
+                                <Text
+                                    opacity={0.5}
+                                    fontSize={14}
+                                    color="#1F2832"
+                                >
+                                    # ID
                                 </Text>
-                            </VStack>
-                        </Box>
-                    )}
-                    {filterAndSort().length != 0 && (
-                        <Box overflow="hidden" mt="$5" mb="$6">
-                            {/* Table Header */}
-                            <HStack p="$3">
-                                <Box flex={1}>
-                                    <Text
-                                        opacity={0.5}
-                                        fontSize={14}
-                                        color="#1F2832"
-                                    >
-                                        # ID
-                                    </Text>
-                                </Box>
-                                <Box flex={6}>
-                                    <Text
-                                        opacity={0.5}
-                                        fontSize={14}
-                                        color="#1F2832"
-                                    >
-                                        Name
-                                    </Text>
-                                </Box>
-                                <Box flex={3}>
-                                    <Text
-                                        opacity={0.5}
-                                        fontSize={14}
-                                        color="#1F2832"
-                                    >
-                                        Category
-                                    </Text>
-                                </Box>
-                                <Box flex={2}>
-                                    <Text
-                                        opacity={0.5}
-                                        fontSize={14}
-                                        color="#1F2832"
-                                    >
-                                        Created
-                                    </Text>
-                                </Box>
-                                <Box flex={2}>
-                                    <Text
-                                        opacity={0.5}
-                                        fontSize={14}
-                                        color="#1F2832"
-                                    >
-                                        Actions
-                                    </Text>
-                                </Box>
-                            </HStack>
+                            </Box>
+                            <Box flex={6}>
+                                <Text
+                                    opacity={0.5}
+                                    fontSize={14}
+                                    color="#1F2832"
+                                >
+                                    Name
+                                </Text>
+                            </Box>
+                            <Box flex={3}>
+                                <Text
+                                    opacity={0.5}
+                                    fontSize={14}
+                                    color="#1F2832"
+                                >
+                                    Category
+                                </Text>
+                            </Box>
+                            <Box flex={2}>
+                                <Text
+                                    opacity={0.5}
+                                    fontSize={14}
+                                    color="#1F2832"
+                                >
+                                    Created
+                                </Text>
+                            </Box>
+                            <Box flex={2}>
+                                <Text
+                                    opacity={0.5}
+                                    fontSize={14}
+                                    color="#1F2832"
+                                >
+                                    Actions
+                                </Text>
+                            </Box>
+                        </HStack>
 
-                            {/* Table Rows */}
-                            <ScrollView maxHeight={500}>
-                                {filterAndSort().map((liquid, i) => {
-                                    return (
-                                        <ListItem
-                                            liquid={liquid}
-                                            key={i}
-                                            onView={(id) => {
-                                                setSelectedLiquid(id);
-                                                console.log(id);
-                                                setViewLiquidModal(true);
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </ScrollView>
-                        </Box>
-                    )}
-                </Box>
-            </>
-        );
-    }
-
-    return <></>;
+                        {/* Table Rows */}
+                        <ScrollView maxHeight={500}>
+                            {filterAndSort().map((liquid, i) => {
+                                return (
+                                    <ListItem
+                                        liquid={liquid}
+                                        key={i}
+                                        onView={(id) => {
+                                            setSelectedLiquid(id);
+                                            console.log(id);
+                                            setViewLiquidModal(true);
+                                        }}
+                                    />
+                                );
+                            })}
+                        </ScrollView>
+                    </Box>
+                )}
+            </Box>
+        </>
+    );
 };
 
 type ListItemProps = {

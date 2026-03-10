@@ -120,6 +120,41 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 justifyContent="flex-start"
                                 gap={40}
                             >
+                                <Box
+                                    position="relative"
+                                    height={150}
+                                    width={250}
+                                >
+                                    <Button
+                                        onPress={() =>
+                                            navigation.navigate('Liquid list', {
+                                                categoryId: null,
+                                            })
+                                        }
+                                        rounded="$xl"
+                                        bg="white"
+                                        borderWidth={0}
+                                        height={150}
+                                        width="100%"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        shadowColor="$borderLight100"
+                                        shadowOffset={{
+                                            width: 0,
+                                            height: 1,
+                                        }}
+                                        shadowOpacity={0.05}
+                                        shadowRadius={2}
+                                    >
+                                        <ButtonText
+                                            color="$black"
+                                            fontSize={16}
+                                            textAlign="center"
+                                        >
+                                            All liquids
+                                        </ButtonText>
+                                    </Button>
+                                </Box>
                                 {categories.map((category, i) => (
                                     <Box
                                         key={i}
