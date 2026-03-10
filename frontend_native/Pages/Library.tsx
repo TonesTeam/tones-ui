@@ -430,96 +430,94 @@ const LibraryBody = ({
                 actionButtonText="Delete"
             />
             <Box width={900} mb="$10">
-                <Button
-                    variant="outline"
-                    rounded="$full"
-                    borderColor="$black"
-                    bg="#1F2832"
-                    mb="$8"
-                    onPress={() => setNewCategoryModal(true)}
-                    alignItems="center"
-                    justifyContent="center"
-                    height={48}
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    maxHeight={520}
                 >
                     <Box
-                        style={{
-                            filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
-                        }}
+                        mt="$2"
+                        flexDirection="row"
+                        flexWrap="wrap"
+                        justifyContent="flex-start"
+                        gap={70}
                     >
-                        <ButtonIcon
-                            bg="transparent"
-                            color="white"
-                            as={Plus}
-                            mr="$2"
-                            size={20}
-                        />
-                    </Box>
-                    <ButtonText color="white" fontSize={14}>
-                        New Category
-                    </ButtonText>
-                </Button>
-
-                {/* Сетка категорий */}
-                <Box
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    justifyContent="flex-start"
-                    gap={20}
-                >
-                    {categories.map((category, i) => (
-                        <Box
-                            key={i}
-                            position="relative"
-                            height={150}
-                            width="30%"
-                        >
-                            <Button
-                                onPress={() =>
-                                    setSelectedCategoryId(category.id)
-                                }
-                                rounded="$xl"
-                                bg="white"
-                                borderWidth={0}
+                        {categories.map((category, i) => (
+                            <Box
+                                key={i}
+                                position="relative"
                                 height={150}
-                                width="100%"
-                                alignItems="center"
-                                justifyContent="center"
-                                shadowColor="$borderLight100"
-                                shadowOffset={{ width: 0, height: 1 }}
-                                shadowOpacity={0.05}
-                                shadowRadius={2}
+                                width={250}
                             >
-                                <ButtonText
-                                    color="$black"
-                                    fontSize={16}
-                                    fontWeight="$bold"
-                                    textAlign="center"
+                                <Button
+                                    onPress={() =>
+                                        setSelectedCategoryId(category.id)
+                                    }
+                                    rounded="$xl"
+                                    bg="white"
+                                    borderWidth={0}
+                                    height={150}
+                                    width="100%"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    shadowColor="$borderLight100"
+                                    shadowOffset={{ width: 0, height: 1 }}
+                                    shadowOpacity={0.05}
+                                    shadowRadius={2}
                                 >
-                                    {category.name}
-                                </ButtonText>
-                            </Button>
-                            <Button
-                                position="absolute"
-                                top={-8}
-                                right={-8}
-                                rounded="$full"
-                                bg="#626262"
-                                borderWidth={0}
-                                height={32}
-                                width={32}
-                                alignItems="center"
-                                justifyContent="center"
-                                p="$0"
-                                onPress={() => {
-                                    setCategoryToDelete(category.id);
-                                    setDeleteCategoryModal(true);
-                                }}
-                            >
-                                <ButtonIcon as={X} size={20} color="white" />
-                            </Button>
-                        </Box>
-                    ))}
-                </Box>
+                                    <ButtonText
+                                        color="$black"
+                                        fontSize={16}
+                                        textAlign="center"
+                                    >
+                                        {category.name}
+                                    </ButtonText>
+                                </Button>
+                                <Button
+                                    position="absolute"
+                                    top={-8}
+                                    right={-8}
+                                    rounded="$full"
+                                    bg="#626262"
+                                    borderWidth={0}
+                                    height={32}
+                                    width={32}
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    px="$0"
+                                    onPress={() => {
+                                        setCategoryToDelete(category.id);
+                                        setDeleteCategoryModal(true);
+                                    }}
+                                >
+                                    <ButtonIcon as={Trash} color="white" />
+                                </Button>
+                            </Box>
+                        ))}
+                        <Button
+                            onPress={() => setNewCategoryModal(true)}
+                            rounded="$xl"
+                            bg="transparent"
+                            borderWidth={0}
+                            height={150}
+                            width={250}
+                            alignItems="center"
+                            justifyContent="center"
+                            shadowColor="$borderLight100"
+                            shadowOffset={{ width: 0, height: 1 }}
+                            shadowOpacity={0.05}
+                            shadowRadius={2}
+                            borderStyle="dashed"
+                            borderColor="rgba(0, 0, 0, 0.3)"
+                            borderWidth={2}
+                            borderColor="#8d8d8d"
+                        >
+                            <ButtonIcon as={Plus} color="black" mr="$1" />
+                            <ButtonText fontSize={16} color="black">
+                                Category
+                            </ButtonText>
+                        </Button>
+                    </Box>
+                </ScrollView>
             </Box>
         </>
     );
