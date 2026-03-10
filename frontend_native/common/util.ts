@@ -163,6 +163,7 @@ export async function makeRequest<R>(
     });
 }
 
+// TODO: handle hours if properly
 export const formatDuration = (seconds: number): string => {
     if (seconds < 60) {
         return `${seconds} sec`;

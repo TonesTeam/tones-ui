@@ -2,7 +2,7 @@ import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { Text, HStack, VStack, ScrollView } from '@gluestack-ui/themed';
 import StepGroup from './StepGroup';
 import { useEffect, useState } from 'react';
-import { getRequest, makeRequest } from '../../common/util';
+import { formatDuration, getRequest, makeRequest } from '../../common/util';
 import { Method } from 'axios';
 
 interface TimelineProps {
@@ -62,9 +62,8 @@ const Timeline = ({
                 <Text color="black" fontSize={16}>
                     Timeline
                 </Text>
-                {/* TODO: do some neat time formatting? or just do like in the mockup? */}
                 <Text color="black" fontSize={16} ml="auto">
-                    {estimatedExectuionTime} sec
+                    ~ {formatDuration(estimatedExectuionTime || 0)}
                 </Text>
             </HStack>
             <ScrollView
