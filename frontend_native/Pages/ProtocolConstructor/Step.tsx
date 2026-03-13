@@ -162,7 +162,8 @@ const Step = ({
 
                 {/* Washing info block for Reagent steps */}
                 {step.type === 'Liquid Application' &&
-                    selectedWashingLiquid && (
+                    selectedWashingLiquid &&
+                    step.washing_iterations > 0 && (
                         <HStack gap={8} alignItems="center" width="100%">
                             <Box width={20}></Box>
                             <HStack

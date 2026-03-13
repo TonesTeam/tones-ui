@@ -535,7 +535,7 @@ const AddLiquidForm = ({
                 {/* Washing iterations */}
                 <VStack gap={8}>
                     <Text fontSize={12} color="black" opacity={0.7}>
-                        Washing iterations
+                        Washing iterations (If no washing needed enter 0)
                     </Text>
                     <Input
                         height={48}
