@@ -59,7 +59,11 @@ const AddStepForm = ({
     setWashingIncubationTime,
 }: AddStepFormProps) => {
     const [state, setState] = useState(
-        'Select' as 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
+        'Select' as
+            | 'Select'
+            | 'Add liquid'
+            | 'Add washing'
+            | 'Add individual washing',
     );
 
     if (state === 'Select') {
@@ -112,7 +116,11 @@ interface SelectFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     setFormState: (
-        state: 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
+        state:
+            | 'Select'
+            | 'Add liquid'
+            | 'Add washing'
+            | 'Add individual washing',
     ) => void;
     setActiveStepGroup: (sequenceNumber: number) => void;
     selectedWashingLiquid?: number | null;
@@ -264,7 +272,7 @@ const SelectForm = ({
                     if (!selectedWashingLiquid) {
                         setShowWashingRequiredModal(true);
                     } else {
-                        setFormState('Edit washing');
+                        setFormState('Add individual washing');
                     }
                 }}
                 disabled={!selectedWashingLiquid}
@@ -844,7 +852,11 @@ interface EditWashingFormProps {
     washingIncubationTime: number | null;
     setWashingIncubationTime: (time: number | null) => void;
     setFormState: (
-        state: 'Select' | 'Add liquid' | 'Add washing' | 'Edit washing',
+        state:
+            | 'Select'
+            | 'Add liquid'
+            | 'Add washing'
+            | 'Add individual washing',
     ) => void;
 }
 
@@ -889,7 +901,7 @@ const EditWashingForm = ({
             >
                 <Icon as={Droplet} size={16} color="black" mr="$1" />
                 <Text fontSize={16} color="black">
-                    Edit Washing
+                    Add Individual Washing
                 </Text>
                 <Box ml="auto">
                     <Pressable
