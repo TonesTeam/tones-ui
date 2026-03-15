@@ -119,7 +119,7 @@ const SelectForm = ({
             >
                 <ButtonIcon as={Plus} size={20} color="black" mr="$1" />
                 <ButtonText fontSize={16} color="black">
-                    New step
+                    New step group
                 </ButtonText>
             </Button>
             <Button
