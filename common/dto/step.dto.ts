@@ -10,6 +10,7 @@ export interface StepDTO {
     applied_liquid_id: number;
     sequence_number: number;
     washing_iterations: number;
+    single_wash_duration: number;
 }
 
 export interface StepParams {}

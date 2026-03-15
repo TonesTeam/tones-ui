@@ -23,6 +23,7 @@ import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { Method } from 'axios';
 import { makeRequest } from '../../common/util';
 import { useUser } from '../../contexts/UserContext';
+import { StepDTO } from 'common/dto/step.dto';
 
 const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [name, setName] = useState('Protocol name');
@@ -52,14 +53,18 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     name: sg.step_group.name,
                     description: '',
                     sequence_number: sg.step_group.sequence_number,
-                    steps: sg.steps.map((s) => ({
-                        iterations: 1,
-                        sequence_number: s.sequence_number,
-                        target_temperature: s.target_temperature,
-                        incubation_time: s.incubation_time,
-                        applied_liquid_id: s.applied_liquid_id,
-                        washing_iterations: s.washing_iterations,
-                    })),
+                    steps: sg.steps.map(
+                        (s) =>
+                            ({
+                                iterations: 1,
+                                sequence_number: s.sequence_number,
+                                target_temperature: s.target_temperature,
+                                incubation_time: s.incubation_time,
+                                applied_liquid_id: s.applied_liquid_id,
+                                washing_iterations: s.washing_iterations,
+                                single_wash_duration: s.single_wash_duration,
+                            }) as StepDTO,
+                    ),
                 })),
             }),
         ).then((response) => {

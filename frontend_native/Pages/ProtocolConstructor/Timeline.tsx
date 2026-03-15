@@ -35,6 +35,7 @@ const Timeline = ({
                     incubation_time: s.incubation_time,
                     applied_liquid_id: s.applied_liquid_id,
                     washing_iterations: s.washing_iterations,
+                    single_wash_duration: s.single_wash_duration,
                 })),
             })),
         );

@@ -168,6 +168,7 @@ const AddLiquidForm = ({
     const [incubationTime, setIncubationTime] = useState<string>('');
     const [targetTemperature, setTargetTemperature] = useState<string>('');
     const [washingIterations, setWashingIterations] = useState<string>('0');
+    const [singleWashDuration, setSingleWashDuration] = useState<string>('');
 
     const findNextSequenceNumberForSteps = (
         stepGroups: StepGroupWithStepsDTO[],
@@ -366,29 +367,54 @@ const AddLiquidForm = ({
                 </VStack>
 
                 {/* Washing iterations */}
-                <VStack gap={8}>
-                    <Text fontSize={12} color="black" opacity={0.7}>
-                        Washing iterations
-                    </Text>
-                    <Input
-                        height={48}
-                        borderRadius={16}
-                        bg="#F1F1F1"
-                        borderWidth={0}
-                        value={washingIterations}
-                        onChange={(e: any) =>
-                            setWashingIterations(e.nativeEvent.text)
-                        }
-                    >
-                        <InputField
-                            color="black"
-                            fontSize={16}
-                            placeholder="Number of washing iterations"
-                            keyboardType="numeric"
-                            ml={16}
-                        />
-                    </Input>
-                </VStack>
+                <HStack gap={8} alignItems="center">
+                    <VStack gap={8} flex={1}>
+                        <Text fontSize={11} color="black" opacity={0.7}>
+                            Washing iterations
+                        </Text>
+                        <Input
+                            height={48}
+                            borderRadius={16}
+                            bg="#F1F1F1"
+                            borderWidth={0}
+                            value={washingIterations}
+                            onChange={(e: any) =>
+                                setWashingIterations(e.nativeEvent.text)
+                            }
+                        >
+                            <InputField
+                                color="black"
+                                fontSize={12}
+                                placeholder="Number of washing iterations"
+                                keyboardType="numeric"
+                                ml={16}
+                            />
+                        </Input>
+                    </VStack>
+                    <VStack gap={8} flex={1}>
+                        <Text fontSize={11} color="black" opacity={0.7}>
+                            Single wash duration (minutes)
+                        </Text>
+                        <Input
+                            height={48}
+                            borderRadius={16}
+                            bg="#F1F1F1"
+                            borderWidth={0}
+                            value={singleWashDuration}
+                            onChange={(e: any) =>
+                                setSingleWashDuration(e.nativeEvent.text)
+                            }
+                        >
+                            <InputField
+                                color="black"
+                                fontSize={12}
+                                placeholder="Single wash duration"
+                                keyboardType="numeric"
+                                ml={16}
+                            />
+                        </Input>
+                    </VStack>
+                </HStack>
             </VStack>
             <HStack gap={24} mt={30}>
                 <Button
@@ -428,6 +454,8 @@ const AddLiquidForm = ({
                                     activeStepGroup,
                                 ),
                                 washing_iterations: parseInt(washingIterations),
+                                single_wash_duration:
+                                    parseInt(singleWashDuration) * 60 || 0,
                             };
 
                             const updatedStepGroups = stepGroups.map(
