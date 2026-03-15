@@ -30,7 +30,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         {
             step_group: {
                 id: 1,
-                name: 'Step 1',
+                name: 'Step Group 1',
                 protocol_id: 1,
                 sequence_number: 1,
             },

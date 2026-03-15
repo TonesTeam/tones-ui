@@ -107,7 +107,7 @@ const SelectForm = ({
                         {
                             step_group: {
                                 id: 1,
-                                name: `Step ${stepGroups.length + 1}`,
+                                name: `Step Group ${stepGroups.length + 1}`,
                                 protocol_id: 1,
                                 sequence_number: newSequenceNumber,
                             },
