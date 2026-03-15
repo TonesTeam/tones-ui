@@ -163,38 +163,43 @@ export default function NavBar() {
             </Text>
 
             {/* User info section */}
-            <VStack flex={7} mt={70} alignItems="flex-start">
-                <Pressable
-                    my="$2"
-                    onPress={() => navigation.navigate('Profile')}
-                    style={{
-                        filter: `
+            <VStack flex={7} mt={80} width="70%" alignItems="center">
+                <VStack alignItems="flex-start">
+                    <Pressable
+                        my="$2"
+                        onPress={() => navigation.navigate('Profile')}
+                        style={{
+                            filter: `
                             drop-shadow(0px 4.75px 11.88px rgba(0, 0, 0, 0.15))
                             drop-shadow(2.38px 23.75px 23.75px rgba(0, 0, 0, 0.13))
                         `,
-                    }}
-                >
-                    <GeneratedAvatar name={user?.first_name} size={64} />
-                </Pressable>
-                <Text fontSize={16} color="#1F2832">
-                    {user?.first_name}
-                    {'\n'}
-                    {user?.last_name}
-                </Text>
-                <Text color="rgba(31, 40, 50, 0.4)" fontSize={12}>
-                    {user?.institution}
-                </Text>
-                <Button
-                    variant="link"
-                    onPress={() => setLogoutConfirmModal(true)}
-                    mt="$4"
-                >
-                    <ButtonText color="#1F2832" mr="$2" fontSize={14}>
-                        Log out
-                    </ButtonText>
-                    <Icon color="black" as={LogOut} />
-                </Button>
+                        }}
+                    >
+                        <GeneratedAvatar name={user?.first_name} size={64} />
+                    </Pressable>
+                    <Text fontSize={16} color="#1F2832">
+                        {user?.first_name}
+                        {'\n'}
+                        {user?.last_name}
+                    </Text>
+                    <Text color="rgba(31, 40, 50, 0.4)" fontSize={12}>
+                        {user?.institution}
+                    </Text>
+                </VStack>
             </VStack>
+
+            <Button
+                variant="link"
+                onPress={() => setLogoutConfirmModal(true)}
+                mt="auto"
+                mb={20}
+                flex={1}
+            >
+                <ButtonText color="#1F2832" mr="$2" fontSize={14}>
+                    Log out
+                </ButtonText>
+                <Icon color="black" as={LogOut} />
+            </Button>
         </Box>
     );
 }
