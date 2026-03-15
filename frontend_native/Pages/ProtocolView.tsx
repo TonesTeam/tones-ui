@@ -214,124 +214,43 @@ const StepsColumn = ({
                             <VStack space="sm">
                                 {group.steps.map(
                                     (step: StepDTO, index: number) => {
-                                        // Определяем мойка это или реагент по типу жидкости
-                                        const liquid = liquids.find(
-                                            (l: any) =>
-                                                l.id === step.applied_liquid_id,
-                                        );
-                                        const isWashing =
-                                            liquid?.liquid_type_name?.includes(
-                                                'washing',
-                                            );
                                         return (
-                                            <HStack
-                                                key={step.id}
-                                                bg="$white"
-                                                borderRadius="$lg"
-                                                p="$3"
-                                                mb="$2"
-                                                space="md"
-                                                alignItems="center"
-                                                shadowColor="$black"
-                                                shadowOffset={{
-                                                    width: 0,
-                                                    height: 1,
-                                                }}
-                                                shadowOpacity={0.08}
-                                                shadowRadius={2}
-                                                elevation={1}
-                                            >
-                                                <Text
-                                                    fontWeight="bold"
-                                                    fontSize="$sm"
-                                                    minWidth={25}
-                                                >
-                                                    #{index + 1}
-                                                </Text>
-
-                                                <Icon
-                                                    as={
-                                                        isWashing
-                                                            ? Waves
-                                                            : FlaskConical
+                                            <VStack key={step.id}>
+                                                <StepListItem
+                                                    key={step.id}
+                                                    step={step}
+                                                    index={index}
+                                                    isWashing={false}
+                                                    getLiquidName={
+                                                        getLiquidName
                                                     }
-                                                    color={
-                                                        isWashing
-                                                            ? '$blue500'
-                                                            : '$purple500'
-                                                    }
-                                                    size="md"
                                                 />
-
-                                                <VStack flex={1}>
-                                                    <Text
-                                                        fontWeight="600"
-                                                        fontSize="$sm"
-                                                    >
-                                                        {isWashing
-                                                            ? 'Washing'
-                                                            : getLiquidName(
-                                                                  step.applied_liquid_id,
-                                                              )}
-                                                    </Text>
-                                                </VStack>
-
-                                                <HStack
-                                                    space="md"
-                                                    alignItems="center"
-                                                >
-                                                    <VStack alignItems="center">
-                                                        <Text
-                                                            fontSize="$xs"
-                                                            color="$coolGray600"
-                                                        >
-                                                            Incubation
-                                                        </Text>
-                                                        <Text
-                                                            fontWeight="600"
-                                                            fontSize="$sm"
-                                                        >
-                                                            {formatDuration(
-                                                                step.incubation_time,
-                                                            )}
-                                                        </Text>
-                                                    </VStack>
-
-                                                    {!isWashing && (
-                                                        <VStack alignItems="center">
-                                                            <Text
-                                                                fontSize="$xs"
-                                                                color="$coolGray600"
-                                                            >
-                                                                °C
-                                                            </Text>
-                                                            <Text
-                                                                fontWeight="600"
-                                                                fontSize="$sm"
-                                                            >
-                                                                {
-                                                                    step.target_temperature
-                                                                }
-                                                            </Text>
-                                                        </VStack>
-                                                    )}
-
-                                                    <VStack alignItems="center">
-                                                        <Text
-                                                            fontSize="$xs"
-                                                            color="$coolGray600"
-                                                        >
-                                                            Iterations
-                                                        </Text>
-                                                        <Text
-                                                            fontWeight="600"
-                                                            fontSize="$sm"
-                                                        >
-                                                            {step.iterations}
-                                                        </Text>
-                                                    </VStack>
-                                                </HStack>
-                                            </HStack>
+                                                {step.washing_iterations >
+                                                    0 && (
+                                                    <StepListItem
+                                                        key={`${step.id}-wash`}
+                                                        step={
+                                                            {
+                                                                type: step.type,
+                                                                id: step.id,
+                                                                iterations:
+                                                                    step.washing_iterations,
+                                                                incubation_time: 120,
+                                                                target_temperature: 25,
+                                                                applied_liquid_id: 0,
+                                                                sequence_number:
+                                                                    step.sequence_number,
+                                                                washing_iterations: 0,
+                                                            } as StepDTO
+                                                        }
+                                                        index={index}
+                                                        isWashing={true}
+                                                        getLiquidName={
+                                                            getLiquidName
+                                                        }
+                                                    />
+                                                )}
+                                            </VStack>
                                         );
                                     },
                                 )}
@@ -350,10 +269,12 @@ const StepListItem = ({
     step,
     index,
     isWashing,
+    getLiquidName,
 }: {
     step: StepDTO;
     index: number;
     isWashing: boolean;
+    getLiquidName: (liquidId: number) => string;
 }) => {
     return (
         <HStack
