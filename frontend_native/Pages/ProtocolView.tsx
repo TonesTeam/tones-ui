@@ -21,9 +21,10 @@ import {
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { Method } from 'axios';
-import { Waves, FlaskConical } from 'lucide-react-native';
+import { Droplet, FlaskConical } from 'lucide-react-native';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
+import GeneratedAvatar from '../components/GeneratedAvatar';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const protocol_ID = route.params?.protocol_ID;
@@ -153,7 +154,7 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         </Button>
                     </HStack>
 
-                    <HStack space="lg" alignItems="flex-start">
+                    <HStack gap={30} alignItems="flex-start">
                         <StepsColumn protocol={protocol} liquids={liquids} />
                         <MetadataColumn protocol={protocol} />
                     </HStack>
@@ -211,11 +212,11 @@ const StepsColumn = ({
                             <Text fontWeight="bold" fontSize={16} mb="$2">
                                 {group.step_group.name}
                             </Text>
-                            <VStack space="sm">
+                            <VStack>
                                 {group.steps.map(
                                     (step: StepDTO, index: number) => {
                                         return (
-                                            <VStack key={step.id}>
+                                            <VStack key={step.id} p={0} m={0}>
                                                 <StepListItem
                                                     key={step.id}
                                                     step={step}
@@ -299,13 +300,17 @@ const StepListItem = ({
             </Text>
 
             <Icon
-                as={isWashing ? Waves : FlaskConical}
-                color={isWashing ? '$blue500' : '$purple500'}
+                as={isWashing ? Droplet : FlaskConical}
+                color={isWashing ? '#1193CF' : '$purple500'}
                 size="md"
             />
 
             <VStack flex={1}>
-                <Text fontWeight="600" fontSize="$sm">
+                <Text
+                    fontWeight="600"
+                    fontSize="$sm"
+                    color={isWashing ? '#1193CF' : 'black'}
+                >
                     {isWashing
                         ? 'Washing'
                         : getLiquidName(step.applied_liquid_id)}
@@ -348,7 +353,7 @@ const StepListItem = ({
 
 const MetadataColumn = ({ protocol }: { protocol: ProtocolWithStepsDTO }) => {
     return (
-        <VStack flex={0.4} minWidth={250}>
+        <VStack flex={0.3} minWidth={250}>
             <VStack>
                 <Heading size="md" mb="$4">
                     Protocol Information
@@ -357,9 +362,15 @@ const MetadataColumn = ({ protocol }: { protocol: ProtocolWithStepsDTO }) => {
                     <Text fontWeight="bold" flex={0.4}>
                         Author:
                     </Text>
-                    <Text flex={0.6}>
-                        {`${protocol?.metadata.author_first_name} ${protocol?.metadata.author_last_name}`}
-                    </Text>
+                    <HStack flex={0.6}>
+                        <GeneratedAvatar
+                            name={protocol.metadata.author_first_name}
+                            size={26}
+                        />
+                        <Text ml="$2">
+                            {`${protocol?.metadata.author_first_name} ${protocol?.metadata.author_last_name}`}
+                        </Text>
+                    </HStack>
                 </HStack>
                 <HStack mb="$3">
                     <Text fontWeight="bold" flex={0.4}>
