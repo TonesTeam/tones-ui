@@ -98,6 +98,7 @@ const ListItem = ({
                         rounded="$xl"
                         offset={0}
                         isOpen={menuOpen}
+                        onOpen={() => setMenuOpen(true)}
                         onClose={() => setMenuOpen(false)}
                         trigger={({ ...triggerProps }) => {
                             return (
@@ -105,11 +106,6 @@ const ListItem = ({
                                     {...triggerProps}
                                     alignItems="flex-start"
                                     justifyContent="center"
-                                    onPress={() => {
-                                        requestAnimationFrame(() =>
-                                            setMenuOpen(!menuOpen),
-                                        );
-                                    }}
                                 >
                                     <Icon
                                         as={EllipsisVertical}
