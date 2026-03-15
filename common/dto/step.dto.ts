@@ -6,7 +6,7 @@ export interface StepDTO {
     id: number;
     iterations: number;
     incubation_time: number; // in seconds
-    targetTemperature: number;
+    target_temperature: number;
     applied_liquid_id: number;
     sequence_number: number;
     washing_iterations: number;

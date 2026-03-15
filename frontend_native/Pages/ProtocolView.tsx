@@ -12,17 +12,24 @@ import {
 } from '@gluestack-ui/themed';
 import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
-import { getRequest, makeRequest, formatSocialMediaTime } from '../common/util';
+import {
+    getRequest,
+    makeRequest,
+    formatSocialMediaTime,
+    formatDuration,
+} from '../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { Method } from 'axios';
 import { Waves, FlaskConical } from 'lucide-react-native';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
+import { StepDTO } from 'common/dto/step.dto';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const protocol_ID = route.params?.protocol_ID;
     const [protocol, setProtocol] = useState<ProtocolWithStepsDTO | null>(null);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [liquids, setLiquids] = useState<any[]>([]);
+    const [liquids, setLiquids] = useState<PermanentLiquidDTO[]>([]);
 
     useEffect(() => {
         if (protocol_ID) {
@@ -62,11 +69,6 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
         }
     }, [protocol_ID]);
 
-    const getLiquidName = (liquidId: number) => {
-        const liquid = liquids.find((l) => l.id === liquidId);
-        return liquid ? liquid.name : `Liquid #${liquidId}`;
-    };
-
     const deleteProtocol = (id: number) => {
         makeRequest('DELETE' as Method, `/protocols/${id}`)
             .then((r) => {
@@ -90,7 +92,8 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 <Box
                     alignItems="center"
                     justifyContent="center"
-                    style={styles.wrapper}
+                    flex={1}
+                    p={24}
                 >
                     <Spinner size="large" color="grey" />
                 </Box>
@@ -151,219 +154,8 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     </HStack>
 
                     <HStack space="lg" alignItems="flex-start">
-                        <VStack flex={1}>
-                            <VStack mb="$6">
-                                <Heading size="lg" mb="$4">
-                                    Protocol Steps
-                                </Heading>
-                                {protocol.step_groups &&
-                                protocol.step_groups.length > 0 ? (
-                                    protocol.step_groups.map((group) => (
-                                        <VStack
-                                            key={group.step_group.id}
-                                            mb="$4"
-                                        >
-                                            <Text
-                                                fontWeight="bold"
-                                                fontSize={16}
-                                                mb="$2"
-                                            >
-                                                {group.step_group.name}
-                                            </Text>
-                                            <VStack space="sm">
-                                                {group.steps.map(
-                                                    (
-                                                        step: any,
-                                                        index: number,
-                                                    ) => {
-                                                        // Определяем мойка это или реагент по типу жидкости
-                                                        const liquid =
-                                                            liquids.find(
-                                                                (l: any) =>
-                                                                    l.id ===
-                                                                    step.applied_liquid_id,
-                                                            );
-                                                        const isWashing =
-                                                            liquid?.liquid_type_name?.includes(
-                                                                'washing',
-                                                            );
-                                                        return (
-                                                            <HStack
-                                                                key={step.id}
-                                                                bg="$white"
-                                                                borderRadius="$lg"
-                                                                p="$3"
-                                                                mb="$2"
-                                                                space="md"
-                                                                alignItems="center"
-                                                                shadowColor="$black"
-                                                                shadowOffset={{
-                                                                    width: 0,
-                                                                    height: 1,
-                                                                }}
-                                                                shadowOpacity={
-                                                                    0.08
-                                                                }
-                                                                shadowRadius={2}
-                                                                elevation={1}
-                                                            >
-                                                                <Text
-                                                                    fontWeight="bold"
-                                                                    fontSize="$sm"
-                                                                    minWidth={
-                                                                        25
-                                                                    }
-                                                                >
-                                                                    #{index + 1}
-                                                                </Text>
-
-                                                                <Icon
-                                                                    as={
-                                                                        isWashing
-                                                                            ? Waves
-                                                                            : FlaskConical
-                                                                    }
-                                                                    color={
-                                                                        isWashing
-                                                                            ? '$blue500'
-                                                                            : '$purple500'
-                                                                    }
-                                                                    size="md"
-                                                                />
-
-                                                                <VStack
-                                                                    flex={1}
-                                                                >
-                                                                    <Text
-                                                                        fontWeight="600"
-                                                                        fontSize="$sm"
-                                                                    >
-                                                                        {isWashing
-                                                                            ? 'Washing'
-                                                                            : getLiquidName(
-                                                                                  step.applied_liquid_id,
-                                                                              )}
-                                                                    </Text>
-                                                                </VStack>
-
-                                                                <HStack
-                                                                    space="md"
-                                                                    alignItems="center"
-                                                                >
-                                                                    <VStack alignItems="center">
-                                                                        <Text
-                                                                            fontSize="$xs"
-                                                                            color="$coolGray600"
-                                                                        >
-                                                                            Incubation
-                                                                        </Text>
-                                                                        <Text
-                                                                            fontWeight="600"
-                                                                            fontSize="$sm"
-                                                                        >
-                                                                            {
-                                                                                step.incubation_time
-                                                                            }
-                                                                            s
-                                                                        </Text>
-                                                                    </VStack>
-
-                                                                    {!isWashing && (
-                                                                        <VStack alignItems="center">
-                                                                            <Text
-                                                                                fontSize="$xs"
-                                                                                color="$coolGray600"
-                                                                            >
-                                                                                °C
-                                                                            </Text>
-                                                                            <Text
-                                                                                fontWeight="600"
-                                                                                fontSize="$sm"
-                                                                            >
-                                                                                {
-                                                                                    step.target_temperature
-                                                                                }
-                                                                            </Text>
-                                                                        </VStack>
-                                                                    )}
-
-                                                                    <VStack alignItems="center">
-                                                                        <Text
-                                                                            fontSize="$xs"
-                                                                            color="$coolGray600"
-                                                                        >
-                                                                            Iterations
-                                                                        </Text>
-                                                                        <Text
-                                                                            fontWeight="600"
-                                                                            fontSize="$sm"
-                                                                        >
-                                                                            {
-                                                                                step.iterations
-                                                                            }
-                                                                        </Text>
-                                                                    </VStack>
-                                                                </HStack>
-                                                            </HStack>
-                                                        );
-                                                    },
-                                                )}
-                                            </VStack>
-                                        </VStack>
-                                    ))
-                                ) : (
-                                    <Text>No steps in this protocol</Text>
-                                )}
-                            </VStack>
-                        </VStack>
-
-                        <VStack flex={0.4} minWidth={250}>
-                            <VStack>
-                                <Heading size="md" mb="$4">
-                                    Protocol Information
-                                </Heading>
-                                <HStack mb="$3">
-                                    <Text fontWeight="bold" flex={0.4}>
-                                        Author:
-                                    </Text>
-                                    <Text flex={0.6}>
-                                        {`${protocol?.metadata.author_first_name} ${protocol?.metadata.author_last_name}`}
-                                    </Text>
-                                </HStack>
-                                <HStack mb="$3">
-                                    <Text fontWeight="bold" flex={0.4}>
-                                        Created:
-                                    </Text>
-                                    <Text flex={0.6}>
-                                        {protocol?.metadata.created_at
-                                            ? formatSocialMediaTime(
-                                                  protocol.metadata.created_at,
-                                              )
-                                            : ''}
-                                    </Text>
-                                </HStack>
-                                {protocol?.metadata.last_updated && (
-                                    <HStack mb="$3">
-                                        <Text fontWeight="bold" flex={0.4}>
-                                            Last Updated:
-                                        </Text>
-                                        <Text flex={0.6}>
-                                            {formatSocialMediaTime(
-                                                protocol.metadata.last_updated,
-                                            )}
-                                        </Text>
-                                    </HStack>
-                                )}
-                                <VStack>
-                                    <Text fontWeight="bold" mb="$1">
-                                        Description:{' '}
-                                    </Text>
-                                    <Text fontWeight="normal" fontSize="$sm">
-                                        {protocol?.metadata.description ?? ''}
-                                    </Text>
-                                </VStack>
-                            </VStack>
-                        </VStack>
+                        <StepsColumn protocol={protocol} liquids={liquids} />
+                        <MetadataColumn protocol={protocol} />
                     </HStack>
 
                     <Button
@@ -395,11 +187,294 @@ const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
     );
 };
 
-const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-        padding: 24,
-    },
-});
+const StepsColumn = ({
+    protocol,
+    liquids,
+}: {
+    protocol: ProtocolWithStepsDTO;
+    liquids: PermanentLiquidDTO[];
+}) => {
+    const getLiquidName = (liquidId: number) => {
+        const liquid = liquids.find((l) => l.id === liquidId);
+        return liquid ? liquid.name : `Liquid #${liquidId}`;
+    };
+
+    return (
+        <VStack flex={1}>
+            <VStack mb="$6">
+                <Heading size="lg" mb="$4">
+                    Protocol Steps
+                </Heading>
+                {protocol.step_groups && protocol.step_groups.length > 0 ? (
+                    protocol.step_groups.map((group) => (
+                        <VStack key={group.step_group.id} mb="$4">
+                            <Text fontWeight="bold" fontSize={16} mb="$2">
+                                {group.step_group.name}
+                            </Text>
+                            <VStack space="sm">
+                                {group.steps.map(
+                                    (step: StepDTO, index: number) => {
+                                        // Определяем мойка это или реагент по типу жидкости
+                                        const liquid = liquids.find(
+                                            (l: any) =>
+                                                l.id === step.applied_liquid_id,
+                                        );
+                                        const isWashing =
+                                            liquid?.liquid_type_name?.includes(
+                                                'washing',
+                                            );
+                                        return (
+                                            <HStack
+                                                key={step.id}
+                                                bg="$white"
+                                                borderRadius="$lg"
+                                                p="$3"
+                                                mb="$2"
+                                                space="md"
+                                                alignItems="center"
+                                                shadowColor="$black"
+                                                shadowOffset={{
+                                                    width: 0,
+                                                    height: 1,
+                                                }}
+                                                shadowOpacity={0.08}
+                                                shadowRadius={2}
+                                                elevation={1}
+                                            >
+                                                <Text
+                                                    fontWeight="bold"
+                                                    fontSize="$sm"
+                                                    minWidth={25}
+                                                >
+                                                    #{index + 1}
+                                                </Text>
+
+                                                <Icon
+                                                    as={
+                                                        isWashing
+                                                            ? Waves
+                                                            : FlaskConical
+                                                    }
+                                                    color={
+                                                        isWashing
+                                                            ? '$blue500'
+                                                            : '$purple500'
+                                                    }
+                                                    size="md"
+                                                />
+
+                                                <VStack flex={1}>
+                                                    <Text
+                                                        fontWeight="600"
+                                                        fontSize="$sm"
+                                                    >
+                                                        {isWashing
+                                                            ? 'Washing'
+                                                            : getLiquidName(
+                                                                  step.applied_liquid_id,
+                                                              )}
+                                                    </Text>
+                                                </VStack>
+
+                                                <HStack
+                                                    space="md"
+                                                    alignItems="center"
+                                                >
+                                                    <VStack alignItems="center">
+                                                        <Text
+                                                            fontSize="$xs"
+                                                            color="$coolGray600"
+                                                        >
+                                                            Incubation
+                                                        </Text>
+                                                        <Text
+                                                            fontWeight="600"
+                                                            fontSize="$sm"
+                                                        >
+                                                            {formatDuration(
+                                                                step.incubation_time,
+                                                            )}
+                                                        </Text>
+                                                    </VStack>
+
+                                                    {!isWashing && (
+                                                        <VStack alignItems="center">
+                                                            <Text
+                                                                fontSize="$xs"
+                                                                color="$coolGray600"
+                                                            >
+                                                                °C
+                                                            </Text>
+                                                            <Text
+                                                                fontWeight="600"
+                                                                fontSize="$sm"
+                                                            >
+                                                                {
+                                                                    step.target_temperature
+                                                                }
+                                                            </Text>
+                                                        </VStack>
+                                                    )}
+
+                                                    <VStack alignItems="center">
+                                                        <Text
+                                                            fontSize="$xs"
+                                                            color="$coolGray600"
+                                                        >
+                                                            Iterations
+                                                        </Text>
+                                                        <Text
+                                                            fontWeight="600"
+                                                            fontSize="$sm"
+                                                        >
+                                                            {step.iterations}
+                                                        </Text>
+                                                    </VStack>
+                                                </HStack>
+                                            </HStack>
+                                        );
+                                    },
+                                )}
+                            </VStack>
+                        </VStack>
+                    ))
+                ) : (
+                    <Text>No steps in this protocol</Text>
+                )}
+            </VStack>
+        </VStack>
+    );
+};
+
+const StepListItem = ({
+    step,
+    index,
+    isWashing,
+}: {
+    step: StepDTO;
+    index: number;
+    isWashing: boolean;
+}) => {
+    return (
+        <HStack
+            key={step.id}
+            bg="$white"
+            borderRadius="$lg"
+            p="$3"
+            mb="$2"
+            space="md"
+            alignItems="center"
+            shadowColor="$black"
+            shadowOffset={{
+                width: 0,
+                height: 1,
+            }}
+            shadowOpacity={0.08}
+            shadowRadius={2}
+            elevation={1}
+        >
+            <Text fontWeight="bold" fontSize="$sm" minWidth={25}>
+                #{index + 1}
+            </Text>
+
+            <Icon
+                as={isWashing ? Waves : FlaskConical}
+                color={isWashing ? '$blue500' : '$purple500'}
+                size="md"
+            />
+
+            <VStack flex={1}>
+                <Text fontWeight="600" fontSize="$sm">
+                    {isWashing
+                        ? 'Washing'
+                        : getLiquidName(step.applied_liquid_id)}
+                </Text>
+            </VStack>
+
+            <HStack space="md" alignItems="center">
+                <VStack alignItems="center">
+                    <Text fontSize="$xs" color="$coolGray600">
+                        Incubation
+                    </Text>
+                    <Text fontWeight="600" fontSize="$sm">
+                        {formatDuration(step.incubation_time)}
+                    </Text>
+                </VStack>
+
+                {!isWashing && (
+                    <VStack alignItems="center">
+                        <Text fontSize="$xs" color="$coolGray600">
+                            °C
+                        </Text>
+                        <Text fontWeight="600" fontSize="$sm">
+                            {step.target_temperature}
+                        </Text>
+                    </VStack>
+                )}
+
+                <VStack alignItems="center">
+                    <Text fontSize="$xs" color="$coolGray600">
+                        Iterations
+                    </Text>
+                    <Text fontWeight="600" fontSize="$sm">
+                        {step.iterations}
+                    </Text>
+                </VStack>
+            </HStack>
+        </HStack>
+    );
+};
+
+const MetadataColumn = ({ protocol }: { protocol: ProtocolWithStepsDTO }) => {
+    return (
+        <VStack flex={0.4} minWidth={250}>
+            <VStack>
+                <Heading size="md" mb="$4">
+                    Protocol Information
+                </Heading>
+                <HStack mb="$3">
+                    <Text fontWeight="bold" flex={0.4}>
+                        Author:
+                    </Text>
+                    <Text flex={0.6}>
+                        {`${protocol?.metadata.author_first_name} ${protocol?.metadata.author_last_name}`}
+                    </Text>
+                </HStack>
+                <HStack mb="$3">
+                    <Text fontWeight="bold" flex={0.4}>
+                        Created:
+                    </Text>
+                    <Text flex={0.6}>
+                        {protocol?.metadata.created_at
+                            ? formatSocialMediaTime(
+                                  protocol.metadata.created_at,
+                              )
+                            : ''}
+                    </Text>
+                </HStack>
+                {protocol?.metadata.last_updated && (
+                    <HStack mb="$3">
+                        <Text fontWeight="bold" flex={0.4}>
+                            Last Updated:
+                        </Text>
+                        <Text flex={0.6}>
+                            {formatSocialMediaTime(
+                                protocol.metadata.last_updated,
+                            )}
+                        </Text>
+                    </HStack>
+                )}
+                <VStack>
+                    <Text fontWeight="bold" mb="$1">
+                        Description:{' '}
+                    </Text>
+                    <Text fontWeight="normal" fontSize="$sm">
+                        {protocol?.metadata.description ?? ''}
+                    </Text>
+                </VStack>
+            </VStack>
+        </VStack>
+    );
+};
 
 export default ProtocolView;
