@@ -19,7 +19,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Header from './Header';
 import Timeline from './Timeline';
 import AddStepForm from './AddStepForm';
-import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
+import {
+    ProtocolWithStepsDTO,
+    StepGroupWithStepsDTO,
+} from 'common/dto/protocol.dto';
 import { Method } from 'axios';
 import { makeRequest } from '../../common/util';
 import { useUser } from '../../contexts/UserContext';
@@ -40,6 +43,18 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
     const { user } = useUser();
+
+    useEffect(() => {
+        if (route.params?.protocol_ID) {
+            makeRequest(
+                'GET' as Method,
+                `/protocols/${route.params.protocol_ID}`,
+            ).then((response) => {
+                const protocol = response.data as ProtocolWithStepsDTO;
+                setStepGroups(protocol.step_groups);
+            });
+        }
+    }, [route.params?.protocol_ID]);
 
     const saveProtocol = () => {
         makeRequest(
