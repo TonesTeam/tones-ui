@@ -10,7 +10,17 @@ import {
     Spinner,
     ScrollView,
 } from '@gluestack-ui/themed';
-import { Edit3, File, Rocket, Trash } from 'lucide-react-native';
+import {
+    Edit3,
+    File,
+    Rocket,
+    Trash,
+    Clock,
+    FlaskConical,
+    Thermometer,
+    Droplet,
+    Repeat,
+} from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import {
     getRequest,
@@ -21,7 +31,6 @@ import {
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { Method } from 'axios';
-import { Droplet, FlaskConical } from 'lucide-react-native';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
 import GeneratedAvatar from '../components/GeneratedAvatar';
@@ -319,34 +328,28 @@ const StepListItem = ({
             </VStack>
 
             <HStack space="md" alignItems="center">
-                <VStack alignItems="center">
-                    <Text fontSize="$xs" color="$coolGray600">
-                        Incubation
-                    </Text>
-                    <Text fontWeight="600" fontSize="$sm">
+                <HStack justifyContent="center" alignItems="center">
+                    <Icon as={Clock} size="xs" />
+                    <Text ml={4} fontSize={12}>
                         {formatDuration(step.incubation_time)}
                     </Text>
-                </VStack>
+                </HStack>
 
                 {!isWashing && (
-                    <VStack alignItems="center">
-                        <Text fontSize="$xs" color="$coolGray600">
-                            °C
+                    <HStack alignItems="center" justifyContent="center">
+                        <Icon as={Thermometer} size="xs" />
+                        <Text ml={4} fontSize={12}>
+                            {step.target_temperature / 100} °C
                         </Text>
-                        <Text fontWeight="600" fontSize="$sm">
-                            {step.target_temperature}
-                        </Text>
-                    </VStack>
+                    </HStack>
                 )}
 
-                <VStack alignItems="center">
-                    <Text fontSize="$xs" color="$coolGray600">
-                        Iterations
-                    </Text>
-                    <Text fontWeight="600" fontSize="$sm">
+                <HStack alignItems="center" justifyContent="center">
+                    <Icon as={Repeat} size="xs" />
+                    <Text ml={4} fontSize={12}>
                         {step.iterations}
                     </Text>
-                </VStack>
+                </HStack>
             </HStack>
         </HStack>
     );

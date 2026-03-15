@@ -1,7 +1,12 @@
 import { HStack, Text, Icon, Box, Pressable } from '@gluestack-ui/themed';
 import { StepDTO } from 'common/dto/step.dto';
-import { AlignJustify, Thermometer } from 'lucide-react-native';
-import { Clock, X, FlaskConical } from 'lucide-react-native';
+import {
+    Clock,
+    X,
+    FlaskConical,
+    AlignJustify,
+    Thermometer,
+} from 'lucide-react-native';
 import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 
 interface StepProps {
