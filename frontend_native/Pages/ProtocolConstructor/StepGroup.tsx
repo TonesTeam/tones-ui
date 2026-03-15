@@ -32,7 +32,9 @@ const StepGroup = ({
 
     useEffect(() => {
         if (isEditing) {
-            inputRef.current?.focus();
+            requestAnimationFrame(() => {
+                inputRef.current?.focus();
+            });
         }
     }, [isEditing]);
 
@@ -58,7 +60,12 @@ const StepGroup = ({
                             : 'transparent'
                     }
                 >
-                    <Input flex={1} borderWidth={0} width={300} isReadOnly={!isEditing}>
+                    <Input
+                        flex={1}
+                        borderWidth={0}
+                        width={300}
+                        isReadOnly={!isEditing}
+                    >
                         <InputField
                             ref={inputRef}
                             onFocus={() => {
@@ -104,6 +111,9 @@ const StepGroup = ({
                     >
                         <Pressable
                             onPress={() => {
+                                setActiveStepGroup(
+                                    stepGroup.step_group.sequence_number,
+                                );
                                 setIsEditing(true);
                             }}
                         >
