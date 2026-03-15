@@ -29,9 +29,8 @@ import Header from './Header';
 
 const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [categories, setCategories] = useState<LiquidTypeDTO[]>([]);
-    const [categoryToDelete, setCategoryToDelete] = useState<number | null>(
-        null,
-    );
+    const [categoryToDelete, setCategoryToDelete] =
+        useState<LiquidTypeDTO | null>(null);
     const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
     const [newCategoryModal, setNewCategoryModal] = useState(false);
 
@@ -101,10 +100,10 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         }}
                         action={() => {
                             if (categoryToDelete) {
-                                deleteCategory(categoryToDelete);
+                                deleteCategory(categoryToDelete.id);
                             }
                         }}
-                        headline="Delete Category"
+                        headline={`Delete Category "${categoryToDelete?.name}"?`}
                         text="Are you sure you want to delete this category? This action cannot be undone."
                         actionButtonText="Delete"
                     />
@@ -207,9 +206,7 @@ const CategoryGrid = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                             justifyContent="center"
                                             px="$0"
                                             onPress={() => {
-                                                setCategoryToDelete(
-                                                    category.id,
-                                                );
+                                                setCategoryToDelete(category);
                                                 setDeleteCategoryModal(true);
                                             }}
                                         >
