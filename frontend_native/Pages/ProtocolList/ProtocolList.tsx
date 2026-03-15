@@ -82,7 +82,12 @@ export default function ProtocolList({
         if (!protocols) return;
 
         let authors = Array.from(
-            new Set(protocols.map((protocol) => protocol.author as string)),
+            new Set(
+                protocols.map(
+                    (protocol) =>
+                        `${protocol.author_first_name} ${protocol.author_last_name}`,
+                ),
+            ),
         ).sort();
 
         setAuthorList(authors);
@@ -110,14 +115,17 @@ export default function ProtocolList({
             return (
                 e.name.toLowerCase().includes(query) ||
                 e.description?.toLowerCase().includes(query) ||
-                e.author?.toLowerCase().includes(query)
+                e.author_first_name?.toLowerCase().includes(query) ||
+                e.author_last_name?.toLowerCase().includes(query)
             );
         });
 
         filteredList = filteredList.filter((e) => {
             if (authorFilter === 'All authors') return true;
 
-            return e.author == authorFilter;
+            return (
+                `${e.author_first_name} ${e.author_last_name}` == authorFilter
+            );
         });
 
         let sortedList = filteredList.sort((a, b) => {
@@ -132,14 +140,14 @@ export default function ProtocolList({
                         comparison = a.name.localeCompare(b.name);
                         break;
                     case 'author':
-                        comparison = (a.author || '').localeCompare(
-                            b.author || '',
+                        comparison = (a.author_first_name || '').localeCompare(
+                            b.author_first_name || '',
                         );
                         break;
                     case 'created':
                         comparison =
-                            new Date(a.creationDate).getTime() -
-                            new Date(b.creationDate).getTime();
+                            new Date(a.created_at).getTime() -
+                            new Date(b.created_at).getTime();
                         break;
                     case 'status':
                         comparison = 0;
@@ -153,22 +161,22 @@ export default function ProtocolList({
 
             if (sortingStrategy === 'Oldest first') {
                 return (
-                    new Date(a.creationDate).getTime() -
-                    new Date(b.creationDate).getTime()
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime()
                 );
             } else if (sortingStrategy === 'Newest first') {
                 return (
-                    new Date(b.creationDate).getTime() -
-                    new Date(a.creationDate).getTime()
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime()
                 );
             } else if (sortingStrategy === 'Last updated') {
                 // Sort by lastUpdate if available, otherwise by creationDate
-                const aDate = a.lastUpdate
-                    ? new Date(a.lastUpdate).getTime()
-                    : new Date(a.creationDate).getTime();
-                const bDate = b.lastUpdate
-                    ? new Date(b.lastUpdate).getTime()
-                    : new Date(b.creationDate).getTime();
+                const aDate = a.last_updated
+                    ? new Date(a.last_updated).getTime()
+                    : new Date(a.created_at).getTime();
+                const bDate = b.last_updated
+                    ? new Date(b.last_updated).getTime()
+                    : new Date(b.created_at).getTime();
                 return bDate - aDate; // Most recently updated first
             } else {
                 return 0;

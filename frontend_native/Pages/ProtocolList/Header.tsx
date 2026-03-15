@@ -45,7 +45,7 @@ const Header = ({
     sortDirection,
 }: HeaderProps) => {
     return (
-        <VStack alignItems="start" width="100%" space="lg" mt="$4">
+        <VStack alignItems="flex-start" width="100%" space="lg" mt="$4">
             {/* Row with the search bar, sorting selectors and call to action button */}
             <HStack justifyContent="space-between" width="100%">
                 <HStack>
