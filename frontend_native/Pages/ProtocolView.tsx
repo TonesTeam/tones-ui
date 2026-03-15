@@ -207,20 +207,21 @@ const StepsColumn = ({
                     Protocol Steps
                 </Heading>
                 {protocol.step_groups && protocol.step_groups.length > 0 ? (
-                    protocol.step_groups.map((group) => (
-                        <VStack key={group.step_group.id} mb="$4">
-                            <Text fontWeight="bold" fontSize={16} mb="$2">
-                                {group.step_group.name}
-                            </Text>
-                            <VStack>
-                                {group.steps.map(
-                                    (step: StepDTO, index: number) => {
+                    protocol.step_groups.map((group) => {
+                        let stepNumber = 0;
+                        return (
+                            <VStack key={group.step_group.id} mb="$4">
+                                <Text fontWeight="bold" fontSize={16} mb="$2">
+                                    {group.step_group.name}
+                                </Text>
+                                <VStack>
+                                    {group.steps.map((step: StepDTO) => {
                                         return (
                                             <VStack key={step.id} p={0} m={0}>
                                                 <StepListItem
                                                     key={step.id}
                                                     step={step}
-                                                    index={index}
+                                                    index={++stepNumber}
                                                     isWashing={false}
                                                     getLiquidName={
                                                         getLiquidName
@@ -244,7 +245,7 @@ const StepsColumn = ({
                                                                 washing_iterations: 0,
                                                             } as StepDTO
                                                         }
-                                                        index={index}
+                                                        index={++stepNumber}
                                                         isWashing={true}
                                                         getLiquidName={
                                                             getLiquidName
@@ -253,11 +254,11 @@ const StepsColumn = ({
                                                 )}
                                             </VStack>
                                         );
-                                    },
-                                )}
+                                    })}
+                                </VStack>
                             </VStack>
-                        </VStack>
-                    ))
+                        );
+                    })
                 ) : (
                     <Text>No steps in this protocol</Text>
                 )}
@@ -296,7 +297,7 @@ const StepListItem = ({
             elevation={1}
         >
             <Text fontWeight="bold" fontSize="$sm" minWidth={25}>
-                #{index + 1}
+                #{index}
             </Text>
 
             <Icon
