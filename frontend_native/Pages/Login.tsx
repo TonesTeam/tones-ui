@@ -1,4 +1,4 @@
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 import {
@@ -18,6 +18,7 @@ import {
     ModalBackdrop,
     ButtonIcon,
     HStack,
+    FlatList,
 } from '@gluestack-ui/themed';
 import { Save } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
@@ -182,10 +183,11 @@ const UserGrid: React.FC<UserGridProps> = ({
         <View style={s.gridContainer}>
             {/* сетка из карточек пользователей (3 колонки) */}
             <FlatList
+                showsVerticalScrollIndicator={false}
                 data={users}
                 numColumns={3}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => {
+                keyExtractor={(item: User) => item.id.toString()}
+                renderItem={({ item }: { item: User }) => {
                     return (
                         <UserCard
                             user={item}
@@ -370,7 +372,6 @@ const s = StyleSheet.create({
     },
 
     row: {
-        justifyContent: 'space-around',
         marginBottom: 20,
         gap: 10,
     },
