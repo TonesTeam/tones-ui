@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react';
 import {
     HStack,
     Pressable,
@@ -26,6 +27,15 @@ const StepGroup = ({
     activeStepGroup,
     setActiveStepGroup,
 }: StepGroupProps) => {
+    const inputRef = useRef<any>(null);
+    const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        if (isEditing) {
+            inputRef.current?.focus();
+        }
+    }, [isEditing]);
+
     console.log(
         `activeStepGroup: ${activeStepGroup}, stepGroupId: ${stepGroup.step_group.name}`,
     );
@@ -48,12 +58,16 @@ const StepGroup = ({
                             : 'transparent'
                     }
                 >
-                    <Input flex={1} borderWidth={0} width={300}>
+                    <Input flex={1} borderWidth={0} width={300} isReadOnly={!isEditing}>
                         <InputField
+                            ref={inputRef}
                             onFocus={() => {
                                 setActiveStepGroup(
                                     stepGroup.step_group.sequence_number,
                                 );
+                            }}
+                            onBlur={() => {
+                                setIsEditing(false);
                             }}
                             onChange={(e: any) => {
                                 const updatedStepGroups = allStepGroups.map(
@@ -88,7 +102,11 @@ const StepGroup = ({
                         justifyContent="center"
                         gap={16}
                     >
-                        <Pressable>
+                        <Pressable
+                            onPress={() => {
+                                setIsEditing(true);
+                            }}
+                        >
                             <Icon
                                 as={Pencil}
                                 opacity={0.7}
