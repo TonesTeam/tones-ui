@@ -2,7 +2,7 @@ import { MainContainer } from '../constants/styles';
 import NavBar from '../navigation/NavBar';
 import { Box, Text } from '@gluestack-ui/themed';
 
-const History = (props: any) => {
+const Jobs = (props: any) => {
     return (
         <MainContainer>
             <NavBar />
@@ -14,11 +14,11 @@ const History = (props: any) => {
                     mb="$8"
                     mt={16}
                 >
-                    History
+                    Jobs
                 </Text>
             </Box>
         </MainContainer>
     );
 };
 
-export default History;
+export default Jobs;

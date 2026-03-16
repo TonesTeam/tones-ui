@@ -4,7 +4,7 @@ import Constructor from '../Pages/ProtocolConstructor/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import CategoryGrid from '../Pages/LiquidLibrary/CategoryGrid';
 import Library from '../Pages/LiquidLibrary/Library';
-import History from '../Pages/History';
+import Jobs from '../Pages/Jobs';
 import Profile from '../Pages/UserProfile';
 import ProtocolLogs from '../Pages/ProtocolLogs';
 import Loading from '../Pages/Loading';
@@ -51,8 +51,8 @@ export const Pages: Page[] = [
         isNavigatableFromNavBar: false,
     },
     {
-        name: 'History',
-        component: History,
+        name: 'Jobs',
+        component: Jobs,
         isNavigatableFromNavBar: true,
     },
     {
