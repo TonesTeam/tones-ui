@@ -197,7 +197,7 @@ const UserGrid: React.FC<UserGridProps> = ({
                                     `Logging in as ${item.first_name} ${item.last_name}`,
                                 );
                                 setUser(item);
-                                navigation.navigate('Protocols');
+                                navigation.navigate('Dashboard');
                             }}
                         />
                     );

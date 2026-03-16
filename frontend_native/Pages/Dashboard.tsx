@@ -129,9 +129,10 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         </Button>
                     </HStack>
                     <VStack>
-                        {protocols.slice(0, 3).map((protocol) => {
+                        {protocols.slice(0, 3).map((protocol, i) => {
                             return (
                                 <ListItem
+                                    key={i}
                                     navigation={navigation}
                                     protocol={protocol}
                                     removeProtocolFromList={() => {}}
