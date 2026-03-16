@@ -231,7 +231,7 @@ const StepGroup = ({
                         <>
                             {step.target_temperature > 2500 && (
                                 <Step
-                                    key={index}
+                                    key={`h${index}`}
                                     index={++index}
                                     step={step}
                                     setStepGroups={setStepGroups}
@@ -243,7 +243,7 @@ const StepGroup = ({
                                 />
                             )}
                             <Step
-                                key={index}
+                                key={`l${index}`}
                                 index={++index}
                                 step={step}
                                 setStepGroups={setStepGroups}
@@ -255,7 +255,7 @@ const StepGroup = ({
                             />
                             {step.target_temperature > 2500 && (
                                 <Step
-                                    key={index}
+                                    key={`c${index}`}
                                     index={++index}
                                     step={step}
                                     setStepGroups={setStepGroups}
@@ -268,7 +268,7 @@ const StepGroup = ({
                             )}
                             {step.washing_iterations > 0 && (
                                 <Step
-                                    key={index}
+                                    key={`w${index}`}
                                     index={++index}
                                     step={step}
                                     setStepGroups={setStepGroups}
