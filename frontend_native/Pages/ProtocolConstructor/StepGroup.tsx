@@ -43,6 +43,8 @@ const StepGroup = ({
     console.log(
         `activeStepGroup: ${activeStepGroup}, stepGroupId: ${stepGroup.step_group.name}`,
     );
+
+    let index = 0;
     return (
         <VStack>
             <ConfirmationModal
@@ -221,21 +223,63 @@ const StepGroup = ({
                 </HStack>
             </Pressable>
             <VStack gap={8} mt={24}>
-                {stepGroup.steps.map((step, index) => {
+                {stepGroup.steps.map((step) => {
                     console.log(
                         `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
                     );
                     return (
-                        <Step
-                            key={index}
-                            index={index + 1}
-                            step={step}
-                            setStepGroups={setStepGroups}
-                            allStepGroups={allStepGroups}
-                            stepGroupSequenceNumber={
-                                stepGroup.step_group.sequence_number
-                            }
-                        />
+                        <>
+                            {step.target_temperature > 2500 && (
+                                <Step
+                                    key={index}
+                                    index={++index}
+                                    step={step}
+                                    setStepGroups={setStepGroups}
+                                    allStepGroups={allStepGroups}
+                                    stepGroupSequenceNumber={
+                                        stepGroup.step_group.sequence_number
+                                    }
+                                    type={'heating'}
+                                />
+                            )}
+                            <Step
+                                key={index}
+                                index={++index}
+                                step={step}
+                                setStepGroups={setStepGroups}
+                                allStepGroups={allStepGroups}
+                                stepGroupSequenceNumber={
+                                    stepGroup.step_group.sequence_number
+                                }
+                                type={'liquid'}
+                            />
+                            {step.target_temperature > 2500 && (
+                                <Step
+                                    key={index}
+                                    index={++index}
+                                    step={step}
+                                    setStepGroups={setStepGroups}
+                                    allStepGroups={allStepGroups}
+                                    stepGroupSequenceNumber={
+                                        stepGroup.step_group.sequence_number
+                                    }
+                                    type={'cooling'}
+                                />
+                            )}
+                            {step.washing_iterations > 0 && (
+                                <Step
+                                    key={index}
+                                    index={++index}
+                                    step={step}
+                                    setStepGroups={setStepGroups}
+                                    allStepGroups={allStepGroups}
+                                    stepGroupSequenceNumber={
+                                        stepGroup.step_group.sequence_number
+                                    }
+                                    type={'wash'}
+                                />
+                            )}
+                        </>
                     );
                 })}
             </VStack>

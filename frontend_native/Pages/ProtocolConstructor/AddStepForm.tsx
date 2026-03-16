@@ -447,7 +447,8 @@ const AddLiquidForm = ({
                                 type: 'Liquid Application' as StepType,
                                 applied_liquid_id: selectedLiquid!,
                                 incubation_time: parseInt(incubationTime) * 60, // Convert minutes to seconds
-                                target_temperature: parseInt(targetTemperature),
+                                target_temperature:
+                                    parseInt(targetTemperature) * 100,
                                 iterations: 1,
                                 sequence_number: findNextSequenceNumberForSteps(
                                     stepGroups,
