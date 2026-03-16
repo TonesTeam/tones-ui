@@ -53,8 +53,20 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 const protocol = response.data as ProtocolWithStepsDTO;
                 setStepGroups(protocol.step_groups);
             });
+        } else {
+            setStepGroups([
+                {
+                    step_group: {
+                        id: 1,
+                        name: 'Step Group 1',
+                        protocol_id: 1,
+                        sequence_number: 1,
+                    },
+                    steps: [],
+                },
+            ] as StepGroupWithStepsDTO[]);
         }
-    }, [route.params?.protocol_ID]);
+    }, [route.params]);
 
     const saveProtocol = () => {
         makeRequest(
