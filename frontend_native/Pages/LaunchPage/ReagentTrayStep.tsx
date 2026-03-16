@@ -298,7 +298,7 @@ export function ReagentTrayStep(props: {
         setLoading(true);
         try {
             const response = await getRequest<ProtocolWithStepsDTO>(
-                `/protocol/${props.protocolId}`,
+                `/protocols/${props.protocolId}`,
             );
             if ('data' in response) {
                 const protocol = response.data;
