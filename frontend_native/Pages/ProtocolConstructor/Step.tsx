@@ -57,7 +57,7 @@ const Step = ({
                 <HStack flex={2} justifyContent="center" alignItems="center">
                     <Icon as={Thermometer} size={16} />
                     <Text color="black" fontSize={12} ml={6}>
-                        {step.target_temperature} °C
+                        {step.target_temperature / 100} °C
                     </Text>
                 </HStack>
                 <Box flex={2}></Box>
