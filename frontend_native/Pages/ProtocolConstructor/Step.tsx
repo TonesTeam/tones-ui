@@ -36,6 +36,8 @@ const Step = ({
     let incubationTime = 0;
     let color = 'black';
     let temperature = 0;
+    let automaticStep = false;
+
     switch (type) {
         case 'liquid':
             stepName = 'Reagent';
@@ -44,6 +46,7 @@ const Step = ({
             incubationTime = step.incubation_time || 0;
             color = 'black';
             temperature = step.target_temperature || 0;
+            automaticStep = false;
             break;
         case 'wash':
             stepName = 'Washing';
@@ -52,6 +55,7 @@ const Step = ({
             incubationTime = step.single_wash_duration || 0;
             color = '#1193CF';
             temperature = 2500;
+            automaticStep = true;
             break;
         case 'cooling':
             stepName = 'Cooling';
@@ -59,6 +63,7 @@ const Step = ({
             incubationTime = 60 * 7;
             color = '#0D26B0';
             temperature = step.target_temperature || 0;
+            automaticStep = true;
             break;
         case 'heating':
             stepName = 'Heating';
@@ -66,6 +71,7 @@ const Step = ({
             incubationTime = 60 * 7;
             color = '#BE0707';
             temperature = 2500;
+            automaticStep = true;
             break;
     }
 
@@ -77,7 +83,7 @@ const Step = ({
             <HStack
                 flex={1}
                 height={50}
-                bg="white"
+                bg={automaticStep ? '#F0F0F0' : '#FFFFFF'}
                 width="92%"
                 borderRadius={12}
                 alignItems="center"
