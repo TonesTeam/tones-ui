@@ -6,7 +6,6 @@ const isoDateFormat =
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2}:?\d{2}|Z)?$/;
 
 let domain: string | null = null;
-let backdoorAddress: string | null = null;
 const prefix = '';
 
 function generateIPRange(ip, subnetMask) {
@@ -85,25 +84,10 @@ async function findBE(
     console.log(`subnet mask - ${subnetMask}`);
     const ipList = generateIPRange(ipAddress, subnetMask);
 
-    let foundIP: string | null = '';
+    let foundIP = await scanNetwork(ipList, setProgressValue);
 
-    if (backdoorAddress) foundIP = backdoorAddress;
-    else foundIP = await scanNetwork(ipList, setProgressValue);
-
-    console.log(`Backdoor IP - ${backdoorAddress}`);
     return `http://${foundIP}:8080`;
 }
-
-export const setBackdoorAddress = (address: string) => {
-    console.log(`Setting backdoor address to ${address}`);
-    backdoorAddress = address;
-    domain = null; // Reset cached domain to force findBE() to run again
-    domainPromise = null;
-};
-
-export const getBackdoorAddress = () => {
-    return backdoorAddress;
-};
 
 let domainPromise: Promise<string> | null = null;
 

@@ -30,6 +30,7 @@ import {
 import { useAppSelector } from '../state/hooks';
 import { Status } from '../state/progress';
 import { useUser } from '../contexts/UserContext';
+import { VStack } from '@gluestack-ui/themed';
 
 type User = {
     id: number;
@@ -46,7 +47,6 @@ export default function Login({
     navigation,
 }: NativeStackScreenProps<any>) {
     const [users, setUsers] = useState<User[]>([]);
-    const [backdoorModal, setBackdoorModal] = useState(false);
     const [loginClicks, setLoginClicks] = useState(0);
     const activeProtocols = useAppSelector((state) => state.protocols);
 
@@ -95,27 +95,9 @@ export default function Login({
         fetchUsers();
     }, []);
 
-    useEffect(() => {
-        if (loginClicks === 5) {
-            setBackdoorModal(true);
-        }
-    }, [loginClicks]);
-
-    const handleSetBackdoor = (address: string) => {
-        setBackdoorAddress(address);
-        setBackdoorModal(false);
-        setLoginClicks(0);
-        navigation.navigate('Loading');
-    };
-
-    const handleCancelBackdoor = () => {
-        setLoginClicks(0);
-        setBackdoorModal(false);
-    };
-
     return (
-        <View style={s.container}>
-            <Header onLoginClick={() => setLoginClicks(loginClicks + 1)} />
+        <VStack bg="#E5E7F0" flex={1}>
+            <Header />
             <UserGrid
                 users={users}
                 navigation={navigation}
@@ -128,31 +110,16 @@ export default function Login({
                 style={s.bottomLogo}
                 resizeMode="contain"
             />
-
-            <BackdoorModal
-                isOpen={backdoorModal}
-                onClose={handleCancelBackdoor}
-                onSet={handleSetBackdoor}
-                initialAddress={getBackdoorAddress() ?? ''}
-            />
-        </View>
+        </VStack>
     );
 }
 
-//Заголовок
-type HeaderProps = {
-    onLoginClick: () => void;
-};
-
-const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
+const Header = () => {
     return (
         <View style={s.header}>
-            {/* Нажми 5 раз на "Login" чтобы открыть настройки IP */}
-            <Pressable onPress={onLoginClick}>
-                <Heading size="2xl" style={s.loginHeading}>
-                    Login
-                </Heading>
-            </Pressable>
+            <Heading size="2xl" style={s.loginHeading}>
+                Login
+            </Heading>
         </View>
     );
 };
@@ -242,109 +209,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, isActive, onPress }) => {
     );
 };
 
-//(BackdoorModal)
-
-type BackdoorModalProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    onCancel?: () => void;
-    onSet?: (address: string) => void;
-    initialAddress?: string;
-};
-
-const BackdoorModal: React.FC<BackdoorModalProps> = ({
-    isOpen,
-    onClose,
-    onCancel,
-    onSet,
-    initialAddress = '',
-}) => {
-    const [addressInput, setAddressInput] = useState<string>(initialAddress);
-
-    useEffect(() => {
-        if (isOpen) setAddressInput(initialAddress);
-    }, [isOpen, initialAddress]);
-
-    const handleCancel = () => {
-        setAddressInput('');
-        if (onCancel) onCancel();
-        onClose();
-    };
-
-    const handleSet = () => {
-        const trimmed = addressInput.trim();
-        console.log(`Setting backdoor address to: ${trimmed}`);
-        if (onSet) onSet(trimmed);
-        setAddressInput('');
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={isOpen} onClose={handleCancel} avoidKeyboard>
-            <ModalBackdrop />
-            <ModalContent p="$3" bg="black">
-                <ModalHeader>
-                    <Heading size="xl" color="lightgreen">
-                        Enter backend address 😈
-                    </Heading>
-                </ModalHeader>
-
-                <ModalBody>
-                    <Text mb="$4" color="lightgreen">
-                        Enter the backend host (without protocol or port).
-                        Example: 192.168.1.10
-                    </Text>
-
-                    <HStack alignItems="center">
-                        <Text color="lightgreen" flex={0.7}>
-                            http://
-                        </Text>
-                        <Input
-                            variant="outline"
-                            borderColor="lightgreen"
-                            color="lightgreen"
-                            flex={4}
-                        >
-                            <InputField
-                                value={addressInput}
-                                onChangeText={setAddressInput}
-                                color="lightgreen"
-                                placeholder="e.g. 192.168.1.10 or some domain"
-                            />
-                        </Input>
-                        <Text color="lightgreen" ml="$2" flex={1}>
-                            :8080
-                        </Text>
-                    </HStack>
-                </ModalBody>
-
-                <ModalFooter>
-                    <Button
-                        variant="outline"
-                        borderColor="lightgreen"
-                        onPress={handleCancel}
-                        mr="$4"
-                    >
-                        <ButtonText color="lightgreen">Cancel</ButtonText>
-                    </Button>
-
-                    <Button bg="lightgreen" onPress={handleSet}>
-                        <ButtonIcon as={Save} color="black" mr="$2" />
-                        <ButtonText color="black">Set</ButtonText>
-                    </Button>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    );
-};
-
 const s = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#E5E7F0',
-    },
-
     header: {
         flexDirection: 'row',
         justifyContent: 'center',
