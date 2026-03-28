@@ -19,18 +19,16 @@ import {
     ButtonIcon,
     HStack,
     FlatList,
+    Switch,
+    VStack,
 } from '@gluestack-ui/themed';
-import { Save } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import {
-    setBackdoorAddress,
-    getBackdoorAddress,
-    getRequest,
-} from '../common/util';
+import { getRequest, makeRequest } from '../common/util';
 import { useAppSelector } from '../state/hooks';
 import { Status } from '../state/progress';
 import { useUser } from '../contexts/UserContext';
-import { VStack } from '@gluestack-ui/themed';
+import { Plus, Save, Trash } from 'lucide-react-native';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 type User = {
     id: number;
@@ -49,62 +47,80 @@ export default function Login({
     const [users, setUsers] = useState<User[]>([]);
     const [loginClicks, setLoginClicks] = useState(0);
     const activeProtocols = useAppSelector((state) => state.protocols);
+    const [editMode, setEditMode] = useState(false);
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                console.log('[Login] Fetching users from backend...');
-                const res = await getRequest<User[]>('/users');
-
-                console.log('[Login] /users success', {
-                    status: res.status,
-                    url: res.config?.url,
-                    method: res.config?.method,
-                    responseHeaders: res.headers,
-                    dataType: typeof res.data,
-                    dataLength: Array.isArray(res.data)
-                        ? res.data.length
-                        : undefined,
-                    // preview so you don't spam logcat:
-                    dataPreview: Array.isArray(res.data)
-                        ? res.data.slice(0, 3)
-                        : res.data,
-                });
-
-                setUsers(res.data);
-            } catch (err: unknown) {
-                if (axios.isAxiosError(err)) {
-                    console.error('[Login] /users axios error', {
-                        message: err.message,
-                        code: err.code,
-                        url: err.config?.url,
-                        method: err.config?.method,
-                        timeout: err.config?.timeout,
-                        requestHeaders: err.config?.headers,
-                        // Present only if server responded (HTTP error codes etc.)
-                        status: err.response?.status,
-                        responseHeaders: err.response?.headers,
-                        responseData: err.response?.data,
-                    });
-                } else {
-                    console.error('[Login] /users non-axios error', err);
-                }
-            }
-        };
-
         fetchUsers();
     }, []);
 
+    const fetchUsers = async () => {
+        try {
+            console.log('[Login] Fetching users from backend...');
+            const res = await getRequest<User[]>('/users');
+
+            console.log('[Login] /users success', {
+                status: res.status,
+                url: res.config?.url,
+                method: res.config?.method,
+                responseHeaders: res.headers,
+                dataType: typeof res.data,
+                dataLength: Array.isArray(res.data)
+                    ? res.data.length
+                    : undefined,
+                // preview so you don't spam logcat:
+                dataPreview: Array.isArray(res.data)
+                    ? res.data.slice(0, 3)
+                    : res.data,
+            });
+
+            setUsers(res.data);
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                console.error('[Login] /users axios error', {
+                    message: err.message,
+                    code: err.code,
+                    url: err.config?.url,
+                    method: err.config?.method,
+                    timeout: err.config?.timeout,
+                    requestHeaders: err.config?.headers,
+                    // Present only if server responded (HTTP error codes etc.)
+                    status: err.response?.status,
+                    responseHeaders: err.response?.headers,
+                    responseData: err.response?.data,
+                });
+            } else {
+                console.error('[Login] /users non-axios error', err);
+            }
+        }
+    };
+
     return (
         <VStack bg="#E5E7F0" flex={1}>
+            {/* Edit mode toggle */}
+            <HStack justifyContent="flex-end" padding={16} alignItems="center">
+                <Text fontSize={12} color="gray" mr={8}>
+                    Edit mode
+                </Text>
+                <Switch
+                    size="md"
+                    value={editMode}
+                    onToggle={() => setEditMode(!editMode)}
+                />
+            </HStack>
+
+            {/* 'Login' text */}
             <Header />
+
+            {/* User cards */}
             <UserGrid
                 users={users}
                 navigation={navigation}
                 activeProtocols={activeProtocols}
+                editMode={editMode}
+                refreshUsers={fetchUsers}
             />
 
-            {/* Логотип внизу страницы */}
+            {/* Tones logo */}
             <Image
                 source={require('../assets/pics/tones-logo.png')}
                 style={s.bottomLogo}
@@ -116,11 +132,16 @@ export default function Login({
 
 const Header = () => {
     return (
-        <View style={s.header}>
-            <Heading size="2xl" style={s.loginHeading}>
+        <HStack alignItems="center" justifyContent="center" pt={30}>
+            <Text
+                fontSize={32}
+                fontFamily="Orbitron-Medium"
+                fontWeight="400"
+                color="black"
+            >
                 Login
-            </Heading>
-        </View>
+            </Text>
+        </HStack>
     );
 };
 
@@ -129,14 +150,22 @@ type UserGridProps = {
     users: User[];
     navigation: any;
     activeProtocols: any[];
+    editMode: boolean;
+    refreshUsers: () => void;
 };
 
 const UserGrid: React.FC<UserGridProps> = ({
     users,
     navigation,
     activeProtocols,
+    editMode,
+    refreshUsers,
 }) => {
-    console.log('UserGrid rendering with users:', users);
+    const [usersWithPlaceholder, setUsersWithPlaceholder] = useState<User[]>(
+        [],
+    );
+    const [biggestUserId, setBiggestUserId] = useState(0);
+
     const isUserActive = (username: string) => {
         const isActive = activeProtocols.some(
             (protocol) =>
@@ -146,27 +175,47 @@ const UserGrid: React.FC<UserGridProps> = ({
     };
     const { setUser } = useUser();
 
+    useEffect(() => {
+        const user: User = {
+            id: Math.max(...users.map((u) => u.id), 0) + 1,
+            first_name: 'Add New User',
+            last_name: 'Placeholder',
+            is_deleted: false,
+            institution: 'System',
+            role: 'System',
+            avatar: null,
+        };
+        setUsersWithPlaceholder([...users, user]);
+        setBiggestUserId(user.id);
+    }, [users]);
+
     return (
         <View style={s.gridContainer}>
             {/* сетка из карточек пользователей (3 колонки) */}
             <FlatList
                 showsVerticalScrollIndicator={false}
-                data={users}
+                data={usersWithPlaceholder}
                 numColumns={3}
-                keyExtractor={(item: User) => item.id.toString()}
-                renderItem={({ item }: { item: User }) => {
-                    return (
-                        <UserCard
-                            user={item}
-                            isActive={isUserActive(item.username)}
-                            onPress={() => {
-                                console.log(
-                                    `Logging in as ${item.first_name} ${item.last_name}`,
-                                );
-                                setUser(item);
-                                navigation.navigate('Dashboard');
-                            }}
-                        />
+                keyExtractor={(_item: User, index: number) => index.toString()}
+                renderItem={({ item, i }: { item: User; i: number }) => {
+                    return item.id === biggestUserId && editMode ? (
+                        <AddUserCard refreshUsers={refreshUsers} />
+                    ) : (
+                        item.id !== biggestUserId && (
+                            <UserCard
+                                user={item}
+                                isActive={isUserActive(item.username)}
+                                onPress={() => {
+                                    console.log(
+                                        `Logging in as ${item.first_name} ${item.last_name}`,
+                                    );
+                                    setUser(item);
+                                    navigation.navigate('Dashboard');
+                                }}
+                                editMode={editMode}
+                                refreshUsers={refreshUsers}
+                            />
+                        )
                     );
                 }}
                 columnWrapperStyle={s.row}
@@ -175,16 +224,196 @@ const UserGrid: React.FC<UserGridProps> = ({
         </View>
     );
 };
-//Карточка пользователя
+
+interface AddUserCardProps {
+    refreshUsers: () => void;
+}
+
+const AddUserCard = ({ refreshUsers }: AddUserCardProps) => {
+    const [addUserModal, setAddUserModal] = useState(false);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [institution, setInstitution] = useState('');
+
+    const handleAddUser = () => {
+        makeRequest(
+            'POST',
+            '/users',
+            JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                institution,
+                role: 'Regular User',
+            }),
+        )
+            .then((res) => {
+                console.log('User added successfully:', res.data);
+                setAddUserModal(false);
+                refreshUsers();
+            })
+            .catch((err) => {
+                console.error('Error adding user:', err);
+            });
+    };
+
+    return (
+        <>
+            <Button
+                bg="transparent"
+                borderRadius={12}
+                p={20}
+                width={200}
+                height={204}
+                m={10}
+                alignItems="center"
+                justifyContent="center"
+                borderStyle="dashed"
+                borderColor="rgba(0, 0, 0, 0.3)"
+                borderWidth={2}
+                onPress={() => setAddUserModal(true)}
+            >
+                <ButtonIcon as={Plus} color="black" mr="$1" />
+                <ButtonText fontSize={16} color="black">
+                    Add New User
+                </ButtonText>
+            </Button>
+
+            <Modal isOpen={addUserModal} onClose={() => setAddUserModal(false)}>
+                <ModalBackdrop />
+                <ModalContent p={10}>
+                    <ModalHeader mb={20}>
+                        <Text
+                            fontSize={20}
+                            color="black"
+                            fontFamily="Manrope-SemiBold"
+                        >
+                            🌱 Add New User
+                        </Text>
+                    </ModalHeader>
+
+                    <ModalBody>
+                        <VStack space="md">
+                            <HStack
+                                space="md"
+                                alignItems="center"
+                                justifyContent="center"
+                                mb={10}
+                            >
+                                <GeneratedAvatar name={firstName} size={100} />
+                            </HStack>
+
+                            <HStack space="md" alignItems="center">
+                                <Text>First Name</Text>
+                                <Input width="80%">
+                                    <InputField
+                                        value={firstName}
+                                        onChange={(e) =>
+                                            setFirstName(e.nativeEvent.text)
+                                        }
+                                        placeholder="e.g. Alice"
+                                    ></InputField>
+                                </Input>
+                            </HStack>
+
+                            <HStack space="md" alignItems="center">
+                                <Text>Last Name</Text>
+                                <Input width="80%">
+                                    <InputField
+                                        value={lastName}
+                                        onChange={(e) =>
+                                            setLastName(e.nativeEvent.text)
+                                        }
+                                        placeholder="e.g. Roberts"
+                                    ></InputField>
+                                </Input>
+                            </HStack>
+
+                            <HStack space="md" alignItems="center">
+                                <Text>Institution</Text>
+                                <Input width="80%">
+                                    <InputField
+                                        value={institution}
+                                        onChange={(e) =>
+                                            setInstitution(e.nativeEvent.text)
+                                        }
+                                        placeholder="e.g. Transport and Telecommunication Institute"
+                                    ></InputField>
+                                </Input>
+                            </HStack>
+                        </VStack>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button
+                            variant="outline"
+                            mr="$2"
+                            onPress={() => setAddUserModal(false)}
+                            borderColor="black"
+                        >
+                            <ButtonText color="black">Cancel</ButtonText>
+                        </Button>
+                        <Button
+                            bg="#1F2832"
+                            color="white"
+                            onPress={handleAddUser}
+                        >
+                            <ButtonIcon as={Save} color="white" mr="$1" />
+                            <ButtonText>Add User</ButtonText>
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    );
+};
+
 type UserCardProps = {
     user: User;
     isActive: boolean;
     onPress: () => void;
+    editMode: boolean;
+    refreshUsers: () => void;
 };
 
-const UserCard: React.FC<UserCardProps> = ({ user, isActive, onPress }) => {
+const UserCard: React.FC<UserCardProps> = ({
+    user,
+    isActive,
+    onPress,
+    editMode,
+    refreshUsers,
+}) => {
+    const [deleteUserModal, setDeleteUserModal] = useState(false);
+
+    const handleDeleteUser = () => {
+        makeRequest('DELETE', `/users/${user.id}`)
+            .then((res) => {
+                console.log('User deleted successfully:', res.data);
+                refreshUsers();
+            })
+            .catch((err) => {
+                console.error('Error deleting user:', err);
+            });
+    };
+
     return (
         <Pressable onPress={onPress} style={s.card}>
+            {editMode && (
+                <Button
+                    position="absolute"
+                    top={-10}
+                    right={-10}
+                    size="sm"
+                    bg="transparent"
+                    borderRadius={9999}
+                    aspectRatio={1}
+                    onPress={() => setDeleteUserModal(true)}
+                    bg="red"
+                >
+                    <ButtonIcon color="white" as={Trash} />
+                </Button>
+            )}
+
             {/* Avatar */}
             <View style={s.cardHeader}>
                 <GeneratedAvatar name={user.first_name} size={64} />
@@ -205,23 +434,24 @@ const UserCard: React.FC<UserCardProps> = ({ user, isActive, onPress }) => {
                     </View>
                 )}
             </View>
+
+            <ConfirmationModal
+                isOpen={deleteUserModal}
+                onClose={() => {
+                    setDeleteUserModal(false);
+                }}
+                action={() => {
+                    handleDeleteUser();
+                }}
+                headline={`Delete User "${user.first_name} ${user.last_name}"?`}
+                text="Are you sure you want to delete this user? This action cannot be undone."
+                actionButtonText="Delete"
+            />
         </Pressable>
     );
 };
 
 const s = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 80,
-    },
-    loginHeading: {
-        fontFamily: 'Orbitron-Medium',
-        fontWeight: '400',
-        fontSize: 32,
-    },
-
     bottomLogo: {
         width: '100%',
         height: 10.69,
