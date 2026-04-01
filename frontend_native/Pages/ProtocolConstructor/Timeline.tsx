@@ -10,6 +10,7 @@ interface TimelineProps {
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
+    liquidMap: Map<number, string>;
 }
 
 const Timeline = ({
@@ -17,6 +18,7 @@ const Timeline = ({
     setStepGroups,
     activeStepGroup,
     setActiveStepGroup,
+    liquidMap,
 }: TimelineProps) => {
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
         '' as '' | number,
@@ -80,6 +82,7 @@ const Timeline = ({
                         allStepGroups={stepGroups}
                         activeStepGroup={activeStepGroup}
                         setActiveStepGroup={setActiveStepGroup}
+                        liquidMap={liquidMap}
                     />
                 ))}
             </ScrollView>

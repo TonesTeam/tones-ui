@@ -20,6 +20,7 @@ interface StepProps {
     allStepGroups: StepGroupWithStepsDTO[];
     stepGroupSequenceNumber: number;
     type: 'liquid' | 'wash' | 'cooling' | 'heating';
+    liquidMap?: Map<number, string>;
 }
 
 const Step = ({
@@ -29,7 +30,16 @@ const Step = ({
     allStepGroups,
     stepGroupSequenceNumber,
     type,
+    liquidMap,
 }: StepProps) => {
+    const trimLiquidName = (name: string) => {
+        const trimThreshold = 13;
+        if (name.length > trimThreshold) {
+            return name.substring(0, trimThreshold) + '...';
+        }
+        return name;
+    };
+
     let stepName = '';
     let icon = null;
     let iterations = 0;
@@ -40,7 +50,9 @@ const Step = ({
 
     switch (type) {
         case 'liquid':
-            stepName = 'Reagent';
+            stepName =
+                trimLiquidName(liquidMap?.get(step.applied_liquid_id)) ||
+                'Unknown Liquid';
             icon = FlaskConical;
             iterations = step.iterations || 0;
             incubationTime = step.incubation_time || 0;

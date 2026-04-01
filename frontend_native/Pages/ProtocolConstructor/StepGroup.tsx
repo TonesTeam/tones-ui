@@ -19,6 +19,7 @@ interface StepGroupProps {
     allStepGroups: StepGroupWithStepsDTO[];
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
+    liquidMap: Map<number, string>;
 }
 
 const StepGroup = ({
@@ -27,6 +28,7 @@ const StepGroup = ({
     allStepGroups,
     activeStepGroup,
     setActiveStepGroup,
+    liquidMap,
 }: StepGroupProps) => {
     const inputRef = useRef<any>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -252,6 +254,7 @@ const StepGroup = ({
                                     stepGroup.step_group.sequence_number
                                 }
                                 type={'liquid'}
+                                liquidMap={liquidMap}
                             />
                             {step.target_temperature > 2500 && (
                                 <Step

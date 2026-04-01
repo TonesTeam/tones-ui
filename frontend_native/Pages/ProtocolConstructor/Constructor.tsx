@@ -27,6 +27,7 @@ import { Method } from 'axios';
 import { makeRequest } from '../../common/util';
 import { useUser } from '../../contexts/UserContext';
 import { StepDTO } from 'common/dto/step.dto';
+import { LiquidDTO } from 'common/dto/liquid.dto';
 
 const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [name, setName] = useState('Protocol name');
@@ -42,7 +43,14 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         },
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
+    const [liquids, setLiquids] = useState([] as LiquidDTO[]);
     const { user } = useUser();
+
+    useEffect(() => {
+        makeRequest('GET' as Method, '/liquids').then((response) => {
+            setLiquids(response.data as LiquidDTO[]);
+        });
+    }, []);
 
     useEffect(() => {
         if (route.params?.protocol_ID) {
@@ -67,6 +75,14 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             ] as StepGroupWithStepsDTO[]);
         }
     }, [route.params]);
+
+    useEffect(() => {
+        console.log('stepGroups', stepGroups);
+        stepGroups.sort(
+            (a, b) =>
+                a.step_group.sequence_number - b.step_group.sequence_number,
+        );
+    }, [stepGroups]);
 
     const saveProtocol = () => {
         makeRequest(
@@ -100,13 +116,13 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         });
     };
 
-    useEffect(() => {
-        console.log('stepGroups', stepGroups);
-        stepGroups.sort(
-            (a, b) =>
-                a.step_group.sequence_number - b.step_group.sequence_number,
-        );
-    }, [stepGroups]);
+    const liquidsToLiquidMap = (liquids: LiquidDTO[]) => {
+        const liquidMap: Map<number, string> = new Map();
+        liquids.forEach((liquid) => {
+            liquidMap.set(liquid.id, liquid.name);
+        });
+        return liquidMap;
+    };
 
     return (
         <MainContainer>
@@ -153,6 +169,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 setStepGroups={setStepGroups}
                                 activeStepGroup={activeStepGroup}
                                 setActiveStepGroup={setActiveStepGroup}
+                                liquidMap={liquidsToLiquidMap(liquids)}
                             />
                         </LinearGradient>
                     </Box>
