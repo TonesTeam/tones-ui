@@ -8,7 +8,7 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 import Txt from '../../components/Txt';
 import { AppStyles } from '../../constants/styles';
-import { Box, HStack, VStack } from '@gluestack-ui/themed';
+import { Box, HStack, VStack, Text } from '@gluestack-ui/themed';
 import { getRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { ReagentStep } from 'common/dto/step.dto';
@@ -233,33 +233,28 @@ export function WashingLiquidsStep(props: {
             <HStack flex={1} gap={34}>
                 {/* Left: Instructions */}
                 <VStack flex={1} space="md">
-                    <Box
-                        backgroundColor={AppStyles.color.primary_faded}
-                        padding="$4"
-                        borderRadius="$lg"
-                    >
-                        <Txt
-                            style={{
-                                fontSize: 20,
-                                fontFamily: 'Roboto-bold',
-                                marginBottom: 12,
-                            }}
+                    <Box>
+                        <Text
+                            fontSize={20}
+                            fontFamily="Orbitron-Bold"
+                            color="#1F2832"
+                            marginBottom={18}
                         >
                             Add Washing Liquids
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            1. Open tray with liquids
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            2. Check if there is enough liquid
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            3. If there is not enough liquid. Insert liquids as
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            1. Open tray with washing liquids
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            2. Check if there is enough washing liquid
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            3. If there is not enough liquid, insert liquids as
                             per instructions into the tray
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            4. When done, close the tray with liquids
-                        </Txt>
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            4. When done, close the tray with washing liquids
+                        </Text>
                     </Box>
                 </VStack>
 
@@ -393,40 +388,43 @@ export function WashingLiquidsStep(props: {
             <HStack flex={1} gap={34}>
                 {/* Left: Instructions */}
                 <VStack flex={1} space="md">
-                    <Box
-                        backgroundColor={AppStyles.color.primary_faded}
-                        padding="$4"
-                        borderRadius="$lg"
-                    >
-                        <Txt
-                            style={{
-                                fontSize: 20,
-                                fontFamily: 'Roboto-bold',
-                                marginBottom: 12,
-                            }}
+                    <Box>
+                        <Text
+                            fontSize={20}
+                            fontFamily="Orbitron-Bold"
+                            color="#1F2832"
+                            marginBottom={18}
                         >
-                            Check Wastes Containers
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
+                            Check Waste Containers
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
                             1. Find container with{' '}
-                            <Txt style={{ fontFamily: 'Roboto-bold' }}>
+                            <Text
+                                fontSize={12}
+                                color="black"
+                                fontFamily="Manrope-SemiBold"
+                            >
                                 general
-                            </Txt>{' '}
-                            wastes
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            2. Empty it if it is more than half full.
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                            3. Find container with{' '}
-                            <Txt style={{ fontFamily: 'Roboto-bold' }}>
+                            </Text>{' '}
+                            waste
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            2. Empty it if it is more than half full
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            1. Find container with{' '}
+                            <Text
+                                fontSize={12}
+                                color="black"
+                                fontFamily="Manrope-SemiBold"
+                            >
                                 hazard
-                            </Txt>{' '}
-                            wastes
-                        </Txt>
-                        <Txt style={{ fontSize: 14, lineHeight: 20 }}>
+                            </Text>{' '}
+                            waste
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
                             4. Empty it if it is more than half full.
-                        </Txt>
+                        </Text>
                     </Box>
                 </VStack>
 
