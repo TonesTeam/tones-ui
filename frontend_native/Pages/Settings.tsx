@@ -14,7 +14,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { makeRequest } from '../common/util';
 import { useUser, User } from '../contexts/UserContext';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 
 const Settings = ({ route, navigation }: NativeStackScreenProps<any>) => {
@@ -60,6 +60,12 @@ const Settings = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 console.error('Error updating user:', err);
             });
     };
+
+    useEffect(() => {
+        setFirstName(user?.first_name);
+        setLastName(user?.last_name);
+        setInstitution(user?.institution);
+    }, [user]);
 
     return (
         <MainContainer>
