@@ -47,7 +47,7 @@ export function SlotSelection(props: {
             {/* Left Panel - Instructions */}
             <VStack px={25}>
                 <Text
-                    fontFamily="Orbitron-Medium"
+                    fontFamily="Orbitron-Bold"
                     fontSize={20}
                     color="#1F2832"
                     mb={10}
