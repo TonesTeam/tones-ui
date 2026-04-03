@@ -13,14 +13,13 @@ import {
 } from '@gluestack-ui/themed';
 import Logo from '../assets/pics/tones_logo.svg';
 import { useEffect, useState } from 'react';
-import { getDomain, setBackdoorAddress } from '../common/util';
+import { getDomain } from '../common/util';
 
 const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [progressValue, setProgressValue] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [errorClicks, setErrorClicks] = useState(0);
     const [refresh, setRefresh] = useState(0);
-    const [ipAddress, setIpAddress] = useState('');
 
     const goForAScan = () => {
         getDomain(setProgressValue).then((domain) => {
@@ -34,10 +33,9 @@ const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
         });
     };
 
-    const useSetIpAddress = () => {
-        setBackdoorAddress(ipAddress);
-        navigation.replace('Logout');
-    };
+    useEffect(() => {
+        goForAScan();
+    }, []);
 
     return (
         <VStack
@@ -49,23 +47,6 @@ const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
             justifyContent="center"
         >
             <Logo />
-            <Button onPress={goForAScan} mt={4}>
-                <ButtonText color="white" fontSize={14}>
-                    Start Scan
-                </ButtonText>
-            </Button>
-            <Button onPress={useSetIpAddress} mt={4}>
-                <ButtonText color="white" fontSize={14}>
-                    Try with pre-defined IP
-                </ButtonText>
-            </Button>
-            <Input width={300} mt={4}>
-                <InputField
-                    placeholder="Enter IP address to try"
-                    onChange={(e: any) => setIpAddress(e.nativeEvent.text)}
-                    value={ipAddress}
-                />
-            </Input>
             {!error ? (
                 <VStack mt={50} alignItems="center">
                     <Text fontSize={12}>
@@ -117,7 +98,7 @@ const Loading = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             console.log('Retrying to find Tones device...');
                             setError(null);
                             setProgressValue(0);
-                            setRefresh(refresh + 1);
+                            goForAScan();
                         }}
                         width={150}
                     >

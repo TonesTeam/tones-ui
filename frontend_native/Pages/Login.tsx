@@ -210,7 +210,7 @@ const UserGrid: React.FC<UserGridProps> = ({
                                         `Logging in as ${item.first_name} ${item.last_name}`,
                                     );
                                     setUser(item);
-                                    navigation.navigate('Dashboard');
+                                    navigation.replace('Dashboard');
                                 }}
                                 editMode={editMode}
                                 refreshUsers={refreshUsers}
@@ -383,37 +383,8 @@ const UserCard: React.FC<UserCardProps> = ({
     editMode,
     refreshUsers,
 }) => {
-    const [deleteUserModal, setDeleteUserModal] = useState(false);
-
-    const handleDeleteUser = () => {
-        makeRequest('DELETE', `/users/${user.id}`)
-            .then((res) => {
-                console.log('User deleted successfully:', res.data);
-                refreshUsers();
-            })
-            .catch((err) => {
-                console.error('Error deleting user:', err);
-            });
-    };
-
     return (
         <Pressable onPress={onPress} style={s.card}>
-            {editMode && (
-                <Button
-                    position="absolute"
-                    top={-10}
-                    right={-10}
-                    size="sm"
-                    bg="transparent"
-                    borderRadius={9999}
-                    aspectRatio={1}
-                    onPress={() => setDeleteUserModal(true)}
-                    bg="red"
-                >
-                    <ButtonIcon color="white" as={Trash} />
-                </Button>
-            )}
-
             {/* Avatar */}
             <View style={s.cardHeader}>
                 <GeneratedAvatar name={user.first_name} size={64} />
@@ -434,19 +405,6 @@ const UserCard: React.FC<UserCardProps> = ({
                     </View>
                 )}
             </View>
-
-            <ConfirmationModal
-                isOpen={deleteUserModal}
-                onClose={() => {
-                    setDeleteUserModal(false);
-                }}
-                action={() => {
-                    handleDeleteUser();
-                }}
-                headline={`Delete User "${user.first_name} ${user.last_name}"?`}
-                text="Are you sure you want to delete this user? This action cannot be undone."
-                actionButtonText="Delete"
-            />
         </Pressable>
     );
 };
