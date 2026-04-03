@@ -412,7 +412,7 @@ export function WashingLiquidsStep(props: {
                             2. Empty it if it is more than half full
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
-                            1. Find container with{' '}
+                            3. Find container with{' '}
                             <Text
                                 fontSize={12}
                                 color="black"
