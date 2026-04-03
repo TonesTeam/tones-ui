@@ -19,8 +19,12 @@ export default function App() {
     LogBox.ignoreLogs(['Require cycle:']);
     const [fontsLoaded, fontError] = useFonts({
         Orbitron: require('./assets/fonts/Orbitron-VariableFont_wght.ttf'),
-        'Orbitron-Medium': require('./assets/fonts/orbitron-medium.ttf'),
         'Orbitron-Regular': require('./assets/fonts/Orbitron-Regular.ttf'),
+        'Orbitron-Medium': require('./assets/fonts/Orbitron-Medium.ttf'),
+        'Orbitron-SemiBold': require('./assets/fonts/Orbitron-SemiBold.ttf'),
+        'Orbitron-Bold': require('./assets/fonts/Orbitron-Bold.ttf'),
+        'Orbitron-ExtraBold': require('./assets/fonts/Orbitron-ExtraBold.ttf'),
+        'Orbitron-Black': require('./assets/fonts/Orbitron-Black.ttf'),
         'Manrope-Light': require('./assets/fonts/Manrope-Light.ttf'),
         'Manrope-Medium': require('./assets/fonts/Manrope-Medium.ttf'),
         'Manrope-SemiBold': require('./assets/fonts/Manrope-SemiBold.ttf'),
