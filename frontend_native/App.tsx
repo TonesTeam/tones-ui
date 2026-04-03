@@ -18,10 +18,6 @@ export default function App() {
     // Ignore specific warning by message
     LogBox.ignoreLogs(['Require cycle:']);
     const [fontsLoaded, fontError] = useFonts({
-        'Roboto-thin': require('./assets/fonts/Roboto-Light.ttf'),
-        'Roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
-        'Roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
-        Newsreader: require('./assets/fonts/Newsreader.ttf'),
         Orbitron: require('./assets/fonts/Orbitron-VariableFont_wght.ttf'),
         'Orbitron-Medium': require('./assets/fonts/orbitron-medium.ttf'),
         'Orbitron-Regular': require('./assets/fonts/Orbitron-Regular.ttf'),

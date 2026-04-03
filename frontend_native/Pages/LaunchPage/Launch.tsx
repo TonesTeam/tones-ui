@@ -28,7 +28,6 @@ import { SlotSelection } from './SlotSelection';
 import { ReagentTrayStep } from './ReagentTrayStep';
 import { WashingLiquidsStep } from './WashingLiquidsStep';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
-import { Confirmations } from './Confirmations';
 import { SetLaunchTime } from './SetLaunchTime';
 import { getRequest, makeRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
