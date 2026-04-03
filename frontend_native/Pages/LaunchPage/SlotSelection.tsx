@@ -9,7 +9,7 @@ import Txt from '../../components/Txt';
 import { AppStyles } from '../../constants/styles';
 import { SLOT_QUANTITY } from '../../common/cartridgeConfig';
 import { useState, useEffect } from 'react';
-import { Pencil } from 'lucide-react-native';
+import { getRequest, makeRequest } from '../../common/util';
 import {
     Icon,
     Text,
@@ -20,10 +20,28 @@ import {
     Image,
 } from '@gluestack-ui/themed';
 
+type SlotState = {
+    id: number;
+    state: 'Idle' | 'Missing' | 'Busy';
+};
+
 export function SlotSelection(props: {
     selectedSlots: Set<number>;
     setSelectedSlots: (slots: Set<number>) => void;
 }) {
+    const [slotStates, setSlotStates] = useState<Map<number, string>>();
+
+    useEffect(() => {
+        getRequest('/hardware/slot-states').then((res) => {
+            const states = new Map<number, string>();
+            const data = res.data as SlotState[];
+            data.forEach((slot: SlotState) => {
+                states.set(slot.id, slot.state);
+            });
+            setSlotStates(states);
+        });
+    }, []);
+
     return (
         <HStack>
             {/* Left Panel - Instructions */}
@@ -75,6 +93,11 @@ export function SlotSelection(props: {
                                 <SlotCard
                                     name={`Slot ${index + 1}`}
                                     key={index}
+                                    state={
+                                        slotStates
+                                            ? slotStates.get(index) || 'Idle'
+                                            : 'Idle'
+                                    }
                                     isSelected={props.selectedSlots.has(index)}
                                     onPress={() => {
                                         const newSelectedSlots = new Set(
@@ -102,13 +125,17 @@ const SlotCard = ({
     name,
     isSelected,
     onPress,
+    state,
 }: {
     name: string;
     isSelected: boolean;
     onPress: () => void;
+    state: string;
 }) => {
+    const isDisabled = state !== 'Idle';
+
     return (
-        <Pressable onPress={onPress}>
+        <Pressable onPress={() => !isDisabled && onPress()}>
             <Box
                 bg="rgba(255, 255, 255, 0.4)"
                 borderRadius={10}
@@ -119,13 +146,14 @@ const SlotCard = ({
                 height={180}
                 alignItems="center"
                 justifyContent="space-between"
+                opacity={isDisabled ? 0.4 : 1}
             >
                 <Text
                     fontSize={14}
                     color="#1F2832"
                     fontFamily="Manrope-SemiBold"
                 >
-                    {name}
+                    {isDisabled ? `${name} (${state})` : name}
                 </Text>
                 <Image
                     width={46 * 0.7}
