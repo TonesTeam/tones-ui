@@ -163,6 +163,19 @@ export default function Launch({
         setSlotNumber(selectedCount);
     }
 
+    const isNextDisabled = () => {
+        if (stage === LaunchStage.STEP_ONE) {
+            return selectedSlots.size === 0;
+        } else if (stage === LaunchStage.STEP_TWO) {
+            return !allReagentSlotsSelected;
+        } else if (stage === LaunchStage.STEP_THREE) {
+            return !allWashingSwitchesOn;
+        } else if (stage === LaunchStage.STEP_FOUR) {
+            return !isLaunchTimeValid;
+        }
+        return false;
+    };
+
     return (
         <MainContainer>
             <NavBar />
@@ -273,7 +286,7 @@ export default function Launch({
                                         });
                                     }
                                 }}
-                                isDisabled={selectedSlots.size == 0}
+                                isDisabled={isNextDisabled()}
                             >
                                 <ButtonText
                                     fontSize={14}
@@ -318,10 +331,6 @@ export default function Launch({
                         )}
                         {stage == LaunchStage.STEP_THREE && (
                             <WashingLiquidsStep
-                                slots={
-                                    slotNumber == '' ? 1 : Number(slotNumber)
-                                }
-                                protocolId={protocol_ID}
                                 onCompletionChange={(allOn) =>
                                     setAllWashingSwitchesOn(allOn)
                                 }
