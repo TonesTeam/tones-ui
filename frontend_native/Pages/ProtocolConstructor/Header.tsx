@@ -17,9 +17,16 @@ interface HeaderProps {
     name: string;
     setName: (name: string) => void;
     saveProtocol: () => void;
+    editingMode: boolean;
 }
 
-const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
+const Header = ({
+    navigation,
+    name,
+    setName,
+    saveProtocol,
+    editingMode,
+}: HeaderProps) => {
     return (
         <HStack mt={16}>
             <HStack alignItems="center">
@@ -43,7 +50,7 @@ const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
                     color="#1F2832"
                     fontFamily="Orbitron-Medium"
                 >
-                    New protocol
+                    {editingMode ? 'Editing' : 'New'} protocol
                 </Text>
 
                 {/* Divider */}

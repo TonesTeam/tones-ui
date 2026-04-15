@@ -45,6 +45,8 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
     const [liquids, setLiquids] = useState([] as LiquidDTO[]);
     const { user } = useUser();
+    const editingMode = route.params?.edit ? true : false;
+    const [historyId, setHistoryId] = useState('');
 
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids').then((response) => {
@@ -60,6 +62,11 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             ).then((response) => {
                 const protocol = response.data as ProtocolWithStepsDTO;
                 setStepGroups(protocol.step_groups);
+                setHistoryId(protocol.metadata.history_id);
+
+                if (editingMode) {
+                    setName(protocol.metadata.name);
+                }
             });
         } else {
             setStepGroups([
@@ -85,35 +92,74 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     }, [stepGroups]);
 
     const saveProtocol = () => {
-        makeRequest(
-            'POST' as Method,
-            '/protocols',
-            JSON.stringify({
-                name,
-                description: '',
-                author_id: user?.id,
-                step_groups: stepGroups.map((sg) => ({
-                    name: sg.step_group.name,
+        if (editingMode) {
+            makeRequest(
+                'PUT' as Method,
+                `/protocols/${route.params?.protocol_ID}`,
+                JSON.stringify({
+                    history_id: historyId,
+                    new_protocol: {
+                        name,
+                        description: '',
+                        author_id: user?.id,
+                        step_groups: stepGroups.map((sg) => ({
+                            name: sg.step_group.name,
+                            description: '',
+                            sequence_number: sg.step_group.sequence_number,
+                            steps: sg.steps.map(
+                                (s) =>
+                                    ({
+                                        iterations: 1,
+                                        sequence_number: s.sequence_number,
+                                        target_temperature:
+                                            s.target_temperature,
+                                        incubation_time: s.incubation_time,
+                                        applied_liquid_id: s.applied_liquid_id,
+                                        washing_iterations:
+                                            s.washing_iterations,
+                                        single_wash_duration:
+                                            s.single_wash_duration,
+                                    }) as StepDTO,
+                            ),
+                        })),
+                    },
+                }),
+            ).then((response) => {
+                console.log(response.data);
+                navigation.navigate('Protocols');
+            });
+        } else {
+            makeRequest(
+                'POST' as Method,
+                '/protocols',
+                JSON.stringify({
+                    name,
                     description: '',
-                    sequence_number: sg.step_group.sequence_number,
-                    steps: sg.steps.map(
-                        (s) =>
-                            ({
-                                iterations: 1,
-                                sequence_number: s.sequence_number,
-                                target_temperature: s.target_temperature,
-                                incubation_time: s.incubation_time,
-                                applied_liquid_id: s.applied_liquid_id,
-                                washing_iterations: s.washing_iterations,
-                                single_wash_duration: s.single_wash_duration,
-                            }) as StepDTO,
-                    ),
-                })),
-            }),
-        ).then((response) => {
-            console.log(response.data);
-            navigation.navigate('Protocols');
-        });
+                    author_id: user?.id,
+                    step_groups: stepGroups.map((sg) => ({
+                        name: sg.step_group.name,
+                        description: '',
+                        sequence_number: sg.step_group.sequence_number,
+                        steps: sg.steps.map(
+                            (s) =>
+                                ({
+                                    iterations: 1,
+                                    sequence_number: s.sequence_number,
+                                    target_temperature: s.target_temperature,
+                                    incubation_time: s.incubation_time,
+                                    applied_liquid_id: s.applied_liquid_id,
+                                    washing_iterations: s.washing_iterations,
+                                    single_wash_duration:
+                                        s.single_wash_duration,
+                                }) as StepDTO,
+                        ),
+                    })),
+                }),
+            ).then((response) => {
+                console.log(response.data);
+                navigation.navigate('Protocols');
+            });
+        }
     };
 
     const liquidsToLiquidMap = (liquids: LiquidDTO[]) => {
@@ -133,6 +179,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     navigation={navigation}
                     name={name}
                     setName={setName}
+                    editingMode={editingMode}
                 />
 
                 <Box

@@ -148,7 +148,7 @@ const ListItem = ({
                                 setMenuOpen(false);
                                 navigation.navigate('Create protocol', {
                                     protocol_ID: protocol.id,
-                                    preserveID: true,
+                                    edit: true,
                                 });
                             }}
                         >
