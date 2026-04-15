@@ -86,11 +86,11 @@ const ListItem = ({
                     {formatSocialMediaTime(protocol.created_at)}
                 </Text>
 
-                <Text color="#1F2832" size="md" flex={3} textAlign="center">
+                <Text color="#1F2832" size="md" flex={2} textAlign="right">
                     Ready
                 </Text>
 
-                <Box flex={1}>
+                <Box flex={2}>
                     <Menu
                         minWidth={150}
                         placement="top"
@@ -103,14 +103,12 @@ const ListItem = ({
                         trigger={({ ...triggerProps }) => {
                             return (
                                 <Pressable
+                                    width="100%"
                                     {...triggerProps}
-                                    alignItems="flex-start"
+                                    alignItems="center"
                                     justifyContent="center"
                                     onPress={(e) => {
                                         triggerProps.onPress(e);
-                                        requestAnimationFrame(() => {
-                                            setMenuOpen((prev) => !prev);
-                                        });
                                     }}
                                 >
                                     <Icon
@@ -128,12 +126,13 @@ const ListItem = ({
                             rounded="$md"
                         >
                             <MenuItemLabel
-                                onPress={() =>
+                                onPress={() => {
+                                    setMenuOpen(false);
                                     navigation.navigate('Create protocol', {
                                         protocol_ID: protocol.id,
                                         preserveID: false,
-                                    })
-                                }
+                                    });
+                                }}
                                 size="lg"
                                 color="$black"
                             >
@@ -145,12 +144,13 @@ const ListItem = ({
                             key="Edit"
                             textValue="Edit"
                             rounded="$md"
-                            onPress={() =>
+                            onPress={() => {
+                                setMenuOpen(false);
                                 navigation.navigate('Create protocol', {
                                     protocol_ID: protocol.id,
                                     preserveID: true,
-                                })
-                            }
+                                });
+                            }}
                         >
                             <MenuItemLabel size="lg" color="$black">
                                 Edit
@@ -159,6 +159,7 @@ const ListItem = ({
                         <MenuSeparator width="85%" alignSelf="center" />
                         <MenuItem
                             onPress={() => {
+                                setMenuOpen(false);
                                 navigation.navigate('ProtocolView', {
                                     protocol_ID: protocol.id,
                                 });
