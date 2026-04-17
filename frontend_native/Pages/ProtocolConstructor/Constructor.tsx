@@ -14,11 +14,13 @@ import { MainContainer, globalElementStyle } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from './Header';
 import Timeline from './Timeline';
 import AddStepForm from './AddStepForm';
+import SaveProtocolModal from './SaveProtocolModal';
 import {
     ProtocolWithStepsDTO,
     StepGroupWithStepsDTO,
@@ -31,6 +33,8 @@ import { LiquidDTO } from 'common/dto/liquid.dto';
 
 const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [name, setName] = useState('Protocol name');
+    const [description, setDescription] = useState('');
+    const [saveModalOpen, setSaveModalOpen] = useState(false);
     const [stepGroups, setStepGroups] = useState([
         {
             step_group: {
@@ -52,29 +56,39 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         });
     }, []);
 
-    useEffect(() => {
-        if (route.params?.protocol_ID) {
-            makeRequest(
-                'GET' as Method,
-                `/protocols/${route.params.protocol_ID}`,
-            ).then((response) => {
-                const protocol = response.data as ProtocolWithStepsDTO;
-                setStepGroups(protocol.step_groups);
-            });
-        } else {
-            setStepGroups([
-                {
-                    step_group: {
-                        id: 1,
-                        name: 'Step Group 1',
-                        protocol_id: 1,
-                        sequence_number: 1,
+    useFocusEffect(
+        React.useCallback(() => {
+            const protocol_ID = route.params?.protocol_ID;
+
+            if (protocol_ID) {
+                makeRequest('GET' as Method, `/protocols/${protocol_ID}`).then(
+                    (response) => {
+                        const protocol = response.data as ProtocolWithStepsDTO;
+                        setStepGroups(protocol.step_groups);
+                        setName(protocol.metadata.name);
+                        setDescription(protocol.metadata.description || '');
                     },
-                    steps: [],
-                },
-            ] as StepGroupWithStepsDTO[]);
-        }
-    }, [route.params]);
+                );
+            } else {
+                // Reset to new protocol state
+                setStepGroups([
+                    {
+                        step_group: {
+                            id: 1,
+                            name: 'Step Group 1',
+                            protocol_id: 1,
+                            sequence_number: 1,
+                        },
+                        steps: [],
+                    },
+                ] as StepGroupWithStepsDTO[]);
+                setName('Protocol name');
+                setDescription('');
+                setActiveStepGroup(1);
+                setSaveModalOpen(false);
+            }
+        }, [route.params?.protocol_ID]),
+    );
 
     useEffect(() => {
         console.log('stepGroups', stepGroups);
@@ -84,13 +98,16 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         );
     }, [stepGroups]);
 
-    const saveProtocol = () => {
+    const saveProtocol = (
+        protocolName: string,
+        protocolDescription: string,
+    ) => {
         makeRequest(
             'POST' as Method,
             '/protocols',
             JSON.stringify({
-                name,
-                description: '',
+                name: protocolName,
+                description: protocolDescription,
                 author_id: user?.id,
                 step_groups: stepGroups.map((sg) => ({
                     name: sg.step_group.name,
@@ -112,6 +129,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             }),
         ).then((response) => {
             console.log(response.data);
+            setSaveModalOpen(false);
             navigation.navigate('Protocols');
         });
     };
@@ -129,7 +147,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
             <NavBar />
             <Box flex={1} p={24}>
                 <Header
-                    saveProtocol={saveProtocol}
+                    onSaveClick={() => setSaveModalOpen(true)}
                     navigation={navigation}
                     name={name}
                     setName={setName}
@@ -187,6 +205,19 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         />
                     </Box>
                 </Box>
+
+                <SaveProtocolModal
+                    isOpen={saveModalOpen}
+                    onClose={() => setSaveModalOpen(false)}
+                    onSave={(protocolName, protocolDescription) => {
+                        saveProtocol(protocolName, protocolDescription);
+                    }}
+                    protocolName={name}
+                    setProtocolName={setName}
+                    protocolDescription={description}
+                    setProtocolDescription={setDescription}
+                    stepGroups={stepGroups}
+                />
             </Box>
         </MainContainer>
     );

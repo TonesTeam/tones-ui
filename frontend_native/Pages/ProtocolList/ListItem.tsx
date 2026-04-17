@@ -106,12 +106,6 @@ const ListItem = ({
                                     {...triggerProps}
                                     alignItems="flex-start"
                                     justifyContent="center"
-                                    onPress={(e) => {
-                                        triggerProps.onPress(e);
-                                        requestAnimationFrame(() => {
-                                            setMenuOpen((prev) => !prev);
-                                        });
-                                    }}
                                 >
                                     <Icon
                                         as={EllipsisVertical}

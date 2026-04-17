@@ -16,10 +16,10 @@ interface HeaderProps {
     navigation: any;
     name: string;
     setName: (name: string) => void;
-    saveProtocol: () => void;
+    onSaveClick: () => void;
 }
 
-const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
+const Header = ({ navigation, name, setName, onSaveClick }: HeaderProps) => {
     return (
         <HStack mt={16}>
             <HStack alignItems="center">
@@ -64,7 +64,7 @@ const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
                     p={0}
                     alignItems="center"
                 >
-                    <InputIcon as={Pencil} color="#313131" size={16} />
+                    <InputIcon as={Pencil} color="#313131" size="md" />
                     <InputField
                         placeholder="Protocol name"
                         value={name}
@@ -88,7 +88,7 @@ const Header = ({ navigation, name, setName, saveProtocol }: HeaderProps) => {
                     fontSize={14}
                     color="white"
                     onPress={() => {
-                        saveProtocol();
+                        onSaveClick();
                     }}
                 >
                     Save
