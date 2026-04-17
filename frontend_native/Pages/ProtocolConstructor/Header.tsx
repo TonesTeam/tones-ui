@@ -18,6 +18,7 @@ interface HeaderProps {
     setName: (name: string) => void;
     saveProtocol: () => void;
     editingMode: boolean;
+    onSaveClick?: () => void;
 }
 
 const Header = ({
@@ -26,6 +27,7 @@ const Header = ({
     setName,
     saveProtocol,
     editingMode,
+    onSaveClick,
 }: HeaderProps) => {
     return (
         <HStack mt={16}>
@@ -71,7 +73,7 @@ const Header = ({
                     p={0}
                     alignItems="center"
                 >
-                    <InputIcon as={Pencil} color="#313131" size={16} />
+                    <InputIcon as={Pencil} color="#313131" size="md" />
                     <InputField
                         placeholder="Protocol name"
                         value={name}
@@ -95,7 +97,7 @@ const Header = ({
                     fontSize={14}
                     color="white"
                     onPress={() => {
-                        saveProtocol();
+                        onSaveClick ? onSaveClick() : saveProtocol();
                     }}
                 >
                     Save
