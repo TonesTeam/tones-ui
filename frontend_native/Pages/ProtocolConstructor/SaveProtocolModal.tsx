@@ -40,6 +40,7 @@ interface SaveProtocolModalProps {
     protocolDescription: string;
     setProtocolDescription: (description: string) => void;
     stepGroups: StepGroupWithStepsDTO[];
+    liquidMap: Map<number, string>;
 }
 
 const SaveProtocolModal = ({
@@ -51,6 +52,7 @@ const SaveProtocolModal = ({
     protocolDescription,
     setProtocolDescription,
     stepGroups,
+    liquidMap,
 }: SaveProtocolModalProps) => {
     const s = StyleSheet.create({
         modal_container: {
@@ -230,6 +232,9 @@ const SaveProtocolModal = ({
                                                                             isWashing={
                                                                                 false
                                                                             }
+                                                                            liquidMap={
+                                                                                liquidMap
+                                                                            }
                                                                         />
                                                                         {step.washing_iterations >
                                                                             0 && (
@@ -254,6 +259,9 @@ const SaveProtocolModal = ({
                                                                                 }
                                                                                 isWashing={
                                                                                     true
+                                                                                }
+                                                                                liquidMap={
+                                                                                    liquidMap
                                                                                 }
                                                                             />
                                                                         )}
@@ -324,11 +332,16 @@ const StepListItem = ({
     step,
     index,
     isWashing,
+    liquidMap,
 }: {
     step: StepDTO;
     index: number;
     isWashing: boolean;
+    liquidMap: Map<number, string>;
 }) => {
+    const liquidName = isWashing
+        ? 'Washing solution'
+        : liquidMap.get(step.applied_liquid_id) || 'Reagent';
     return (
         <HStack
             bg="$white"
@@ -362,7 +375,7 @@ const StepListItem = ({
                     fontSize="$sm"
                     color={isWashing ? '#1193CF' : 'black'}
                 >
-                    {isWashing ? 'Washing' : 'Reagent'}
+                    {liquidName}
                 </Text>
             </VStack>
 

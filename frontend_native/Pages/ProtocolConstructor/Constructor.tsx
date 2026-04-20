@@ -262,6 +262,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 protocolDescription={description}
                 setProtocolDescription={setDescription}
                 stepGroups={stepGroups}
+                liquidMap={liquidsToLiquidMap(liquids)}
             />
         </MainContainer>
     );
