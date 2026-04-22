@@ -59,7 +59,7 @@ export function WashingLiquidsStep(props: {
                     <ActionConfirmationToggle
                         icon={Droplet}
                         number={1}
-                        toggleName="Washing buffer"
+                        toggleName="Washing liquid"
                         confirmedActionName="at least 250ml"
                         checked={washingChecked}
                         onToggle={() => setWashingChecked(!washingChecked)}

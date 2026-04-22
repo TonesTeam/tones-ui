@@ -176,8 +176,8 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
             <ConfirmationModal
                 isOpen={showWashingWarning}
                 onClose={() => setShowWashingWarning(false)}
-                headline="Single Washing Solution Required"
-                text={`1. Each protocol can use only ONE washing liquid TYPE.\n2. We RECOMMEND recording the name of the washing solution in the Description field,when you will be saving the protocol. \n3. You may need to change the washing bottle during launch if necessary.`}
+                headline="Single Washing Liquid Required"
+                text={`1. Each protocol can use only ONE washing liquid TYPE.\n2. We RECOMMEND recording the name of the washing liquid in the Description field,when you will be saving the protocol. \n3. You may need to change the washing bottle during launch if necessary.`}
                 actionButtonText="Continue"
                 showCheckbox={true}
                 checkboxLabel="Don't show this message again"

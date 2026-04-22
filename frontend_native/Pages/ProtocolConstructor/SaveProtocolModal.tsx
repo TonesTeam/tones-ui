@@ -341,7 +341,7 @@ const StepListItem = ({
     liquidMap: Map<number, string>;
 }) => {
     const liquidName = isWashing
-        ? 'Washing solution'
+        ? 'Washing'
         : liquidMap.get(step.applied_liquid_id) || 'Reagent';
     return (
         <HStack

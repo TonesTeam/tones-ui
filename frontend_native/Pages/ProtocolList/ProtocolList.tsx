@@ -356,7 +356,7 @@ export default function ProtocolList({
             <ConfirmationModal
                 isOpen={showWashingWarning}
                 onClose={() => setShowWashingWarning(false)}
-                headline="Single Washing Solution Required"
+                headline="Single Washing Liquid Required"
                 text={`1. Each protocol can use only ONE washing liquid TYPE.\n2. We RECOMMEND recording the name of the washing liquid in the Description field ,when you will be saving the protocol. \n3. You may need to change the washing bottle during launch if necessary.`}
                 actionButtonText="Continue"
                 showCheckbox={true}
