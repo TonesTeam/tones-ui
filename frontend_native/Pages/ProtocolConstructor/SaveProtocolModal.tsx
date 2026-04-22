@@ -139,7 +139,8 @@ const SaveProtocolModal = ({
                                             color: AppStyles.color.text_primary,
                                         }}
                                     >
-                                        Description
+                                        Description ( Add washing liquid name
+                                        here )
                                     </Text>
                                     <Input
                                         borderWidth="$0"

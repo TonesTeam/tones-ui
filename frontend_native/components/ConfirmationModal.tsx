@@ -7,6 +7,10 @@ import {
     Heading,
     Button,
     ButtonText,
+    Checkbox,
+    CheckboxIndicator,
+    CheckboxLabel,
+    HStack,
 } from '@gluestack-ui/themed';
 import { StyleSheet, Text } from 'react-native';
 import { AppStyles } from '../constants/styles';
@@ -19,6 +23,10 @@ type TonesModalProps = {
     headline: string;
     text: string;
     actionButtonText: string;
+    showCheckbox?: boolean;
+    checkboxLabel?: string;
+    checkboxValue?: boolean;
+    onCheckboxChange?: (value: boolean) => void;
 };
 
 export default function ConfirmationModal({
@@ -28,11 +36,15 @@ export default function ConfirmationModal({
     headline,
     text,
     actionButtonText,
+    showCheckbox,
+    checkboxLabel,
+    checkboxValue,
+    onCheckboxChange,
 }: TonesModalProps) {
     const s = StyleSheet.create({
         modal_container: {
             borderRadius: 24,
-            width: 476,
+            width: 500,
         },
         text_center: {
             textAlign: 'center',
@@ -85,6 +97,31 @@ export default function ConfirmationModal({
                         >
                             {text}
                         </Text>
+                        {showCheckbox && (
+                            <HStack
+                                mt="$4"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Checkbox
+                                    value={
+                                        checkboxValue ? 'checked' : 'unchecked'
+                                    }
+                                    onChange={(isChecked) => {
+                                        onCheckboxChange?.(isChecked);
+                                    }}
+                                >
+                                    <CheckboxIndicator mr="$2" />
+                                    <CheckboxLabel
+                                        fontSize={14}
+                                        fontFamily="Manrope-Medium"
+                                        color={AppStyles.color.text_primary}
+                                    >
+                                        {checkboxLabel || "Don't show again"}
+                                    </CheckboxLabel>
+                                </Checkbox>
+                            </HStack>
+                        )}
                     </ModalBody>
                     <ModalFooter>
                         <Button

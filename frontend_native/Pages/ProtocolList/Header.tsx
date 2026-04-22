@@ -28,6 +28,7 @@ interface HeaderProps {
     onSort: (column: string) => void;
     sortColumn: string;
     sortDirection: 'asc' | 'desc';
+    onCreateProtocol?: () => void;
 }
 
 const Header = ({
@@ -43,6 +44,7 @@ const Header = ({
     onSort,
     sortColumn,
     sortDirection,
+    onCreateProtocol,
 }: HeaderProps) => {
     return (
         <VStack alignItems="flex-start" width="100%" space="lg" mt="$4">
@@ -70,7 +72,11 @@ const Header = ({
                     borderColor="$black"
                     bg="#1F2832"
                     ml="$2"
-                    onPress={() => navigation.navigate('Create protocol')}
+                    onPress={() =>
+                        onCreateProtocol
+                            ? onCreateProtocol()
+                            : navigation.navigate('Create protocol')
+                    }
                     alignItems="center"
                     justifyContent="center"
                     height={48}

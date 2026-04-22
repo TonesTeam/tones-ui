@@ -16,12 +16,35 @@ import { makeRequest } from '../common/util';
 import { Method } from 'axios';
 import { ProtocolDto } from 'common/dto/protocol.dto';
 import ListItem from './ProtocolList/ListItem';
+import ConfirmationModal from '../components/ConfirmationModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../contexts/UserContext';
 
 const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
+    const { user } = useUser();
     const [protocolCount, setProtocolCount] = useState(0);
     const [liquidCount, setLiquidCount] = useState(0);
     const [jobCount, setJobCount] = useState(0);
     const [protocols, setProtocols] = useState([] as ProtocolDto[]);
+    const [showWashingWarning, setShowWashingWarning] = useState(false);
+    const [dontShowAgain, setDontShowAgain] = useState(false);
+
+    const getWarningStorageKey = () => `dontShowWashingWarning_${user?.id}`;
+
+    useEffect(() => {
+        // Проверяем при загрузке был ли checkbox отмечен ранее для этого пользователя
+        const checkWashingWarning = async () => {
+            const storageKey = getWarningStorageKey();
+            const dontShow = await AsyncStorage.getItem(storageKey);
+            if (dontShow === 'true') {
+                setDontShowAgain(true);
+            }
+        };
+
+        if (user?.id) {
+            checkWashingWarning();
+        }
+    }, [user?.id]);
 
     useEffect(() => {
         makeRequest('GET' as Method, '/protocols').then((response) => {
@@ -62,7 +85,15 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         bg="#1F2832"
                         mt="$3"
                         mr="$1"
-                        onPress={() => navigation.navigate('Create protocol')}
+                        onPress={() => {
+                            if (dontShowAgain) {
+                                // Если checkbox был отмечен - прямо переходим
+                                navigation.navigate('Create protocol');
+                            } else {
+                                // Иначе показываем модал
+                                setShowWashingWarning(true);
+                            }
+                        }}
                         alignItems="center"
                         justifyContent="center"
                         height={48}
@@ -142,6 +173,29 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     </VStack>
                 </VStack>
             </Box>
+            <ConfirmationModal
+                isOpen={showWashingWarning}
+                onClose={() => setShowWashingWarning(false)}
+                headline="Single Washing Solution Required"
+                text={`1. Each protocol can use only ONE washing liquid TYPE.\n2. We RECOMMEND recording the name of the washing solution in the Description field,when you will be saving the protocol. \n3. You may need to change the washing bottle during launch if necessary.`}
+                actionButtonText="Continue"
+                showCheckbox={true}
+                checkboxLabel="Don't show this message again"
+                checkboxValue={dontShowAgain}
+                onCheckboxChange={async (isChecked) => {
+                    setDontShowAgain(isChecked);
+                    const storageKey = getWarningStorageKey();
+                    if (isChecked) {
+                        await AsyncStorage.setItem(storageKey, 'true');
+                    } else {
+                        await AsyncStorage.removeItem(storageKey);
+                    }
+                }}
+                action={() => {
+                    setShowWashingWarning(false);
+                    navigation.navigate('Create protocol');
+                }}
+            />
         </MainContainer>
     );
 };
