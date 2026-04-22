@@ -228,6 +228,7 @@ const StepGroup = ({
                     console.log(
                         `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
                     );
+                    let currentIndex = stepIndex * 4 + 1;
                     return (
                         <>
                             {step.target_temperature > 2500 && (
@@ -245,7 +246,7 @@ const StepGroup = ({
                             )}
                             <Step
                                 key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
-                                index={stepIndex * 4 + 1}
+                                index={currentIndex}
                                 step={step}
                                 setStepGroups={setStepGroups}
                                 allStepGroups={allStepGroups}
@@ -258,7 +259,7 @@ const StepGroup = ({
                             {step.target_temperature > 2500 && (
                                 <Step
                                     key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}
-                                    index={stepIndex * 4 + 2}
+                                    index={currentIndex + 1}
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
@@ -271,7 +272,11 @@ const StepGroup = ({
                             {step.washing_iterations > 0 && (
                                 <Step
                                     key={`${stepGroup.step_group.sequence_number}-${step.id}-wash`}
-                                    index={stepIndex * 4 + 3}
+                                    index={
+                                        step.target_temperature > 2500
+                                            ? currentIndex + 2
+                                            : currentIndex + 1
+                                    }
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
