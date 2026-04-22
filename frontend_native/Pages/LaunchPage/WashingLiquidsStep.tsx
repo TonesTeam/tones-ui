@@ -4,6 +4,7 @@ import { Biohazard, Droplet, Trash } from 'lucide-react-native';
 
 export function WashingLiquidsStep(props: {
     onCompletionChange?: (allSwitchesOn: boolean) => void;
+    protocolDescription?: string;
 }) {
     const [washingChecked, setWashingChecked] = useState(false);
     const [generalWasteChecked, setGeneralWasteChecked] = useState(false);
@@ -36,14 +37,20 @@ export function WashingLiquidsStep(props: {
                             1. Open tray with washing liquids
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
-                            2. Check if there is enough washing liquid
+                            2. Check if washing liquid have the right name and
+                            type. If needed, change the liquid , by unscrewing
+                            the cap and replacing the liquid bottle with the
+                            correct one.
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
-                            3. If there is not enough liquid, insert liquids as
+                            3. Check if there is enough washing liquid
+                        </Text>
+                        <Text mb={4} fontSize={12} color="black" opacity={0.5}>
+                            4. If there is not enough liquid, insert liquids as
                             per instructions into the tray
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
-                            4. When done, close the tray with washing liquids
+                            5. When done, close the tray with washing liquids
                         </Text>
                     </Box>
                 </VStack>
@@ -57,6 +64,31 @@ export function WashingLiquidsStep(props: {
                         checked={washingChecked}
                         onToggle={() => setWashingChecked(!washingChecked)}
                     />
+                    {props.protocolDescription && (
+                        <Box
+                            bg="rgba(31, 40, 50, 0.05)"
+                            borderRadius={8}
+                            p="$3"
+                            mt="$3"
+                            borderWidth={1}
+                            borderColor="rgba(31, 40, 50, 0.1)"
+                        >
+                            <Text
+                                fontSize={12}
+                                color="#1F2832"
+                                fontFamily="Manrope-Medium"
+                            >
+                                <Text
+                                    fontSize={12}
+                                    fontFamily="Manrope-SemiBold"
+                                    color="#1F2832"
+                                >
+                                    Description:{' '}
+                                </Text>
+                                {props.protocolDescription}
+                            </Text>
+                        </Box>
+                    )}
                 </Box>
             </HStack>
 

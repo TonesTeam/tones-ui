@@ -334,6 +334,9 @@ export default function Launch({
                                 onCompletionChange={(allOn) =>
                                     setAllWashingSwitchesOn(allOn)
                                 }
+                                protocolDescription={
+                                    protocol?.metadata.description
+                                }
                             />
                         )}
                         {stage == LaunchStage.STEP_FOUR && (
