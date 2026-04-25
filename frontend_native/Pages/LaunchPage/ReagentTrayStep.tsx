@@ -2,12 +2,21 @@ import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import Txt from '../../components/Txt';
 import { AppStyles } from '../../constants/styles';
-import { Box, HStack, VStack } from '@gluestack-ui/themed';
 import { getRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { ReagentStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 import { CARTRIDGE_CONFIG } from '../../common/cartridgeConfig';
+import {
+    Icon,
+    Text,
+    VStack,
+    HStack,
+    Pressable,
+    Box,
+    Image,
+} from '@gluestack-ui/themed';
+import { LiquidDTO } from 'common/dto/liquid.dto';
 
 interface ReagentInfo {
     name: string;
@@ -87,12 +96,13 @@ function ReagentTray(props: {
                         borderRadius: props.slotSize / 2,
                         alignItems: 'center',
                         justifyContent: 'center',
+                        padding: 0,
                     }}
                 >
                     <Txt
                         style={{
                             color: textColor,
-                            fontSize: 14,
+                            fontSize: 12,
                             fontFamily: 'Roboto-bold',
                         }}
                     >
@@ -287,12 +297,21 @@ export function ReagentTrayStep(props: {
     const [selectedSlotsM, setSelectedSlotsM] = useState<Set<number>>(
         new Set(),
     );
+    const [liquids, setLiquids] = useState([] as LiquidDTO[]);
 
     useEffect(() => {
         if (props.protocolId) {
             loadReagents();
         }
-    }, [props.protocolId, props.slots]);
+    }, [props.protocolId, props.slots, liquids]);
+
+    useEffect(() => {
+        getRequest<LiquidDTO[]>(`/liquids`).then((response) => {
+            if ('data' in response) {
+                setLiquids(response.data);
+            }
+        });
+    }, []);
 
     const loadReagents = async () => {
         setLoading(true);
@@ -310,29 +329,23 @@ export function ReagentTrayStep(props: {
 
                 // Go through each step and find liquid steps (exclude washing)
                 const allSteps =
-                    protocol.stepBatches?.flatMap(
-                        (batch: any) => batch.steps,
-                    ) || [];
-                allSteps.forEach((step: any) => {
-                    if (step.type === StepType.REAGENT) {
-                        const reagentStep = step.params as ReagentStep;
-                        const liquidName = reagentStep.liquid.name;
-                        const typeName = reagentStep.liquid.type.name;
+                    protocol.step_groups.flatMap((group) => group.steps) || [];
+                allSteps.forEach((step) => {
+                    const liquidName =
+                        liquids.find((l) => l.id === step.applied_liquid_id)
+                            ?.name || `Liquid ${step.applied_liquid_id}`;
+                    const typeName = 'Unknown';
 
-                        // Skip washing liquids
-                        if (typeName === 'Washing') return;
+                    const stepUsage = 1;
 
-                        const stepUsage = 1;
-
-                        if (reagentUsage.has(liquidName)) {
-                            reagentUsage.get(liquidName)!.usage += stepUsage;
-                        } else {
-                            reagentUsage.set(liquidName, {
-                                name: liquidName,
-                                usage: stepUsage,
-                                type: typeName,
-                            });
-                        }
+                    if (reagentUsage.has(liquidName)) {
+                        reagentUsage.get(liquidName)!.usage += stepUsage;
+                    } else {
+                        reagentUsage.set(liquidName, {
+                            name: liquidName,
+                            usage: stepUsage,
+                            type: typeName,
+                        });
                     }
                 });
 
@@ -464,45 +477,59 @@ export function ReagentTrayStep(props: {
     );
 
     return (
-        <HStack flex={1} gap={15} padding="$4">
+        <HStack flex={1} gap={15} padding="$2">
             {/* Left panel: Instructions + Tray */}
-            <VStack flex={0.5} space="md">
-                {/* Instructions */}
-                <Box
-                    backgroundColor={AppStyles.color.primary_faded}
-                    padding="$4"
-                    borderRadius="$lg"
+            <VStack flex={0.48}>
+                <Text
+                    fontFamily="Orbitron-Bold"
+                    fontSize={20}
+                    color="#1F2832"
+                    mb={20}
                 >
-                    <Txt
-                        style={{
-                            fontSize: 20,
-                            fontFamily: 'Roboto-bold',
-                            marginBottom: 5,
-                        }}
-                    >
-                        Add Reagents
-                    </Txt>
-                    <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                        1. Open tray with reagents
-                    </Txt>
-                    <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                        2. Insert exact reagents as per their numbers into the
-                        tray
-                    </Txt>
-                    <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                        3. Mark each inserted reagent in checkbox
-                    </Txt>
-                    <Txt style={{ fontSize: 14, lineHeight: 20 }}>
-                        4. When done, close the tray with reagents
-                    </Txt>
-                </Box>
+                    Add Reagents
+                </Text>
+                <VStack gap={5} mb={20}>
+                    <Text opacity={0.6}>
+                        <Text fontSize={12} fontFamily="Manrope-SemiBold">
+                            1.{' '}
+                        </Text>
+                        <Text fontSize={12} fontFamily="Manrope-Medium">
+                            Open tray with reagents
+                        </Text>
+                    </Text>
+                    <Text opacity={0.6}>
+                        <Text fontSize={12} fontFamily="Manrope-SemiBold">
+                            2.{' '}
+                        </Text>
+                        <Text fontSize={12} fontFamily="Manrope-Medium">
+                            Insert exact reagents as per their numbers into the
+                            tray
+                        </Text>
+                    </Text>
+                    <Text opacity={0.6}>
+                        <Text fontSize={12} fontFamily="Manrope-SemiBold">
+                            3.{' '}
+                        </Text>
+                        <Text fontSize={12} fontFamily="Manrope-Medium">
+                            Mark each inserted reagent in checkbox
+                        </Text>
+                    </Text>
+                    <Text opacity={0.6}>
+                        <Text fontSize={12} fontFamily="Manrope-SemiBold">
+                            4.{' '}
+                        </Text>
+                        <Text fontSize={12} fontFamily="Manrope-Medium">
+                            When done, close the tray with reagents
+                        </Text>
+                    </Text>
+                </VStack>
 
                 {/* Trays */}
                 <ScrollView
                     style={{ flex: 1 }}
                     contentContainerStyle={{ alignItems: 'center' }}
                 >
-                    <HStack space="mg">
+                    <HStack>
                         <ReagentTray
                             reagents={smallReagents}
                             selectedSlots={selectedSlotsS}
@@ -510,8 +537,8 @@ export function ReagentTrayStep(props: {
                             rows={table_config.size_S.y}
                             cols={table_config.size_S.x}
                             color="#FFFFFF"
-                            slotSize={30}
-                            slotMargin={4.23}
+                            slotSize={20}
+                            slotMargin={3}
                             startNumber={1}
                         />
                         <ReagentTray
@@ -521,12 +548,24 @@ export function ReagentTrayStep(props: {
                             rows={table_config.size_M.y}
                             cols={table_config.size_M.x}
                             color={AppStyles.color.secondary}
-                            slotSize={45}
-                            slotMargin={5}
+                            slotSize={37}
+                            slotMargin={3}
                             startNumber={33}
                         />
                     </HStack>
                 </ScrollView>
+
+                <Text
+                    fontSize={10}
+                    fontFamily="Manrope-Medium"
+                    color="#1F2832"
+                    mt={10}
+                    opacity={0.6}
+                    flex={0.25}
+                    alignSelf="center"
+                >
+                    Tray front side
+                </Text>
             </VStack>
 
             {/* Right panel: Reagent tables (S and M sections only) */}
@@ -579,8 +618,7 @@ export function ReagentTrayStep(props: {
 const s = StyleSheet.create({
     // Tray styles
     trayContainer: {
-        padding: 8,
-        marginBottom: 8,
+        padding: 3,
     },
     trayRow: {
         flexDirection: 'row',

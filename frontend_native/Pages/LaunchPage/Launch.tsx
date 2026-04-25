@@ -310,9 +310,7 @@ export default function Launch({
                         )}
                         {stage == LaunchStage.STEP_TWO && (
                             <ReagentTrayStep
-                                slots={
-                                    slotNumber == '' ? 1 : Number(slotNumber)
-                                }
+                                slots={selectedSlots.size}
                                 protocolId={protocol_ID}
                                 onSelectionChange={(allSelected) =>
                                     setAllReagentSlotsSelected(allSelected)
