@@ -14,7 +14,6 @@ import {
 import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { SlotMap } from './SlotMap';
 import { SlotSelection } from './SlotSelection';
 import { ReagentTrayStep } from './ReagentTrayStep';
 import { WashingLiquidsStep } from './WashingLiquidsStep';
