@@ -31,6 +31,7 @@ import { makeRequest } from '../../common/util';
 import { useUser } from '../../contexts/UserContext';
 import { StepDTO } from 'common/dto/step.dto';
 import { LiquidDTO } from 'common/dto/liquid.dto';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const [name, setName] = useState('Protocol name');
@@ -53,6 +54,20 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const editingMode = route.params?.edit ? true : false;
     const [historyId, setHistoryId] = useState('');
 
+    const [confirmExitModal, setConfirmExitModal] = useState(false);
+    const [storedAction, setStoredAction] = useState<any>(null);
+    const [originalName, setOriginalName] = useState(name);
+    const [originalStepGroups, setOriginalStepGroups] = useState(stepGroups);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+    useEffect(() => {
+        const changed =
+            name !== originalName ||
+            JSON.stringify(stepGroups) !== JSON.stringify(originalStepGroups);
+
+        setHasUnsavedChanges(changed);
+    }, [name, stepGroups]);
+
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids').then((response) => {
             setLiquids(response.data as LiquidDTO[]);
@@ -71,6 +86,10 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         setName(protocol.metadata.name);
                         setDescription(protocol.metadata.description || '');
                         setHistoryId(protocol.metadata.history_id);
+
+                        setOriginalName(protocol.metadata.name);
+                        setOriginalStepGroups(protocol.step_groups);
+                        setHasUnsavedChanges(false);
                     },
                 );
             } else {
@@ -90,6 +109,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 setDescription('');
                 setActiveStepGroup(1);
                 setSaveModalOpen(false);
+                setHasUnsavedChanges(false);
             }
         }, [route.params?.protocol_ID]),
     );
@@ -101,6 +121,14 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 a.step_group.sequence_number - b.step_group.sequence_number,
         );
     }, [stepGroups]);
+
+    navigation.addListener('beforeRemove', (e) => {
+        if (hasUnsavedChanges) {
+            setConfirmExitModal(true);
+            setStoredAction(e.data.action);
+            e.preventDefault();
+        }
+    });
 
     const saveProtocol = (
         protocolName: string = name,
@@ -187,6 +215,21 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     return (
         <MainContainer>
             <NavBar />
+
+            <ConfirmationModal
+                isOpen={confirmExitModal}
+                onClose={() => setConfirmExitModal(false)}
+                action={() => {
+                    setConfirmExitModal(false);
+                    if (storedAction) {
+                        navigation.dispatch(storedAction);
+                    }
+                }}
+                headline="Exit Protocol Constructor?"
+                text="Your changes will be lost if you exit without saving."
+                actionButtonText="Exit anyway"
+            />
+
             <Box flex={1} p={24}>
                 <Header
                     saveProtocol={saveProtocol}

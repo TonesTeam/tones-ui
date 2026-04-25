@@ -127,7 +127,7 @@ export default function NavBar() {
                                     if (page.isLogout) {
                                         setLogoutConfirmModal(true);
                                     } else {
-                                        navigation.navigate(page.name);
+                                        navigation.replace(page.name);
                                     }
                                 }}
                                 width="100%"
