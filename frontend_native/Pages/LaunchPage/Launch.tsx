@@ -13,16 +13,7 @@ import {
 } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Txt from '../../components/Txt';
-import Step1 from '../../assets/pics/step1.svg';
-import Step2 from '../../assets/pics/step2.svg';
-import Step2_inactive from '../../assets/pics/step2_inactive.svg';
-import Step3 from '../../assets/pics/step3.svg';
-import Step3_inactive from '../../assets/pics/step3_inactive.svg';
-import Slot_quantity_active_Icon from '../../assets/icons/slot_active_mark.svg';
-import Slot_quantity_inactive_Icon from '../../assets/icons/slots_quantity_inactive.svg';
 import { useEffect, useState } from 'react';
-import { LiquidTable } from './LiquidTable';
 import { SlotMap } from './SlotMap';
 import { SlotSelection } from './SlotSelection';
 import { ReagentTrayStep } from './ReagentTrayStep';
