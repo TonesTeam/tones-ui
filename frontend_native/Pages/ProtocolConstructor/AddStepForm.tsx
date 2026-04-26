@@ -187,6 +187,53 @@ const AddLiquidForm = ({
     const [washingIterations, setWashingIterations] = useState<string>('0');
     const [singleWashDuration, setSingleWashDuration] = useState<string>('');
 
+    const [error, setError] = useState<string>('');
+
+    const validate = (): boolean => {
+        if (!selectedLiquid) {
+            setError('Please select a reagent');
+            return false;
+        }
+
+        const incubation = parseFloat(incubationTime);
+        if (!incubationTime.trim() || isNaN(incubation) || incubation <= 0) {
+            setError('Incubation time must be a positive number');
+            return false;
+        }
+
+        const temperature = parseFloat(targetTemperature);
+        if (!targetTemperature.trim() || isNaN(temperature)) {
+            setError('Target temperature must be a number');
+            return false;
+        } else if (temperature < 10 || temperature > 100) {
+            setError('Temperature must be between 10°C and 100°C');
+            return false;
+        }
+
+        const iterations = parseInt(washingIterations);
+        if (!washingIterations.trim() || isNaN(iterations) || iterations < 0) {
+            setError('Washing iterations must be a non-negative whole number');
+            return false;
+        }
+
+        if (iterations > 0) {
+            const washDuration = parseFloat(singleWashDuration);
+            if (
+                !singleWashDuration.trim() ||
+                isNaN(washDuration) ||
+                washDuration <= 0
+            ) {
+                setError(
+                    'Wash duration must be a positive number when iterations > 0',
+                );
+                return false;
+            }
+        }
+
+        setError('');
+        return true;
+    };
+
     const findNextSequenceNumberForSteps = (
         stepGroups: StepGroupWithStepsDTO[],
         activeStepGroup: number,
@@ -448,7 +495,14 @@ const AddLiquidForm = ({
                     </VStack>
                 </HStack>
             </VStack>
-            <HStack gap={24} mt={30}>
+            <Box height={30} alignItems="center" justifyContent="center">
+                {error ? (
+                    <Text fontSize={12} color="red" flex={1}>
+                        {error}
+                    </Text>
+                ) : null}
+            </Box>
+            <HStack gap={24} mt={10}>
                 <Button
                     height={40}
                     width={95}
@@ -474,6 +528,8 @@ const AddLiquidForm = ({
                         color="white"
                         fontFamily="Manrope-SemiBold"
                         onPress={() => {
+                            if (!validate()) return;
+
                             const newStep: StepDTO = {
                                 id: Date.now(), // Temporary ID, replace with actual ID from backend
                                 type: 'Liquid Application' as StepType,
