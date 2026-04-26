@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { MainContainer } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
-import { Box, Text } from '@gluestack-ui/themed';
+import { Box, Text, ScrollView } from '@gluestack-ui/themed';
 import { getRequest } from '../../common/util';
 import ListItem from './ListItem';
+import Animated, {
+    FadeInDown,
+    LinearTransition,
+} from 'react-native-reanimated';
 
 export interface Batch {
     id: number;
@@ -43,13 +47,23 @@ const Jobs = (props: any) => {
                     Job Batches
                 </Text>
 
-                {batches.map((batch) => (
-                    <ListItem
-                        key={batch.id}
-                        batch={batch}
-                        navigation={props.navigation}
-                    />
-                ))}
+                <ScrollView>
+                    {batches.map((batch, index) => (
+                        <Animated.View
+                            key={batch.id}
+                            entering={FadeInDown.delay(index * 60)
+                                .springify()
+                                .damping(0)}
+                            layout={LinearTransition.springify()}
+                        >
+                            <ListItem
+                                key={batch.id}
+                                batch={batch}
+                                navigation={props.navigation}
+                            />
+                        </Animated.View>
+                    ))}
+                </ScrollView>
             </Box>
         </MainContainer>
     );

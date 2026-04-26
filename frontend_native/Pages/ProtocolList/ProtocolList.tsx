@@ -4,6 +4,10 @@ import {
     makeRequest,
     formatSocialMediaTime,
 } from '../../common/util';
+import Animated, {
+    FadeInDown,
+    LinearTransition,
+} from 'react-native-reanimated';
 import { useIsFocused } from '@react-navigation/native';
 import {
     AppStyles,
@@ -320,8 +324,16 @@ export default function ProtocolList({
                                         showsVerticalScrollIndicator={true}
                                     >
                                         {filterAndSort().map(
-                                            function (protocol, index) {
-                                                return (
+                                            (protocol, index) => (
+                                                <Animated.View
+                                                    key={protocol.id}
+                                                    entering={FadeInDown.delay(
+                                                        index * 60,
+                                                    )
+                                                        .springify()
+                                                        .damping(0)}
+                                                    layout={LinearTransition.springify()}
+                                                >
                                                     <ListItem
                                                         removeProtocolFromList={(
                                                             id: number,
@@ -339,12 +351,11 @@ export default function ProtocolList({
                                                                         : protocols,
                                                             );
                                                         }}
-                                                        key={protocol.id}
                                                         protocol={protocol}
                                                         navigation={navigation}
                                                     />
-                                                );
-                                            },
+                                                </Animated.View>
+                                            ),
                                         )}
                                     </ScrollView>
                                 )}
