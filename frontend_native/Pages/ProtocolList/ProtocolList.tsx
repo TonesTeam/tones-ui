@@ -265,9 +265,7 @@ export default function ProtocolList({
                             alignItems="center"
                             justifyContent="center"
                             flex={1}
-                        >
-                            <Spinner size="large" color="grey" />
-                        </Box>
+                        ></Box>
                     )}
                     {protocols != undefined && (
                         <>
