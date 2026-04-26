@@ -507,7 +507,6 @@ const NewLiquidModal = ({
     const [defaultIncubationTime, setDefaultIncubationTime] = useState(0);
     const [defaultTargetTemperature, setDefaultTargetTemperature] = useState(0);
     const [position, setPosition] = useState(0);
-    const [connectionType, setConnectionType] = useState('Selector');
 
     const handleSave = () => {
         const newLiquid: PermanentLiquidDTO = {
@@ -517,7 +516,7 @@ const NewLiquidModal = ({
             default_incubation_time: defaultIncubationTime,
             default_incubation_temperature: defaultTargetTemperature,
             position,
-            is_connected_to_selector: connectionType == 'Selector',
+            is_connected_to_selector: 0,
             liquid_type_name: selectedTypeName,
             liquid_type_id: selectedTypeId,
             created_at: 0,
@@ -604,31 +603,6 @@ const NewLiquidModal = ({
                                     keyboardType="numeric"
                                 />
                             </Input>
-                            <Select onValueChange={(e) => setConnectionType(e)}>
-                                <SelectTrigger>
-                                    <SelectInput
-                                        placeholder="Select connection type"
-                                        value={connectionType}
-                                    />
-                                    <SelectIcon as={ChevronDown} />
-                                    <SelectPortal>
-                                        <SelectBackdrop />
-                                        <SelectContent>
-                                            <SelectDragIndicatorWrapper>
-                                                <SelectDragIndicator />
-                                            </SelectDragIndicatorWrapper>
-                                            <SelectItem
-                                                label="Selector"
-                                                value="Selector"
-                                            />
-                                            <SelectItem
-                                                label="Grid"
-                                                value="Grid"
-                                            />
-                                        </SelectContent>
-                                    </SelectPortal>
-                                </SelectTrigger>
-                            </Select>
                             <Select
                                 onValueChange={(e) => {
                                     const selected = categories.find(
