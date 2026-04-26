@@ -20,14 +20,29 @@ import {
 } from '@gluestack-ui/themed';
 import GeneratedAvatar from '../../components/GeneratedAvatar';
 import { Method } from 'axios';
-import { Batch } from './Jobs';
+import { Batch } from './Batches';
+import { Job } from './Jobs';
 
 interface ListItemProps {
-    batch: Batch;
+    batch: Batch | Job;
     navigation: NativeStackNavigationProp<any>;
+    isJob: boolean;
 }
 
-const ListItem = ({ batch, navigation }: ListItemProps) => {
+const ListItem = ({ batch, navigation, isJob }: ListItemProps) => {
+    const handleView = () => {
+        if (isJob) {
+            navigation.navigate('JobDetail', { job_id: batch.id });
+        } else {
+            navigation.navigate('JobList', {
+                batch_id: batch.id,
+                batch_name: batch.name,
+            });
+        }
+    };
+
+    const isBatch = (item: Batch | Job): item is Batch => !isJob;
+
     return (
         <Box
             rounded="$xl"
@@ -53,26 +68,30 @@ const ListItem = ({ batch, navigation }: ListItemProps) => {
                     {batch.name}
                 </Text>
 
-                <HStack flex={4} alignItems="center" space="sm">
-                    <GeneratedAvatar
-                        name={batch.creator_first_name}
-                        size={32}
-                    />
-                    <Text color="#1F2832" size="md">
-                        {batch.creator_first_name} {batch.creator_last_name}
+                {/* Creator - only available on Batch */}
+                {isBatch(batch) ? (
+                    <HStack flex={4} alignItems="center" space="sm">
+                        <GeneratedAvatar
+                            name={batch.creator_first_name}
+                            size={32}
+                        />
+                        <Text color="#1F2832" size="md">
+                            {batch.creator_first_name} {batch.creator_last_name}
+                        </Text>
+                    </HStack>
+                ) : (
+                    <Text flex={4} color="#1F2832" size="md">
+                        Slot {batch.slot_number}
                     </Text>
-                </HStack>
+                )}
 
                 <Text size="md" color="#1F2832" flex={2} textAlign="center">
                     {formatSocialMediaTime(batch.start_timestamp)}
                 </Text>
-
                 <Text color="#1F2832" size="md" flex={2} textAlign="right">
                     {batch.status}
                 </Text>
-
                 <Box flex={2} />
-
                 <HStack flex={2} justifyContent="flex-end" space="sm">
                     <Button
                         variant="outline"
@@ -84,6 +103,7 @@ const ListItem = ({ batch, navigation }: ListItemProps) => {
                         alignItems="center"
                         justifyContent="center"
                         size="md"
+                        onPress={handleView}
                     >
                         <Box
                             style={{

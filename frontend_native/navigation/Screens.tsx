@@ -4,11 +4,13 @@ import Constructor from '../Pages/ProtocolConstructor/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import CategoryGrid from '../Pages/LiquidLibrary/CategoryGrid';
 import Library from '../Pages/LiquidLibrary/Library';
-import Jobs from '../Pages/Jobs/Jobs';
+import BatchList from '../Pages/Jobs/Batches';
 import Profile from '../Pages/UserProfile';
 import Loading from '../Pages/Loading';
 import Settings from '../Pages/Settings';
 import Dashboard from '../Pages/Dashboard';
+import JobList from '../Pages/Jobs/Jobs';
+import JobDetail from '../Pages/Jobs/JobDetail';
 
 import Launch from '../Pages/LaunchPage/Launch';
 import ProtocolView from '../Pages/ProtocolView';
@@ -51,8 +53,18 @@ export const Pages: Page[] = [
     },
     {
         name: 'Jobs',
-        component: Jobs,
+        component: BatchList,
         isNavigatableFromNavBar: true,
+    },
+    {
+        name: 'JobList',
+        component: JobList,
+        isNavigatableFromNavBar: false,
+    },
+    {
+        name: 'JobDetail',
+        component: JobDetail,
+        isNavigatableFromNavBar: false,
     },
     {
         name: 'Logout',

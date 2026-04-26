@@ -9,27 +9,28 @@ import Animated, {
     LinearTransition,
 } from 'react-native-reanimated';
 
-export interface Job {
+export interface Batch {
     id: number;
     name: string;
     status: string;
     start_timestamp: number;
     end_timestamp: number | null;
-    slot_number: number;
-    batch_id: number;
+    creator_id: number;
+    creator_first_name: string;
+    creator_last_name: string;
 }
 
-const JobList = (props: any) => {
-    const [jobs, setJobs] = useState([] as Job[]);
+const BatchList = (props: any) => {
+    const [batches, setBatches] = useState([] as Batch[]);
 
     useEffect(() => {
-        getRequest(`/jobs/batch/${props.route.params.batch_id}`)
+        getRequest('/jobs')
             .then((response) => {
-                const batches = response.data as Job[];
+                const batches = response.data as Batch[];
                 const sortedBatches = batches.sort(
                     (a, b) => b.start_timestamp - a.start_timestamp,
                 );
-                setJobs(sortedBatches);
+                setBatches(sortedBatches);
             })
             .catch((error) => {
                 console.error('Error fetching jobs:', error);
@@ -42,36 +43,28 @@ const JobList = (props: any) => {
             <Box flex={1} p={24}>
                 <Text
                     color="black"
-                    fontSize={24}
+                    fontSize={32}
                     fontFamily="Orbitron-Medium"
                     mb="$8"
                     mt={16}
                 >
-                    Jobs |{' '}
-                    <Text
-                        color="black"
-                        fontSize={24}
-                        fontFamily="Orbitron-Regular"
-                        opacity={0.2}
-                    >
-                        {props.route.params.batch_name}
-                    </Text>
+                    Job Batches
                 </Text>
 
                 <ScrollView>
-                    {jobs.map((job, index) => (
+                    {batches.map((batch, index) => (
                         <Animated.View
-                            key={job.id}
+                            key={batch.id}
                             entering={FadeInDown.delay(index * 60)
                                 .springify()
                                 .damping(0)}
                             layout={LinearTransition.springify()}
                         >
                             <ListItem
-                                key={job.id}
-                                batch={job}
+                                key={batch.id}
+                                batch={batch}
                                 navigation={props.navigation}
-                                isJob={true}
+                                isJob={false}
                             />
                         </Animated.View>
                     ))}
@@ -81,4 +74,4 @@ const JobList = (props: any) => {
     );
 };
 
-export default JobList;
+export default BatchList;
