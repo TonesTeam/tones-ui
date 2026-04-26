@@ -16,6 +16,6 @@ export interface PermanentLiquidDTO extends LiquidDTO {
     liquid_type_name: string;
     created_at: number;
     default_incubation_time: number;
-    default_incubation_temperature: number;
+    default_target_temperature: number;
     description: string;
 }

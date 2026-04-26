@@ -220,6 +220,21 @@ const AddLiquidForm = ({
             });
     }, []);
 
+    useEffect(() => {
+        if (selectedLiquid) {
+            const liquid = liquids.find((l) => l.id === selectedLiquid);
+            if (liquid) {
+                console.log(liquid);
+                setIncubationTime(
+                    (liquid.default_incubation_time / 60).toString(),
+                );
+                setTargetTemperature(
+                    liquid.default_target_temperature.toString(),
+                );
+            }
+        }
+    }, [selectedLiquid]);
+
     return (
         <Box>
             <HStack
@@ -343,10 +358,6 @@ const AddLiquidForm = ({
                         borderRadius={16}
                         bg="#F1F1F1"
                         borderWidth={0}
-                        value={incubationTime}
-                        onChange={(e: any) =>
-                            setIncubationTime(e.nativeEvent.text)
-                        }
                     >
                         <InputField
                             color="black"
@@ -354,6 +365,10 @@ const AddLiquidForm = ({
                             placeholder="Time in minutes"
                             keyboardType="numeric"
                             ml={16}
+                            value={incubationTime}
+                            onChange={(e: any) =>
+                                setIncubationTime(e.nativeEvent.text)
+                            }
                         />
                     </Input>
                 </VStack>
@@ -368,10 +383,6 @@ const AddLiquidForm = ({
                         borderRadius={16}
                         bg="#F1F1F1"
                         borderWidth={0}
-                        value={targetTemperature}
-                        onChange={(e: any) =>
-                            setTargetTemperature(e.nativeEvent.text)
-                        }
                     >
                         <InputField
                             color="black"
@@ -379,6 +390,10 @@ const AddLiquidForm = ({
                             placeholder="Degrees in celsius"
                             keyboardType="numeric"
                             ml={16}
+                            value={targetTemperature}
+                            onChange={(e: any) =>
+                                setTargetTemperature(e.nativeEvent.text)
+                            }
                         />
                     </Input>
                 </VStack>
@@ -394,10 +409,6 @@ const AddLiquidForm = ({
                             borderRadius={16}
                             bg="#F1F1F1"
                             borderWidth={0}
-                            value={washingIterations}
-                            onChange={(e: any) =>
-                                setWashingIterations(e.nativeEvent.text)
-                            }
                         >
                             <InputField
                                 color="black"
@@ -405,6 +416,10 @@ const AddLiquidForm = ({
                                 placeholder="Number of washing iterations"
                                 keyboardType="numeric"
                                 ml={16}
+                                value={washingIterations}
+                                onChange={(e: any) =>
+                                    setWashingIterations(e.nativeEvent.text)
+                                }
                             />
                         </Input>
                     </VStack>
@@ -417,10 +432,6 @@ const AddLiquidForm = ({
                             borderRadius={16}
                             bg="#F1F1F1"
                             borderWidth={0}
-                            value={singleWashDuration}
-                            onChange={(e: any) =>
-                                setSingleWashDuration(e.nativeEvent.text)
-                            }
                         >
                             <InputField
                                 color="black"
@@ -428,6 +439,10 @@ const AddLiquidForm = ({
                                 placeholder="Single wash duration"
                                 keyboardType="numeric"
                                 ml={16}
+                                value={singleWashDuration}
+                                onChange={(e: any) =>
+                                    setSingleWashDuration(e.nativeEvent.text)
+                                }
                             />
                         </Input>
                     </VStack>

@@ -695,6 +695,9 @@ const ViewLiquidModal = ({
                         >
                             <ButtonText>Delete</ButtonText>
                         </Button>
+                        <Button variant="outline" mr="$2">
+                            <ButtonText>Update</ButtonText>
+                        </Button>
                         <Button onPress={onClose}>
                             <ButtonText>Close</ButtonText>
                         </Button>
