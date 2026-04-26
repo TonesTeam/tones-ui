@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import Txt from '../../components/Txt';
 import { AppStyles } from '../../constants/styles';
-import { getRequest } from '../../common/util';
+import { getRequest, makeRequest } from '../../common/util';
 import { ProtocolWithStepsDTO } from 'common/dto/protocol.dto';
 import { ReagentStep } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
@@ -140,6 +140,12 @@ function Table(props: {
     onCellClick: (cellIndex: number) => void;
     highlightedCell?: number;
 }) {
+    console.log(
+        'Rendering Table:',
+        props.title,
+        'with reagents:',
+        props.reagents,
+    );
     return (
         <View style={s.table}>
             <View style={s.table_title}>
@@ -430,6 +436,12 @@ export function ReagentTrayStep(props: {
             newSelected.add(position);
         }
         setSelectedSlots(newSelected);
+
+        const reagents = section === 'S' ? smallReagents : mediumReagents;
+        const reagent = reagents.find((r) => r.trayPosition === position);
+        if (reagent) {
+            updateLiquidPosition(reagent.name, position, isCurrentlySelected);
+        }
     };
 
     const handleTableCellClick = (section: 'S' | 'M', cellIndex: number) => {
@@ -451,6 +463,37 @@ export function ReagentTrayStep(props: {
                 newSelected.add(reagent.trayPosition);
             }
             setSelectedSlots(newSelected);
+            updateLiquidPosition(
+                reagent.name,
+                reagent.trayPosition,
+                isCurrentlySelected,
+            );
+        }
+    };
+
+    const updateLiquidPosition = async (
+        liquidName: string,
+        position: number,
+        isDeselecting: boolean,
+    ) => {
+        const liquid = liquids.find((l) => l.name === liquidName);
+        if (!liquid) return;
+
+        try {
+            makeRequest(
+                'PUT',
+                `/liquids/${liquid.id}`,
+                JSON.stringify({
+                    ...liquid,
+                    position: isDeselecting ? null : position,
+                }),
+            )
+                .then((response) => {})
+                .catch((error) => {
+                    console.error('Failed to update liquid position:', error);
+                });
+        } catch (error) {
+            console.error('Failed to update liquid position:', error);
         }
     };
 
