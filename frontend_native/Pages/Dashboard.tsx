@@ -19,6 +19,14 @@ import ListItem from './ProtocolList/ListItem';
 import ConfirmationModal from '../components/ConfirmationModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../contexts/UserContext';
+import Animated, {
+    FadeInDown,
+    LinearTransition,
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    withDelay,
+} from 'react-native-reanimated';
 
 const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
     const { user } = useUser();
@@ -125,9 +133,17 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         Key metrics
                     </Text>
                     <HStack gap={30}>
-                        <InfoCard title="Protocols" value={protocolCount} />
-                        <InfoCard title="Launches" value={jobCount} />
-                        <InfoCard title="Library" value={liquidCount} />
+                        <InfoCard
+                            title="Protocols"
+                            value={protocolCount}
+                            index={1}
+                        />
+                        <InfoCard title="Launches" value={jobCount} index={2} />
+                        <InfoCard
+                            title="Library"
+                            value={liquidCount}
+                            index={3}
+                        />
                     </HStack>
                 </VStack>
                 <VStack gap={10} mt={40}>
@@ -162,12 +178,20 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
                     <VStack>
                         {protocols.slice(0, 3).map((protocol, i) => {
                             return (
-                                <ListItem
-                                    key={i}
-                                    navigation={navigation}
-                                    protocol={protocol}
-                                    removeProtocolFromList={() => {}}
-                                />
+                                <Animated.View
+                                    key={protocol.id}
+                                    entering={FadeInDown.delay(i * 60)
+                                        .springify()
+                                        .damping(0)}
+                                    layout={LinearTransition.springify()}
+                                >
+                                    <ListItem
+                                        key={i}
+                                        navigation={navigation}
+                                        protocol={protocol}
+                                        removeProtocolFromList={() => {}}
+                                    />
+                                </Animated.View>
                             );
                         })}
                     </VStack>
@@ -200,32 +224,56 @@ const Dashboard = ({ route, navigation }: NativeStackScreenProps<any>) => {
     );
 };
 
-const InfoCard = ({ title, value }: { title: string; value: number }) => {
+const InfoCard = ({
+    title,
+    value,
+    index,
+}: {
+    title: string;
+    value: number;
+    index: number;
+}) => {
+    const opacity = useSharedValue(0);
+    const translateY = useSharedValue(-20);
+
+    useEffect(() => {
+        const delay = index * 100;
+        opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+        translateY.value = withDelay(delay, withTiming(0, { duration: 400 }));
+    }, []);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }],
+    }));
+
     return (
-        <Box
-            bg="white"
-            borderRadius="$xl"
-            p="$4"
-            width={230}
-            height={200}
-            style={{
-                filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
-            }}
-        >
-            <Text color="black" fontSize={16} fontFamily="Manrope-SemiBold">
-                {title}
-            </Text>
-            <Box alignSelf="center" justifyContent="center" height="100%">
-                <Text
-                    color="black"
-                    mb={35}
-                    fontSize={40}
-                    fontFamily="Manrope-Medium"
-                >
-                    {value}
+        <Animated.View style={animatedStyle}>
+            <Box
+                bg="white"
+                borderRadius="$xl"
+                p="$4"
+                width={230}
+                height={200}
+                style={{
+                    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
+                }}
+            >
+                <Text color="black" fontSize={16} fontFamily="Manrope-SemiBold">
+                    {title}
                 </Text>
+                <Box alignSelf="center" justifyContent="center" height="100%">
+                    <Text
+                        color="black"
+                        mb={35}
+                        fontSize={40}
+                        fontFamily="Manrope-Medium"
+                    >
+                        {value}
+                    </Text>
+                </Box>
             </Box>
-        </Box>
+        </Animated.View>
     );
 };
 
