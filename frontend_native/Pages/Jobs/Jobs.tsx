@@ -26,7 +26,11 @@ const Jobs = (props: any) => {
     useEffect(() => {
         getRequest('/jobs')
             .then((response) => {
-                setBatches(response.data);
+                const batches = response.data as Batch[];
+                const sortedBatches = batches.sort(
+                    (a, b) => b.start_timestamp - a.start_timestamp,
+                );
+                setBatches(sortedBatches);
             })
             .catch((error) => {
                 console.error('Error fetching jobs:', error);
