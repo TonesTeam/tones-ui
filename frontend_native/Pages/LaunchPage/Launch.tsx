@@ -71,6 +71,10 @@ export default function Launch({
         useState(false);
     const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
     const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
+    const [batchName, setBatchName] = useState<string>(
+        `Run of ${protocol_name}`,
+    );
+    console.log(`Batch name: ${batchName}`);
 
     const { user } = useUser();
     const current_user_id = user ? user.id : null;
@@ -268,7 +272,9 @@ export default function Launch({
                                             JSON.stringify({
                                                 protocol_id: protocol_ID,
                                                 slots_used: [...selectedSlots],
-                                                name: 'hello world',
+                                                name:
+                                                    batchName ||
+                                                    `Run of ${protocol_name}`,
                                                 creator_id: current_user_id,
                                             }),
                                         ).then((res) => {
@@ -334,6 +340,8 @@ export default function Launch({
                                 onValidationChange={(isValid) =>
                                     setIsLaunchTimeValid(isValid)
                                 }
+                                batchName={batchName}
+                                setBatchName={setBatchName}
                             />
                         )}
                     </Box>
