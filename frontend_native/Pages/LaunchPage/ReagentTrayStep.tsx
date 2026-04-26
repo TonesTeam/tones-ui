@@ -16,7 +16,7 @@ import {
     Box,
     Image,
 } from '@gluestack-ui/themed';
-import { LiquidDTO } from 'common/dto/liquid.dto';
+import { LiquidDTO, PermanentLiquidDTO } from 'common/dto/liquid.dto';
 
 interface ReagentInfo {
     name: string;
@@ -297,7 +297,7 @@ export function ReagentTrayStep(props: {
     const [selectedSlotsM, setSelectedSlotsM] = useState<Set<number>>(
         new Set(),
     );
-    const [liquids, setLiquids] = useState([] as LiquidDTO[]);
+    const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
 
     useEffect(() => {
         if (props.protocolId) {
@@ -306,7 +306,7 @@ export function ReagentTrayStep(props: {
     }, [props.protocolId, props.slots, liquids]);
 
     useEffect(() => {
-        getRequest<LiquidDTO[]>(`/liquids`).then((response) => {
+        getRequest<PermanentLiquidDTO[]>(`/liquids`).then((response) => {
             if ('data' in response) {
                 setLiquids(response.data);
             }
@@ -335,6 +335,13 @@ export function ReagentTrayStep(props: {
                         liquids.find((l) => l.id === step.applied_liquid_id)
                             ?.name || `Liquid ${step.applied_liquid_id}`;
                     const typeName = 'Unknown';
+                    const connectedToSelector = liquids.find(
+                        (l) => l.id === step.applied_liquid_id,
+                    )?.is_connected_to_selector;
+
+                    if (connectedToSelector) {
+                        return;
+                    }
 
                     const stepUsage = 1;
 

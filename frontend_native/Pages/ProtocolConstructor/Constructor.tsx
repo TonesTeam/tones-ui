@@ -122,13 +122,17 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         );
     }, [stepGroups]);
 
-    navigation.addListener('beforeRemove', (e) => {
-        if (hasUnsavedChanges) {
-            setConfirmExitModal(true);
-            setStoredAction(e.data.action);
-            e.preventDefault();
-        }
-    });
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            if (hasUnsavedChanges) {
+                setConfirmExitModal(true);
+                setStoredAction(e.data.action);
+                e.preventDefault();
+            }
+        });
+
+        return unsubscribe;
+    }, [hasUnsavedChanges, navigation]);
 
     const saveProtocol = (
         protocolName: string = name,
@@ -297,6 +301,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 isOpen={saveModalOpen}
                 onClose={() => setSaveModalOpen(false)}
                 onSave={(protocolName, protocolDescription) => {
+                    setHasUnsavedChanges(false);
                     setSaveModalOpen(false);
                     saveProtocol(protocolName, protocolDescription);
                 }}
