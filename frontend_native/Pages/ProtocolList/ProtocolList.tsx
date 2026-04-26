@@ -26,11 +26,15 @@ import { X } from 'lucide-react-native';
 import ListItem from './ListItem';
 import Header from './Header';
 import EmptyListPlaceholder from './EmptyListPlaceholder';
+import ConfirmationModal from '../../components/ConfirmationModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../../contexts/UserContext';
 
 export default function ProtocolList({
     route,
     navigation,
 }: NativeStackScreenProps<any>) {
+    const { user } = useUser();
     const scrollViewRef = useRef<ScrollView>(null);
     const isFocused = useIsFocused();
     const [networkError, setNetworkError] = useState(false);
@@ -38,6 +42,8 @@ export default function ProtocolList({
     const [protocols, setProtocols] = useState<ProtocolDto[] | undefined>(
         undefined,
     );
+
+    const getWarningStorageKey = () => `dontShowWashingWarning_${user?.id}`;
 
     const listInitilizer = () => {
         setNetworkError(false);
@@ -78,6 +84,24 @@ export default function ProtocolList({
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const [active, setActive] = useState(false);
+    const [showWashingWarning, setShowWashingWarning] = useState(false);
+    const [dontShowAgain, setDontShowAgain] = useState(false);
+
+    // Проверяем при загрузке был ли checkbox отмечен ранее
+    useEffect(() => {
+        const checkWashingWarning = async () => {
+            const storageKey = getWarningStorageKey();
+            const dontShow = await AsyncStorage.getItem(storageKey);
+            if (dontShow === 'true') {
+                setDontShowAgain(true);
+            }
+        };
+
+        if (user?.id) {
+            checkWashingWarning();
+        }
+    }, [user?.id]);
+
     useEffect(() => {
         if (!protocols) return;
 
@@ -221,6 +245,15 @@ export default function ProtocolList({
                     onSort={handleSort}
                     sortColumn={sortColumn}
                     sortDirection={sortDirection}
+                    onCreateProtocol={() => {
+                        if (dontShowAgain) {
+                            // Если checkbox был отмечен - прямо переходим
+                            navigation.navigate('Create protocol');
+                        } else {
+                            // Иначе показываем модал
+                            setShowWashingWarning(true);
+                        }
+                    }}
                 />
                 <Box flex={9} width="100%" mt="0">
                     {protocols == undefined && (
@@ -320,6 +353,29 @@ export default function ProtocolList({
                     )}
                 </Box>
             </Box>
+            <ConfirmationModal
+                isOpen={showWashingWarning}
+                onClose={() => setShowWashingWarning(false)}
+                headline="Single Washing Liquid Required"
+                text={`1. Each protocol can use only ONE washing liquid TYPE.\n2. We RECOMMEND recording the name of the washing liquid in the Description field ,when you will be saving the protocol. \n3. You may need to change the washing bottle during launch if necessary.`}
+                actionButtonText="Continue"
+                showCheckbox={true}
+                checkboxLabel="Don't show this message again"
+                checkboxValue={dontShowAgain}
+                onCheckboxChange={async (isChecked) => {
+                    setDontShowAgain(isChecked);
+                    const storageKey = getWarningStorageKey();
+                    if (isChecked) {
+                        await AsyncStorage.setItem(storageKey, 'true');
+                    } else {
+                        await AsyncStorage.removeItem(storageKey);
+                    }
+                }}
+                action={() => {
+                    setShowWashingWarning(false);
+                    navigation.navigate('Create protocol');
+                }}
+            />
         </MainContainer>
     );
 }

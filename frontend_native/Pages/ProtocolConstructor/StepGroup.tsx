@@ -46,7 +46,6 @@ const StepGroup = ({
         `activeStepGroup: ${activeStepGroup}, stepGroupId: ${stepGroup.step_group.name}`,
     );
 
-    let index = 0;
     return (
         <VStack>
             <ConfirmationModal
@@ -225,16 +224,17 @@ const StepGroup = ({
                 </HStack>
             </Pressable>
             <VStack gap={8} mt={24}>
-                {stepGroup.steps.map((step) => {
+                {stepGroup.steps.map((step, stepIndex) => {
                     console.log(
                         `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
                     );
+                    let currentIndex = stepIndex * 4 + 1;
                     return (
                         <>
                             {step.target_temperature > 2500 && (
                                 <Step
-                                    key={`h${index}`}
-                                    index={++index}
+                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-heating`}
+                                    index={stepIndex * 4}
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
@@ -245,8 +245,8 @@ const StepGroup = ({
                                 />
                             )}
                             <Step
-                                key={`l${index}`}
-                                index={++index}
+                                key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
+                                index={currentIndex}
                                 step={step}
                                 setStepGroups={setStepGroups}
                                 allStepGroups={allStepGroups}
@@ -258,8 +258,8 @@ const StepGroup = ({
                             />
                             {step.target_temperature > 2500 && (
                                 <Step
-                                    key={`c${index}`}
-                                    index={++index}
+                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}
+                                    index={currentIndex + 1}
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
@@ -271,8 +271,12 @@ const StepGroup = ({
                             )}
                             {step.washing_iterations > 0 && (
                                 <Step
-                                    key={`w${index}`}
-                                    index={++index}
+                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-wash`}
+                                    index={
+                                        step.target_temperature > 2500
+                                            ? currentIndex + 2
+                                            : currentIndex + 1
+                                    }
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
