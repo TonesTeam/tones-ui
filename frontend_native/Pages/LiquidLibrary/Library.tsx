@@ -1,4 +1,8 @@
 import { MainContainer, globalElementStyle } from '../../constants/styles';
+import Animated, {
+    FadeInDown,
+    LinearTransition,
+} from 'react-native-reanimated';
 import NavBar from '../../navigation/NavBar';
 import { useEffect, useState } from 'react';
 import {
@@ -237,6 +241,32 @@ const LibraryBody = ({
                 liquid={liquids.filter((e) => e.id == selectedLiquid)[0]}
                 onClose={() => setViewLiquidModal(false)}
                 onDelete={deleteLiquid}
+                onUpdate={(updatedLiquid) => {
+                    const json = JSON.stringify({
+                        name: updatedLiquid.name,
+                        description: updatedLiquid.description,
+                        default_incubation_time:
+                            updatedLiquid.default_incubation_time,
+                        default_target_temperature:
+                            updatedLiquid.default_target_temperature,
+                        position: updatedLiquid.position,
+                        liquid_type_id: updatedLiquid.liquid_type_id,
+                    });
+                    makeRequest(
+                        'PUT' as Method,
+                        `/liquids/${updatedLiquid.id}`,
+                        json,
+                    )
+                        .then((r) => {
+                            if (r.status >= 200 && r.status <= 299) {
+                                setViewLiquidModal(false);
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err.message);
+                        });
+                    listInitilizer();
+                }}
             />
             <Box width={900}>
                 <HStack space="xl" alignItems="center" mb="$4">
@@ -352,15 +382,23 @@ const LibraryBody = ({
                         <ScrollView maxHeight={500}>
                             {filterAndSort().map((liquid, i) => {
                                 return (
-                                    <ListItem
-                                        liquid={liquid}
-                                        key={i}
-                                        onView={(id) => {
-                                            setSelectedLiquid(id);
-                                            console.log(id);
-                                            setViewLiquidModal(true);
-                                        }}
-                                    />
+                                    <Animated.View
+                                        key={liquid.id}
+                                        entering={FadeInDown.delay(i * 60)
+                                            .springify()
+                                            .damping(0)}
+                                        layout={LinearTransition.springify()}
+                                    >
+                                        <ListItem
+                                            liquid={liquid}
+                                            key={i}
+                                            onView={(id) => {
+                                                setSelectedLiquid(id);
+                                                console.log(id);
+                                                setViewLiquidModal(true);
+                                            }}
+                                        />
+                                    </Animated.View>
                                 );
                             })}
                         </ScrollView>
@@ -646,56 +684,154 @@ const ViewLiquidModal = ({
     liquid,
     onClose,
     onDelete,
+    onUpdate,
 }: {
     open: boolean;
     liquid: PermanentLiquidDTO;
     onClose: () => void;
     onDelete: (id: number) => void;
+    onUpdate: (liq: PermanentLiquidDTO) => void;
 }) => {
+    const [confirmationModal, setConfirmationModal] = useState(false);
+    const [description, setDescription] = useState('');
+    const [incubationTime, setIncubationTime] = useState('');
+    const [targetTemperature, setTargetTemperature] = useState('');
+    const [position, setPosition] = useState('');
+    const [liquidTypeName, setLiquidTypeName] = useState('');
+
+    useEffect(() => {
+        if (liquid) {
+            setDescription(liquid.description);
+            setIncubationTime(String(liquid.default_incubation_time));
+            setTargetTemperature(String(liquid.default_target_temperature));
+            setPosition(String(liquid.position));
+            setLiquidTypeName(liquid.liquid_type_name);
+        }
+    }, [liquid]);
+
+    const LabeledInput = ({
+        label,
+        value,
+        onChange,
+        placeholder,
+        keyboardType = 'default',
+    }: {
+        label: string;
+        value: string;
+        onChange: (v: string) => void;
+        placeholder?: string;
+        keyboardType?: string;
+    }) => (
+        <HStack gap="$2" alignItems="center">
+            <Text color="$black">{label}</Text>
+            <Input
+                h="$12"
+                borderRadius="$2xl"
+                bg="$backgroundLight100"
+                borderWidth="$0"
+                w="$64"
+            >
+                <InputField
+                    color="$black"
+                    fontSize="$md"
+                    placeholder={placeholder}
+                    pl="$4"
+                    value={value}
+                    keyboardType={keyboardType}
+                    onChange={(e: any) => onChange(e.nativeEvent.text)}
+                />
+            </Input>
+        </HStack>
+    );
+
     return (
         open && (
             <Modal isOpen={open} onClose={onClose}>
+                <ConfirmationModal
+                    isOpen={confirmationModal}
+                    onClose={() => setConfirmationModal(false)}
+                    action={() => onDelete(liquid.id)}
+                    headline={`Are you sure you want to delete ${liquid.name}?`}
+                    text="This action cannot be undone."
+                    actionButtonText="Delete"
+                />
+
                 <ModalBackdrop />
                 <ModalContent>
                     <ModalHeader>
-                        <Text fontSize={20} color="black">
+                        <Text fontSize="$xl" color="$black">
                             {liquid.name}
                         </Text>
                     </ModalHeader>
                     <ModalBody>
                         <VStack space="md">
-                            <Text color="$black">{liquid.description}</Text>
-                            <Text color="$black">
-                                Default Incubation Time:{' '}
-                                {liquid.default_incubation_time} s
-                            </Text>
-                            <Text color="$black">
-                                Default Target Temperature:{' '}
-                                {liquid.default_incubation_temperature} °C
-                            </Text>
-                            <Text color="$black">
-                                Position: {liquid.position}
-                            </Text>
-                            <Text color="$black">
-                                Connection Type:{' '}
-                                {liquid.is_connected_to_selector
-                                    ? 'Selector'
-                                    : 'Grid'}
-                            </Text>
-                            <Text color="$black">
-                                Liquid Type: {liquid.liquid_type_name}
-                            </Text>
+                            <LabeledInput
+                                label="Description:"
+                                value={description}
+                                onChange={setDescription}
+                                placeholder="e.g. A common reagent used for DNA extraction."
+                            />
+                            <LabeledInput
+                                label="Default Incubation Time (s):"
+                                value={incubationTime}
+                                onChange={setIncubationTime}
+                                placeholder="e.g. 300"
+                                keyboardType="numeric"
+                            />
+                            <LabeledInput
+                                label="Default Target Temperature (°C):"
+                                value={targetTemperature}
+                                onChange={setTargetTemperature}
+                                placeholder="e.g. 37"
+                                keyboardType="numeric"
+                            />
+                            <LabeledInput
+                                label="Position:"
+                                value={position}
+                                onChange={setPosition}
+                                placeholder="e.g. A1"
+                            />
+                            <HStack gap="$2" alignItems="center">
+                                <Text color="$black">Connection Type:</Text>
+                                <Text color="$black">
+                                    {liquid.is_connected_to_selector
+                                        ? 'Selector'
+                                        : 'Grid'}
+                                </Text>
+                            </HStack>
+                            <LabeledInput
+                                label="Liquid Type:"
+                                value={liquidTypeName}
+                                onChange={setLiquidTypeName}
+                                placeholder="e.g. Reagent"
+                            />
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
                         <Button
                             variant="outline"
-                            onPress={() => onDelete(liquid.id)}
+                            onPress={() => setConfirmationModal(true)}
                             mr="$2"
                         >
                             <ButtonText>Delete</ButtonText>
                         </Button>
-                        <Button variant="outline" mr="$2">
+                        <Button
+                            variant="outline"
+                            mr="$2"
+                            onPress={() => {
+                                const updatedLiquid: PermanentLiquidDTO = {
+                                    ...liquid,
+                                    description,
+                                    default_incubation_time:
+                                        parseInt(incubationTime) || 0,
+                                    default_target_temperature:
+                                        parseInt(targetTemperature) || 0,
+                                    position: parseInt(position) || 0,
+                                    liquid_type_name: liquidTypeName,
+                                };
+                                onUpdate(updatedLiquid);
+                            }}
+                        >
                             <ButtonText>Update</ButtonText>
                         </Button>
                         <Button onPress={onClose}>
