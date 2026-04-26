@@ -698,6 +698,7 @@ const ViewLiquidModal = ({
     const [targetTemperature, setTargetTemperature] = useState('');
     const [position, setPosition] = useState('');
     const [liquidTypeName, setLiquidTypeName] = useState('');
+    const [isReadOnly, setIsReadOnly] = useState(false);
 
     useEffect(() => {
         if (liquid) {
@@ -706,6 +707,7 @@ const ViewLiquidModal = ({
             setTargetTemperature(String(liquid.default_target_temperature));
             setPosition(String(liquid.position));
             setLiquidTypeName(liquid.liquid_type_name);
+            setIsReadOnly(liquid.is_connected_to_selector == 1);
         }
     }, [liquid]);
 
@@ -808,32 +810,43 @@ const ViewLiquidModal = ({
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button
-                            variant="outline"
-                            onPress={() => setConfirmationModal(true)}
-                            mr="$2"
-                        >
-                            <ButtonText>Delete</ButtonText>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            mr="$2"
-                            onPress={() => {
-                                const updatedLiquid: PermanentLiquidDTO = {
-                                    ...liquid,
-                                    description,
-                                    default_incubation_time:
-                                        parseInt(incubationTime) || 0,
-                                    default_target_temperature:
-                                        parseInt(targetTemperature) || 0,
-                                    position: parseInt(position) || 0,
-                                    liquid_type_name: liquidTypeName,
-                                };
-                                onUpdate(updatedLiquid);
-                            }}
-                        >
-                            <ButtonText>Update</ButtonText>
-                        </Button>
+                        {!isReadOnly && (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    onPress={() => setConfirmationModal(true)}
+                                    mr="$2"
+                                >
+                                    <ButtonText>Delete</ButtonText>
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    disabled={isReadOnly}
+                                    mr="$2"
+                                    onPress={() => {
+                                        const updatedLiquid: PermanentLiquidDTO =
+                                            {
+                                                ...liquid,
+                                                description,
+                                                default_incubation_time:
+                                                    parseInt(incubationTime) ||
+                                                    0,
+                                                default_target_temperature:
+                                                    parseInt(
+                                                        targetTemperature,
+                                                    ) || 0,
+                                                position:
+                                                    parseInt(position) || 0,
+                                                liquid_type_name:
+                                                    liquidTypeName,
+                                            };
+                                        onUpdate(updatedLiquid);
+                                    }}
+                                >
+                                    <ButtonText>Update</ButtonText>
+                                </Button>
+                            </>
+                        )}
                         <Button onPress={onClose}>
                             <ButtonText>Close</ButtonText>
                         </Button>

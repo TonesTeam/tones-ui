@@ -11,7 +11,7 @@ export interface LiquidDTO {
 
 export interface PermanentLiquidDTO extends LiquidDTO {
     position: number;
-    is_connected_to_selector: boolean;
+    is_connected_to_selector: number;
     liquid_type_id: number;
     liquid_type_name: string;
     created_at: number;
