@@ -1,0 +1,58 @@
+import { useState, useEffect } from 'react';
+import { MainContainer } from '../../constants/styles';
+import NavBar from '../../navigation/NavBar';
+import { Box, Text } from '@gluestack-ui/themed';
+import { getRequest } from '../../common/util';
+import ListItem from './ListItem';
+
+export interface Batch {
+    id: number;
+    name: string;
+    status: string;
+    start_timestamp: number;
+    end_timestamp: number | null;
+    creator_id: number;
+    creator_first_name: string;
+    creator_last_name: string;
+}
+
+const Jobs = (props: any) => {
+    const [batches, setBatches] = useState([] as Batch[]);
+
+    useEffect(() => {
+        getRequest('/jobs')
+            .then((response) => {
+                setBatches(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching jobs:', error);
+            });
+    }, []);
+
+    return (
+        <MainContainer>
+            <NavBar />
+            <Box flex={1} p={24}>
+                <Text
+                    color="black"
+                    fontSize={32}
+                    fontFamily="Orbitron-Medium"
+                    mb="$8"
+                    mt={16}
+                >
+                    Job Batches
+                </Text>
+
+                {batches.map((batch) => (
+                    <ListItem
+                        key={batch.id}
+                        batch={batch}
+                        navigation={props.navigation}
+                    />
+                ))}
+            </Box>
+        </MainContainer>
+    );
+};
+
+export default Jobs;

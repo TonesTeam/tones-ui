@@ -4,7 +4,7 @@ import Constructor from '../Pages/ProtocolConstructor/Constructor';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import CategoryGrid from '../Pages/LiquidLibrary/CategoryGrid';
 import Library from '../Pages/LiquidLibrary/Library';
-import Jobs from '../Pages/Jobs';
+import Jobs from '../Pages/Jobs/Jobs';
 import Profile from '../Pages/UserProfile';
 import Loading from '../Pages/Loading';
 import Settings from '../Pages/Settings';

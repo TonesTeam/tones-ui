@@ -273,6 +273,7 @@ export default function Launch({
                                             }),
                                         ).then((res) => {
                                             console.log(res.data);
+                                            navigation.navigate('Jobs');
                                         });
                                     }
                                 }}
