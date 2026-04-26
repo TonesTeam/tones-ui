@@ -6,7 +6,6 @@ import CategoryGrid from '../Pages/LiquidLibrary/CategoryGrid';
 import Library from '../Pages/LiquidLibrary/Library';
 import Jobs from '../Pages/Jobs';
 import Profile from '../Pages/UserProfile';
-import ProtocolLogs from '../Pages/ProtocolLogs';
 import Loading from '../Pages/Loading';
 import Settings from '../Pages/Settings';
 import Dashboard from '../Pages/Dashboard';
@@ -74,11 +73,6 @@ export const Pages: Page[] = [
     {
         name: 'ProtocolView',
         component: ProtocolView,
-        isNavigatableFromNavBar: false,
-    },
-    {
-        name: 'ProtocolLogs',
-        component: ProtocolLogs,
         isNavigatableFromNavBar: false,
     },
     {
