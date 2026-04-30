@@ -501,6 +501,7 @@ export function ReagentTrayStep(props: {
 
     // Check if all required slots are selected
     useEffect(() => {
+        console.log('Checking selection change:');
         if (props.onSelectionChange && allReagentsWithTrayPos.length > 0) {
             const allRequiredPositions = allReagentsWithTrayPos
                 .filter((r) => r.trayPosition)
@@ -511,6 +512,8 @@ export function ReagentTrayStep(props: {
             );
 
             props.onSelectionChange(allSelected);
+        } else if (allReagentsWithTrayPos.length === 0) {
+            props.onSelectionChange && props.onSelectionChange(true);
         }
     }, [selectedSlotsS, selectedSlotsM, allReagentsWithTrayPos]);
 
