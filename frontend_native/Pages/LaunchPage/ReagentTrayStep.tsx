@@ -41,7 +41,7 @@ function ReagentTray(props: {
     startNumber?: number;
 }) {
     const renderSlot = (row: number, col: number) => {
-        const slotNumber = row * props.cols + col + (props.startNumber || 1); // Row-major order
+        const slotNumber = col * props.rows + row + (props.startNumber || 1); // Column-major order (top-to-bottom)
         const reagent = props.reagents.find(
             (r) => r.trayPosition === slotNumber,
         );
@@ -197,7 +197,7 @@ function Table(props: {
                                 .fill(null)
                                 .map((_, col_index) => {
                                     const cellIndex =
-                                        row_index * props.config.x + col_index;
+                                        col_index * props.config.y + row_index; // Column-major order (top-to-bottom)
                                     const reagentIndex =
                                         props.startIndex + cellIndex;
                                     const reagent =
@@ -631,6 +631,7 @@ export function ReagentTrayStep(props: {
                     <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={true}
+                        showsVerticalScrollIndicator={true}
                         persistentScrollbar={true}
                         contentContainerStyle={{ alignItems: 'flex-start' }}
                         nestedScrollEnabled={true}
