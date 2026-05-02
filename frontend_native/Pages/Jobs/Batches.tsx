@@ -35,7 +35,7 @@ const BatchList = (props: any) => {
             .catch((error) => {
                 console.error('Error fetching jobs:', error);
             });
-    }, []);
+    }, [props.navigation]);
 
     return (
         <MainContainer>
