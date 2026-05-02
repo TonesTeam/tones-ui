@@ -81,13 +81,14 @@ export default function Library({
                         onPress={() => navigation.goBack()}
                         alignItems="flex-start"
                         justifyContent="center"
-                        pr="$3"
+                        pr="$4"
                     >
                         <Icon
                             as={ArrowLeft}
                             width={20}
                             height={15}
                             color="#1F2832"
+                            size={25}
                         />
                     </Pressable>
                     <Text

@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
 import { MainContainer } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
-import { Box, Text, ScrollView } from '@gluestack-ui/themed';
+import {
+    Box,
+    Text,
+    ScrollView,
+    Pressable,
+    Icon,
+    HStack,
+} from '@gluestack-ui/themed';
 import { getRequest } from '../../common/util';
 import ListItem from './ListItem';
 import Animated, {
     FadeInDown,
     LinearTransition,
 } from 'react-native-reanimated';
+import { ArrowLeft } from 'lucide-react-native';
 
 export interface Job {
     id: number;
@@ -40,23 +48,37 @@ const JobList = (props: any) => {
         <MainContainer>
             <NavBar />
             <Box flex={1} p={24}>
-                <Text
-                    color="black"
-                    fontSize={24}
-                    fontFamily="Orbitron-Medium"
-                    mb="$8"
-                    mt={16}
-                >
-                    Jobs |{' '}
+                <HStack alignItems="center" mb="$8" mt={16}>
+                    <Pressable
+                        onPress={() => props.navigation.goBack()}
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        pr="$4"
+                    >
+                        <Icon
+                            as={ArrowLeft}
+                            width={30}
+                            height={20}
+                            color="#1F2832"
+                            size={25}
+                        />
+                    </Pressable>
                     <Text
                         color="black"
                         fontSize={24}
-                        fontFamily="Orbitron-Regular"
-                        opacity={0.2}
+                        fontFamily="Orbitron-Medium"
                     >
-                        {props.route.params.batch_name}
+                        Jobs |{' '}
+                        <Text
+                            color="black"
+                            fontSize={24}
+                            fontFamily="Orbitron-Regular"
+                            opacity={0.2}
+                        >
+                            {props.route.params.batch_name}
+                        </Text>
                     </Text>
-                </Text>
+                </HStack>
 
                 <ScrollView>
                     {jobs.map((job, index) => (
