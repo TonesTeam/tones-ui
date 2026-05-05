@@ -42,7 +42,7 @@ const JobList = (props: any) => {
             .catch((error) => {
                 console.error('Error fetching jobs:', error);
             });
-    }, []);
+    }, [props.route.params]);
 
     return (
         <MainContainer>

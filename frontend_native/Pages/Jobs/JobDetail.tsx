@@ -17,6 +17,7 @@ import { X } from 'lucide-react-native';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 interface ProtocolState {
+    message: string;
     has_begun: boolean;
     has_ended: boolean;
     is_paused: boolean;
@@ -32,6 +33,7 @@ interface ProtocolState {
 const JobDetail = (props: any) => {
     const [job, setJob] = useState<Job | null>(null);
     const [jobState, setJobState] = useState<ProtocolState | null>(null);
+    const [timer, setTimer] = useState(0);
 
     useEffect(() => {
         const { job_id } = props.route.params;
@@ -46,13 +48,27 @@ const JobDetail = (props: any) => {
 
         getRequest(`/jobs/${job_id}/state`)
             .then((response) => {
-                const stateData = response.data as ProtocolState;
+                let data = response.data;
+                console.log('Fetched job state:', data);
+                data.state.time_remaining_estimate =
+                    data.state.time_remaining_estimate.secs;
+                data.state.initial_time_estimate =
+                    data.state.initial_time_estimate.secs;
+                let stateData = data.state as ProtocolState;
                 setJobState(stateData);
             })
             .catch((error: any) => {
                 console.error('Error fetching job state:', error);
             });
-    }, [props.route.params]);
+    }, [timer]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimer((prev) => prev + 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <MainContainer>
@@ -171,13 +187,14 @@ const LeftPanel = ({
             >
                 Status
             </Text>
-            <HStack
-                borderRadius={16}
+            <Box
                 alignItems="center"
                 mt={6}
                 bg={accentColor + '33'}
                 px={12}
                 py={6}
+                flexDirection="row"
+                borderRadius={16}
             >
                 <Box
                     width={12}
@@ -195,7 +212,7 @@ const LeftPanel = ({
                 >
                     {capitalizeFirstLetter(job?.status ?? '')}
                 </Text>
-            </HStack>
+            </Box>
 
             <Text
                 fontSize={40}
