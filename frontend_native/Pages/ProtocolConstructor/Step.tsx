@@ -66,7 +66,7 @@ const Step = ({
             iterations = step.washing_iterations || 0;
             incubationTime = step.single_wash_duration || 0;
             color = '#1193CF';
-            temperature = 2500;
+            temperature = 25;
             automaticStep = true;
             break;
         case 'cooling':
@@ -82,7 +82,7 @@ const Step = ({
             icon = Thermometer;
             incubationTime = 60 * 7;
             color = '#BE0707';
-            temperature = 2500;
+            temperature = 25;
             automaticStep = true;
             break;
     }
@@ -119,7 +119,7 @@ const Step = ({
                 <HStack flex={2} justifyContent="center" alignItems="center">
                     <Icon as={Thermometer} size={16} />
                     <Text color="black" fontSize={12} ml={6}>
-                        {temperature / 100} °C
+                        {temperature} °C
                     </Text>
                 </HStack>
                 {iterations > 1 ? (
