@@ -90,16 +90,12 @@ const Header = ({
                 bg="#1F2832"
                 alignSelf="center"
                 ml="auto"
-                onPress={() => {}}
+                onPress={() => {
+                    onSaveClick ? onSaveClick() : saveProtocol();
+                }}
                 borderRadius={999}
             >
-                <ButtonText
-                    fontSize={14}
-                    color="white"
-                    onPress={() => {
-                        onSaveClick ? onSaveClick() : saveProtocol();
-                    }}
-                >
+                <ButtonText fontSize={14} color="white">
                     Save
                 </ButtonText>
             </Button>
