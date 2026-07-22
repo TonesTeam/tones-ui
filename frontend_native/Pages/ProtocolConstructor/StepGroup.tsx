@@ -224,71 +224,83 @@ const StepGroup = ({
                 </HStack>
             </Pressable>
             <VStack gap={8} mt={24}>
-                {stepGroup.steps.map((step, stepIndex) => {
-                    console.log(
-                        `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
-                    );
-                    let currentIndex = stepIndex * 4 + 1;
-                    return (
-                        <>
-                            {step.target_temperature > 2500 && (
+                {(() => {
+                    let currentIndex = 1;
+
+                    return stepGroup.steps.map((step) => {
+                        console.log(
+                            `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
+                        );
+
+                        const heatingIndex =
+                            step.target_temperature > 2500
+                                ? currentIndex++
+                                : null;
+                        const liquidIndex = currentIndex++;
+                        const coolingIndex =
+                            step.target_temperature > 2500
+                                ? currentIndex++
+                                : null;
+                        const washIndex =
+                            step.washing_iterations > 0 ? currentIndex++ : null;
+
+                        return (
+                            <>
+                                {heatingIndex !== null && (
+                                    <Step
+                                        key={`${stepGroup.step_group.sequence_number}-${step.id}-heating`}
+                                        index={heatingIndex}
+                                        step={step}
+                                        setStepGroups={setStepGroups}
+                                        allStepGroups={allStepGroups}
+                                        stepGroupSequenceNumber={
+                                            stepGroup.step_group.sequence_number
+                                        }
+                                        type={'heating'}
+                                    />
+                                )}
                                 <Step
-                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-heating`}
-                                    index={stepIndex * 4}
+                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
+                                    index={liquidIndex}
                                     step={step}
                                     setStepGroups={setStepGroups}
                                     allStepGroups={allStepGroups}
                                     stepGroupSequenceNumber={
                                         stepGroup.step_group.sequence_number
                                     }
-                                    type={'heating'}
+                                    type={'liquid'}
+                                    liquidMap={liquidMap}
                                 />
-                            )}
-                            <Step
-                                key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
-                                index={currentIndex}
-                                step={step}
-                                setStepGroups={setStepGroups}
-                                allStepGroups={allStepGroups}
-                                stepGroupSequenceNumber={
-                                    stepGroup.step_group.sequence_number
-                                }
-                                type={'liquid'}
-                                liquidMap={liquidMap}
-                            />
-                            {step.target_temperature > 2500 && (
-                                <Step
-                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}
-                                    index={currentIndex + 1}
-                                    step={step}
-                                    setStepGroups={setStepGroups}
-                                    allStepGroups={allStepGroups}
-                                    stepGroupSequenceNumber={
-                                        stepGroup.step_group.sequence_number
-                                    }
-                                    type={'cooling'}
-                                />
-                            )}
-                            {step.washing_iterations > 0 && (
-                                <Step
-                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-wash`}
-                                    index={
-                                        step.target_temperature > 2500
-                                            ? currentIndex + 2
-                                            : currentIndex + 1
-                                    }
-                                    step={step}
-                                    setStepGroups={setStepGroups}
-                                    allStepGroups={allStepGroups}
-                                    stepGroupSequenceNumber={
-                                        stepGroup.step_group.sequence_number
-                                    }
-                                    type={'wash'}
-                                />
-                            )}
-                        </>
-                    );
-                })}
+                                {coolingIndex !== null && (
+                                    <Step
+                                        key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}
+                                        index={coolingIndex}
+                                        step={step}
+                                        setStepGroups={setStepGroups}
+                                        allStepGroups={allStepGroups}
+                                        stepGroupSequenceNumber={
+                                            stepGroup.step_group.sequence_number
+                                        }
+                                        type={'cooling'}
+                                    />
+                                )}
+                                {washIndex !== null && (
+                                    <Step
+                                        key={`${stepGroup.step_group.sequence_number}-${step.id}-wash`}
+                                        index={washIndex}
+                                        step={step}
+                                        setStepGroups={setStepGroups}
+                                        allStepGroups={allStepGroups}
+                                        stepGroupSequenceNumber={
+                                            stepGroup.step_group.sequence_number
+                                        }
+                                        type={'wash'}
+                                    />
+                                )}
+                            </>
+                        );
+                    });
+                })()}
             </VStack>
         </VStack>
     );
