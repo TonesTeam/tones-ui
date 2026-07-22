@@ -1,51 +1,49 @@
 {
-  "expo": {
-    "jsEngine": "hermes",
-    "name": "Tones",
-    "slug": "tones-frontend",
-    "version": "1.0.0",
-    "orientation": "landscape",
-    "icon": "./assets/favicon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.drewzxcvbnm0.tonesfrontend"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#2d4cc9"
-      },
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.drewzxcvbnm0.tonesfrontend",
-      "permissions": [
-        "ACCESS_NETWORK_STATE",
-        "INTERNET",
-        "ACCESS_WIFI_STATE"
-      ]
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      [
-        "expo-screen-orientation",
-        {
-          "initialOrientation": "LANDSCAPE"
+    "expo": {
+        "jsEngine": "hermes",
+        "name": "Tones Frontend",
+        "slug": "tones-frontend",
+        "version": "1.0.0",
+        "orientation": "landscape",
+        "icon": "./assets/favicon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.t0nes.tonesfrontend"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#2d4cc9"
+            },
+            "softwareKeyboardLayoutMode": "pan",
+            "package": "com.t0nes.tonesfrontend",
+            "permissions": [
+                "ACCESS_NETWORK_STATE",
+                "INTERNET",
+                "ACCESS_WIFI_STATE"
+            ]
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            [
+                "expo-screen-orientation",
+                {
+                    "initialOrientation": "LANDSCAPE"
+                }
+            ],
+            "expo-font"
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "e8703ec2-507b-4a18-9595-69c6823b03bf"
+            }
         }
-      ],
-      "expo-font"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "d11bf65a-55c8-40e2-b39b-5e6a03d62d98"
-      }
     }
-  }
 }
