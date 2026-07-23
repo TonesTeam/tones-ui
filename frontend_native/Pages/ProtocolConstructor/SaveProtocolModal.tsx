@@ -392,7 +392,7 @@ const StepListItem = ({
                     <HStack alignItems="center" justifyContent="center">
                         <Icon as={Thermometer} size="xs" />
                         <Text ml={4} fontSize={12}>
-                            {step.target_temperature / 100} °C
+                                {step.target_temperature} °C
                         </Text>
                     </HStack>
                 )}

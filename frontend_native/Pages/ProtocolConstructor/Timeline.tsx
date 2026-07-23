@@ -33,7 +33,7 @@ const Timeline = ({
                 steps: sg.steps.map((s) => ({
                     iterations: 1,
                     sequence_number: s.sequence_number,
-                    target_temperature: s.target_temperature * 100,
+                    target_temperature: s.target_temperature,
                     incubation_time: s.incubation_time,
                     applied_liquid_id: s.applied_liquid_id,
                     washing_iterations: s.washing_iterations,

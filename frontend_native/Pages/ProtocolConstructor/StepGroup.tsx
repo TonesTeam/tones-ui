@@ -233,12 +233,12 @@ const StepGroup = ({
                         );
 
                         const heatingIndex =
-                            step.target_temperature > 2500
+                            step.target_temperature > 25
                                 ? currentIndex++
                                 : null;
                         const liquidIndex = currentIndex++;
                         const coolingIndex =
-                            step.target_temperature > 2500
+                            step.target_temperature > 25
                                 ? currentIndex++
                                 : null;
                         const washIndex =
