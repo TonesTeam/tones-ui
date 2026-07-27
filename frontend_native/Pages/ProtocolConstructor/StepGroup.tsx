@@ -7,6 +7,7 @@ import {
     Input,
     InputField,
 } from '@gluestack-ui/themed';
+import { PanResponder } from 'react-native';
 import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { Copy, Pencil, Trash } from 'lucide-react-native';
 import Step from './Step';
@@ -31,8 +32,16 @@ const StepGroup = ({
     liquidMap,
 }: StepGroupProps) => {
     const inputRef = useRef<any>(null);
+    const didReorderRef = useRef(false);
+    const localStepsRef = useRef(stepGroup.steps);
+    const stepRefs = useRef<Record<number, any>>({});
+    const stepLayouts = useRef<Record<number, { top: number; height: number }>>(
+        {},
+    );
     const [isEditing, setIsEditing] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
+    const [draggingStepId, setDraggingStepId] = useState<number | null>(null);
+    const [localSteps, setLocalSteps] = useState(stepGroup.steps);
 
     useEffect(() => {
         if (isEditing) {
@@ -41,6 +50,142 @@ const StepGroup = ({
             });
         }
     }, [isEditing]);
+
+    useEffect(() => {
+        if (draggingStepId === null) {
+            setLocalSteps(stepGroup.steps);
+            localStepsRef.current = stepGroup.steps;
+        }
+    }, [stepGroup.steps, draggingStepId]);
+
+    useEffect(() => {
+        const frame = requestAnimationFrame(() => {
+            localSteps.forEach((step) => {
+                const node = stepRefs.current[step.id];
+                if (node?.measureInWindow) {
+                    node.measureInWindow(
+                        (
+                            _x: number,
+                            y: number,
+                            _width: number,
+                            height: number,
+                        ) => {
+                            stepLayouts.current[step.id] = {
+                                top: y,
+                                height,
+                            };
+                        },
+                    );
+                }
+            });
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [localSteps, draggingStepId]);
+
+    const moveStepWithinGroup = (fromIndex: number, toIndex: number) => {
+        if (fromIndex === toIndex) {
+            return;
+        }
+
+        const normalizedTargetIndex = Math.max(0, toIndex);
+
+        setLocalSteps((prevSteps) => {
+            const maxIndex = prevSteps.length - 1;
+            const targetIndex = Math.min(normalizedTargetIndex, maxIndex);
+
+            if (fromIndex === targetIndex) {
+                return prevSteps;
+            }
+
+            didReorderRef.current = true;
+            const nextSteps = [...prevSteps];
+            const [movedStep] = nextSteps.splice(fromIndex, 1);
+            nextSteps.splice(targetIndex, 0, movedStep);
+            localStepsRef.current = nextSteps;
+            return nextSteps;
+        });
+    };
+
+    const commitLocalOrder = () => {
+        if (!didReorderRef.current) {
+            return;
+        }
+
+        const committedSteps = localStepsRef.current.map((step, index) => ({
+            ...step,
+            sequence_number: index + 1,
+        }));
+
+        const updatedStepGroups = allStepGroups.map((group) => {
+            if (
+                group.step_group.sequence_number !==
+                stepGroup.step_group.sequence_number
+            ) {
+                return group;
+            }
+
+            return {
+                ...group,
+                steps: committedSteps,
+            };
+        });
+
+        setStepGroups(updatedStepGroups);
+        didReorderRef.current = false;
+    };
+
+    const createDragHandlers = (stepId: number) =>
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderGrant: () => {
+                didReorderRef.current = false;
+                setDraggingStepId(stepId);
+            },
+            onPanResponderMove: (_event, gestureState) => {
+                const currentSteps = localStepsRef.current;
+                const currentIndex = currentSteps.findIndex(
+                    (step) => step.id === stepId,
+                );
+
+                if (currentIndex < 0) {
+                    return;
+                }
+
+                const remainingSteps = currentSteps.filter(
+                    (step) => step.id !== stepId,
+                );
+
+                let destinationIndex = remainingSteps.length;
+
+                for (let index = 0; index < remainingSteps.length; index += 1) {
+                    const step = remainingSteps[index];
+                    const layout = stepLayouts.current[step.id];
+
+                    if (!layout) {
+                        continue;
+                    }
+
+                    const reorderThreshold = layout.top + layout.height * 0.25;
+
+                    if (gestureState.moveY < reorderThreshold) {
+                        destinationIndex = index;
+                        break;
+                    }
+                }
+
+                moveStepWithinGroup(currentIndex, destinationIndex);
+            },
+            onPanResponderRelease: () => {
+                commitLocalOrder();
+                setDraggingStepId(null);
+            },
+            onPanResponderTerminate: () => {
+                commitLocalOrder();
+                setDraggingStepId(null);
+            },
+        }).panHandlers;
 
     console.log(
         `activeStepGroup: ${activeStepGroup}, stepGroupId: ${stepGroup.step_group.name}`,
@@ -227,29 +372,47 @@ const StepGroup = ({
                 {(() => {
                     let currentIndex = 1;
 
-                    return stepGroup.steps.map((step) => {
-                        console.log(
-                            `Rendering step ${JSON.stringify(step)} of group ${stepGroup.step_group.name}`,
-                        );
-
-                        const heatingIndex =
-                            step.target_temperature > 25
-                                ? currentIndex++
-                                : null;
+                    return localSteps.map((step) => {
+                        const hasHeating = step.target_temperature > 25;
+                        const hasCooling = step.target_temperature > 25;
+                        const hasWash = step.washing_iterations > 0;
+                        const dragHandleProps = createDragHandlers(step.id);
+                        const isDragging = draggingStepId === step.id;
+                        const heatingIndex = hasHeating ? currentIndex++ : null;
                         const liquidIndex = currentIndex++;
-                        const coolingIndex =
-                            step.target_temperature > 25
-                                ? currentIndex++
-                                : null;
-                        const washIndex =
-                            step.washing_iterations > 0 ? currentIndex++ : null;
+                        const coolingIndex = hasCooling ? currentIndex++ : null;
+                        const washIndex = hasWash ? currentIndex++ : null;
 
                         return (
-                            <>
-                                {heatingIndex !== null && (
+                            <VStack
+                                key={`${stepGroup.step_group.sequence_number}-${step.id}-block`}
+                                ref={(node) => {
+                                    stepRefs.current[step.id] = node;
+                                }}
+                                onLayout={() => {
+                                    const node = stepRefs.current[step.id];
+                                    if (node?.measureInWindow) {
+                                        node.measureInWindow(
+                                            (
+                                                _x: number,
+                                                y: number,
+                                                _width: number,
+                                                height: number,
+                                            ) => {
+                                                stepLayouts.current[step.id] = {
+                                                    top: y,
+                                                    height,
+                                                };
+                                            },
+                                        );
+                                    }
+                                }}
+                                opacity={isDragging ? 0.7 : 1}
+                            >
+                                {hasHeating && (
                                     <Step
                                         key={`${stepGroup.step_group.sequence_number}-${step.id}-heating`}
-                                        index={heatingIndex}
+                                        index={heatingIndex as number}
                                         step={step}
                                         setStepGroups={setStepGroups}
                                         allStepGroups={allStepGroups}
@@ -270,11 +433,13 @@ const StepGroup = ({
                                     }
                                     type={'liquid'}
                                     liquidMap={liquidMap}
+                                    dragHandleProps={dragHandleProps}
+                                    isDragging={isDragging}
                                 />
-                                {coolingIndex !== null && (
+                                {hasCooling && (
                                     <Step
                                         key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}
-                                        index={coolingIndex}
+                                        index={coolingIndex as number}
                                         step={step}
                                         setStepGroups={setStepGroups}
                                         allStepGroups={allStepGroups}
@@ -284,10 +449,10 @@ const StepGroup = ({
                                         type={'cooling'}
                                     />
                                 )}
-                                {washIndex !== null && (
+                                {hasWash && (
                                     <Step
                                         key={`${stepGroup.step_group.sequence_number}-${step.id}-wash`}
-                                        index={washIndex}
+                                        index={washIndex as number}
                                         step={step}
                                         setStepGroups={setStepGroups}
                                         allStepGroups={allStepGroups}
@@ -297,7 +462,7 @@ const StepGroup = ({
                                         type={'wash'}
                                     />
                                 )}
-                            </>
+                            </VStack>
                         );
                     });
                 })()}

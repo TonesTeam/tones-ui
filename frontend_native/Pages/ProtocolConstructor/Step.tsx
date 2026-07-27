@@ -21,6 +21,8 @@ interface StepProps {
     stepGroupSequenceNumber: number;
     type: 'liquid' | 'wash' | 'cooling' | 'heating';
     liquidMap?: Map<number, string>;
+    dragHandleProps?: any;
+    isDragging?: boolean;
 }
 
 const Step = ({
@@ -31,6 +33,8 @@ const Step = ({
     stepGroupSequenceNumber,
     type,
     liquidMap,
+    dragHandleProps,
+    isDragging,
 }: StepProps) => {
     const trimLiquidName = (name: string) => {
         const trimThreshold = 13;
@@ -98,9 +102,13 @@ const Step = ({
 
     return (
         <HStack gap={8} alignItems="center" width="100%">
-            <Box>
-                <Icon as={AlignJustify} opacity={0.6} size={20} />
-            </Box>
+            {dragHandleProps ? (
+                <Box {...dragHandleProps} opacity={isDragging ? 0.45 : 0.6}>
+                    <Icon as={AlignJustify} opacity={0.6} size={20} />
+                </Box>
+            ) : (
+                <Box width={20} />
+            )}
             <HStack
                 flex={1}
                 height={50}
@@ -109,24 +117,25 @@ const Step = ({
                 borderRadius={12}
                 alignItems="center"
                 px={16}
+                opacity={isDragging ? 0.55 : 1}
             >
                 <Text color="black" fontSize={12} flex={0.7}>
                     #{index}
                 </Text>
                 <HStack justifyContent="center" flex={3}>
-                    <Icon as={icon} color={color} size={16} />
+                    <Icon as={icon} color={color} size="sm" />
                     <Text color={color} fontSize={12} ml={6}>
                         {stepName}
                     </Text>
                 </HStack>
                 <HStack flex={3} justifyContent="center" alignItems="center">
-                    <Icon as={Clock} size={16} />
+                    <Icon as={Clock} size="sm" />
                     <Text color="black" fontSize={12} ml={6}>
                         {formatDuration(incubationTime)}
                     </Text>
                 </HStack>
                 <HStack flex={2} justifyContent="center" alignItems="center">
-                    <Icon as={Thermometer} size={16} />
+                    <Icon as={Thermometer} size="sm" />
                     <Text color="black" fontSize={12} ml={6}>
                         {temperatureDisplay}
                     </Text>
@@ -137,7 +146,7 @@ const Step = ({
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Icon as={Repeat} size={16} />
+                        <Icon as={Repeat} size="sm" />
                         <Text color="black" fontSize={12} ml={6}>
                             {iterations}
                         </Text>
