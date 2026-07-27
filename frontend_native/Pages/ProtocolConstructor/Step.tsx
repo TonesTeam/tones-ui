@@ -46,6 +46,7 @@ const Step = ({
     let incubationTime = 0;
     let color = 'black';
     let temperature = 0;
+    let temperatureDisplay = '';
     let automaticStep = false;
 
     switch (type) {
@@ -58,6 +59,7 @@ const Step = ({
             incubationTime = step.incubation_time || 0;
             color = 'black';
             temperature = step.target_temperature || 0;
+            temperatureDisplay = `${temperature} °C`;
             automaticStep = false;
             break;
         case 'wash':
@@ -67,6 +69,7 @@ const Step = ({
             incubationTime = step.single_wash_duration || 0;
             color = '#1193CF';
             temperature = 25;
+            temperatureDisplay = `${temperature} °C`;
             automaticStep = true;
             break;
         case 'cooling':
@@ -75,6 +78,7 @@ const Step = ({
             incubationTime = 60 * 7;
             color = '#0D26B0';
             temperature = step.target_temperature || 0;
+            temperatureDisplay = `${temperature} °C -> 25 °C`;
             automaticStep = true;
             break;
         case 'heating':
@@ -83,8 +87,13 @@ const Step = ({
             incubationTime = 60 * 7;
             color = '#BE0707';
             temperature = 25;
+            temperatureDisplay = `${temperature} °C -> ${step.target_temperature || 0} °C`;
             automaticStep = true;
             break;
+    }
+
+    if (!temperatureDisplay) {
+        temperatureDisplay = `${temperature} °C`;
     }
 
     return (
@@ -119,7 +128,7 @@ const Step = ({
                 <HStack flex={2} justifyContent="center" alignItems="center">
                     <Icon as={Thermometer} size={16} />
                     <Text color="black" fontSize={12} ml={6}>
-                        {temperature} °C
+                        {temperatureDisplay}
                     </Text>
                 </HStack>
                 {iterations > 1 ? (
