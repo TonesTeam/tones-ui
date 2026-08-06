@@ -37,10 +37,10 @@ export function WashingLiquidsStep(props: {
                             1. Open tray with washing liquids
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
-                            2. Check if washing liquid have the right name and
-                            type. If needed, change the liquid , by unscrewing
-                            the cap and replacing the liquid bottle with the
-                            correct one.
+                            2. Check if washing liquid have the right name. If
+                            needed, change the liquid , by unscrewing the cap
+                            and replacing the liquid bottle with the correct
+                            one.
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
                             3. Check if there is enough washing liquid

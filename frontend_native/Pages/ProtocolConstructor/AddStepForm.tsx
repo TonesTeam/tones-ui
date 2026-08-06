@@ -88,27 +88,7 @@ const SelectForm = ({
     };
 
     return (
-        <VStack height={300} alignItems="center" gap={40}>
-            <Text fontSize={16} opacity={0.5} color="black">
-                Add to step:
-            </Text>
-            <Box
-                bg="rgba(98, 98, 98, 0.1)"
-                borderRadius={8}
-                p="$3"
-                borderWidth={1}
-                borderColor="rgba(0, 0, 0, 0.2)"
-                width={250}
-            >
-                <Text
-                    fontSize={12}
-                    color="rgba(0, 0, 0, 0.7)"
-                    fontFamily="Manrope-Medium"
-                    textAlign="center"
-                >
-                    One protocol can use only ONE type of washing liquid.
-                </Text>
-            </Box>
+        <VStack height={300} alignItems="center" gap={20}>
             <Button
                 bg="transparent"
                 width={250}
@@ -139,6 +119,9 @@ const SelectForm = ({
                     New step group
                 </ButtonText>
             </Button>
+            <Text fontSize={16} opacity={0.5} color="black">
+                Add to step group:
+            </Text>
             <Button
                 bg="transparent"
                 width={250}

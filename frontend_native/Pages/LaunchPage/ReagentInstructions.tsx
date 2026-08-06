@@ -1,3 +1,5 @@
+//Как будто бы это легаси и нигде не используется
+
 import { AppStyles } from '../../constants/styles';
 import {
     Box,

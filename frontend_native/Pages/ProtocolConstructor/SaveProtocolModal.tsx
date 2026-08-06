@@ -139,8 +139,7 @@ const SaveProtocolModal = ({
                                             color: AppStyles.color.text_primary,
                                         }}
                                     >
-                                        Description ( Add washing liquid name
-                                        here )
+                                        Description
                                     </Text>
                                     <Input
                                         borderWidth="$0"
@@ -392,7 +391,7 @@ const StepListItem = ({
                     <HStack alignItems="center" justifyContent="center">
                         <Icon as={Thermometer} size="xs" />
                         <Text ml={4} fontSize={12}>
-                                {step.target_temperature} °C
+                            {step.target_temperature} °C
                         </Text>
                     </HStack>
                 )}
