@@ -22,7 +22,13 @@ import {
     SelectItem,
 } from '@gluestack-ui/themed';
 import { useState, useEffect } from 'react';
-import { X, FlaskConical, Plus, ChevronDown } from 'lucide-react-native';
+import {
+    X,
+    FlaskConical,
+    Plus,
+    ChevronDown,
+    Droplet,
+} from 'lucide-react-native';
 import { Pressable } from 'react-native';
 import { makeRequest } from '../../common/util';
 import { Method } from 'axios';
@@ -119,6 +125,30 @@ const SelectForm = ({
                     New step group
                 </ButtonText>
             </Button>
+
+            <Button
+                bg="transparent"
+                width={250}
+                height={44}
+                style={{ borderStyle: 'dashed' }}
+                borderWidth={1}
+                borderColor="rgba(0, 0, 0, 0.3)"
+                borderRadius={7}
+                onPress={() => {
+                    //!Add retrieving templates from step group library
+                }}
+            >
+                <ButtonIcon
+                    as={Plus}
+                    size={20}
+                    color="rgba(0, 0, 0, 0.3)"
+                    mr="$1"
+                />
+                <ButtonText fontSize={16} color="rgba(0, 0, 0, 0.3)">
+                    Template
+                </ButtonText>
+            </Button>
+
             <Text fontSize={16} opacity={0.5} color="black">
                 Add to step group:
             </Text>
@@ -139,6 +169,35 @@ const SelectForm = ({
                     Reagent
                 </ButtonText>
                 <ButtonIcon as={FlaskConical} size={15} color="black" ml="$3" />
+            </Button>
+
+            <Button
+                bg="transparent"
+                width={250}
+                height={44}
+                style={{ borderStyle: 'dashed' }}
+                borderWidth={1}
+                borderColor="rgba(0, 0, 0, 0.3)"
+                borderRadius={7}
+                onPress={() => {
+                    //!Add washing selection
+                }}
+            >
+                <ButtonIcon
+                    as={Plus}
+                    size={20}
+                    color="rgba(0, 0, 0, 0.3)"
+                    mr="$1"
+                />
+                <ButtonText fontSize={16} color="rgba(0, 0, 0, 0.3)">
+                    Washing
+                </ButtonText>
+                <ButtonIcon
+                    as={Droplet}
+                    size={15}
+                    color="rgba(0, 0, 0, 0.3)"
+                    ml="$3"
+                />
             </Button>
         </VStack>
     );

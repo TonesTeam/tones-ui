@@ -10,6 +10,7 @@ import {
 import { PanResponder } from 'react-native';
 import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { Copy, Pencil, Trash } from 'lucide-react-native';
+import SavePlusIcon from '../../assets/icons/save-plus.svg';
 import Step from './Step';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
@@ -309,9 +310,23 @@ const StepGroup = ({
                                 as={Pencil}
                                 opacity={0.7}
                                 color="#1F2832"
-                                size={21}
+                                size={'lg'}
                             />
                         </Pressable>
+
+                        <Pressable
+                            onPress={() => {
+                                //!Add to store templates (step group) in step group library
+                            }}
+                        >
+                            <Icon
+                                as={SavePlusIcon}
+                                opacity={0.7}
+                                color="#1F2832"
+                                size={'lg'}
+                            />
+                        </Pressable>
+
                         <Pressable
                             onPress={() => {
                                 const current_sn =
@@ -350,7 +365,7 @@ const StepGroup = ({
                                 as={Copy}
                                 opacity={0.7}
                                 color="#1F2832"
-                                size={21}
+                                size={'lg'}
                             />
                         </Pressable>
                         <Pressable
@@ -362,7 +377,7 @@ const StepGroup = ({
                                 as={Trash}
                                 opacity={0.7}
                                 color="#1F2832"
-                                size={21}
+                                size={'lg'}
                             />
                         </Pressable>
                     </HStack>

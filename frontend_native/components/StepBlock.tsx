@@ -1,3 +1,4 @@
+//Возможно легаси код
 import { TouchableOpacity } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -17,7 +18,7 @@ import {
     Box,
     Pressable,
 } from '@gluestack-ui/themed';
-import { Eye, FlaskConical, Waves } from 'lucide-react-native';
+import { Eye, FlaskConical, Waves, Plus } from 'lucide-react-native';
 import { Trash, Pencil } from 'lucide-react-native';
 import { formatDuration } from '../common/util';
 
