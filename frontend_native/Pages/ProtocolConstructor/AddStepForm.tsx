@@ -36,11 +36,18 @@ import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
 import { StepType } from 'common/enums';
 
+interface EditingStep {
+    step: StepDTO;
+    stepGroupSequenceNumber: number;
+}
+
 interface AddStepFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     activeStepGroup: number;
     setActiveStepGroup: (sequenceNumber: number) => void;
+    editingStep?: EditingStep | null;
+    setEditingStep?: (editingStep: EditingStep | null) => void;
 }
 
 const AddStepForm = ({
@@ -48,8 +55,21 @@ const AddStepForm = ({
     setStepGroups,
     activeStepGroup,
     setActiveStepGroup,
+    editingStep,
+    setEditingStep,
 }: AddStepFormProps) => {
     const [state, setState] = useState('Select' as 'Select' | 'Add liquid');
+
+    useEffect(() => {
+        if (editingStep) {
+            setState('Add liquid');
+        }
+    }, [editingStep]);
+
+    const closeForm = () => {
+        setEditingStep?.(null);
+        setState('Select');
+    };
 
     if (state === 'Select') {
         return (
@@ -63,10 +83,12 @@ const AddStepForm = ({
     } else {
         return (
             <AddLiquidForm
+                key={editingStep ? `edit-${editingStep.step.id}` : 'add'}
                 stepGroups={stepGroups}
                 setStepGroups={setStepGroups}
                 activeStepGroup={activeStepGroup}
-                setFormState={setState}
+                setFormState={closeForm}
+                editingStep={editingStep || null}
             />
         );
     }
@@ -207,7 +229,8 @@ interface AddLiquidFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     activeStepGroup: number;
-    setFormState: (state: 'Select' | 'Add liquid') => void;
+    setFormState: () => void;
+    editingStep: EditingStep | null;
 }
 
 const AddLiquidForm = ({
@@ -215,7 +238,9 @@ const AddLiquidForm = ({
     setStepGroups,
     activeStepGroup,
     setFormState,
+    editingStep,
 }: AddLiquidFormProps) => {
+    const isEditing = !!editingStep;
     const [categories, setCategories] = useState(
         [] as { id: number; name: string }[],
     );
@@ -223,11 +248,25 @@ const AddLiquidForm = ({
     const [selectedCategory, setSelectedCategory] = useState<number | null>(
         null,
     );
-    const [selectedLiquid, setSelectedLiquid] = useState<number | null>(null);
-    const [incubationTime, setIncubationTime] = useState<string>('');
-    const [targetTemperature, setTargetTemperature] = useState<string>('');
-    const [washingIterations, setWashingIterations] = useState<string>('0');
-    const [singleWashDuration, setSingleWashDuration] = useState<string>('');
+    const [selectedLiquid, setSelectedLiquid] = useState<number | null>(
+        editingStep?.step.applied_liquid_id ?? null,
+    );
+    const [incubationTime, setIncubationTime] = useState<string>(
+        editingStep
+            ? (editingStep.step.incubation_time / 60).toString()
+            : '',
+    );
+    const [targetTemperature, setTargetTemperature] = useState<string>(
+        editingStep ? editingStep.step.target_temperature.toString() : '',
+    );
+    const [washingIterations, setWashingIterations] = useState<string>(
+        editingStep ? (editingStep.step.washing_iterations ?? 0).toString() : '0',
+    );
+    const [singleWashDuration, setSingleWashDuration] = useState<string>(
+        editingStep?.step.single_wash_duration
+            ? (editingStep.step.single_wash_duration / 60).toString()
+            : '',
+    );
 
     const [error, setError] = useState<string>('');
 
@@ -303,6 +342,14 @@ const AddLiquidForm = ({
         makeRequest('GET' as Method, '/liquids')
             .then((response) => {
                 setLiquids(response.data);
+                if (editingStep) {
+                    const liquid = (response.data as PermanentLiquidDTO[]).find(
+                        (l) => l.id === editingStep.step.applied_liquid_id,
+                    );
+                    if (liquid) {
+                        setSelectedCategory(liquid.liquid_type_id);
+                    }
+                }
             })
             .catch((error) => {
                 console.error('Failed to fetch liquids', error);
@@ -310,6 +357,8 @@ const AddLiquidForm = ({
     }, []);
 
     useEffect(() => {
+        if (isEditing) return;
+
         if (selectedLiquid) {
             const liquid = liquids.find((l) => l.id === selectedLiquid);
             if (liquid) {
@@ -324,6 +373,11 @@ const AddLiquidForm = ({
         }
     }, [selectedLiquid]);
 
+    const selectedCategoryName =
+        categories.find((c) => c.id === selectedCategory)?.name ?? '';
+    const selectedLiquidName =
+        liquids.find((l) => l.id === selectedLiquid)?.name ?? '';
+
     return (
         <Box>
             <HStack
@@ -335,12 +389,12 @@ const AddLiquidForm = ({
             >
                 <Icon as={FlaskConical} size={16} color="black" mr="$1" />
                 <Text fontSize={16} color="black">
-                    Add Reagent
+                    {isEditing ? 'Edit Reagent' : 'Add Reagent'}
                 </Text>
                 <Box ml="auto">
                     <Pressable
                         onPress={() => {
-                            setFormState('Select');
+                            setFormState();
                         }}
                     >
                         <Icon as={X} size={24} color="black" />
@@ -354,11 +408,13 @@ const AddLiquidForm = ({
                         Category
                     </Text>
                     <Select
+                        key={`category-${selectedCategoryName}`}
                         selectedValue={
                             selectedCategory
                                 ? selectedCategory.toString()
                                 : null
                         }
+                        initialLabel={selectedCategoryName}
                         onValueChange={(value) =>
                             setSelectedCategory(parseInt(value))
                         }
@@ -396,9 +452,11 @@ const AddLiquidForm = ({
                         Reagent name
                     </Text>
                     <Select
+                        key={`liquid-${selectedLiquidName}`}
                         selectedValue={
                             selectedLiquid ? selectedLiquid.toString() : null
                         }
+                        initialLabel={selectedLiquidName}
                         onValueChange={(value) =>
                             setSelectedLiquid(parseInt(value))
                         }
@@ -555,7 +613,7 @@ const AddLiquidForm = ({
                 >
                     <ButtonText
                         onPress={() => {
-                            setFormState('Select');
+                            setFormState();
                         }}
                         fontSize={14}
                         color="#1F2832"
@@ -571,6 +629,49 @@ const AddLiquidForm = ({
                         fontFamily="Manrope-SemiBold"
                         onPress={() => {
                             if (!validate()) return;
+
+                            if (editingStep) {
+                                const updatedStep: StepDTO = {
+                                    ...editingStep.step,
+                                    applied_liquid_id: selectedLiquid!,
+                                    incubation_time:
+                                        parseInt(incubationTime) * 60,
+                                    target_temperature:
+                                        parseInt(targetTemperature),
+                                    washing_iterations:
+                                        parseInt(washingIterations),
+                                    single_wash_duration:
+                                        parseInt(singleWashDuration) * 60 ||
+                                        0,
+                                };
+
+                                const updatedStepGroups = stepGroups.map(
+                                    (stepGroup) => {
+                                        if (
+                                            stepGroup.step_group
+                                                .sequence_number ===
+                                            editingStep.stepGroupSequenceNumber
+                                        ) {
+                                            return {
+                                                ...stepGroup,
+                                                steps: stepGroup.steps.map(
+                                                    (s) =>
+                                                        s.sequence_number ===
+                                                        editingStep.step
+                                                            .sequence_number
+                                                            ? updatedStep
+                                                            : s,
+                                                ),
+                                            };
+                                        }
+                                        return stepGroup;
+                                    },
+                                );
+
+                                setStepGroups(updatedStepGroups);
+                                setFormState();
+                                return;
+                            }
 
                             const newStep: StepDTO = {
                                 id: Date.now(), // Temporary ID, replace with actual ID from backend
@@ -607,10 +708,10 @@ const AddLiquidForm = ({
                             );
 
                             setStepGroups(updatedStepGroups);
-                            setFormState('Select');
+                            setFormState();
                         }}
                     >
-                        Add to step
+                        {isEditing ? 'Save' : 'Add to step'}
                     </ButtonText>
                 </Button>
             </HStack>

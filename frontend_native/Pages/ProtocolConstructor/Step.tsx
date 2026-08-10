@@ -12,6 +12,11 @@ import {
 import { StepGroupWithStepsDTO } from 'common/dto/protocol.dto';
 import { formatDuration } from '../../common/util';
 
+interface EditingStep {
+    step: StepDTO;
+    stepGroupSequenceNumber: number;
+}
+
 interface StepProps {
     key: number;
     index: number;
@@ -23,6 +28,7 @@ interface StepProps {
     liquidMap?: Map<number, string>;
     dragHandleProps?: any;
     isDragging?: boolean;
+    setEditingStep?: (editingStep: EditingStep) => void;
 }
 
 const Step = ({
@@ -35,6 +41,7 @@ const Step = ({
     liquidMap,
     dragHandleProps,
     isDragging,
+    setEditingStep,
 }: StepProps) => {
     const trimLiquidName = (name: string) => {
         const trimThreshold = 13;
@@ -109,81 +116,95 @@ const Step = ({
             ) : (
                 <Box width={20} />
             )}
-            <HStack
+            <Pressable
                 flex={1}
-                height={50}
-                bg={automaticStep ? '#F0F0F0' : '#FFFFFF'}
-                width="92%"
-                borderRadius={12}
-                alignItems="center"
-                px={16}
-                opacity={isDragging ? 0.55 : 1}
+                onPress={() => {
+                    setEditingStep?.({ step, stepGroupSequenceNumber });
+                }}
             >
-                <Text color="black" fontSize={12} flex={0.7}>
-                    #{index}
-                </Text>
-                <HStack justifyContent="center" flex={3}>
-                    <Icon as={icon} color={color} size="sm" />
-                    <Text color={color} fontSize={12} ml={6}>
-                        {stepName}
+                <HStack
+                    height={50}
+                    bg={automaticStep ? '#F0F0F0' : '#FFFFFF'}
+                    width="92%"
+                    borderRadius={12}
+                    alignItems="center"
+                    px={16}
+                    opacity={isDragging ? 0.55 : 1}
+                >
+                    <Text color="black" fontSize={12} flex={0.7}>
+                        #{index}
                     </Text>
-                </HStack>
-                <HStack flex={3} justifyContent="center" alignItems="center">
-                    <Icon as={Clock} size="sm" />
-                    <Text color="black" fontSize={12} ml={6}>
-                        {formatDuration(incubationTime)}
-                    </Text>
-                </HStack>
-                <HStack flex={2} justifyContent="center" alignItems="center">
-                    <Icon as={Thermometer} size="sm" />
-                    <Text color="black" fontSize={12} ml={6}>
-                        {temperatureDisplay}
-                    </Text>
-                </HStack>
-                {iterations > 1 ? (
+                    <HStack justifyContent="center" flex={3}>
+                        <Icon as={icon} color={color} size="sm" />
+                        <Text color={color} fontSize={12} ml={6}>
+                            {stepName}
+                        </Text>
+                    </HStack>
+                    <HStack
+                        flex={3}
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Icon as={Clock} size="sm" />
+                        <Text color="black" fontSize={12} ml={6}>
+                            {formatDuration(incubationTime)}
+                        </Text>
+                    </HStack>
                     <HStack
                         flex={2}
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Icon as={Repeat} size="sm" />
+                        <Icon as={Thermometer} size="sm" />
                         <Text color="black" fontSize={12} ml={6}>
-                            {iterations}
+                            {temperatureDisplay}
                         </Text>
                     </HStack>
-                ) : (
-                    <Box flex={2}></Box>
-                )}
-                {type == 'liquid' ? (
-                    <Pressable
-                        onPress={() => {
-                            const updatedStepGroups = allStepGroups.map(
-                                (group) => {
-                                    if (
-                                        group.step_group.sequence_number ===
-                                        stepGroupSequenceNumber
-                                    ) {
-                                        return {
-                                            ...group,
-                                            steps: group.steps.filter(
-                                                (s) =>
-                                                    s.sequence_number !==
-                                                    step.sequence_number,
-                                            ),
-                                        };
-                                    }
-                                    return group;
-                                },
-                            );
-                            setStepGroups(updatedStepGroups);
-                        }}
-                    >
-                        <Icon as={X} />
-                    </Pressable>
-                ) : (
-                    <Box flex={0.5}></Box>
-                )}
-            </HStack>
+                    {iterations > 1 ? (
+                        <HStack
+                            flex={2}
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Icon as={Repeat} size="sm" />
+                            <Text color="black" fontSize={12} ml={6}>
+                                {iterations}
+                            </Text>
+                        </HStack>
+                    ) : (
+                        <Box flex={2}></Box>
+                    )}
+                    {type == 'liquid' ? (
+                        <Pressable
+                            onPress={() => {
+                                const updatedStepGroups = allStepGroups.map(
+                                    (group) => {
+                                        if (
+                                            group.step_group.sequence_number ===
+                                            stepGroupSequenceNumber
+                                        ) {
+                                            return {
+                                                ...group,
+                                                steps: group.steps.filter(
+                                                    (s) =>
+                                                        s.sequence_number !==
+                                                        step.sequence_number,
+                                                ),
+                                            };
+                                        }
+                                        return group;
+                                    },
+                                );
+                                setStepGroups(updatedStepGroups);
+                            }}
+                        >
+                            <Icon as={X} />
+                        </Pressable>
+                    ) : (
+                        <Box flex={0.5}></Box>
+                    )}
+                </HStack>
+            </Pressable>
         </HStack>
     );
 };

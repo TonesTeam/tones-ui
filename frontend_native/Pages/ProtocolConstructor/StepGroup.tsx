@@ -13,6 +13,7 @@ import { Copy, Pencil, Trash } from 'lucide-react-native';
 import SavePlusIcon from '../../assets/icons/save-plus.svg';
 import Step from './Step';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import { StepDTO } from 'common/dto/step.dto';
 
 interface StepGroupProps {
     key: number;
@@ -22,6 +23,10 @@ interface StepGroupProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     liquidMap: Map<number, string>;
+    setEditingStep?: (editingStep: {
+        step: StepDTO;
+        stepGroupSequenceNumber: number;
+    }) => void;
 }
 
 const StepGroup = ({
@@ -31,6 +36,7 @@ const StepGroup = ({
     activeStepGroup,
     setActiveStepGroup,
     liquidMap,
+    setEditingStep,
 }: StepGroupProps) => {
     const inputRef = useRef<any>(null);
     const didReorderRef = useRef(false);
@@ -435,6 +441,7 @@ const StepGroup = ({
                                             stepGroup.step_group.sequence_number
                                         }
                                         type={'heating'}
+                                        setEditingStep={setEditingStep}
                                     />
                                 )}
                                 <Step
@@ -450,6 +457,7 @@ const StepGroup = ({
                                     liquidMap={liquidMap}
                                     dragHandleProps={dragHandleProps}
                                     isDragging={isDragging}
+                                    setEditingStep={setEditingStep}
                                 />
                                 {hasCooling && (
                                     <Step
@@ -462,6 +470,7 @@ const StepGroup = ({
                                             stepGroup.step_group.sequence_number
                                         }
                                         type={'cooling'}
+                                        setEditingStep={setEditingStep}
                                     />
                                 )}
                                 {hasWash && (
@@ -475,6 +484,7 @@ const StepGroup = ({
                                             stepGroup.step_group.sequence_number
                                         }
                                         type={'wash'}
+                                        setEditingStep={setEditingStep}
                                     />
                                 )}
                             </VStack>

@@ -49,6 +49,10 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         },
     ] as StepGroupWithStepsDTO[]);
     const [activeStepGroup, setActiveStepGroup] = useState<number>(1);
+    const [editingStep, setEditingStep] = useState<{
+        step: StepDTO;
+        stepGroupSequenceNumber: number;
+    } | null>(null);
     const [liquids, setLiquids] = useState([] as LiquidDTO[]);
     const { user } = useUser();
     const editingMode = route.params?.edit ? true : false;
@@ -279,6 +283,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 activeStepGroup={activeStepGroup}
                                 setActiveStepGroup={setActiveStepGroup}
                                 liquidMap={liquidsToLiquidMap(liquids)}
+                                setEditingStep={setEditingStep}
                             />
                         </LinearGradient>
                     </Box>
@@ -293,6 +298,8 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             setStepGroups={setStepGroups}
                             activeStepGroup={activeStepGroup}
                             setActiveStepGroup={setActiveStepGroup}
+                            editingStep={editingStep}
+                            setEditingStep={setEditingStep}
                         />
                     </Box>
                 </Box>

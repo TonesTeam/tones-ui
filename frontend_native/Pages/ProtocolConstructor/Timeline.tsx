@@ -4,6 +4,7 @@ import StepGroup from './StepGroup';
 import { useEffect, useState } from 'react';
 import { formatDuration, getRequest, makeRequest } from '../../common/util';
 import { Method } from 'axios';
+import { StepDTO } from 'common/dto/step.dto';
 
 interface TimelineProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -11,6 +12,10 @@ interface TimelineProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     liquidMap: Map<number, string>;
+    setEditingStep?: (editingStep: {
+        step: StepDTO;
+        stepGroupSequenceNumber: number;
+    }) => void;
 }
 
 const Timeline = ({
@@ -19,6 +24,7 @@ const Timeline = ({
     activeStepGroup,
     setActiveStepGroup,
     liquidMap,
+    setEditingStep,
 }: TimelineProps) => {
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
         '' as '' | number,
@@ -83,6 +89,7 @@ const Timeline = ({
                         activeStepGroup={activeStepGroup}
                         setActiveStepGroup={setActiveStepGroup}
                         liquidMap={liquidMap}
+                        setEditingStep={setEditingStep}
                     />
                 ))}
             </ScrollView>
