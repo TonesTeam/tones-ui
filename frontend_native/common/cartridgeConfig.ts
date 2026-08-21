@@ -4,10 +4,10 @@ export const CARTRIDGE_CONFIG = {
     size_L: {
         x: 1,
         y: 1,
-        name: 'Washing liquid',
+        name: 'Large liquids',
         minVolume: 100,
         maxVolume: 250,
-    }, // 2 rows × 2 columns (washing liquid)
+    }, // 2 rows × 2 columns
 };
 
 export const SLOT_QUANTITY = 5;

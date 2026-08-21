@@ -12,6 +12,7 @@ interface TimelineProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     liquidMap: Map<number, string>;
+    liquidCategoryMap?: Map<number, string>;
     setEditingStep?: (editingStep: {
         step: StepDTO;
         stepGroupSequenceNumber: number;
@@ -24,6 +25,7 @@ const Timeline = ({
     activeStepGroup,
     setActiveStepGroup,
     liquidMap,
+    liquidCategoryMap,
     setEditingStep,
 }: TimelineProps) => {
     const [estimatedExectuionTime, setEstimatedExecutionTime] = useState(
@@ -89,6 +91,7 @@ const Timeline = ({
                         activeStepGroup={activeStepGroup}
                         setActiveStepGroup={setActiveStepGroup}
                         liquidMap={liquidMap}
+                        liquidCategoryMap={liquidCategoryMap}
                         setEditingStep={setEditingStep}
                     />
                 ))}

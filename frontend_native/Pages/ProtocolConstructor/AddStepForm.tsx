@@ -34,12 +34,14 @@ import { makeRequest } from '../../common/util';
 import { Method } from 'axios';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
-import { StepType } from 'common/enums';
+import { StepType, isWashingLiquidCategory } from 'common/enums';
 
 interface EditingStep {
     step: StepDTO;
     stepGroupSequenceNumber: number;
 }
+
+type FormState = 'Select' | 'Add liquid' | 'Add washing';
 
 interface AddStepFormProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -48,6 +50,7 @@ interface AddStepFormProps {
     setActiveStepGroup: (sequenceNumber: number) => void;
     editingStep?: EditingStep | null;
     setEditingStep?: (editingStep: EditingStep | null) => void;
+    liquidCategoryMap?: Map<number, string>;
 }
 
 const AddStepForm = ({
@@ -57,12 +60,18 @@ const AddStepForm = ({
     setActiveStepGroup,
     editingStep,
     setEditingStep,
+    liquidCategoryMap,
 }: AddStepFormProps) => {
-    const [state, setState] = useState('Select' as 'Select' | 'Add liquid');
+    const [state, setState] = useState<FormState>('Select');
 
     useEffect(() => {
         if (editingStep) {
-            setState('Add liquid');
+            const isWashing =
+                editingStep.step.type === StepType.WASHING ||
+                isWashingLiquidCategory(
+                    liquidCategoryMap?.get(editingStep.step.applied_liquid_id),
+                );
+            setState(isWashing ? 'Add washing' : 'Add liquid');
         }
     }, [editingStep]);
 
@@ -80,9 +89,20 @@ const AddStepForm = ({
                 setActiveStepGroup={setActiveStepGroup}
             />
         );
-    } else {
+    } else if (state === 'Add liquid') {
         return (
             <AddLiquidForm
+                key={editingStep ? `edit-${editingStep.step.id}` : 'add'}
+                stepGroups={stepGroups}
+                setStepGroups={setStepGroups}
+                activeStepGroup={activeStepGroup}
+                setFormState={closeForm}
+                editingStep={editingStep || null}
+            />
+        );
+    } else {
+        return (
+            <AddWashingForm
                 key={editingStep ? `edit-${editingStep.step.id}` : 'add'}
                 stepGroups={stepGroups}
                 setStepGroups={setStepGroups}
@@ -97,7 +117,7 @@ const AddStepForm = ({
 interface SelectFormProps {
     stepGroups: StepGroupWithStepsDTO[];
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
-    setFormState: (state: 'Select' | 'Add liquid') => void;
+    setFormState: (state: FormState) => void;
     setActiveStepGroup: (sequenceNumber: number) => void;
 }
 
@@ -202,28 +222,67 @@ const SelectForm = ({
                 borderColor="rgba(0, 0, 0, 0.3)"
                 borderRadius={7}
                 onPress={() => {
-                    //!Add washing selection
+                    setFormState('Add washing');
                 }}
             >
-                <ButtonIcon
-                    as={Plus}
-                    size={20}
-                    color="rgba(0, 0, 0, 0.3)"
-                    mr="$1"
-                />
-                <ButtonText fontSize={16} color="rgba(0, 0, 0, 0.3)">
+                <ButtonIcon as={Plus} size={20} color="black" mr="$1" />
+                <ButtonText fontSize={16} color="black">
                     Washing
                 </ButtonText>
-                <ButtonIcon
-                    as={Droplet}
-                    size={15}
-                    color="rgba(0, 0, 0, 0.3)"
-                    ml="$3"
-                />
+                <ButtonIcon as={Droplet} size={15} color="black" ml="$3" />
             </Button>
         </VStack>
     );
 };
+
+interface WashingParamsFieldsProps {
+    iterations: string;
+    setIterations: (value: string) => void;
+    duration: string;
+    setDuration: (value: string) => void;
+}
+
+const WashingParamsFields = ({
+    iterations,
+    setIterations,
+    duration,
+    setDuration,
+}: WashingParamsFieldsProps) => (
+    <HStack gap={8} alignItems="center">
+        <VStack gap={8} flex={1}>
+            <Text fontSize={11} color="black" opacity={0.7}>
+                Washing iterations
+            </Text>
+            <Input height={48} borderRadius={16} bg="#F1F1F1" borderWidth={0}>
+                <InputField
+                    color="black"
+                    fontSize={12}
+                    placeholder="Number of washing iterations"
+                    keyboardType="numeric"
+                    ml={16}
+                    value={iterations}
+                    onChange={(e: any) => setIterations(e.nativeEvent.text)}
+                />
+            </Input>
+        </VStack>
+        <VStack gap={8} flex={1}>
+            <Text fontSize={11} color="black" opacity={0.7}>
+                Single wash duration
+            </Text>
+            <Input height={48} borderRadius={16} bg="#F1F1F1" borderWidth={0}>
+                <InputField
+                    color="black"
+                    fontSize={12}
+                    placeholder="Minutes"
+                    keyboardType="numeric"
+                    ml={16}
+                    value={duration}
+                    onChange={(e: any) => setDuration(e.nativeEvent.text)}
+                />
+            </Input>
+        </VStack>
+    </HStack>
+);
 
 interface AddLiquidFormProps {
     stepGroups: StepGroupWithStepsDTO[];
@@ -252,15 +311,15 @@ const AddLiquidForm = ({
         editingStep?.step.applied_liquid_id ?? null,
     );
     const [incubationTime, setIncubationTime] = useState<string>(
-        editingStep
-            ? (editingStep.step.incubation_time / 60).toString()
-            : '',
+        editingStep ? (editingStep.step.incubation_time / 60).toString() : '',
     );
     const [targetTemperature, setTargetTemperature] = useState<string>(
         editingStep ? editingStep.step.target_temperature.toString() : '',
     );
     const [washingIterations, setWashingIterations] = useState<string>(
-        editingStep ? (editingStep.step.washing_iterations ?? 0).toString() : '0',
+        editingStep
+            ? (editingStep.step.washing_iterations ?? 0).toString()
+            : '0',
     );
     const [singleWashDuration, setSingleWashDuration] = useState<string>(
         editingStep?.step.single_wash_duration
@@ -546,54 +605,12 @@ const AddLiquidForm = ({
                 </VStack>
 
                 {/* Washing iterations */}
-                <HStack gap={8} alignItems="center">
-                    <VStack gap={8} flex={1}>
-                        <Text fontSize={11} color="black" opacity={0.7}>
-                            Washing iterations
-                        </Text>
-                        <Input
-                            height={48}
-                            borderRadius={16}
-                            bg="#F1F1F1"
-                            borderWidth={0}
-                        >
-                            <InputField
-                                color="black"
-                                fontSize={12}
-                                placeholder="Number of washing iterations"
-                                keyboardType="numeric"
-                                ml={16}
-                                value={washingIterations}
-                                onChange={(e: any) =>
-                                    setWashingIterations(e.nativeEvent.text)
-                                }
-                            />
-                        </Input>
-                    </VStack>
-                    <VStack gap={8} flex={1}>
-                        <Text fontSize={11} color="black" opacity={0.7}>
-                            Single wash duration (minutes)
-                        </Text>
-                        <Input
-                            height={48}
-                            borderRadius={16}
-                            bg="#F1F1F1"
-                            borderWidth={0}
-                        >
-                            <InputField
-                                color="black"
-                                fontSize={12}
-                                placeholder="Single wash duration"
-                                keyboardType="numeric"
-                                ml={16}
-                                value={singleWashDuration}
-                                onChange={(e: any) =>
-                                    setSingleWashDuration(e.nativeEvent.text)
-                                }
-                            />
-                        </Input>
-                    </VStack>
-                </HStack>
+                <WashingParamsFields
+                    iterations={washingIterations}
+                    setIterations={setWashingIterations}
+                    duration={singleWashDuration}
+                    setDuration={setSingleWashDuration}
+                />
             </VStack>
             <Box height={30} alignItems="center" justifyContent="center">
                 {error ? (
@@ -641,8 +658,7 @@ const AddLiquidForm = ({
                                     washing_iterations:
                                         parseInt(washingIterations),
                                     single_wash_duration:
-                                        parseInt(singleWashDuration) * 60 ||
-                                        0,
+                                        parseInt(singleWashDuration) * 60 || 0,
                                 };
 
                                 const updatedStepGroups = stepGroups.map(
@@ -687,6 +703,325 @@ const AddLiquidForm = ({
                                 washing_iterations: parseInt(washingIterations),
                                 single_wash_duration:
                                     parseInt(singleWashDuration) * 60 || 0,
+                            };
+
+                            const updatedStepGroups = stepGroups.map(
+                                (stepGroup) => {
+                                    if (
+                                        stepGroup.step_group.sequence_number ===
+                                        activeStepGroup
+                                    ) {
+                                        return {
+                                            ...stepGroup,
+                                            steps: [
+                                                ...stepGroup.steps,
+                                                newStep,
+                                            ],
+                                        };
+                                    }
+                                    return stepGroup;
+                                },
+                            );
+
+                            setStepGroups(updatedStepGroups);
+                            setFormState();
+                        }}
+                    >
+                        {isEditing ? 'Save' : 'Add to step'}
+                    </ButtonText>
+                </Button>
+            </HStack>
+        </Box>
+    );
+};
+
+interface AddWashingFormProps {
+    stepGroups: StepGroupWithStepsDTO[];
+    setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
+    activeStepGroup: number;
+    setFormState: () => void;
+    editingStep: EditingStep | null;
+}
+
+const AddWashingForm = ({
+    stepGroups,
+    setStepGroups,
+    activeStepGroup,
+    setFormState,
+    editingStep,
+}: AddWashingFormProps) => {
+    const isEditing = !!editingStep;
+    const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
+    const [selectedLiquid, setSelectedLiquid] = useState<number | null>(
+        editingStep?.step.applied_liquid_id ?? null,
+    );
+    const [washingTemperature, setWashingTemperature] = useState<string>(
+        editingStep ? editingStep.step.target_temperature.toString() : '25',
+    );
+    const [washingDuration, setWashingDuration] = useState<string>(
+        editingStep ? (editingStep.step.incubation_time / 60).toString() : '',
+    );
+    const [washingIterations, setWashingIterations] = useState<string>(
+        editingStep ? (editingStep.step.iterations ?? 1).toString() : '1',
+    );
+
+    const [error, setError] = useState<string>('');
+
+    const validate = (): boolean => {
+        if (!selectedLiquid) {
+            setError('Please select a washing liquid');
+            return false;
+        }
+
+        const temperature = parseFloat(washingTemperature);
+        if (!washingTemperature.trim() || isNaN(temperature)) {
+            setError('Washing temperature must be a number');
+            return false;
+        } else if (temperature < 10 || temperature > 100) {
+            setError('Temperature must be between 10°C and 100°C');
+            return false;
+        }
+
+        const duration = parseFloat(washingDuration);
+        if (!washingDuration.trim() || isNaN(duration) || duration <= 0) {
+            setError('Washing duration must be a positive number');
+            return false;
+        }
+
+        const iterations = parseInt(washingIterations);
+        if (!washingIterations.trim() || isNaN(iterations) || iterations <= 0) {
+            setError('Washing iterations must be a positive whole number');
+            return false;
+        }
+
+        setError('');
+        return true;
+    };
+
+    const findNextSequenceNumberForSteps = (
+        stepGroups: StepGroupWithStepsDTO[],
+        activeStepGroup: number,
+    ) => {
+        const currentGroup = stepGroups.find(
+            (sg) => sg.step_group.sequence_number === activeStepGroup,
+        );
+        if (!currentGroup) return 1;
+        let biggest = 0;
+        for (let step of currentGroup.steps) {
+            biggest = Math.max(biggest, step.sequence_number);
+        }
+        return biggest + 1;
+    };
+
+    useEffect(() => {
+        makeRequest('GET' as Method, '/liquids')
+            .then((response) => {
+                setLiquids(
+                    (response.data as PermanentLiquidDTO[]).filter((liquid) =>
+                        isWashingLiquidCategory(liquid.liquid_type_name),
+                    ),
+                );
+            })
+            .catch((error) => {
+                console.error('Failed to fetch liquids', error);
+            });
+    }, []);
+
+    const selectedLiquidName =
+        liquids.find((l) => l.id === selectedLiquid)?.name ?? '';
+
+    return (
+        <Box>
+            <HStack
+                mb={24}
+                alignItems="center"
+                borderBottomWidth={1}
+                borderColor="rgba(0, 0, 0, 0.2)"
+                height={48}
+            >
+                <Icon as={Droplet} size={16} color="black" mr="$1" />
+                <Text fontSize={16} color="black">
+                    {isEditing ? 'Edit Washing' : 'Add Washing'}
+                </Text>
+                <Box ml="auto">
+                    <Pressable
+                        onPress={() => {
+                            setFormState();
+                        }}
+                    >
+                        <Icon as={X} size={24} color="black" />
+                    </Pressable>
+                </Box>
+            </HStack>
+            <VStack gap={8}>
+                {/* Washing liquid */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Washing name
+                    </Text>
+                    <Select
+                        key={`washing-liquid-${selectedLiquidName}`}
+                        selectedValue={
+                            selectedLiquid ? selectedLiquid.toString() : null
+                        }
+                        initialLabel={selectedLiquidName}
+                        onValueChange={(value) =>
+                            setSelectedLiquid(parseInt(value))
+                        }
+                    >
+                        <SelectTrigger
+                            borderWidth={0}
+                            bg="#F1F1F1"
+                            height={48}
+                            borderRadius={16}
+                        >
+                            <SelectInput placeholder="Select washing liquid" />
+                            <SelectIcon className="mr-3" as={ChevronDown} />
+                        </SelectTrigger>
+                        <SelectPortal>
+                            <SelectBackdrop />
+                            <SelectContent>
+                                <SelectDragIndicatorWrapper>
+                                    <SelectDragIndicator />
+                                </SelectDragIndicatorWrapper>
+                                {liquids.map((liquid) => (
+                                    <SelectItem
+                                        key={liquid.id}
+                                        label={liquid.name}
+                                        value={liquid.id.toString()}
+                                    />
+                                ))}
+                            </SelectContent>
+                        </SelectPortal>
+                    </Select>
+                </VStack>
+
+                {/* Washing temperature */}
+                <VStack gap={8}>
+                    <Text fontSize={12} color="black" opacity={0.7}>
+                        Washing temperature (degrees, celsius)
+                    </Text>
+                    <Input
+                        height={48}
+                        borderRadius={16}
+                        bg="#F1F1F1"
+                        borderWidth={0}
+                    >
+                        <InputField
+                            color="black"
+                            fontSize={16}
+                            placeholder="Degrees in celsius"
+                            keyboardType="numeric"
+                            ml={16}
+                            value={washingTemperature}
+                            onChange={(e: any) =>
+                                setWashingTemperature(e.nativeEvent.text)
+                            }
+                        />
+                    </Input>
+                </VStack>
+
+                {/* Washing duration and iterations */}
+                <WashingParamsFields
+                    iterations={washingIterations}
+                    setIterations={setWashingIterations}
+                    duration={washingDuration}
+                    setDuration={setWashingDuration}
+                />
+            </VStack>
+            <Box height={30} alignItems="center" justifyContent="center">
+                {error ? (
+                    <Text fontSize={12} color="red" flex={1}>
+                        {error}
+                    </Text>
+                ) : null}
+            </Box>
+            <HStack gap={24} mt={10}>
+                <Button
+                    height={40}
+                    width={95}
+                    borderWidth={1}
+                    borderColor="rgba(31, 40, 50, 0.2)"
+                    borderRadius={999}
+                    bg="transparent"
+                >
+                    <ButtonText
+                        onPress={() => {
+                            setFormState();
+                        }}
+                        fontSize={14}
+                        color="#1F2832"
+                        fontFamily="Manrope-SemiBold"
+                    >
+                        Cancel
+                    </ButtonText>
+                </Button>
+                <Button bg="#1F2832" height={40} width={170} borderRadius={999}>
+                    <ButtonText
+                        fontSize={14}
+                        color="white"
+                        fontFamily="Manrope-SemiBold"
+                        onPress={() => {
+                            if (!validate()) return;
+
+                            const durationSeconds =
+                                parseInt(washingDuration) * 60;
+
+                            if (editingStep) {
+                                const updatedStep: StepDTO = {
+                                    ...editingStep.step,
+                                    type: StepType.WASHING,
+                                    applied_liquid_id: selectedLiquid!,
+                                    target_temperature:
+                                        parseInt(washingTemperature),
+                                    incubation_time: durationSeconds,
+                                    iterations: parseInt(washingIterations),
+                                    washing_iterations: 0,
+                                    single_wash_duration: 0,
+                                };
+
+                                const updatedStepGroups = stepGroups.map(
+                                    (stepGroup) => {
+                                        if (
+                                            stepGroup.step_group
+                                                .sequence_number ===
+                                            editingStep.stepGroupSequenceNumber
+                                        ) {
+                                            return {
+                                                ...stepGroup,
+                                                steps: stepGroup.steps.map(
+                                                    (s) =>
+                                                        s.sequence_number ===
+                                                        editingStep.step
+                                                            .sequence_number
+                                                            ? updatedStep
+                                                            : s,
+                                                ),
+                                            };
+                                        }
+                                        return stepGroup;
+                                    },
+                                );
+
+                                setStepGroups(updatedStepGroups);
+                                setFormState();
+                                return;
+                            }
+
+                            const newStep: StepDTO = {
+                                id: Date.now(),
+                                type: StepType.WASHING,
+                                applied_liquid_id: selectedLiquid!,
+                                incubation_time: durationSeconds,
+                                target_temperature:
+                                    parseInt(washingTemperature),
+                                iterations: parseInt(washingIterations),
+                                sequence_number: findNextSequenceNumberForSteps(
+                                    stepGroups,
+                                    activeStepGroup,
+                                ),
+                                washing_iterations: 0,
+                                single_wash_duration: 0,
                             };
 
                             const updatedStepGroups = stepGroups.map(

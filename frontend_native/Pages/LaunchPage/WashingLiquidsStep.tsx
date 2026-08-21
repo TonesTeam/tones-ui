@@ -20,7 +20,7 @@ export function WashingLiquidsStep(props: {
 
     return (
         <VStack flex={1} padding="$4" space="lg">
-            {/* Top Section: Washing Liquids */}
+            {/* Top Section: Washing liquid */}
             <HStack flex={1} gap={34}>
                 {/* Left: Instructions */}
                 <VStack flex={1} space="md">
@@ -31,7 +31,7 @@ export function WashingLiquidsStep(props: {
                             color="#1F2832"
                             marginBottom={18}
                         >
-                            Add Washing Liquids
+                            Add Washing liquids
                         </Text>
                         <Text mb={4} fontSize={12} color="black" opacity={0.5}>
                             1. Open tray with washing liquids

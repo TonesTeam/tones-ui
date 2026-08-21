@@ -14,6 +14,7 @@ import SavePlusIcon from '../../assets/icons/save-plus.svg';
 import Step from './Step';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { StepDTO } from 'common/dto/step.dto';
+import { StepType, isWashingLiquidCategory } from 'common/enums';
 
 interface StepGroupProps {
     key: number;
@@ -23,6 +24,7 @@ interface StepGroupProps {
     activeStepGroup: number;
     setActiveStepGroup: (id: number) => void;
     liquidMap: Map<number, string>;
+    liquidCategoryMap?: Map<number, string>;
     setEditingStep?: (editingStep: {
         step: StepDTO;
         stepGroupSequenceNumber: number;
@@ -36,6 +38,7 @@ const StepGroup = ({
     activeStepGroup,
     setActiveStepGroup,
     liquidMap,
+    liquidCategoryMap,
     setEditingStep,
 }: StepGroupProps) => {
     const inputRef = useRef<any>(null);
@@ -394,13 +397,26 @@ const StepGroup = ({
                     let currentIndex = 1;
 
                     return localSteps.map((step) => {
-                        const hasHeating = step.target_temperature > 25;
-                        const hasCooling = step.target_temperature > 25;
-                        const hasWash = step.washing_iterations > 0;
+                        const isWashingStep =
+                            step.type === StepType.WASHING ||
+                            isWashingLiquidCategory(
+                                liquidCategoryMap?.get(step.applied_liquid_id),
+                            );
+                        const hasHeating =
+                            !isWashingStep && step.target_temperature > 25;
+                        const hasCooling =
+                            !isWashingStep && step.target_temperature > 25;
+                        const hasWash =
+                            !isWashingStep && step.washing_iterations > 0;
                         const dragHandleProps = createDragHandlers(step.id);
                         const isDragging = draggingStepId === step.id;
                         const heatingIndex = hasHeating ? currentIndex++ : null;
-                        const liquidIndex = currentIndex++;
+                        const liquidIndex = isWashingStep
+                            ? null
+                            : currentIndex++;
+                        const washingStepIndex = isWashingStep
+                            ? currentIndex++
+                            : null;
                         const coolingIndex = hasCooling ? currentIndex++ : null;
                         const washIndex = hasWash ? currentIndex++ : null;
 
@@ -444,21 +460,40 @@ const StepGroup = ({
                                         setEditingStep={setEditingStep}
                                     />
                                 )}
-                                <Step
-                                    key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
-                                    index={liquidIndex}
-                                    step={step}
-                                    setStepGroups={setStepGroups}
-                                    allStepGroups={allStepGroups}
-                                    stepGroupSequenceNumber={
-                                        stepGroup.step_group.sequence_number
-                                    }
-                                    type={'liquid'}
-                                    liquidMap={liquidMap}
-                                    dragHandleProps={dragHandleProps}
-                                    isDragging={isDragging}
-                                    setEditingStep={setEditingStep}
-                                />
+                                {!isWashingStep && (
+                                    <Step
+                                        key={`${stepGroup.step_group.sequence_number}-${step.id}-liquid`}
+                                        index={liquidIndex as number}
+                                        step={step}
+                                        setStepGroups={setStepGroups}
+                                        allStepGroups={allStepGroups}
+                                        stepGroupSequenceNumber={
+                                            stepGroup.step_group.sequence_number
+                                        }
+                                        type={'liquid'}
+                                        liquidMap={liquidMap}
+                                        dragHandleProps={dragHandleProps}
+                                        isDragging={isDragging}
+                                        setEditingStep={setEditingStep}
+                                    />
+                                )}
+                                {isWashingStep && (
+                                    <Step
+                                        key={`${stepGroup.step_group.sequence_number}-${step.id}-washing-step`}
+                                        index={washingStepIndex as number}
+                                        step={step}
+                                        setStepGroups={setStepGroups}
+                                        allStepGroups={allStepGroups}
+                                        stepGroupSequenceNumber={
+                                            stepGroup.step_group.sequence_number
+                                        }
+                                        type={'washing-step'}
+                                        liquidMap={liquidMap}
+                                        dragHandleProps={dragHandleProps}
+                                        isDragging={isDragging}
+                                        setEditingStep={setEditingStep}
+                                    />
+                                )}
                                 {hasCooling && (
                                     <Step
                                         key={`${stepGroup.step_group.sequence_number}-${step.id}-cooling`}

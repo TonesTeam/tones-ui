@@ -30,7 +30,8 @@ import { Method } from 'axios';
 import { makeRequest } from '../../common/util';
 import { useUser } from '../../contexts/UserContext';
 import { StepDTO } from 'common/dto/step.dto';
-import { LiquidDTO } from 'common/dto/liquid.dto';
+import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
+import { isWashingLiquidCategory } from 'common/enums';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
@@ -53,7 +54,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         step: StepDTO;
         stepGroupSequenceNumber: number;
     } | null>(null);
-    const [liquids, setLiquids] = useState([] as LiquidDTO[]);
+    const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
     const { user } = useUser();
     const editingMode = route.params?.edit ? true : false;
     const [historyId, setHistoryId] = useState('');
@@ -74,7 +75,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
 
     useEffect(() => {
         makeRequest('GET' as Method, '/liquids').then((response) => {
-            setLiquids(response.data as LiquidDTO[]);
+            setLiquids(response.data as PermanentLiquidDTO[]);
         });
     }, []);
 
@@ -138,6 +139,34 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         return unsubscribe;
     }, [hasUnsavedChanges, navigation]);
 
+    // Washing steps carry a client-side-only "iterations" count so a repeated
+    // wash can be entered once in the UI; the backend has no concept of
+    // repeats, so we expand it into that many identical consecutive steps.
+    const expandStepsForSave = (steps: StepDTO[]): StepDTO[] => {
+        const sorted = [...steps].sort(
+            (a, b) => a.sequence_number - b.sequence_number,
+        );
+        const expanded: StepDTO[] = [];
+        for (const step of sorted) {
+            const liquid = liquids.find(
+                (l) => l.id === step.applied_liquid_id,
+            );
+            const isWashing = isWashingLiquidCategory(
+                liquid?.liquid_type_name,
+            );
+            const repeatCount = isWashing
+                ? Math.max(1, step.iterations || 1)
+                : 1;
+            for (let i = 0; i < repeatCount; i++) {
+                expanded.push({ ...step, iterations: 1 });
+            }
+        }
+        return expanded.map((step, index) => ({
+            ...step,
+            sequence_number: index + 1,
+        }));
+    };
+
     const saveProtocol = (
         protocolName: string = name,
         protocolDescription: string = description,
@@ -156,7 +185,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             name: sg.step_group.name,
                             description: '',
                             sequence_number: sg.step_group.sequence_number,
-                            steps: sg.steps.map(
+                            steps: expandStepsForSave(sg.steps).map(
                                 (s) =>
                                     ({
                                         iterations: 1,
@@ -190,7 +219,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                         name: sg.step_group.name,
                         description: '',
                         sequence_number: sg.step_group.sequence_number,
-                        steps: sg.steps.map(
+                        steps: expandStepsForSave(sg.steps).map(
                             (s) =>
                                 ({
                                     iterations: 1,
@@ -212,12 +241,20 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         }
     };
 
-    const liquidsToLiquidMap = (liquids: LiquidDTO[]) => {
+    const liquidsToLiquidMap = (liquids: PermanentLiquidDTO[]) => {
         const liquidMap: Map<number, string> = new Map();
         liquids.forEach((liquid) => {
             liquidMap.set(liquid.id, liquid.name);
         });
         return liquidMap;
+    };
+
+    const liquidsToCategoryMap = (liquids: PermanentLiquidDTO[]) => {
+        const categoryMap: Map<number, string> = new Map();
+        liquids.forEach((liquid) => {
+            categoryMap.set(liquid.id, liquid.liquid_type_name);
+        });
+        return categoryMap;
     };
 
     return (
@@ -283,6 +320,9 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                                 activeStepGroup={activeStepGroup}
                                 setActiveStepGroup={setActiveStepGroup}
                                 liquidMap={liquidsToLiquidMap(liquids)}
+                                liquidCategoryMap={liquidsToCategoryMap(
+                                    liquids,
+                                )}
                                 setEditingStep={setEditingStep}
                             />
                         </LinearGradient>
@@ -300,6 +340,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                             setActiveStepGroup={setActiveStepGroup}
                             editingStep={editingStep}
                             setEditingStep={setEditingStep}
+                            liquidCategoryMap={liquidsToCategoryMap(liquids)}
                         />
                     </Box>
                 </Box>
@@ -318,6 +359,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 setProtocolDescription={setDescription}
                 stepGroups={stepGroups}
                 liquidMap={liquidsToLiquidMap(liquids)}
+                liquidCategoryMap={liquidsToCategoryMap(liquids)}
             />
         </MainContainer>
     );

@@ -33,6 +33,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { Method } from 'axios';
 import { PermanentLiquidDTO } from 'common/dto/liquid.dto';
 import { StepDTO } from 'common/dto/step.dto';
+import { isWashingLiquidCategory } from 'common/enums';
 import GeneratedAvatar from '../components/GeneratedAvatar';
 
 const ProtocolView = ({ route, navigation }: NativeStackScreenProps<any>) => {
@@ -206,7 +207,34 @@ const StepsColumn = ({
 }) => {
     const getLiquidName = (liquidId: number) => {
         const liquid = liquids.find((l) => l.id === liquidId);
-        return liquid ? liquid.name : `Liquid #${liquidId}`;
+        return liquid?.name?.trim() || null;
+    };
+
+    const isWashingStep = (step: StepDTO) => {
+        const liquid = liquids.find((l) => l.id === step.applied_liquid_id);
+        return isWashingLiquidCategory(liquid?.liquid_type_name);
+    };
+
+    // Repeated washes are saved as separate consecutive identical steps
+    // (see Constructor.tsx's expandStepsForSave) — collapse them back into  single row with a repeat count for display.
+    const groupConsecutiveSteps = (steps: StepDTO[]) => {
+        const groups: { step: StepDTO; count: number }[] = [];
+        for (const step of steps) {
+            const last = groups[groups.length - 1];
+            if (
+                last &&
+                last.step.applied_liquid_id === step.applied_liquid_id &&
+                last.step.incubation_time === step.incubation_time &&
+                last.step.target_temperature === step.target_temperature &&
+                last.step.washing_iterations === step.washing_iterations &&
+                last.step.single_wash_duration === step.single_wash_duration
+            ) {
+                last.count += 1;
+            } else {
+                groups.push({ step, count: 1 });
+            }
+        }
+        return groups;
     };
 
     return (
@@ -224,46 +252,64 @@ const StepsColumn = ({
                                     {group.step_group.name}
                                 </Text>
                                 <VStack>
-                                    {group.steps.map((step: StepDTO) => {
-                                        return (
-                                            <VStack key={step.id} p={0} m={0}>
-                                                <StepListItem
+                                    {groupConsecutiveSteps(group.steps).map(
+                                        ({ step, count }) => {
+                                            const stepIsWashing =
+                                                isWashingStep(step);
+                                            return (
+                                                <VStack
                                                     key={step.id}
-                                                    step={step}
-                                                    index={++stepNumber}
-                                                    isWashing={false}
-                                                    getLiquidName={
-                                                        getLiquidName
-                                                    }
-                                                />
-                                                {step.washing_iterations >
-                                                    0 && (
+                                                    p={0}
+                                                    m={0}
+                                                >
                                                     <StepListItem
-                                                        key={`${step.id}-wash`}
-                                                        step={
-                                                            {
-                                                                type: step.type,
-                                                                id: step.id,
-                                                                iterations:
-                                                                    step.washing_iterations,
-                                                                incubation_time: 120,
-                                                                target_temperature: 25,
-                                                                applied_liquid_id: 0,
-                                                                sequence_number:
-                                                                    step.sequence_number,
-                                                                washing_iterations: 0,
-                                                            } as StepDTO
-                                                        }
+                                                        key={step.id}
+                                                        step={step}
                                                         index={++stepNumber}
-                                                        isWashing={true}
+                                                        isWashing={
+                                                            stepIsWashing
+                                                        }
+                                                        repeatCount={count}
                                                         getLiquidName={
                                                             getLiquidName
                                                         }
                                                     />
-                                                )}
-                                            </VStack>
-                                        );
-                                    })}
+                                                    {!stepIsWashing &&
+                                                        step.washing_iterations >
+                                                            0 && (
+                                                            <StepListItem
+                                                                key={`${step.id}-wash`}
+                                                                step={
+                                                                    {
+                                                                        type: step.type,
+                                                                        id: step.id,
+                                                                        iterations:
+                                                                            step.washing_iterations,
+                                                                        incubation_time:
+                                                                            step.single_wash_duration,
+                                                                        target_temperature: 25,
+                                                                        applied_liquid_id: 0,
+                                                                        sequence_number:
+                                                                            step.sequence_number,
+                                                                        washing_iterations: 0,
+                                                                    } as StepDTO
+                                                                }
+                                                                index={
+                                                                    ++stepNumber
+                                                                }
+                                                                isWashing={true}
+                                                                repeatCount={
+                                                                    step.washing_iterations
+                                                                }
+                                                                getLiquidName={
+                                                                    getLiquidName
+                                                                }
+                                                            />
+                                                        )}
+                                                </VStack>
+                                            );
+                                        },
+                                    )}
                                 </VStack>
                             </VStack>
                         );
@@ -281,12 +327,19 @@ const StepListItem = ({
     index,
     isWashing,
     getLiquidName,
+    repeatCount = 1,
 }: {
     step: StepDTO;
     index: number;
     isWashing: boolean;
-    getLiquidName: (liquidId: number) => string;
+    getLiquidName: (liquidId: number) => string | null;
+    repeatCount?: number;
 }) => {
+    const liquidName = getLiquidName(step.applied_liquid_id);
+    const displayName =
+        liquidName ??
+        (isWashing ? 'Washing' : `Liquid #${step.applied_liquid_id}`);
+
     return (
         <HStack
             key={step.id}
@@ -321,9 +374,7 @@ const StepListItem = ({
                     fontSize="$sm"
                     color={isWashing ? '#1193CF' : 'black'}
                 >
-                    {isWashing
-                        ? 'Washing'
-                        : getLiquidName(step.applied_liquid_id)}
+                    {displayName}
                 </Text>
             </VStack>
 
@@ -347,7 +398,7 @@ const StepListItem = ({
                 <HStack alignItems="center" justifyContent="center">
                     <Icon as={Repeat} size="xs" />
                     <Text ml={4} fontSize={12}>
-                        {step.iterations}
+                        {repeatCount}
                     </Text>
                 </HStack>
             </HStack>

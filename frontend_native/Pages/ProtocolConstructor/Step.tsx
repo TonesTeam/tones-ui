@@ -24,7 +24,7 @@ interface StepProps {
     setStepGroups: (stepGroups: StepGroupWithStepsDTO[]) => void;
     allStepGroups: StepGroupWithStepsDTO[];
     stepGroupSequenceNumber: number;
-    type: 'liquid' | 'wash' | 'cooling' | 'heating';
+    type: 'liquid' | 'wash' | 'cooling' | 'heating' | 'washing-step';
     liquidMap?: Map<number, string>;
     dragHandleProps?: any;
     isDragging?: boolean;
@@ -82,6 +82,18 @@ const Step = ({
             temperature = 25;
             temperatureDisplay = `${temperature} °C`;
             automaticStep = true;
+            break;
+        case 'washing-step':
+            stepName =
+                trimLiquidName(liquidMap?.get(step.applied_liquid_id)) ||
+                'Washing';
+            icon = Droplet;
+            iterations = step.iterations || 0;
+            incubationTime = step.incubation_time || 0;
+            color = '#1193CF';
+            temperature = step.target_temperature || 0;
+            temperatureDisplay = `${temperature} °C`;
+            automaticStep = false;
             break;
         case 'cooling':
             stepName = 'Cooling';
@@ -174,7 +186,7 @@ const Step = ({
                     ) : (
                         <Box flex={2}></Box>
                     )}
-                    {type == 'liquid' ? (
+                    {type == 'liquid' || type == 'washing-step' ? (
                         <Pressable
                             onPress={() => {
                                 const updatedStepGroups = allStepGroups.map(

@@ -25,6 +25,7 @@ import {
     Repeat,
 } from 'lucide-react-native';
 import { StepDTO } from 'common/dto/step.dto';
+import { isWashingLiquidCategory } from 'common/enums';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Dimensions } from 'react-native';
 import { AppStyles } from '../../constants/styles';
@@ -41,6 +42,7 @@ interface SaveProtocolModalProps {
     setProtocolDescription: (description: string) => void;
     stepGroups: StepGroupWithStepsDTO[];
     liquidMap: Map<number, string>;
+    liquidCategoryMap: Map<number, string>;
 }
 
 const SaveProtocolModal = ({
@@ -53,6 +55,7 @@ const SaveProtocolModal = ({
     setProtocolDescription,
     stepGroups,
     liquidMap,
+    liquidCategoryMap,
 }: SaveProtocolModalProps) => {
     const s = StyleSheet.create({
         modal_container: {
@@ -211,6 +214,12 @@ const SaveProtocolModal = ({
                                                     <VStack>
                                                         {group.steps.map(
                                                             (step: StepDTO) => {
+                                                                const stepIsWashing =
+                                                                    isWashingLiquidCategory(
+                                                                        liquidCategoryMap.get(
+                                                                            step.applied_liquid_id,
+                                                                        ),
+                                                                    );
                                                                 return (
                                                                     <VStack
                                                                         key={
@@ -230,14 +239,15 @@ const SaveProtocolModal = ({
                                                                                 ++stepNumber
                                                                             }
                                                                             isWashing={
-                                                                                false
+                                                                                stepIsWashing
                                                                             }
                                                                             liquidMap={
                                                                                 liquidMap
                                                                             }
                                                                         />
-                                                                        {step.washing_iterations >
-                                                                            0 && (
+                                                                        {!stepIsWashing &&
+                                                                            step.washing_iterations >
+                                                                                0 && (
                                                                             <StepListItem
                                                                                 key={`${step.id}-wash`}
                                                                                 step={
@@ -246,7 +256,8 @@ const SaveProtocolModal = ({
                                                                                         id: step.id,
                                                                                         iterations:
                                                                                             step.washing_iterations,
-                                                                                        incubation_time: 120,
+                                                                                        incubation_time:
+                                                                                            step.single_wash_duration,
                                                                                         target_temperature: 25,
                                                                                         applied_liquid_id: 0,
                                                                                         sequence_number:
@@ -339,9 +350,9 @@ const StepListItem = ({
     isWashing: boolean;
     liquidMap: Map<number, string>;
 }) => {
-    const liquidName = isWashing
-        ? 'Washing'
-        : liquidMap.get(step.applied_liquid_id) || 'Reagent';
+    const liquidName =
+        liquidMap.get(step.applied_liquid_id) ||
+        (isWashing ? 'Washing' : 'Reagent');
     return (
         <HStack
             bg="$white"
