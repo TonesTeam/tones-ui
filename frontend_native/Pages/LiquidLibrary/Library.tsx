@@ -234,6 +234,7 @@ const LibraryBody = ({
             <NewLiquidModal
                 open={newLiquidModal}
                 categories={categories}
+                selectedCategoryId={selectedCategoryId}
                 onClose={() => setNewLiquidModal(false)}
                 onSave={saveLiquid}
             />
@@ -489,11 +490,13 @@ const ListItem = ({ liquid, onView }: ListItemProps) => {
 const NewLiquidModal = ({
     open,
     categories,
+    selectedCategoryId,
     onClose,
     onSave,
 }: {
     open: boolean;
     categories: LiquidTypeDTO[];
+    selectedCategoryId?: number | null;
     onClose: () => void;
     onSave: (liq: PermanentLiquidDTO) => void;
 }) => {
@@ -508,6 +511,23 @@ const NewLiquidModal = ({
     const [defaultIncubationTime, setDefaultIncubationTime] = useState(0);
     const [defaultTargetTemperature, setDefaultTargetTemperature] = useState(0);
     const [position, setPosition] = useState(0);
+
+    // The modal never unmounts (it just renders null while closed), so the
+    // initial useState defaults only apply once. Re-sync the category every
+    // time it's opened to whichever category the user was browsing.
+    useEffect(() => {
+        if (!open) return;
+
+        const preselected = selectedCategoryId
+            ? categories.find((cat) => cat.id === selectedCategoryId)
+            : undefined;
+        const defaultCategory = preselected || categories[0];
+
+        if (defaultCategory) {
+            setSelectedTypeId(defaultCategory.id);
+            setSelectedTypeName(defaultCategory.name);
+        }
+    }, [open, selectedCategoryId, categories]);
 
     const handleSave = () => {
         const newLiquid: PermanentLiquidDTO = {
