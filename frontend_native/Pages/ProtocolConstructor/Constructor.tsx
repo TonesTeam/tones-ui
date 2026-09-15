@@ -9,6 +9,11 @@ import {
     Input,
     InputField,
     InputIcon,
+    useToast,
+    Toast,
+    ToastTitle,
+    ToastDescription,
+    VStack,
 } from '@gluestack-ui/themed';
 import { MainContainer, globalElementStyle } from '../../constants/styles';
 import NavBar from '../../navigation/NavBar';
@@ -56,6 +61,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
     } | null>(null);
     const [liquids, setLiquids] = useState([] as PermanentLiquidDTO[]);
     const { user } = useUser();
+    const toast = useToast();
     const editingMode = route.params?.edit ? true : false;
     const [historyId, setHistoryId] = useState('');
 
@@ -148,12 +154,8 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
         );
         const expanded: StepDTO[] = [];
         for (const step of sorted) {
-            const liquid = liquids.find(
-                (l) => l.id === step.applied_liquid_id,
-            );
-            const isWashing = isWashingLiquidCategory(
-                liquid?.liquid_type_name,
-            );
+            const liquid = liquids.find((l) => l.id === step.applied_liquid_id);
+            const isWashing = isWashingLiquidCategory(liquid?.liquid_type_name);
             const repeatCount = isWashing
                 ? Math.max(1, step.iterations || 1)
                 : 1;
@@ -205,6 +207,7 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 }),
             ).then((response) => {
                 console.log(response.data);
+                showSavedToast(protocolName);
                 navigation.navigate('Protocols');
             });
         } else {
@@ -236,9 +239,31 @@ const Constructor = ({ route, navigation }: NativeStackScreenProps<any>) => {
                 }),
             ).then((response) => {
                 console.log(response.data);
+                showSavedToast(protocolName);
                 navigation.navigate('Protocols');
             });
         }
+    };
+
+    const showSavedToast = (protocolName: string) => {
+        toast.show({
+            placement: 'top',
+            duration: 5000,
+            render: ({ id }) => (
+                <Toast
+                    nativeID={`toast-${id}`}
+                    action="success"
+                    variant="solid"
+                >
+                    <VStack space="xs">
+                        <ToastTitle>Protocol saved</ToastTitle>
+                        <ToastDescription>
+                            "{protocolName}" saved successfully
+                        </ToastDescription>
+                    </VStack>
+                </Toast>
+            ),
+        });
     };
 
     const liquidsToLiquidMap = (liquids: PermanentLiquidDTO[]) => {
