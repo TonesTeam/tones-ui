@@ -69,7 +69,8 @@ export function SlotSelection(props: {
                             2.{' '}
                         </Text>
                         <Text fontSize={12} fontFamily="Manrope-Medium">
-                            Select how many slots will be used.
+                            Select how many slots will be used. And put the
+                            samples in the selected slots.
                         </Text>
                     </Text>
                     <Text>
@@ -78,6 +79,15 @@ export function SlotSelection(props: {
                         </Text>
                         <Text fontSize={12} fontFamily="Manrope-Medium">
                             Select each chip size.
+                        </Text>
+                    </Text>
+                    <Text>
+                        <Text fontSize={12} fontFamily="Manrope-SemiBold">
+                            4.{' '}
+                        </Text>
+                        <Text fontSize={12} fontFamily="Manrope-Medium">
+                            Rename a slot if needed. By pressing the pencil icon
+                            next to the slot name.
                         </Text>
                     </Text>
                 </VStack>
