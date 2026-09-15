@@ -71,6 +71,7 @@ export default function Launch({
         useState(false);
     const [allWashingSwitchesOn, setAllWashingSwitchesOn] = useState(false);
     const [isLaunchTimeValid, setIsLaunchTimeValid] = useState(true);
+    const [readinessConfirmed, setReadinessConfirmed] = useState(false);
     const [batchName, setBatchName] = useState<string>(
         `Run of ${protocol_name}`,
     );
@@ -165,7 +166,7 @@ export default function Launch({
         } else if (stage === LaunchStage.STEP_THREE) {
             return !allWashingSwitchesOn;
         } else if (stage === LaunchStage.STEP_FOUR) {
-            return !isLaunchTimeValid;
+            return !isLaunchTimeValid || !readinessConfirmed;
         }
         return false;
     };
@@ -342,6 +343,8 @@ export default function Launch({
                                 }
                                 batchName={batchName}
                                 setBatchName={setBatchName}
+                                readinessConfirmed={readinessConfirmed}
+                                setReadinessConfirmed={setReadinessConfirmed}
                             />
                         )}
                     </Box>
