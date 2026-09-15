@@ -263,7 +263,13 @@ function Table(props: {
                                                         {reagent.volumePerCell
                                                             ? reagent.volumePerCell.toFixed(
                                                                   2,
-                                                              ) + ' ml'
+                                                              ) +
+                                                              ' ml / ' +
+                                                              (
+                                                                  reagent.volumePerCell *
+                                                                  1000
+                                                              ).toFixed(0) +
+                                                              ' µl'
                                                             : '---'}
                                                     </Txt>
                                                 </VStack>
