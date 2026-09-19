@@ -1,81 +1,73 @@
-# Tones UI and Backend
+# Tones UI
 
 <img width="675" height="307" alt="Screenshot From 2025-10-05 17-37-34" src="https://github.com/user-attachments/assets/2386e1cc-081c-49e9-8e03-e2c993983d75" />
 
-The project consists of 3 modules:
-* Frontend (`frontend_native`) - Expo React Native app;
-* Backend (`backend`) - NestJS rest api and a database generated with Prisma ORM;
-* Common code (`common`) - Logic that is used on both the backend and the native app.
+Автоматизированный стейнер для иммуногистохимической окраски клеток. Система состоит
+из трёх процессов в трёх репозиториях:
 
-# Project Setup and Development Guide
+| Слой | Где | Стек | Порт |
+|---|---|---|---|
+| Приложение | `frontend_native/` (этот репозиторий) | Expo 54, RN 0.81, React 19, TS, gluestack-ui | — |
+| Backend | `../backend` → [TonesTeam/backend](https://github.com/TonesTeam/backend) | Rust, axum, sqlx, SQLite | `0.0.0.0:8080` |
+| Контроллер железа | `../controller_v2-master` → [TonesTeam/controller_v2](https://github.com/TonesTeam/controller_v2) | Rust, serialport, CAN | `127.0.0.1:3000` |
 
-This README file outlines the steps required to set up and run the backend and frontend of this project. The project consists of both a backend module and a frontend mobile application using Expo.
+Поток данных: планшет → backend (`:8080`) → controller_v2 (`:3000`) → Klipper по HTTP
+на `tonespi.local:7125` (G-code), насосы и клапаны по serial, датчики по CAN. Слои 2 и 3
+живут на одной машине (Raspberry Pi, `tonespi.local`).
+
+> `backend/` в этом репозитории — **мёртвый** NestJS+Prisma, исходники удалены, остался
+> только `dist/`. Не использовать. Актуальный backend — отдельный Rust-репозиторий,
+> см. таблицу выше.
 
 ## Prerequisites
 
-Make sure you have the following installed on your machine:
+- [Node.js](https://nodejs.org/en/download/) (LTS) и npm — для фронтенда
+- [Rust toolchain](https://rustup.rs/) — для backend и контроллера
+- Клонировать соседние репозитории рядом с `tones-ui`, если их ещё нет на диске:
+  ```bash
+  git clone https://github.com/TonesTeam/backend.git
+  git clone https://github.com/TonesTeam/controller_v2.git controller_v2-master
+  ```
 
-- [Node.js](https://nodejs.org/en/download/) (LTS version recommended)
-- [npm](https://www.npmjs.com/get-npm) (comes with Node.js)
-- [Expo CLI](https://docs.expo.dev/get-started/installation/) (for running the mobile frontend)
+## Как запустить backend
 
-Before running the backend or the frontend make sure that all the
-dependencies are installed by running:
+Из `../backend`:
+```bash
+cargo run --bin seed      # один раз, наполнить БД тестовыми данными
+cargo run --bin backend
+```
+
+Поднимет REST API на `0.0.0.0:8080`. Актуальная документация эндпоинтов —
+`../backend/NEW_ENDPOINTS.md`.
+
+Контроллер (`controller_v2-master`) локально не поднимается: требует COM-порты,
+CAN-датчики и приватные зависимости по SSH. Без него работает всё, кроме запуска
+задач и `/hardware/slot-states`.
+
+## Как запустить фронтенд
+
+Из корня `tones-ui`:
 ```bash
 npm install
+npm run frontend
 ```
 
-## How to run the backend
+После сборки Expo покажет QR-код — отсканировать в приложении Expo Go (iOS/Android),
+либо открыть веб-версию по ссылке из терминала.
 
-The backend has a docker setup, just make sure you have docker and docker-compose installed,
-and then run the following command from the root of the project:
-```bash
-docker-compose up -d --build
-```
+Если приложение не находит backend в сети (автопоиск в `common/util.ts` сканирует
+подсеть по `GET /health` с маской `255.255.254.0`, которая подходит не всякой сети),
+можно прописать адрес вручную — присвоить `foundIP` реальный IP после вызова
+`scanNetwork` в `common/util.ts`.
 
-This will start a REST API on port 8080 connected to the database.
+> `npm run backend` из корневого `package.json` **сломан** (зовёт Prisma от мёртвого
+> NestJS-бэкенда) — используйте команды выше вместо него.
 
-When you wish to stop the backend, you can run:
-```bash
-docker-compose down
-```
+## Модули этого репозитория
 
+- `frontend_native/` — приложение. Ключевое: `Pages/ProtocolConstructor/` (конструктор
+  протоколов), `Pages/LaunchPage/` (мастер запуска), `Pages/Jobs/`,
+  `Pages/LiquidLibrary/`, `common/util.ts` (HTTP-слой и автопоиск бэкенда).
+- `common/` — общие TS-типы (DTO, енумы), подключён как `file:../common`.
 
-
-## Frontend Setup (React Native with Expo)
-
-1. **Navigate to the Frontend Module**\
-   Open a new terminal window and change directory to the frontend module:
-   ```bash
-   cd frontend_native
-   ```
-2. **Adjust Configuration (if needed)**\
-   Open the following file to adjust the backend API's IP address and port if necessary:
-   ```plaintext
-   frontend_native/common/util.ts
-   ```
-   On line 61, make sure the IP is correct and the port is set to `8080` if needed.
-   It may be the case that the frontend can't find the backend, so then one can
-   adjust the IP address (a domain name can also be used)
-   and the port accordingly, by hardcoding the values that
-   correspond to the backend server.
-
-   For example if you're running the server on your device on the default port `8080`,
-   and it's IP is `192.168.1.106`, but the native app can't find your API, you can try
-   something like:
-   ```typescript
-   let foundIP = await scanNetwork(ipList);
-   foundIP = '192.168.1.106';
-   return 'http://' + foundIP + ':8080';
-   ```
-
-
-2. **Start the Expo Development Server**\
-   Start the Expo development server using the following command:
-
-   ```bash
-   # This should be run while inside /frontend_native
-   npx expo start
-   ```
-
-   After the build process begins, the terminal will display a QR code. You can scan this QR code with your Expo Go app (available on both iOS and Android) to load the mobile application on your device. Alternativelly you can run the web bundle, that will be accessible by following the link that Expo has provided you with.
+Подробнее о модели данных, соглашениях и известных особенностях — см. [CLAUDE.md](CLAUDE.md).
