@@ -77,9 +77,9 @@ export default function ProtocolList({
     const [searchPrompt, setSearchPrompt] = useState('');
     const [authorFilter, setAuthorFilter] = useState('All authors');
     const [authorList, setAuthorList] = useState<string[]>([]);
-    const [sortingStrategy, setSortingStrategy] = useState('Oldest first');
-    const [sortColumn, setSortColumn] = useState<string>('');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [sortingStrategy, setSortingStrategy] = useState('Newest first');
+    const [sortColumn, setSortColumn] = useState<string>('created');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
     useEffect(() => {
         if (!protocols) return;
